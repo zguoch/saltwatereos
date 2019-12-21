@@ -1,9 +1,11 @@
 #ifndef H2ONACL_H
 #define H2ONACL_H
 #include<iostream>
+#include<fstream>
 #include<map>  
 #include<string> 
 #include<cmath>
+#include<vector>
 using namespace std;
 
 // const value define
@@ -83,8 +85,7 @@ private:
     const double *m_Parray;
     const double *m_Tarray;
     const double *m_Xarray;
-    int m_number; //how man points of (P, T, X)
-    PROP_H2ONaCl m_prop;
+    int m_number; //how many points of (P, T, X)
     Cr_STRUCT m_Cr;
     Cr_STRUCT init_Cr();
     f_STRUCT m_f;
@@ -99,7 +100,7 @@ public:
     ~cH2ONaCl();
     MAP_PHASE_REGION m_phaseRegion_name;
     void Calculate();
-
+    PROP_H2ONaCl m_prop;
 private:
     inline double Xwt2Xmol(double X){return (X/M_NaCl)/(X/M_NaCl+(1-X)/M_H2O);};
     void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);

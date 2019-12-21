@@ -67,14 +67,23 @@ Cr_STRUCT cH2ONaCl:: init_Cr()
 }
 void cH2ONaCl:: init_PhaseRegionName()
 {
-    m_phaseRegion_name[SinglePhase_L]="Single phase(Liquid)";
-    m_phaseRegion_name[TwoPhase_L_V_X0]="Liquid + Vapor at X=0";
-    m_phaseRegion_name[SinglePhase_V]="Pure vapour phase";
-    m_phaseRegion_name[TwoPhase_L_H]="Liquid + Halite";
-    m_phaseRegion_name[TwoPhase_V_H]="Vaper + Halite";
-    m_phaseRegion_name[ThreePhase_V_L_H]="Vapour + Liquid + Halite";
-    m_phaseRegion_name[TwoPhase_V_L_L]="Vapour + Liquid on the liquid side";
-    m_phaseRegion_name[TwoPhase_V_L_V]="Vapour + Liquid on the vapour side";
+    // m_phaseRegion_name[SinglePhase_L]="Single phase(Liquid)";
+    // m_phaseRegion_name[TwoPhase_L_V_X0]="Liquid + Vapor at X=0";
+    // m_phaseRegion_name[SinglePhase_V]="Pure vapour phase";
+    // m_phaseRegion_name[TwoPhase_L_H]="Liquid + Halite";
+    // m_phaseRegion_name[TwoPhase_V_H]="Vaper + Halite";
+    // m_phaseRegion_name[ThreePhase_V_L_H]="Vapour + Liquid + Halite";
+    // m_phaseRegion_name[TwoPhase_V_L_L]="Vapour + Liquid on the liquid side";
+    // m_phaseRegion_name[TwoPhase_V_L_V]="Vapour + Liquid on the vapour side";
+
+    m_phaseRegion_name[SinglePhase_L]="0";
+    m_phaseRegion_name[TwoPhase_L_V_X0]="1.5";
+    m_phaseRegion_name[SinglePhase_V]="2";
+    m_phaseRegion_name[TwoPhase_L_H]="3";
+    m_phaseRegion_name[TwoPhase_V_H]="4";
+    m_phaseRegion_name[ThreePhase_V_L_H]="4.5";
+    m_phaseRegion_name[TwoPhase_V_L_L]="5";
+    m_phaseRegion_name[TwoPhase_V_L_V]="6";
 }
 void cH2ONaCl:: init_prop()
 {
@@ -97,9 +106,9 @@ void cH2ONaCl:: init_prop()
 void cH2ONaCl:: Calculate()
 {
     // 1. 
-    double Xl_all,Xv_all;
-    PhaseRegion reg=m_prop.Region=findRegion(m_T, m_P, m_X,Xl_all,Xv_all);
-    cout<<m_phaseRegion_name[reg]<<" Xl_all: "<<Xl_all<<" Xv_all: "<<Xv_all<<endl;
+    // double Xl_all,Xv_all;
+    m_prop.Region=findRegion(m_T, m_P, m_X,m_prop.X_l,m_prop.X_v);
+    
 }
 
 PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X, double& Xl_all, double& Xv_all)
@@ -126,7 +135,7 @@ PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X
         P_der[i]=Pcrit_h2o_point + S;
         // cout<<P_der[i]<<endl;
     }
-    
+
     double P_crit = 0;
     double X_crit = 0;  // mole fraction
     double P_crit_h20=0;
@@ -135,6 +144,7 @@ PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X
     {
         double Rho_l, Rho_v, h_l, h_v;
         fluidProp_crit_T(T, 1e-8, P_crit_h20,Rho_l, Rho_v, h_l, h_v);
+        // cout<<"T: "<<T<<" P_crit_h20: "<<P_crit_h20<<endl;exit(0);
         P_crit_h20 = P_crit_h20 * 10 ;  // from MPa to Bar
         // this method reproduces Driesner Table of X_v of V+H+L surface, edited by FVehling
         // working vor X_v at V+H+L and at V+H to V  transition
@@ -142,7 +152,6 @@ PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X
                                + cn1[2]*pow((Tcrit_h2o - T),ca[2]) + cn1[3]*pow((Tcrit_h2o - T),ca[3])
                                + cn1[4]*pow((Tcrit_h2o - T),ca[4]) + cn1[5]*pow((Tcrit_h2o - T),ca[5])
                                + cn1[6]*pow((Tcrit_h2o - T),ca[6]); 
-        // cout<<"P_crit: "<<P_crit<<endl;
     }else if(T>Tcrit_h2o && T<=500)
     {
         P_crit = Pcrit_h2o_point + cn2[0]*pow((T - Tcrit_h2o),ca[6+1]) + cn2[1]*pow((T - Tcrit_h2o),ca[6+2])
@@ -157,7 +166,7 @@ PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X
     {
         cout<<"Never happens in cH2ONaCl:: findRegion->P_crit"<<endl;
     }
-    
+    // cout<<"T: "<<T<<" P_crit: "<<P_crit<<" P_crit_h20: "<<P_crit_h20<<endl;exit(0);
     // X_crit
     double d1[7] = {8e-5, 1e-5, -1.37125e-7, 9.46822e-10, -3.50549e-12, 6.57369e-15, -4.89423e-18};
     double d2[4] = {7.77761e-2, 2.7042e-4, -4.244821e-7, 2.580872e-10};
@@ -172,7 +181,7 @@ PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X
         X_crit = d2[0]*pow((T-600),(1-1)) + d2[1]*pow((T-600),(2-1))
                + d2[2]*pow((T-600),(3-1)) + d2[3]*pow((T-600),(4-1));
     }
-    // cout<<"T: "<<T<<" Tcrit_h2o: "<<Tcrit_h2o<<" X_crit: "<<X_crit<<endl;
+    // cout<<"T: "<<T<<" Tcrit_h2o: "<<Tcrit_h2o<<" X_crit: "<<X_crit<<endl;exit(0);
     // ======================================================================
     // FOR THE V+H & V+L REGION
     double a = 2.4726e-2;
@@ -192,7 +201,7 @@ PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X
         cout<<"Never happens in cH2ONaCl:: findRegion->logP_subboil"<<endl;
     }
     double PNacl = pow(10,(logP_subboil)); // halite vapor pressure
-    // cout<<"logP_subboil: "<<logP_subboil<<" PNacl: "<<PNacl<<endl;
+    // cout<<"logP_subboil: "<<logP_subboil<<" PNacl: "<<PNacl<<endl;exit(0);
 
     // coeffs
     m_f.f[10] = P_trip_salt - m_f.sum_f10;
@@ -211,7 +220,7 @@ PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X
     {
         P_vlh=P_trip_salt;
     }
-    // cout<<"T_star: "<<T_star<<" P_vlh:"<<P_vlh<<endl;
+    // cout<<"T_star: "<<T_star<<" P_vlh:"<<P_vlh<<endl;exit(0);
 
     // ======================================================================
     // FOR THE V+L  &  V+H REGION
@@ -249,7 +258,7 @@ PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X
     double j1 = k4 + (k3-k4)/(1 + exp((T-k5)/k6)) + k7*(pow((T + k8),2));
     double j2 = k9 + k10*T + k11*(pow(T,2)) + k12*(pow(T,3));
     double j3 = k13 + k14*T + k15*(pow(T,2));
-    // cout<<"j0: "<<j0<<" j1: "<<j1<<" j2: "<<j2<<" j3: "<<j3<<endl;
+    // cout<<"j0: "<<j0<<" j1: "<<j1<<" j2: "<<j2<<" j3: "<<j3<<endl;exit(0);
     // ======================================================================
     // Calculate Xl_vlh at V+L+H surface for calculating X_l in V+L region
     double e[6] = {0.0989944 + 3.30796e-6*P_vlh - 4.71759e-10*(pow(P_vlh,2)),
@@ -266,7 +275,7 @@ PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X
             + (e[4]*pow(T_star,4)) + (e[5]*pow(T_star,5));
     if(Xl_vlh>1)Xl_vlh=1;   // X of liquid at the V+L+H surface
 
-    // cout<<"Xl_vlh: "<<Xl_vlh<<endl;
+    // cout<<"Xl_vlh: "<<Xl_vlh<<endl;exit(0);
 
     // ======================================================================
     // Calculate Xl_vh metastable for calulating Xv_vh at V - V+H transition P<P_vlh
@@ -294,30 +303,42 @@ PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X
         double log10K1 = log10K2*(log10(PNacl/P_crit) - log10(Xl_vlh)) + log10(Xl_vlh); // here Xl_vlh must be used, not Xl_vh!?
         double log10K = log10K1 - log10(PNacl/Pres);
         double K_vh = pow(10,log10K);
-        Xv_vh = Xl_vh/K_vh;   
+        Xv_vh = Xl_vh/K_vh;  
     }
 
     // ======================================================================
     // Calculate Xl_vl in V+L Region 
     double g1 = h2 + (h1-h2)/(1 + exp((T-h3)/h4)) + h5*(T*T);
     double g2 = h7 + (h6-h7)/(1 + exp((T-h8)/h9)) + h10*exp(-h11*T);
+    // cout<<"g1: "<<g1<<" g2: "<<g2<<endl;
     // For Temp<=Tcrit_h2o find X_crit so that for P_crit_h20, which is lower then P_crit for same Temp,  Xl_vl(P_crit_h20) = 0 
     // Note that X_crit is then negative
     // Equation for X_crit comes from eqn for g0 and Xl_vl
+    // cout<<"X_crit: "<<X_crit<<endl;
     if(T<Tcrit_h2o)
     {
-        X_crit =(  ( Xl_vlh - g1*(P_crit - P_vlh) - g2*(pow((P_crit-P_vlh),2)) ) *  sqrt(P_crit-P_crit_h20)/sqrt(P_crit-P_vlh)
-          + g1*(P_crit - P_crit_h20) + g2*(pow((P_crit-P_crit_h20),2))  )/( -1 + sqrt(P_crit-P_crit_h20)/(sqrt(P_crit-P_vlh)) ) ;
+        X_crit =(
+                ( Xl_vlh - g1*(P_crit - P_vlh) - g2*(pow((P_crit-P_vlh),2)) ) *  
+                sqrt(P_crit-P_crit_h20)/sqrt(P_crit-P_vlh) + 
+                g1*(P_crit - P_crit_h20) + 
+                g2*(pow((P_crit-P_crit_h20),2))  
+                )/( -1 + sqrt(P_crit-P_crit_h20)/(sqrt(P_crit-P_vlh)) ) ;
+        // cout<<"part1: "<<( Xl_vlh - g1*(P_crit - P_vlh) - g2*(pow((P_crit-P_vlh),2)) )<<endl;
+        // cout<<"part2: "<<sqrt(P_crit-P_crit_h20)/sqrt(P_crit-P_vlh)<<" P_crit: "<<P_crit<<" P_crit_h20: "<<P_crit_h20<<" P_vlh: "<<P_vlh<<endl;
+        // cout<<"part3: "<<g1*(P_crit - P_crit_h20)<<endl;
+        // cout<<"part4: "<<g2*(pow((P_crit-P_crit_h20),2))<<endl;
+        // cout<<"part5: "<<sqrt(P_crit-P_crit_h20)/(sqrt(P_crit-P_vlh))<<endl;
         // when P_crit < P_crit_h20 for ind_T, then X_crit is complex     
         if(P_crit<P_crit_h20)X_crit=0; 
     }
     // X_crit(P_crit < P_crit_h20) = % this should not happen, but it does near critical point, when P_crit < P_crit_h20  
-    // cout<<"X_crit: "<<X_crit<<endl;
+    // cout<<"X_crit: "<<X_crit<<endl;exit(0);
     double g0 = (Xl_vlh - X_crit - g1*(P_crit - P_vlh) - g2*pow((P_crit-P_vlh),2))/sqrt(P_crit-P_vlh);
     // cout<<"g0: "<<g0<<endl;
 
     // if (P_crit < Pres), than Xl_vl is complex 
     double Xl_vl = X_crit + g0*sqrt(P_crit - Pres) + g1*(P_crit - Pres) + g2*(pow((P_crit-Pres),2));  // to low for 1000°C 
+    // cout<<"X_crit: "<<X_crit<<" g0*sqrt(P_crit - Pres): "<<g0*sqrt(P_crit - Pres)<<" g1*(P_crit - Pres): "<<g1*(P_crit - Pres)<<" g2*(pow((P_crit-Pres),2)): "<<g2*(pow((P_crit-Pres),2))<<endl;
     // cout<<"Xl_vl: "<<Xl_vl<<endl;
     //--------------------------------------------------------------------------
     //Calculate Xv_vl in V+L Region  T> T_crit_H2O is ok but constnant minmal
@@ -338,6 +359,7 @@ PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X
         Xv_vl=NAN;
         Xl_vl=NAN;
     }
+    // cout<<"Xl_vl: "<<Xl_vl<<" Xv_vl: "<<Xv_vl<<endl;
     //--------------------------------------------------------------------------
     //Calculate Regions
     double P_crit_s = P_crit;
@@ -345,11 +367,11 @@ PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X
     {
         P_crit_s=Pcrit_h2o_point; //P=22.141e6 T=375
     }
-    // cout<<"P_crit_s: "<<P_crit_s<<endl;
+    // cout<<"P_crit_s: "<<P_crit_s<<endl;exit(0);
     double temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8;
     double T_crit=0;
     fluidProp_crit_P( Pres*1e5 , 1e-10, T_crit, temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8);
-    // cout<<"T_crit: "<<T_crit<<endl;
+    // cout<<"T_crit: "<<T_crit<<endl;exit(0);
     double Xv = Xv_vl;
     if(ind)Xv = Xv_vh;
     if(Pres>=P_crit)Xv = 0;
@@ -358,7 +380,7 @@ PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X
     // Xl(ind) = 0;
     if(Pres>=P_crit)Xl = 0;
     if(Pres<=P_vlh-tol_P_LVH)Xl = 0;
-
+    // cout<<"Xv: "<<Xv<<" Xl: "<<Xl<<endl;
     if(X<Xv && Pres<=(P_crit_s) && T>=(T_crit) )region_ind  = SinglePhase_V;   // V  & Temp>=(T_crit)
     if(Pres<PNacl && T>T_trip_salt)region_ind = SinglePhase_V;   // V: below NaCl vapor pressure (for all NaCl values)
     if( X == 0 && Pres <= Pcrit_h2o_point && T<(T_crit+1e-9) && T>(T_crit-1e-9))region_ind = TwoPhase_L_V_X0;
@@ -377,10 +399,15 @@ PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X
     for(int i=0;i<5;i++)ee[5]-=ee[i];
     T_hm = T_trip_salt + a*(Pres - P_trip_salt);  // melting temperature of halite pressure dependent
     double X_hal = (ee[0]*pow((T/T_hm),(1-1))) + (ee[1]*pow((T/T_hm),(2-1))) + (ee[2]*pow((T/T_hm),(3-1)))
-    + (e[3]*pow((T/T_hm),(4-1))) + (ee[4]*pow((T/T_hm),(5-1))) + (ee[5]*pow((T/T_hm),(6-1)));
+    + (ee[3]*pow((T/T_hm),(4-1))) + (ee[4]*pow((T/T_hm),(5-1))) + (ee[5]*pow((T/T_hm),(6-1)));
 
     double X_lh  = X_hal; //Store X of liquid for the L+H region
     if(X>=X_hal &&  T<=T_hm && Pres>=(P_vlh+tol_P_LVH))region_ind = TwoPhase_L_H;  // L+H & L+H-surface
+    // cout<<"Pres: "<<Pres<<" P_vlh: "<<P_vlh<<" tol_P_LVH: "<<tol_P_LVH<<" ddd: "<<(Pres>=(P_vlh+tol_P_LVH))<<endl;
+    // cout<<"X: "<<X<<" X_hal: "<<X_hal<<" X-X_hal: "<<X-X_hal<<endl;
+    // cout<<"Pres: "<<Pres<<" T_hm: "<<T_hm<<" T: "<<T<<endl;
+    // for(int i=0;i<6;i++)cout<<"e["<<i+1<<"]: "<<ee[i]<<endl;
+    // cout<<"region_ind: "<<region_ind<<endl;exit(0);
     switch (region_ind)
     {
     case SinglePhase_L:
@@ -790,7 +817,7 @@ void cH2ONaCl:: fluidProp_crit_T(double T, double tol, double& P,double& Rho_l, 
     bool ind2a=false;
     if(T_2ph > T_creg)ind2b=true;
     ind2a=!ind2b;
-    //cout<<"ind2a: "<<ind2a<<" ind2b: "<<ind2b<<endl;
+    // cout<<"ind2a: "<<ind2a<<" ind2b: "<<ind2b<<endl;exit(0);
 
     if(ind2a)
     {
@@ -806,7 +833,7 @@ void cH2ONaCl:: fluidProp_crit_T(double T, double tol, double& P,double& Rho_l, 
         double Rho_l_ind2a=0,Rho_v_ind2a=0;
         // cout<<"T_ind2a: "<<T_ind2a<<endl;
         approx_Rho_lv(T_ind2a, Rho_l_ind2a,Rho_v_ind2a);
-        // cout<<"Rho_l_ind2a: "<<Rho_l_ind2a<<" Rho_v_ind2a: "<<Rho_v_ind2a<<endl;
+        // cout<<"Rho_l_ind2a: "<<Rho_l_ind2a<<" Rho_v_ind2a: "<<Rho_v_ind2a<<endl;exit(0);
         // do while, break when i>20
         // need to optimize
         TWOPHASEPROP_STRUCT l_prop, v_prop;
@@ -915,19 +942,18 @@ void cH2ONaCl:: approx_Rho_lv(double T, double& Rho_l , double& Rho_v)
             xv = xv* tt + av1[10-i];
         }
         xv = exp(xv);
-        // cout<<"xl: "<<xl<<" xv: "<<xv<<endl;
-        if(T>623.15)
+    }else
+    {
+        tt = pow((1.0 - ts), 0.25);
+        for (size_t i = 0; i < 10; i++)
         {
-            tt = pow((1.0 - ts), 0.25);
-            for (size_t i = 0; i < 10; i++)
-            {
-                xl = xl* tt + al2[9-i];
-                xv = xv* tt + av2[9-i];
-            }
+            xl = xl* tt + al2[9-i];
+            xv = xv* tt + av2[9-i];
         }
-        Rho_l = 1.0/(3.17* xl);
-        Rho_v = 1.0/(3.17* xv);
     }
+    // cout<<"xl: "<<xl<<" xv: "<<xv<<endl;
+    Rho_l = 1.0/(3.17* xl);
+    Rho_v = 1.0/(3.17* xv);
     // cout<<"T: "<<T<<endl;
 }
 
