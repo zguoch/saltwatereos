@@ -125,6 +125,10 @@ void cH2ONaCl:: Calculate()
     double Xw_l = Xl_all * M_NaCl / (Xl_all * M_NaCl + (1-Xl_all) * M_H2O);
     double Xw_v = Xv_all * M_NaCl / (Xv_all * M_NaCl + (1-Xv_all) * M_H2O);
 
+    // 4. calcViscosity
+    calcViscosity(m_prop.Region, m_P, m_T, Xw_l, Xw_v, m_prop.Mu_l, m_prop.Mu_v);
+
+
     if(m_prop.Region==SinglePhase_L)m_prop.S_l=1;
     double Xw=m_Xwt;
     //  Calculate saturation of liquid in L+V region
@@ -1763,5 +1767,51 @@ void cH2ONaCl:: calcEnthalpy(int reg, double T_in, double P_in, double X_l, doub
                     + ( -1.7099e-3 * T_in - 0.5 * 3.82734e-6*pow(T_in,2) - 0.5 * 8.65455e-9*pow(T_in,2) )* P_in
                     + r4 * T_in * pow(P_in,2) ;
         h_h = h_h_p_t100 + F_Cp - F_Cp_100;
+    }
+}
+
+void cH2ONaCl:: calcViscosity(int reg, double P, double T, double Xw_l, double Xw_v, double& mu_l, double& mu_v)
+{
+    double a1 = -35.9858;
+    double a2 = 0.80017;
+    double b1 = 1e-6;
+    double b2 = -0.05239;
+    double b3 = 1.32936;
+    mu_l = 0;
+    mu_v = 0;
+    // calculation of mu liquid
+    bool ind_l=(reg==SinglePhase_L || reg==TwoPhase_L_V_X0 || reg==TwoPhase_L_H || reg==ThreePhase_V_L_H || reg==TwoPhase_V_L_L || reg==TwoPhase_V_L_V);
+    if(ind_l)
+    {
+        double e1 = a1 * pow(Xw_l,a2);
+        double e2 = 1 - b1 * pow(T,b2) - b3 * pow(Xw_l,a2) * pow(T,b2); 
+        double T_star_l = e1 + e2 * T;
+        if(isnan(T_star_l))T_star_l = 0;
+        SteamState S = freesteam_set_pT(P, T_star_l+Kelvin);
+        mu_l=freesteam_mu(S);
+        if(isnan(mu_l))
+        {
+            double T_2ph0, Rho_l0, h_l0,h_v0, dpd_l0, dpd_v0, Rho_v0, Mu_v0;
+            fluidProp_crit_P(P, 1e-10,T_2ph0, Rho_l0, h_l0, h_v0, dpd_l0, dpd_v0, Rho_v0, mu_l, Mu_v0);
+        }
+    }
+    bool ind_v = ( reg==TwoPhase_L_V_X0 | reg==SinglePhase_V | reg==TwoPhase_V_H | reg==ThreePhase_V_L_H | reg==TwoPhase_V_L_L | reg==TwoPhase_V_L_V);
+    if(ind_v)
+    {
+        double e1 = a1 * pow(Xw_v,a2);
+        double e2 = 1 - b1 * pow(T,b2) - b3 * pow(Xw_v,a2) * pow(T,b2); 
+        double T_star_v = e1 + e2 * T;
+        
+        bool ind_0 = (T_star_v > 0);
+        if(ind_0)
+        {
+            SteamState S = freesteam_set_pT(P, T_star_v+Kelvin);
+            mu_v=freesteam_mu(S);
+        }
+        if(isnan(mu_v))
+        {
+            double T_2ph0, Rho_l0, h_l0,h_v0, dpd_l0, dpd_v0, Rho_v0, mu_l0;
+            fluidProp_crit_P(P, 1e-10,T_2ph0, Rho_l0, h_l0, h_v0, dpd_l0, dpd_v0, Rho_v0, mu_l0, mu_v);
+        }
     }
 }
