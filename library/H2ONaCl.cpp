@@ -1,9 +1,10 @@
 #include "H2ONaCl.h"
 
-cH2ONaCl::cH2ONaCl(double P, double T, double X)
-:m_P(P),
-m_T(T),
-m_X(Xwt2Xmol(X)),
+cH2ONaCl::cH2ONaCl()
+:m_P(1e5),
+m_T(100),
+m_Xwt(0.3),
+m_X(Xwt2Xmol(m_Xwt)),
 m_Parray(NULL),
 m_Tarray(NULL),
 m_Xarray(NULL),
@@ -13,17 +14,21 @@ m_f(init_f())
 {
     init_PhaseRegionName();
 }
-// cH2ONaCl::cH2ONaCl(const double* P, const double* T, const double* X, const int n)
-// :m_P(0),
-// m_T(0),
-// m_X(0),
-// m_Parray(P),
-// m_Tarray(T),
-// m_Xarray(X),
-// m_number(n)
-// {
-//     init_PhaseRegionName();
-// }
+
+cH2ONaCl::cH2ONaCl(double P, double T, double X)
+:m_P(P),
+m_T(T),
+m_Xwt(X),
+m_X(Xwt2Xmol(m_Xwt)),
+m_Parray(NULL),
+m_Tarray(NULL),
+m_Xarray(NULL),
+m_number(1),
+m_Cr(init_Cr()),
+m_f(init_f())
+{
+    init_PhaseRegionName();
+}
 
 cH2ONaCl::~cH2ONaCl()
 {
@@ -106,9 +111,59 @@ void cH2ONaCl:: init_prop()
 void cH2ONaCl:: Calculate()
 {
     // 1. 
-    // double Xl_all,Xv_all;
-    m_prop.Region=findRegion(m_T, m_P, m_X,m_prop.X_l,m_prop.X_v);
+    double Xl_all,Xv_all;
+    m_prop.Region=findRegion(m_T, m_P, m_X, Xl_all,Xv_all);
+    // 2. calculate rho
+    // still problematic at high T & low P
+    double V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out;
+    calcRho(m_prop.Region, m_T, m_P, Xl_all, Xv_all, 
+            m_prop.Rho_l, m_prop.Rho_v, m_prop.Rho_h, V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out);
+    // 3. calculate enthalpy
+    calcEnthalpy(m_prop.Region, m_T, m_P, Xl_all, Xv_all, 
+                        m_prop.H_l, m_prop.H_v, m_prop.H_h);
+    // 4. 
+    double Xw_l = Xl_all * M_NaCl / (Xl_all * M_NaCl + (1-Xl_all) * M_H2O);
+    double Xw_v = Xv_all * M_NaCl / (Xv_all * M_NaCl + (1-Xv_all) * M_H2O);
+
+    if(m_prop.Region==SinglePhase_L)m_prop.S_l=1;
+    double Xw=m_Xwt;
+    //  Calculate saturation of liquid in L+V region
+    if(m_prop.Region==TwoPhase_V_L_L | m_prop.Region==TwoPhase_V_L_V)
+    {
+        m_prop.S_l = (m_prop.Rho_v *(Xw_v - Xw))/(m_prop.Rho_v*(Xw_v-Xw) + m_prop.Rho_l *(Xw-Xw_l)); 
+    }
+    // Calculate saturation of halite in V+H region
+    if(m_prop.Region==TwoPhase_V_H)
+    {
+        m_prop.S_h = (m_prop.Rho_v*(Xw_v-Xw))/(m_prop.Rho_h*(Xw-1) + m_prop.Rho_v*(Xw_v-Xw));
+    }
+    //  Calculate saturation of halite in L+H region  % does not work for X = 1
+    if(m_prop.Region==TwoPhase_L_H)
+    {
+        m_prop.S_h = (m_prop.Rho_l*(Xw_l-Xw))/(m_prop.Rho_h*(Xw-1) + m_prop.Rho_l*(Xw_l-Xw));
+    }
+     
+    if(m_prop.Region==SinglePhase_V) m_prop.S_v= 1;
+    if(m_prop.Region==TwoPhase_V_L_L || m_prop.Region==TwoPhase_V_L_V) m_prop.S_v= 1 - m_prop.S_l;
+    if(m_prop.Region==TwoPhase_V_H) m_prop.S_v= 1 - m_prop.S_h;
+    if(m_prop.Region==TwoPhase_L_H) m_prop.S_l= 1 - m_prop.S_h;
+    m_prop.Rho = m_prop.S_l*m_prop.Rho_l + m_prop.S_v*m_prop.Rho_v + m_prop.S_h *m_prop.Rho_h ;
+    m_prop.H = (m_prop.S_l*m_prop.Rho_l*m_prop.H_l + m_prop.S_v*m_prop.Rho_v*m_prop.H_v + m_prop.S_h * m_prop.Rho_h * m_prop.H_h)/m_prop.Rho;
+    // v+l+h-region
+    if(m_prop.Region==ThreePhase_V_L_H) m_prop.S_l= NAN; 
+    if(m_prop.Region==ThreePhase_V_L_H) m_prop.S_v= NAN; 
+    if(m_prop.Region==ThreePhase_V_L_H) m_prop.S_h= NAN; 
+    if(m_prop.Region==ThreePhase_V_L_H) m_prop.Rho= NAN; 
+    if(m_prop.Region==ThreePhase_V_L_H) m_prop.H= NAN; 
+    // v+l-region X = 0;
+    if(m_prop.Region==TwoPhase_L_V_X0) m_prop.S_l= NAN; 
+    if(m_prop.Region==TwoPhase_L_V_X0) m_prop.S_v= NAN; 
+    if(m_prop.Region==TwoPhase_L_V_X0) m_prop.S_h= 0; 
+    if(m_prop.Region==TwoPhase_L_V_X0) m_prop.Rho = NAN; 
+    if(m_prop.Region==TwoPhase_L_V_X0) m_prop.H= NAN; 
     
+    m_prop.X_l = Xw_l;
+    m_prop.X_v = Xw_v;
 }
 
 PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X, double& Xl_all, double& Xv_all)
@@ -135,7 +190,7 @@ PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X
         P_der[i]=Pcrit_h2o_point + S;
         // cout<<P_der[i]<<endl;
     }
-
+    // exit(0);
     double P_crit = 0;
     double X_crit = 0;  // mole fraction
     double P_crit_h20=0;
@@ -305,7 +360,7 @@ PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X
         double K_vh = pow(10,log10K);
         Xv_vh = Xl_vh/K_vh;  
     }
-
+    // cout<<" Xv_vh: "<<Xv_vh<<endl;exit(0);
     // ======================================================================
     // Calculate Xl_vl in V+L Region 
     double g1 = h2 + (h1-h2)/(1 + exp((T-h3)/h4)) + h5*(T*T);
@@ -323,11 +378,6 @@ PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X
                 g1*(P_crit - P_crit_h20) + 
                 g2*(pow((P_crit-P_crit_h20),2))  
                 )/( -1 + sqrt(P_crit-P_crit_h20)/(sqrt(P_crit-P_vlh)) ) ;
-        // cout<<"part1: "<<( Xl_vlh - g1*(P_crit - P_vlh) - g2*(pow((P_crit-P_vlh),2)) )<<endl;
-        // cout<<"part2: "<<sqrt(P_crit-P_crit_h20)/sqrt(P_crit-P_vlh)<<" P_crit: "<<P_crit<<" P_crit_h20: "<<P_crit_h20<<" P_vlh: "<<P_vlh<<endl;
-        // cout<<"part3: "<<g1*(P_crit - P_crit_h20)<<endl;
-        // cout<<"part4: "<<g2*(pow((P_crit-P_crit_h20),2))<<endl;
-        // cout<<"part5: "<<sqrt(P_crit-P_crit_h20)/(sqrt(P_crit-P_vlh))<<endl;
         // when P_crit < P_crit_h20 for ind_T, then X_crit is complex     
         if(P_crit<P_crit_h20)X_crit=0; 
     }
@@ -415,6 +465,7 @@ PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X
         break;
     case TwoPhase_L_H:
         Xl_all=X_lh;
+        break;
     case ThreePhase_V_L_H:
         Xl_all=Xl;
         break;
@@ -1197,4 +1248,520 @@ TWOPHASEPROP_STRUCT cH2ONaCl:: props(double T, double Rho, BS_STRUCT BS, RS_STRU
     PROP.x = BS.x;
     // cout<<"PROP.f: "<<PROP.f<<" PROP.p: "<<PROP.p<<" PROP.s: "<<PROP.s<<" PROP.g: "<<PROP.g<<" PROP.h: "<<PROP.h<<" PROP.dpd: "<<PROP.dpd<<endl;
     return PROP;
+}
+
+void cH2ONaCl:: writeProps2VTK(vector<double> T, vector<double> P, vector<double> X, vector<PROP_H2ONaCl> props, string fname, bool normalize)
+{
+    if((T.size()*P.size()*X.size())!=props.size())
+    {
+        cout<<"ERROR: T.size()*P.size()*X.size() != props.size() in writeProps2VTK\nThe VTK file can not be created correctly."<<endl;
+        exit(0);
+    }
+    ofstream fpout(fname);
+    if(!fpout)
+    {
+        cout<<"ERROR: Can not open file: "<<fname<<endl;
+        exit(0);
+    }
+    //  write vtk head
+    fpout<<"# vtk DataFile Version 2.0"<<endl;
+    fpout<<"Properties of seawater"<<endl;
+    fpout<<"ASCII"<<endl;
+    fpout<<"DATASET RECTILINEAR_GRID"<<endl;
+    fpout<<"DIMENSIONS "<<T.size()<<" "<<P.size()<<" "<<X.size()<<endl;
+    if(normalize)
+    {
+        double MAXT=max(T);
+        double MINT=min(T);
+        double MAXP=max(P);
+        double MINP=min(P);
+        double MAXX=max(X);
+        double MINX=min(X);
+        fpout<<"X_COORDINATES "<<T.size()<<" float"<<endl;
+        for(int i=0;i<T.size();i++)fpout<<(T[i]-MINT)/(MAXT-MINT)<<" ";fpout<<endl;
+        fpout<<"Y_COORDINATES "<<P.size()<<" float"<<endl;
+        for(int i=0;i<P.size();i++)fpout<<(P[i]-MINP)/(MAXP-MINP)<<" ";fpout<<endl;
+        fpout<<"Z_COORDINATES "<<X.size()<<" float"<<endl;
+        for(int i=0;i<X.size();i++)fpout<<(X[i]-MINX)/(MAXX-MINX)<<" ";fpout<<endl;
+    }else
+    {
+        fpout<<"X_COORDINATES "<<T.size()<<" float"<<endl;
+        for(int i=0;i<T.size();i++)fpout<<T[i]<<" ";fpout<<endl;
+        fpout<<"Y_COORDINATES "<<P.size()<<" float"<<endl;
+        for(int i=0;i<P.size();i++)fpout<<P[i]<<" ";fpout<<endl;
+        fpout<<"Z_COORDINATES "<<X.size()<<" float"<<endl;
+        for(int i=0;i<X.size();i++)fpout<<X[i]<<" ";fpout<<endl;
+    }
+    fpout<<"POINT_DATA "<<props.size()<<endl;
+    // 1. phase region
+    fpout<<"SCALARS PhaseRegion int"<<endl;
+    fpout<<"LOOKUP_TABLE default"<<endl;
+    for(int i=0;i<props.size();i++)
+    {
+        fpout<<props[i].Region<<" ";
+    }fpout<<endl;
+    // 2. Xl 
+    fpout<<"SCALARS Xl double"<<endl;
+    fpout<<"LOOKUP_TABLE default"<<endl;
+    for(int i=0;i<props.size();i++)
+    {
+        fpout<<props[i].X_l<<" ";
+    }fpout<<endl;
+    // 2. Xv
+    fpout<<"SCALARS Xv double"<<endl;
+    fpout<<"LOOKUP_TABLE default"<<endl;
+    for(int i=0;i<props.size();i++)
+    {
+        fpout<<props[i].X_v<<" ";
+    }fpout<<endl;
+    // 3. rho_l
+    fpout<<"SCALARS Rho_l double"<<endl;
+    fpout<<"LOOKUP_TABLE default"<<endl;
+    for(int i=0;i<props.size();i++)
+    {
+        fpout<<props[i].Rho_l<<" ";
+    }fpout<<endl;
+    // 4. Rho_v
+    fpout<<"SCALARS Rho_v double"<<endl;
+    fpout<<"LOOKUP_TABLE default"<<endl;
+    for(int i=0;i<props.size();i++)
+    {
+        fpout<<props[i].Rho_v<<" ";
+    }fpout<<endl;
+    // 5. Rho_h
+    fpout<<"SCALARS Rho_h double"<<endl;
+    fpout<<"LOOKUP_TABLE default"<<endl;
+    for(int i=0;i<props.size();i++)
+    {
+        fpout<<props[i].Rho_h<<" ";
+    }fpout<<endl;
+    // 6. H_l
+    fpout<<"SCALARS H_l double"<<endl;
+    fpout<<"LOOKUP_TABLE default"<<endl;
+    for(int i=0;i<props.size();i++)
+    {
+        fpout<<props[i].H_l<<" ";
+    }fpout<<endl;
+    // 7. H_v
+    fpout<<"SCALARS H_v double"<<endl;
+    fpout<<"LOOKUP_TABLE default"<<endl;
+    for(int i=0;i<props.size();i++)
+    {
+        fpout<<props[i].H_v<<" ";
+    }fpout<<endl;
+    // 8. H_h
+    fpout<<"SCALARS H_h double"<<endl;
+    fpout<<"LOOKUP_TABLE default"<<endl;
+    for(int i=0;i<props.size();i++)
+    {
+        fpout<<props[i].H_h<<" ";
+    }fpout<<endl;
+
+    fpout.close();
+}
+template <typename T>
+T cH2ONaCl:: max(vector<T> data)
+{
+    T result=data[0];
+    for(int i=0;i<data.size();i++)
+    {
+        if(data[i]>result)
+        {
+            result=data[i];
+        }
+    }
+    return result;
+}
+template <typename T>
+T cH2ONaCl:: min(vector<T> data)
+{
+    T result=data[0];
+    for(int i=0;i<data.size();i++)
+    {
+        if(data[i]<result)
+        {
+            result=data[i];
+        }
+    }
+    return result;
+}
+template <typename T> 
+T cH2ONaCl:: sum_array1d(T* a, int n)
+{
+    T sum=0;
+    for(int i=0;i<n;i++)sum+=a[i];
+    return sum;
+};
+
+void cH2ONaCl:: calcRho(int reg, double T_in, double P_in, double X_l, double X_v, double& Rho_l, double& Rho_v, double& Rho_h, 
+                    double& V_l_out, double& V_v_out, double& T_star_l_out, double& T_star_v_out, 
+                    double& n1_v_out, double& n2_v_out)
+{
+    P_in = P_in/1e5; //Pa to bar
+    Rho_l = 0;
+    Rho_v = 0;
+    Rho_h = 0;
+
+    V_l_out = 0;
+    T_star_l_out = 0; 
+    V_v_out = 0;
+    T_star_v_out = 0; 
+
+    n1_v_out = 0; 
+    n2_v_out = 0; 
+
+    const double mass_h2o = 18.015/1e3; 
+    const double mass_salt = 58.443/1e3;
+    const double P_crit = 220.5491;  //[bar]
+    //Fitting parameters to calculate T*
+    double n11  = -54.2958 - 45.7623*exp(-9.44785e-4*P_in);
+    double n21  = -2.6142 - 0.000239092*P_in; 
+    double n22  = 0.0356828 + 4.37235e-6*P_in + 2.0566e-9*pow(P_in,2);
+    double n300 = 7.60664e6/pow((P_in + 472.051),2);
+    double n301 = -50 - 86.1446*exp(-6.21128e-4*P_in);
+    double n302 = 294.318*exp(-5.66735e-3*P_in);
+    double n310 = (-0.0732761*exp(-2.3772e-3*P_in)) - 5.2948e-5*P_in;
+    double n311 = -47.2747 + 24.3653*exp(-1.25533e-3*P_in);
+    double n312 = -0.278529 + 0.00081381*P_in;
+    double n20  = 1 - n21*sqrt(n22);
+    double n1_1 = 330.47 + 0.942876*sqrt(P_in) + 0.0817193*P_in - 2.47556e-8*pow(P_in,2) + 3.45052e-10*pow(P_in,3);
+    double n10  = n1_1;
+    double n2_1 = -0.0370751 + 0.00237723*sqrt(P_in) + 5.42049e-5*P_in + 5.84709e-9*pow(P_in,2) - 5.99373e-13*pow(P_in,3);
+    double n23  = n2_1 - n20 - n21*sqrt((1+n22));
+    double n12  = - n10 - n11;
+    // 
+    bool ind_lv=(reg==TwoPhase_L_V_X0);
+    bool ind_v=(reg==SinglePhase_V || reg==TwoPhase_V_H || reg==ThreePhase_V_L_H || reg==TwoPhase_V_L_L || reg==TwoPhase_V_L_V);
+    bool ind_l=(reg==SinglePhase_L || reg==TwoPhase_L_H || reg==ThreePhase_V_L_H || reg==TwoPhase_V_L_L || reg==TwoPhase_V_L_V);
+    bool ind_h=(reg==TwoPhase_L_H || reg==TwoPhase_V_H || reg==ThreePhase_V_L_H);
+    // cout<<"ind_lv: "<<ind_lv<<" ind_v: "<<ind_v<<" ind_l: "<<ind_l<<" ind_h: "<<ind_h<<endl;
+    if(ind_lv)
+    {
+        double T_2ph0, h_l0, h_v0, dpd_l0, dpd_v0, Mu_l0, Mu_v0;
+        fluidProp_crit_P(P_in*1e5, 1e-12, T_2ph0, Rho_l, h_l0, h_v0, dpd_l0, dpd_v0, Rho_v, Mu_l0, Mu_v0);
+    }
+    if(ind_v)
+    {
+        double mass_sol_v = mass_h2o*(1-X_v) + mass_salt*X_v;
+        double n1_v = n10 + n11*(1-X_v) + n12*pow((1-X_v),2);
+        double n2_v = n20 + n21*sqrt(X_v+n22) + n23*X_v;
+        double T_star_v = n1_v + n2_v*T_in; // + D_v;  %only for low pres
+        double P_star_v = P_in;
+        // double Rho_star_l=water_tp_IAPS84(P_star_v*1e5, T_star_v, 50,dRhodP, h, Mu, 1e-9, true); 
+        SteamState S = freesteam_set_pT(P_star_v*1e5, T_star_v+Kelvin);
+        double Rho_star_v=freesteam_rho(S);
+        bool ind1 = (Rho_star_v > 321.89 && P_star_v <= P_crit); 
+        bool ind2 = (isnan(Rho_star_v) && P_star_v <= P_crit);
+        while (ind1 || ind2)
+        {
+            double T_2ph, Rho_l, h_l, h_v, dpd_l, dpd_v, Rho_star_v, Mu_l, Mu_v;
+            fluidProp_crit_P(P_star_v*1e5,1e-12,T_2ph, Rho_l, h_l, h_v, dpd_l, dpd_v, Rho_star_v, Mu_l, Mu_v);
+            ind1 = (Rho_star_v > 321.89 && P_star_v <= P_crit);
+            ind2 = (isnan(Rho_star_v) && P_star_v <= P_crit); 
+        }
+        double Vol_v = 1./Rho_star_v;
+        double V_v = Vol_v*mass_h2o;
+
+        Rho_v = (mass_sol_v/V_v);
+        
+        V_v_out = V_v;
+        T_star_v_out = T_star_v;
+        n1_v_out = n1_v; 
+        n2_v_out = n2_v;
+    }
+    if(ind_l)
+    {
+        double mass_sol_l = mass_h2o*(1-X_l) + mass_salt*X_l;
+
+        double n1_l = n10 + n11*(1-X_l) + n12*pow((1-X_l),2);
+        double n2_l = n20 + n21*sqrt(X_l+n22) + n23*X_l;
+        double T_star_l = n1_l + n2_l*T_in; // + D_l; %only for low pres
+        double P_star_l = P_in;
+        SteamState S = freesteam_set_pT(P_star_l*1e5, T_star_l+Kelvin);
+        double Rho_star_l=freesteam_rho(S);
+        // cout<<"P_star_l: "<<P_star_l<<" T_star_l: "<<T_star_l<<" Rho_star_l: "<<Rho_star_l<<endl;
+        double Vol = 1/Rho_star_l;
+        double V_l = Vol*mass_h2o;
+        bool ind_low=( (Rho_star_l < 321.89 || isnan(Rho_star_l)) && P_star_l <= P_crit );
+        if(ind_low)
+        {
+            // [ T_crit, Rho_star_crit_l, ~, ~, ~, ~ ] = fluidprop_crit_P( P_star_l(ind_low)*1e5 , 1e-9 );  % P_star_l = P_l
+            double T_crit, Rho_star_crit_l, h_l, h_v, dpd_l, dpd_v, Rho_v, Mu_l, Mu_v;
+            fluidProp_crit_P(P_star_l*1e5,1e-9,T_crit, Rho_star_crit_l, h_l, h_v, dpd_l, dpd_v, Rho_v, Mu_l, Mu_v);
+            double Vol_l_crit = mass_h2o / Rho_star_crit_l;
+            S = freesteam_set_pT(P_star_l*1e5, T_crit-1+Kelvin);
+            double Rho_star_crit_l_minus=freesteam_rho(S);
+            double Vol_l_crit_minus = mass_h2o / Rho_star_crit_l_minus;
+            double dVol_ldT = (Vol_l_crit - Vol_l_crit_minus)/1;
+            double o1 = dVol_ldT ; //- 3*o2 * T_crit.^2;
+            double o0 = Vol_l_crit - o1 * T_crit ;//- o2 * T_crit.^3;
+            double V_l_low = o0 + o1 *  T_star_l ;// + o2 *  T_star_l(ind_low).^3;
+            V_l = V_l_low;
+        }
+        bool ind_high=((T_in >=600) && (P_in < 390.147) && (X_l > 0.1));
+        if(ind_high)
+        {
+            double P_390 = 390.147;
+            double n11_P  = -54.2958 - 45.7623*exp(-9.44785e-4*P_390);
+            double n21_P  = -2.6142 - 0.000239092*P_390; 
+            double n22_P  = 0.0356828 + 4.37235e-6*P_390 + 2.0566e-9*pow(P_390,2);
+            double n20_P  = 1 - n21_P*sqrt(n22_P);
+            double n1_1_P = 330.47 + 0.942876*sqrt(P_390) + 0.0817193*P_390 - 2.47556e-8*pow(P_390,2) + 3.45052e-10*pow(P_390,3);
+            double n10_P  = n1_1_P;
+            double n2_1_P = -0.0370751 + 0.00237723*sqrt(P_390) + 5.42049e-5*P_390 + 5.84709e-9*pow(P_390,2) - 5.99373e-13*pow(P_390,3);
+            double n23_P  = n2_1_P - n20_P - n21_P*sqrt((1+n22_P));
+            double n12_P  = - n10_P - n11_P;
+            double X_l_ind_l = X_l;
+            double n1_l_P = n10_P + n11_P*(1-X_l_ind_l) + n12_P*pow((1-X_l_ind_l),2);
+            double n2_l_P = n20_P + n21_P*sqrt(X_l_ind_l+n22_P) + n23_P*X_l_ind_l;
+            double T_in_ind_l = T_in;
+            double T_star_l_P = n1_l_P + n2_l_P*T_in_ind_l;
+            double P_400 = 400;
+            double n11_P4  = -54.2958 - 45.7623*exp(-9.44785e-4*P_400);
+            double n21_P4  = -2.6142 - 0.000239092*P_400; 
+            double n22_P4  = 0.0356828 + 4.37235e-6*P_400 + 2.0566e-9*pow(P_400,2);
+            double n20_P4  = 1 - n21_P4*sqrt(n22_P4);
+            double n1_1_P4 = 330.47 + 0.942876*sqrt(P_400) + 0.0817193*P_400 - 2.47556e-8*pow(P_400,2) + 3.45052e-10*pow(P_400,3);
+            double n10_P4  =  n1_1_P4;
+            double n2_1_P4 = -0.0370751 + 0.00237723*sqrt(P_400) + 5.42049e-5*P_400 + 5.84709e-9*pow(P_400,2) - 5.99373e-13*pow(P_400,3);
+            double n23_P4  = n2_1_P4 - n20_P4 - n21_P4*sqrt((1+n22_P4));
+            double n12_P4  = - n10_P4 - n11_P4;
+            X_l_ind_l = X_l;
+            double n1_l_P4 = n10_P4 + n11_P4*(1-X_l_ind_l) + n12_P4*pow((1-X_l_ind_l),2);
+            double n2_l_P4 = n20_P4 + n21_P4*sqrt(X_l_ind_l+n22_P4) + n23_P4*X_l_ind_l;
+            T_in_ind_l = T_in;
+            double T_star_l_P4 = n1_l_P4 + n2_l_P4*T_in_ind_l;
+            double P_1000 = 1000;
+            double n11_P1  = -54.2958 - 45.7623*exp(-9.44785e-4*P_1000);
+            double n21_P1  = -2.6142 - 0.000239092*P_1000; 
+            double n22_P1  = 0.0356828 + 4.37235e-6*P_1000 + 2.0566e-9*pow(P_1000,2);
+            double n20_P1  = 1 - n21_P1*sqrt(n22_P);
+            double n1_1_P1 = 330.47 + 0.942876*sqrt(P_1000) + 0.0817193*P_1000 - 2.47556e-8*pow(P_1000,2) + 3.45052e-10*pow(P_1000,3);
+            double n10_P1  =  n1_1_P1;
+            double n2_1_P1 = -0.0370751 + 0.00237723*sqrt(P_1000) + 5.42049e-5*P_1000 + 5.84709e-9*pow(P_1000,2) - 5.99373e-13*pow(P_1000,3);
+            double n23_P1  = n2_1_P1 - n20_P1 - n21_P1*sqrt((1+n22_P1));
+            double n12_P1  = - n10_P1 - n11_P1;
+            X_l_ind_l = X_l;
+            double n1_l_P1 = n10_P1 + n11_P1*(1-X_l_ind_l) + n12_P1*pow((1-X_l_ind_l),2);
+            double n2_l_P1 = n20_P1 + n21_P1*sqrt(X_l_ind_l+n22_P1) + n23_P1*X_l_ind_l;
+            T_in_ind_l = T_in;
+            double T_star_l_P1 = n1_l_P1 + n2_l_P1*T_in_ind_l;
+            S = freesteam_set_pT(P_390*1e5, T_star_l_P+Kelvin);
+            double Rho_l_390=freesteam_rho(S);
+            double Vol_390 = mass_h2o / Rho_l_390; 
+            S = freesteam_set_pT(P_400*1e5, T_star_l_P4+Kelvin);
+            double Rho_l_400=freesteam_rho(S);
+            double Vol_400 = mass_h2o / Rho_l_400;   
+            S = freesteam_set_pT(P_1000*1e5, T_star_l_P1+Kelvin); 
+            double Rho_l_1000=freesteam_rho(S);
+            double Vol_1000 = mass_h2o / Rho_l_1000; 
+            double dVol_dP = (Vol_400 - Vol_390) / (P_400 - P_390);
+
+            double P_610 = P_1000 - P_390;
+            double P_1390 = P_1000 + P_390; 
+            double o4 = ( - Vol_390 + Vol_1000 - dVol_dP * (P_610) )/ ( - log(P_1390) + log( 2*P_1000 ) - (P_610/P_1390) ) ; 
+            double o5 = dVol_dP - o4 / P_1390;
+            double o3 = Vol_390 - o4 * log(P_1390) - o5 * P_390;
+            double V_l_ind_high = o3 + o4 * log(P_star_l+P_1000) + o5 * P_star_l;
+            V_l = V_l_ind_high;
+        }
+        Rho_l = (mass_sol_l/V_l);
+        V_l_out = V_l;
+        T_star_l_out = T_star_l; 
+        // cout<<"Rho_l: "<<Rho_l<<" V_l_out: "<<V_l_out<<" T_star_l_out: "<<T_star_l_out<<endl;
+    }
+    if(ind_h)
+    {
+        double l0  = 2.1704e3;
+        double l1  = -2.4599e-1;
+        double l2  = -9.5797e-5;
+        double l3  = 5.727e-3;
+        double l4  = 2.715e-3;
+        double l5  = 733.4;
+        double l = l3 + l4*exp(T_in/l5);
+        double Rho0_h = l0 + l1*(T_in) + l2*pow(T_in,2);
+        Rho_h = Rho0_h + l*P_in;
+    }
+}
+
+void cH2ONaCl:: calcEnthalpy(int reg, double T_in, double P_in, double X_l, double X_v,
+        double& h_l, double& h_v, double& h_h)
+{
+    double P_crit = 220.5491;
+
+    P_in = P_in/1e5;
+
+    h_l = 0;
+    h_v = 0;
+    h_h = 0;
+    double T_star_v_out = 0;
+    //Fitting parameters to calculate T*
+    double q11  = -32.1724 + 0.0621255*P_in;
+    double q21  = -1.69513 - 4.52781e-4*P_in - 6.04279e-8*pow(P_in,2); 
+    double q22  = 0.0612567 + 1.88082e-5*P_in;
+    double q1_1 = 47.9048 - 9.36994e-3*P_in;
+    double q2_1 = 0.241022 + 3.45087e-5*P_in - 4.28356e-9*pow(P_in,2);
+    double q12  = -q11 - q1_1;
+    double q10  = -q11 - q12;
+    double q20  = 1 - q21*sqrt(q22);
+    double q23  = q2_1 - q20 - q21*sqrt(1+q22);
+    double T_trip_salt = 800.7;
+    // P_trip_salt = 5e-4;
+    // mass_salt = 58.443/1e3;
+    //--------------------------------------------------------------------------
+    //FIND ENTHALPY OF VAPOUR
+    //find coeff
+    bool ind_lv = ( reg==TwoPhase_L_V_X0 );
+    bool ind_v  = ( reg == SinglePhase_V || reg == TwoPhase_V_H || reg ==ThreePhase_V_L_H || reg == TwoPhase_V_L_L || reg == TwoPhase_V_L_V ); 
+    bool ind_l  = ( reg == SinglePhase_L ||  reg == TwoPhase_L_H || reg ==ThreePhase_V_L_H || reg == TwoPhase_V_L_L || reg == TwoPhase_V_L_V ); 
+    bool ind_h  = (reg==TwoPhase_L_H || reg==TwoPhase_V_H || reg==ThreePhase_V_L_H);
+    if(ind_lv)
+    {
+        double T_2ph0, Rho_l0, h_l0, dpd_l0, dpd_v0, Rho_v0, Mu_l0, Mu_v0;
+        fluidProp_crit_P(P_in*1e5, 1e-12,T_2ph0, Rho_l0, h_l, h_v, dpd_l0, dpd_v0, Rho_v0, Mu_l0, Mu_v0);
+    }
+    if(ind_v)
+    {
+        double q1_v = q10 + q11*(1-X_v) + q12*pow((1-X_v),2);
+        double q2_v = q20 + q21*sqrt(X_v+q22) + q23*X_v;
+
+        double T_star_v = q1_v + q2_v*T_in; 
+        double P_star_v = P_in;
+        SteamState S = freesteam_set_pT(P_star_v*1e5, T_star_v+Kelvin);
+        h_v=freesteam_h(S);
+        bool ind1 = (h_v < 2.086e6 && P_star_v < P_crit);// & P_star_v > 40); 
+        bool ind2 = (isnan(h_v) && P_star_v < P_crit);// & P_star_v > 40); 
+        while (ind1 || ind2)
+        {
+            double T_2ph0, Rho_l0, h_l0, dpd_l0, dpd_v0, Rho_v0, Mu_l0, Mu_v0;
+            fluidProp_crit_P(P_star_v*1e5, 1e-12,T_2ph0, Rho_l0, h_l0, h_v, dpd_l0, dpd_v0, Rho_v0, Mu_l0, Mu_v0);
+            ind1 = (h_v < 2.086e6 && P_star_v < P_crit && P_star_v > 40);
+            ind2 = (isnan(h_v) && P_star_v < P_crit && P_star_v > 40); 
+        }
+        T_star_v_out= T_star_v; 
+    }
+    // FIND ENTHALPY OF LIQUID
+    if(ind_l)
+    {
+        double q1_l = q10 + q11*(1-X_l) + q12*pow((1-X_l),2);
+        double q2_l = q20 + q21*sqrt(X_l+q22) + q23*X_l;
+        //from Driesner is equal to above formulation
+        double q1_lb = q1_1 + q11 * (1-X_l) - (q1_1 +q11) * pow((1-X_l),2);
+        double q2_lb = 1 - q21 * sqrt(q22) + q21 * sqrt(X_l+q22) + X_l * (q21 * sqrt(q22) - 1- q21 * sqrt(1+q22) + q2_1);
+        double T_star_l = q1_l + q2_l*T_in;
+        double P_star_l = P_in;
+        SteamState S = freesteam_set_pT(P_star_l*1e5, T_star_l+Kelvin);
+        h_l=freesteam_h(S);
+        //nedded for boiling temps from 180 to Tcri, is not in Driesners Paper
+        bool ind_low = ( (h_l > 2.086e6 || isnan(h_l))  &&  P_star_l < P_crit  &&  T_in < 375 );
+        if(ind_low)
+        {
+            //  find boiling temperature and spec enthlapy there for given Pressure
+            double T_crit, Rho_l0, h_l_crit, dpd_l0, dpd_v0, Rho_v0, Mu_l0, Mu_v0;
+            fluidProp_crit_P(P_star_l*1e5, 1e-9,T_crit, Rho_l0, h_l_crit, h_v, dpd_l0, dpd_v0, Rho_v0, Mu_l0, Mu_v0);//P_star_l = P_l
+            // find derivative of spec enthlapy at boiling temperature for given Pressure
+            S = freesteam_set_pT(P_star_l*1e5, T_crit-1+Kelvin);
+            double h_l_minus=freesteam_h(S);
+            double dh_ldT = (h_l_crit - h_l_minus)/1;
+            double o1 = dh_ldT ; 
+            double o0 = h_l_crit - o1 * T_crit ;
+            h_l = o0 + o1 *  T_star_l;
+        }
+        bool ind_high = ( P_in <= 390.147  &&  T_in > 600);
+        if(ind_high)
+        {
+            double P_390 = 390.147;
+            // const for P = 390.147 bar
+            q11  = -7.934322551500003;
+            q21  = -1.880979162365801; 
+            q22  =  0.068594662805400;
+            q12  = -36.31482346732;
+            q10  =  44.24914601882;
+            q20  =  1.492639405203696;
+            q23  =  0.705615854382021;
+            q1_l = q10 + q11*(1-X_l) + q12*pow((1-X_l),2);
+            q2_l = q20 + q21*sqrt(X_l+q22) + q23*X_l;
+            double T_star_l_P390 = q1_l + q2_l*T_in;
+
+            double P4 = 400;
+            q11  = -7.322200000000002;
+            q21  = -1.885910864000000; 
+            q22  = 0.068779980000000;
+            q12  = -36.834624000000000;
+            q10  = 44.156824000000000;
+            q20  = 1.494597805305935;
+            q23  = 0.709231197191129;
+            q1_l = q10 + q11*(1-X_l) + q12*pow((1-X_l),2);
+            q2_l = q20 + q21*sqrt(X_l+q22) + q23*X_l;
+            double T_star_l_P4 = q1_l + q2_l*T_in;
+            
+            double P1 = 1000;
+            q11  = 29.953100000000000;
+            q21  = -2.208338900000000; 
+            q22  = 0.080064900000000;
+            q12  = -68.487960000000000;
+            q10  = 38.534860000000000;
+            q20  = 1.624865871647275;
+            q23  = 0.941423327837196;
+            q1_l = q10 + q11*(1-X_l) + q12*pow((1-X_l),2);
+            q2_l = q20 + q21*sqrt(X_l+q22) + q23*X_l;
+            double T_star_l_P1 = q1_l + q2_l*T_in;
+
+            S = freesteam_set_pT(P_390*1e5, T_star_l_P390+Kelvin);
+            double h_l_390=freesteam_h(S);
+
+            S = freesteam_set_pT(P4*1e5, T_star_l_P4+Kelvin);
+            double h_l_400=freesteam_h(S);
+
+            S = freesteam_set_pT(P1*1e5, P1+Kelvin);
+            double h_l_1000=freesteam_h(S);
+
+            double dh_l_dP = (h_l_400 - h_l_390) / (P4 - P_390);
+            double P_610 = P1 - P_390;
+            double P_1390 = P1 + P_390; 
+            double o4 = ( - h_l_390 + h_l_1000 - dh_l_dP * (P_610) )/( - log(P_1390) + log( 2*P1 ) - (P_610/P_1390) ) ; 
+            double o5 = dh_l_dP - o4 / P_1390;
+            double o3 = h_l_390 - o4 * log(P_1390) - o5 * P_390;
+            double h_l_ind_high = o3 + o4 * log(P_star_l+P1) + o5 * P_star_l;
+            h_l = h_l_ind_high;
+        }
+    }
+    //FIND ENTHALPY OF HALITE
+    if(ind_h)
+    {
+        double l0  = 2.1704e3;
+        double l1  = -2.4599e-1;
+        double l2  = -9.5797e-5;
+        double l3  = 5.727e-3;
+        double l4  = 2.715e-3;
+        double l5  = 733.4;
+        
+        double T_100 = 100;
+        double P_100 = 100;
+        double h_h_pt100 = 9.415867359e4;  // from Driesner Table
+        double l = l3 + l4*exp(T_100/l5);
+        double Rho0_h = l0 + l1*(T_100) + l2*pow(T_100,2);
+        double dldT      = l4/l5 * exp(T_100/l5);
+        double dRho0_hdT = l1 + 2 * l2 * T_100;
+        double F_V_100 = 86792219.2899765; // P_100(P[pa])
+        double dF_V_100dT = -43058.0130278123;                           
+        double F_V_p =  1./(l* 1e-5) * log(Rho0_h  +  l * P_in); 
+        double dF_V_pdT =  1e5 * ( ( - dldT / (l*l) ) * log(Rho0_h  +  l * P_in) +  1./(l) * ( dRho0_hdT + dldT * P_in ) / (Rho0_h  +  l * P_in) );            
+        // enthalpy at T_100 and at P_in         
+        double h_h_p_t100 = h_h_pt100 + (F_V_p - F_V_100 - (T_100 + Kelvin) * ( dF_V_pdT - dF_V_100dT ) ) ;
+        double r0      = 1148.81;
+        double r1      = 0.275774;
+        double r2      = 8.8103e-5;
+        //r3      = -1.7099e-3 - 3.82734e-6*T_in - 8.65455e-9*T_in;
+        double r4      = 5.29063e-8 - 9.63084e-11 + 6.50745e-13;
+        double const1 = -0.190169972750000;
+        double const2 = 5.28106423450000e-6;
+        double F_Cp_100_const = 88393.4640361410;    
+        double F_Cp_100 = F_Cp_100_const + const1* P_in  + const2 * pow(P_in,2) ;
+        double F_Cp = r0 * T_in + r1* pow(T_in,2) - 2 * r1* T_in * T_trip_salt 
+                    + r2*pow(T_in,3) - 3 *r2 * pow(T_in,2) * T_trip_salt + 3 * r2 * T_in * pow(T_trip_salt,2)
+                    + ( -1.7099e-3 * T_in - 0.5 * 3.82734e-6*pow(T_in,2) - 0.5 * 8.65455e-9*pow(T_in,2) )* P_in
+                    + r4 * T_in * pow(P_in,2) ;
+        h_h = h_h_p_t100 + F_Cp - F_Cp_100;
+    }
 }

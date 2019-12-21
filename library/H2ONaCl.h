@@ -8,6 +8,11 @@
 #include<vector>
 using namespace std;
 
+// #include "omp.h"
+
+#include "IAPWS-97.H"
+#include "stdio.h"
+
 // const value define
 #define TMIN 273.15
 #define TMAX 1273.15
@@ -15,6 +20,8 @@ using namespace std;
 #define PMAX 1000e5
 #define XMIN 1e-5
 #define XMAX 1
+// --------------
+#define Kelvin 273.15
 // ------------
 #define M_H2O   0.018015  // molar mass of water  [kg/mol]
 #define M_NaCl  0.058443 // molar mass of salt(NaCl)   [kg/mol]
@@ -29,12 +36,12 @@ typedef map<int,string> MAP_PHASE_REGION;
 struct PROP_H2ONaCl
 {
     PhaseRegion Region;
-    double T, H, Rho;
-    double Rho_l, Rho_v, Rho_h;
-    double H_l, H_v, H_h;
-    double S_l, S_v, S_h;
+    double T, H, Rho; //temperature, bulk enthalpy, bulk density
+    double Rho_l, Rho_v, Rho_h; //density
+    double H_l, H_v, H_h; //enthalpy
+    double S_l, S_v, S_h; //saturation
     double X_l, X_v; // volume fraction of NaCl in vaper and liquid, it is a composition fraction. H2O + NaCl
-    double Mu_l, Mu_v;
+    double Mu_l, Mu_v;//viscosity
 };
 
 struct MP_STRUCT
@@ -81,7 +88,7 @@ class cH2ONaCl
 private:
     void init_PhaseRegionName();
     void init_prop();
-    double m_P, m_T, m_X; //P: Pa; T: C; X: (0, 1]
+    double m_P, m_T, m_Xwt, m_X; //P: Pa; T: C; X, Xwt: (0, 1]
     const double *m_Parray;
     const double *m_Tarray;
     const double *m_Xarray;
@@ -92,15 +99,22 @@ private:
     f_STRUCT init_f();
 private:
     PhaseRegion findRegion(const double T, const double P, const double X, double& Xl_all, double& Xv_all);
+    void calcRho(int reg, double T_in, double P_in, double X_l, double X_v, double& Rho_l, double& Rho_v, double& Rho_h, 
+                    double& V_l_out, double& V_v_out, double& T_star_l_out, double& T_star_v_out, double& n1_v_out, double& n2_v_out);
+    void calcEnthalpy(int reg, double T_in, double P_in, double X_l, double X_v,
+        double& h_l, double& h_v, double& h_h);
     void fluidProp_crit_T(double T, double tol, double& P,double& Rho_l, double& Rho_v, double& h_l, double& h_v);
     void fluidProp_crit_P(double P, double tol, double& T_2ph, double& Rho_l, double& h_l, double& h_v, double& dpd_l, double& dpd_v, double& Rho_v, double& Mu_l, double& Mu_v);
 public:
     cH2ONaCl(double P, double T, double X);
+    cH2ONaCl();
     cH2ONaCl(const vector<double> P, const vector<double> T, const vector<double> X);//P, T, X has same size of n
     ~cH2ONaCl();
     MAP_PHASE_REGION m_phaseRegion_name;
     void Calculate();
     PROP_H2ONaCl m_prop;
+    void writeProps2VTK(vector<double> T, vector<double> P, vector<double> X, vector<PROP_H2ONaCl> props, string fname, bool normalize=true);
+    
 private:
     inline double Xwt2Xmol(double X){return (X/M_NaCl)/(X/M_NaCl+(1-X)/M_H2O);};
     void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);
@@ -111,14 +125,12 @@ private:
     BS_STRUCT base(double T, double Rho_l, MP_STRUCT MP);
     RS_STRUCT resid(double T, double Rho_l);
     TWOPHASEPROP_STRUCT props(double T, double Rho, BS_STRUCT BS, RS_STRUCT RS, ID_STRUCT ID);
-    inline double sum_array1d(double* a, int n)
-    {
-        double sum=0;
-        for(int i=0;i<n;i++)sum+=a[i];
-        return sum;
-    };
     void approx_ps(double T, double& psa, double& dpsdt);
-    // void two_phase_prop(double T,double Rho_l, double Rho_v, MP_STRUCT MP,ID_STRUCT ID, TWOPHASEPROP_STRUCT& l_prop,TWOPHASEPROP_STRUCT& v_prop, double& dpT);
+    // double water_tp_IAPS84(double P, double T, double Rho, double& dRhodP, double& h, double& Mu, double tol=1e9,bool validation=true);
+    // int region_tp(double T, double P);
+    template <typename T> T sum_array1d(T* a, int n);
+    template <typename T> T max(vector<T> data);
+    template <typename T> T min(vector<T> data);
 };
 
 #endif
