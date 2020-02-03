@@ -1,1 +1,3 @@
 build
+plot/*
+!plot/*.py
