@@ -7,11 +7,22 @@
 #include<cmath>
 #include<vector>
 using namespace std;
+#include "stdio.h"
 
 // #include "omp.h"
+// chose use which library to calculate water properties
+// if H2ONaCl class is called by swift on ios platform, we change to use PROST to calculate water properties
+// if on desktop platform, please comment this line
 
-#include "IAPWS-97.H"
-#include "stdio.h"
+// #define PLATFORM_IOS 1  
+
+#ifdef PLATFORM_IOS
+    #include "steam4.h"
+#else 
+	#include "IAPWS-97.H"
+#endif 
+
+
 
 // const value define
 #define TMIN 273.15
@@ -106,6 +117,10 @@ private:
     void calcViscosity(int reg, double P, double T, double Xw_l, double Xw_v, double& mu_l, double& mu_v);
     void fluidProp_crit_T(double T, double tol, double& P,double& Rho_l, double& Rho_v, double& h_l, double& h_v);
     void fluidProp_crit_P(double P, double tol, double& T_2ph, double& Rho_l, double& h_l, double& h_v, double& dpd_l, double& dpd_v, double& Rho_v, double& Mu_l, double& Mu_v);
+    // function of water properties: using freesteam or PROST, if both of them are available, default to use freesteam
+    double water_rho_pT(double p, double T_K);
+    double water_h_pT(double p, double T_K);
+    double water_mu_pT(double p, double T_K);
 public:
     cH2ONaCl(double P, double T, double X);
     cH2ONaCl();

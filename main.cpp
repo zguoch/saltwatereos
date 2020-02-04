@@ -10,10 +10,10 @@ void Figure2_Driesner2007_log(double T, string filename, double pmax=400e5, doub
 int main()
 {
     // 1. one point calculation
-    // PhaseRegion_PTX(31600000,100,0.3);
+    PhaseRegion_PTX(31600000,100,0.3);
 
     // 2. 3D P-T-X calculation
-    PhaseRegion3D_PTX();
+    // PhaseRegion3D_PTX();
 
     // 3. Benchmark test and compar with Driesner 2007
     // Figure2_Driesner2007(300, "Figure2a_Driesner2007.csv",400e5);
