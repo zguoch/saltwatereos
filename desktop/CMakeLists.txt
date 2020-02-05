@@ -19,6 +19,15 @@ find_package(VTK COMPONENTS
   vtkInfovisCore
   vtkInteractionStyle
   vtkViewsQt
+  vtkChartsCore
+  vtkCommonDataModel
+  vtkRenderingContext2D
+  vtkRenderingContextOpenGL2
+  vtkRenderingCore
+  vtkRenderingFreeType
+  vtkRenderingGL2PSOpenGL2
+  vtkRenderingOpenGL2
+  vtkViewsContext2D
 )
 include(${VTK_USE_FILE})
 # add H2ONaCl source and library 
