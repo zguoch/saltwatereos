@@ -7,7 +7,11 @@ foreach(p
   endif()
 endforeach()
 
-project(SimpleView)
+set(PROGRAM_NAME swEOS)
+
+project(SaltWaterEOS LANGUAGES CXX)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(VTK COMPONENTS
   vtkCommonCore
@@ -29,13 +33,13 @@ include_directories(
 )
 
 # Set your files and resources here
-set( Srcs main.cxx SimpleView.cxx )
+set( Srcs main.cxx MainWindow.cxx )
 
-set( Hdrs SimpleView.h )
+set( Hdrs MainWindow.h )
 
-set( MOC_Hdrs SimpleView.h )
+set( MOC_Hdrs ui_MainWindow.h )
 
-set( UIs SimpleView.ui )
+set( UIs MainWindow.ui )
 
 set( QRCs Icons/icons.qrc )
 
@@ -61,8 +65,8 @@ source_group("Generated" FILES
   ${QRC_Srcs}
 )
 
-# if want to generage mac os app, add MACOSX_BUNDLE follow MainView 
-add_executable(SimpleView 
+# if want to generage mac os app, add MACOSX_BUNDLE follow ${PROGRAM_NAME} 
+add_executable(${PROGRAM_NAME} 
   ${Srcs} ${Hdrs} ${UI_Srcs} ${MOC_Hdrs} ${QRC_Srcs})
-target_link_libraries(SimpleView Qt5::Core Qt5::Gui Qt5::Widgets)
-target_link_libraries(SimpleView ${VTK_LIBRARIES})
+target_link_libraries(${PROGRAM_NAME} Qt5::Core Qt5::Gui Qt5::Widgets)
+target_link_libraries(${PROGRAM_NAME} ${VTK_LIBRARIES})

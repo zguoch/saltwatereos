@@ -2,3 +2,4 @@ build
 plot/*
 !plot/*.py
 lib
+build-*/
