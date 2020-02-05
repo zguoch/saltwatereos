@@ -21,6 +21,9 @@ find_package(VTK COMPONENTS
   vtkViewsQt
 )
 include(${VTK_USE_FILE})
+# add H2ONaCl source and library 
+include_directories(../src)
+link_directories("../lib" "/usr/local/lib")
 
 if("${VTK_QT_VERSION}" STREQUAL "")
   message(FATAL_ERROR "VTK was not built with Qt")
@@ -68,5 +71,5 @@ source_group("Generated" FILES
 # if want to generage mac os app, add MACOSX_BUNDLE follow ${PROGRAM_NAME} 
 add_executable(${PROGRAM_NAME} 
   ${Srcs} ${Hdrs} ${UI_Srcs} ${MOC_Hdrs} ${QRC_Srcs})
-target_link_libraries(${PROGRAM_NAME} Qt5::Core Qt5::Gui Qt5::Widgets)
+target_link_libraries(${PROGRAM_NAME} Qt5::Core Qt5::Gui Qt5::Widgets eosH2ONaCl freesteam)
 target_link_libraries(${PROGRAM_NAME} ${VTK_LIBRARIES})

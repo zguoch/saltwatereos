@@ -17,6 +17,12 @@
 
 #include "vtkSmartPointer.h"    // Required for smart pointer internal ivars.
 #include <QMainWindow>
+#include "H2ONaCl.H"
+#include <QDateTime>
+#include <QTime>
+
+#define CALCULATION_SINGLE_POINT 1
+#define CALCULATION_MULTI_POINTS 2
 
 // Forward Qt class declarations
 class Ui_MainWindow;
@@ -45,11 +51,20 @@ public slots:
   virtual void slotExit();
 
 protected:
+  int m_calculationMode;
+  double m_IndependentVar1_old, m_IndependentVar2_old, m_IndependentVar3_old;
 
 protected slots:
 
 private slots:
+  void updateCalculationModelSelection(bool isSinglePoint);
   void on_pushButton_2_clicked();
+
+  void on_radioButton_pressed();
+
+  void on_radioButton_clicked();
+
+  void on_radioButton_2_clicked();
 
 private:
 

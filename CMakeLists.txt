@@ -1,6 +1,8 @@
 # 0. CMake Minimum version
 cmake_minimum_required (VERSION 2.8)
 
+project(H2ONaCl)
+
 #2. Source code dir
 aux_source_directory(. SRC_MAIN)
 

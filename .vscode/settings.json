@@ -3,7 +3,8 @@
         "iosfwd": "cpp",
         "ostream": "cpp",
         "iostream": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "H2ONaCl.C": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

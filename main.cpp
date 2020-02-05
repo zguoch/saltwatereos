@@ -2,7 +2,9 @@
 
 using namespace std;
 
-#include"H2ONaCl.h"
+#include"H2ONaCl.H"
+using namespace SWEOS;
+
 void PhaseRegion_PTX(double P, double T, double X);
 void PhaseRegion3D_PTX();
 void Figure2_Driesner2007(double T, string filename, double pmax=400e5);
@@ -10,7 +12,7 @@ void Figure2_Driesner2007_log(double T, string filename, double pmax=400e5, doub
 int main()
 {
     // 1. one point calculation
-    PhaseRegion_PTX(31600000,100,0.3);
+    PhaseRegion_PTX(31600000,100+273.15,0.3);
 
     // 2. 3D P-T-X calculation
     // PhaseRegion3D_PTX();

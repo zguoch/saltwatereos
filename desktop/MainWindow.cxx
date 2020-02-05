@@ -41,6 +41,7 @@
 // Constructor
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
+    , m_calculationMode(CALCULATION_SINGLE_POINT)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -49,8 +50,9 @@ MainWindow::MainWindow(QWidget *parent)
   this->TableView = vtkSmartPointer<vtkQtTableView>::New();
 
   // Place the table view in the designer form
-
-
+    m_IndependentVar1_old=ui->doubleSpinBox->value()*1e5;
+    m_IndependentVar2_old=ui->doubleSpinBox_2->value();
+    m_IndependentVar3_old=ui->doubleSpinBox_3->value();
   // Geometry
   vtkNew<vtkVectorText> text;
   text->SetText("Salt Water EOS");
@@ -116,5 +118,90 @@ void MainWindow::slotExit() {
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    ui->plainTextEdit->setPlainText("dlajjdlakj\njdklsjafd\tjkdljska\n"+QString::number(200));
+     double p=ui->doubleSpinBox->value()*1e5;
+     double T=ui->doubleSpinBox_2->value();
+     double X=ui->doubleSpinBox_3->value();
+     QString color_value_1="Black", color_value_2="Black", color_value_3="Black";
+     color_value_1=(m_IndependentVar1_old==p ? color_value_1="Black": color_value_1="Green");
+     color_value_2=(m_IndependentVar2_old==T ? color_value_2="Black": color_value_2="Green");
+     color_value_3=(m_IndependentVar3_old==X ? color_value_3="Black": color_value_3="Green");
+
+    SWEOS::cH2ONaCl eos(p, T, X);
+    eos.Calculate();
+
+    QString result_str;
+    // T, P, X
+    result_str="<font color=Purple>Pressure</font> = <font color="+color_value_1+">"+QString::number(p)
+            +"</font> Pa, <font color=Purple>Perssure</font> = <font color="+color_value_2+">"+QString::number(T)
+            +"</font> deg. C, <font color=Purple>Salinity</font>  = <font color="+color_value_3+">"+QString::number(X*100)
+            +"</font> wt. % NaCl<br>";
+    result_str+="======================================================================<br>";
+    // Region
+    result_str+="<font color=Blue>Phase Region</font>: "+QString::fromStdString(eos.m_phaseRegion_name[eos.m_prop.Region])+"<br>";
+    // Xl, Xv
+    result_str+="<font color=Blue>Xl: </font> &nbsp; "+QString::number(eos.m_prop.X_l)+
+              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Xv: </font> &nbsp; "+QString::number(eos.m_prop.X_v)+"<br>";
+    // Bulk rho, bulk H, bulk mu
+    result_str+="<font color=Blue>Bulk density: </font> &nbsp; "+QString::number(eos.m_prop.Rho)+
+              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Bulk enthalpy: </font> &nbsp; "+QString::number(eos.m_prop.H)+
+              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Bulk viscosity: </font> &nbsp; "+QString::number(eos.m_prop.H)+"<br>";
+    // rhol, rhov, rhoh
+    result_str+="<font color=Blue>Liquid density: </font> &nbsp; "+QString::number(eos.m_prop.Rho_l)+
+              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Vapour density: </font> &nbsp; "+QString::number(eos.m_prop.Rho_v)+
+              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Halite density: </font> &nbsp; "+QString::number(eos.m_prop.Rho_h)+"<br>";
+
+    // Hl, Hv, Hh
+    result_str+="<font color=Blue>Liquid enthalpy: </font> &nbsp; "+QString::number(eos.m_prop.H_l)+
+              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Vapour enthalpy: </font> &nbsp; "+QString::number(eos.m_prop.H_v)+
+              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Halite enthalpy: </font> &nbsp; "+QString::number(eos.m_prop.H_h)+"<br>";
+    // Mul, Muv
+    result_str+="<font color=Blue>Liquid viscosity: </font> &nbsp; "+QString::number(eos.m_prop.Mu_l)+
+              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Vapour viscosity: </font> &nbsp; "+QString::number(eos.m_prop.Mu_v)+"<br>";
+    // Time stamp
+    QDateTime current_date_time =QDateTime::currentDateTime();
+    QString current_date =current_date_time.toString("yyyy.MM.dd hh:mm:ss ddd");
+    result_str+="<br> ----------------------------------- <font color=Grey>"+current_date+" </font> ----------------------------------- <br><br>";
+
+
+    ui->textEdit->setText(ui->textEdit->toPlainText());
+    ui->textEdit->moveCursor(QTextCursor::Start);
+    ui->textEdit->insertHtml(result_str);
+
+
+    //update old value
+    m_IndependentVar1_old=p;
+    m_IndependentVar2_old=T;
+    m_IndependentVar3_old=X;
+}
+
+void MainWindow::on_radioButton_pressed()
+{
+
+}
+
+void MainWindow::updateCalculationModelSelection(bool isSinglePoint)
+{
+    ui->comboBox->setEnabled(isSinglePoint);
+    ui->doubleSpinBox->setEnabled(isSinglePoint);
+    ui->doubleSpinBox_2->setEnabled(isSinglePoint);
+    ui->doubleSpinBox_3->setEnabled(isSinglePoint);
+}
+void MainWindow::on_radioButton_clicked()
+{
+    if(ui->radioButton->isChecked())
+    {
+        m_calculationMode=CALCULATION_SINGLE_POINT;
+        ui->pushButton_2->setText("Calculatet");
+        updateCalculationModelSelection(true);
+    }
+}
+
+void MainWindow::on_radioButton_2_clicked()
+{
+    if(ui->radioButton_2->isChecked())
+    {
+        m_calculationMode=CALCULATION_MULTI_POINTS;
+        ui->pushButton_2->setText("Open File");
+        updateCalculationModelSelection(false);
+    }
 }

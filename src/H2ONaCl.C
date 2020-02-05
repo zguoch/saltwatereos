@@ -1,10 +1,11 @@
-#include "H2ONaCl.h"
+#include "H2ONaCl.H"
+using namespace SWEOS;
 
 cH2ONaCl::cH2ONaCl()
 :m_P(1e5),
 m_T(100),
 m_Xwt(0.3),
-m_X(Xwt2Xmol(m_Xwt)),
+m_Xmol(Xwt2Xmol(m_Xwt)),
 m_Parray(NULL),
 m_Tarray(NULL),
 m_Xarray(NULL),
@@ -15,11 +16,11 @@ m_f(init_f())
     init_PhaseRegionName();
 }
 
-cH2ONaCl::cH2ONaCl(double P, double T, double X)
+cH2ONaCl::cH2ONaCl(double P, double T_K, double X)
 :m_P(P),
-m_T(T),
+m_T(T_K-Kelvin),
 m_Xwt(X),
-m_X(Xwt2Xmol(m_Xwt)),
+m_Xmol(Xwt2Xmol(m_Xwt)),
 m_Parray(NULL),
 m_Tarray(NULL),
 m_Xarray(NULL),
@@ -72,23 +73,23 @@ Cr_STRUCT cH2ONaCl:: init_Cr()
 }
 void cH2ONaCl:: init_PhaseRegionName()
 {
-    // m_phaseRegion_name[SinglePhase_L]="Single phase(Liquid)";
-    // m_phaseRegion_name[TwoPhase_L_V_X0]="Liquid + Vapor at X=0";
-    // m_phaseRegion_name[SinglePhase_V]="Pure vapour phase";
-    // m_phaseRegion_name[TwoPhase_L_H]="Liquid + Halite";
-    // m_phaseRegion_name[TwoPhase_V_H]="Vaper + Halite";
-    // m_phaseRegion_name[ThreePhase_V_L_H]="Vapour + Liquid + Halite";
-    // m_phaseRegion_name[TwoPhase_V_L_L]="Vapour + Liquid on the liquid side";
-    // m_phaseRegion_name[TwoPhase_V_L_V]="Vapour + Liquid on the vapour side";
+    m_phaseRegion_name[SinglePhase_L]="Single phase(Liquid)";
+    m_phaseRegion_name[TwoPhase_L_V_X0]="Liquid + Vapor at X=0";
+    m_phaseRegion_name[SinglePhase_V]="Pure vapour phase";
+    m_phaseRegion_name[TwoPhase_L_H]="Liquid + Halite";
+    m_phaseRegion_name[TwoPhase_V_H]="Vaper + Halite";
+    m_phaseRegion_name[ThreePhase_V_L_H]="Vapour + Liquid + Halite";
+    m_phaseRegion_name[TwoPhase_V_L_L]="Vapour + Liquid on the liquid side";
+    m_phaseRegion_name[TwoPhase_V_L_V]="Vapour + Liquid on the vapour side";
 
-    m_phaseRegion_name[SinglePhase_L]="0";
-    m_phaseRegion_name[TwoPhase_L_V_X0]="1.5";
-    m_phaseRegion_name[SinglePhase_V]="2";
-    m_phaseRegion_name[TwoPhase_L_H]="3";
-    m_phaseRegion_name[TwoPhase_V_H]="4";
-    m_phaseRegion_name[ThreePhase_V_L_H]="4.5";
-    m_phaseRegion_name[TwoPhase_V_L_L]="5";
-    m_phaseRegion_name[TwoPhase_V_L_V]="6";
+    // m_phaseRegion_name[SinglePhase_L]="0";
+    // m_phaseRegion_name[TwoPhase_L_V_X0]="1.5";
+    // m_phaseRegion_name[SinglePhase_V]="2";
+    // m_phaseRegion_name[TwoPhase_L_H]="3";
+    // m_phaseRegion_name[TwoPhase_V_H]="4";
+    // m_phaseRegion_name[ThreePhase_V_L_H]="4.5";
+    // m_phaseRegion_name[TwoPhase_V_L_L]="5";
+    // m_phaseRegion_name[TwoPhase_V_L_V]="6";
 }
 void cH2ONaCl:: init_prop()
 {
@@ -112,7 +113,7 @@ void cH2ONaCl:: Calculate()
 {
     // 1. 
     double Xl_all,Xv_all;
-    m_prop.Region=findRegion(m_T, m_P, m_X, Xl_all,Xv_all);
+    m_prop.Region=findRegion(m_T, m_P, m_Xmol, Xl_all,Xv_all);
     // 2. calculate rho
     // still problematic at high T & low P
     double V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out;
@@ -170,6 +171,129 @@ void cH2ONaCl:: Calculate()
     m_prop.X_v = Xw_v;
 }
 
+double cH2ONaCl:: rho_pTX(double p, double T_K, double X_wt)
+{
+    // 1. 
+    double T=T_K-Kelvin,Xl_all,Xv_all;
+    m_prop.Region=findRegion(T, p, Xwt2Xmol(X_wt), Xl_all,Xv_all);
+    // 2. calculate rho
+    // still problematic at high T & low P
+    double V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out;
+    calcRho(m_prop.Region, T, p, Xl_all, Xv_all, 
+            m_prop.Rho_l, m_prop.Rho_v, m_prop.Rho_h, V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out);
+    // 4. 
+    double Xw_l = Xl_all * M_NaCl / (Xl_all * M_NaCl + (1-Xl_all) * M_H2O);
+    double Xw_v = Xv_all * M_NaCl / (Xv_all * M_NaCl + (1-Xv_all) * M_H2O);
+
+    if(m_prop.Region==SinglePhase_L)m_prop.S_l=1;
+    double Xw=X_wt;
+    //  Calculate saturation of liquid in L+V region
+    if(m_prop.Region==TwoPhase_V_L_L | m_prop.Region==TwoPhase_V_L_V)
+    {
+        m_prop.S_l = (m_prop.Rho_v *(Xw_v - Xw))/(m_prop.Rho_v*(Xw_v-Xw) + m_prop.Rho_l *(Xw-Xw_l)); 
+    }
+    // Calculate saturation of halite in V+H region
+    if(m_prop.Region==TwoPhase_V_H)
+    {
+        m_prop.S_h = (m_prop.Rho_v*(Xw_v-Xw))/(m_prop.Rho_h*(Xw-1) + m_prop.Rho_v*(Xw_v-Xw));
+    }
+    //  Calculate saturation of halite in L+H region  % does not work for X = 1
+    if(m_prop.Region==TwoPhase_L_H)
+    {
+        m_prop.S_h = (m_prop.Rho_l*(Xw_l-Xw))/(m_prop.Rho_h*(Xw-1) + m_prop.Rho_l*(Xw_l-Xw));
+    }
+     
+    if(m_prop.Region==SinglePhase_V) m_prop.S_v= 1;
+    if(m_prop.Region==TwoPhase_V_L_L || m_prop.Region==TwoPhase_V_L_V) m_prop.S_v= 1 - m_prop.S_l;
+    if(m_prop.Region==TwoPhase_V_H) m_prop.S_v= 1 - m_prop.S_h;
+    if(m_prop.Region==TwoPhase_L_H) m_prop.S_l= 1 - m_prop.S_h;
+    m_prop.Rho = m_prop.S_l*m_prop.Rho_l + m_prop.S_v*m_prop.Rho_v + m_prop.S_h *m_prop.Rho_h ;
+    // v+l+h-region
+    if(m_prop.Region==ThreePhase_V_L_H) m_prop.Rho= NAN; 
+    // v+l-region X = 0;
+    if(m_prop.Region==TwoPhase_L_V_X0) m_prop.Rho = NAN; 
+    
+    return m_prop.Rho;
+}
+
+double cH2ONaCl:: rho_l_pTX(double p, double T_K, double X_wt)
+{
+    // 1. 
+    double T=T_K-Kelvin,Xl_all,Xv_all;
+    m_prop.Region=findRegion(T, p, Xwt2Xmol(X_wt), Xl_all,Xv_all);
+    // 2. calculate rho
+    // still problematic at high T & low P
+    double V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out;
+    calcRho(m_prop.Region, T, p, Xl_all, Xv_all, 
+            m_prop.Rho_l, m_prop.Rho_v, m_prop.Rho_h, V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out);
+    
+    return m_prop.Rho_l;
+}
+
+double cH2ONaCl:: mu_l_pTX(double p, double T_K, double X_wt)
+{
+    // 1. 
+    double T=T_K-Kelvin,Xl_all,Xv_all;
+    m_prop.Region=findRegion(T, p, Xwt2Xmol(X_wt), Xl_all,Xv_all);
+    // 4. 
+    double Xw_l = Xl_all * M_NaCl / (Xl_all * M_NaCl + (1-Xl_all) * M_H2O);
+    double Xw_v = Xv_all * M_NaCl / (Xv_all * M_NaCl + (1-Xv_all) * M_H2O);
+
+    // 4. calcViscosity
+    calcViscosity(m_prop.Region, p, T, Xw_l, Xw_v, m_prop.Mu_l, m_prop.Mu_v);
+
+    return m_prop.Mu_l;
+}
+double cH2ONaCl:: mu_pTX(double p, double T_K, double X_wt)
+{
+    // 1. 
+    double T=T_K-Kelvin,Xl_all,Xv_all;
+    m_prop.Region=findRegion(T, p, Xwt2Xmol(X_wt), Xl_all,Xv_all);
+    // 2. calculate rho
+    // still problematic at high T & low P
+    double V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out;
+    calcRho(m_prop.Region, T, p, Xl_all, Xv_all, 
+            m_prop.Rho_l, m_prop.Rho_v, m_prop.Rho_h, V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out);
+    // 3. calculate enthalpy
+    // calcEnthalpy(m_prop.Region, m_T, m_P, Xl_all, Xv_all, m_prop.H_l, m_prop.H_v, m_prop.H_h);
+    // 4. 
+    double Xw_l = Xl_all * M_NaCl / (Xl_all * M_NaCl + (1-Xl_all) * M_H2O);
+    double Xw_v = Xv_all * M_NaCl / (Xv_all * M_NaCl + (1-Xv_all) * M_H2O);
+
+    // 4. calcViscosity
+    calcViscosity(m_prop.Region, p, T, Xw_l, Xw_v, m_prop.Mu_l, m_prop.Mu_v);
+
+
+    if(m_prop.Region==SinglePhase_L)m_prop.S_l=1;
+    double Xw=X_wt;
+    //  Calculate saturation of liquid in L+V region
+    if(m_prop.Region==TwoPhase_V_L_L | m_prop.Region==TwoPhase_V_L_V)
+    {
+        m_prop.S_l = (m_prop.Rho_v *(Xw_v - Xw))/(m_prop.Rho_v*(Xw_v-Xw) + m_prop.Rho_l *(Xw-Xw_l)); 
+    }
+    // Calculate saturation of halite in V+H region
+    if(m_prop.Region==TwoPhase_V_H)
+    {
+        m_prop.S_h = (m_prop.Rho_v*(Xw_v-Xw))/(m_prop.Rho_h*(Xw-1) + m_prop.Rho_v*(Xw_v-Xw));
+    }
+    //  Calculate saturation of halite in L+H region  % does not work for X = 1
+    if(m_prop.Region==TwoPhase_L_H)
+    {
+        m_prop.S_h = (m_prop.Rho_l*(Xw_l-Xw))/(m_prop.Rho_h*(Xw-1) + m_prop.Rho_l*(Xw_l-Xw));
+    }
+     
+    if(m_prop.Region==SinglePhase_V) m_prop.S_v= 1;
+    if(m_prop.Region==TwoPhase_V_L_L || m_prop.Region==TwoPhase_V_L_V) m_prop.S_v= 1 - m_prop.S_l;
+    if(m_prop.Region==TwoPhase_V_H) m_prop.S_v= 1 - m_prop.S_h;
+    if(m_prop.Region==TwoPhase_L_H) m_prop.S_l= 1 - m_prop.S_h;
+    m_prop.Mu = m_prop.S_l*m_prop.Mu_l + m_prop.S_v*m_prop.Mu_v; //need to fix later!!! This is not correct, but to test thermophysical model in OpenFoam, use this at this moment
+    // v+l+h-region
+    if(m_prop.Region==ThreePhase_V_L_H) m_prop.Mu= NAN; 
+    // v+l-region X = 0;
+    if(m_prop.Region==TwoPhase_L_V_X0) m_prop.Mu = NAN; 
+    
+    return m_prop.Mu;
+}
 PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X, double& Xl_all, double& Xv_all)
 {
     double Pres=P/1e5; //Pa -> bar
@@ -376,42 +500,45 @@ PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X
     // cout<<"X_crit: "<<X_crit<<endl;
     if(T<Tcrit_h2o)
     {
-        X_crit =(
+        // when P_crit < P_crit_h20 for ind_T, then X_crit is complex     
+        if(P_crit<P_crit_h20)
+        {
+            X_crit=0; 
+        }else
+        {
+            X_crit =(
                 ( Xl_vlh - g1*(P_crit - P_vlh) - g2*(pow((P_crit-P_vlh),2)) ) *  
                 sqrt(P_crit-P_crit_h20)/sqrt(P_crit-P_vlh) + 
                 g1*(P_crit - P_crit_h20) + 
                 g2*(pow((P_crit-P_crit_h20),2))  
                 )/( -1 + sqrt(P_crit-P_crit_h20)/(sqrt(P_crit-P_vlh)) ) ;
-        // when P_crit < P_crit_h20 for ind_T, then X_crit is complex     
-        if(P_crit<P_crit_h20)X_crit=0; 
+        }
+        
     }
     // X_crit(P_crit < P_crit_h20) = % this should not happen, but it does near critical point, when P_crit < P_crit_h20  
     // cout<<"X_crit: "<<X_crit<<endl;exit(0);
     double g0 = (Xl_vlh - X_crit - g1*(P_crit - P_vlh) - g2*pow((P_crit-P_vlh),2))/sqrt(P_crit-P_vlh);
     // cout<<"g0: "<<g0<<endl;
 
-    // if (P_crit < Pres), than Xl_vl is complex 
-    double Xl_vl = X_crit + g0*sqrt(P_crit - Pres) + g1*(P_crit - Pres) + g2*(pow((P_crit-Pres),2));  // to low for 1000°C 
-    // cout<<"X_crit: "<<X_crit<<" g0*sqrt(P_crit - Pres): "<<g0*sqrt(P_crit - Pres)<<" g1*(P_crit - Pres): "<<g1*(P_crit - Pres)<<" g2*(pow((P_crit-Pres),2)): "<<g2*(pow((P_crit-Pres),2))<<endl;
-    // cout<<"Xl_vl: "<<Xl_vl<<endl;
-    //--------------------------------------------------------------------------
-    //Calculate Xv_vl in V+L Region  T> T_crit_H2O is ok but constnant minmal
-    //offset to Driesner paper
-    double P_norm = (Pres - PNacl)/(P_crit - PNacl);
-    double log10K2 = 1 + j0*(pow((1-P_norm),j1)) + j2*(1-P_norm) + j3*(pow((1-P_norm),2)) - (1+j0+j2+j3)*(pow((1-P_norm),3));
-    double log10K1 = log10K2*(log10(PNacl/P_crit) - log10(Xl_vlh)) + log10(Xl_vlh);
-    double log10K = log10K1 - log10(PNacl/Pres);
-    double K = pow(10,(log10K));
-    double Xv_vl = Xl_vl/K;   // to low mole fraction for 1000°C and 1bar
-    if(Pres>P_crit)
+    // if (P_crit < Pres), than Xl_vl is complex. OpenFOAM will crash if calculate sqrt(negative value), IMPORTANT!!!
+    double Xl_vl=0,Xv_vl=0;
+    if((Pres>P_crit) || ((Pres<=PNacl) && (T>=T_trip_salt)))
     {
         Xv_vl=NAN;
         Xl_vl=NAN;
     }
-    if((Pres<=PNacl) && (T>=T_trip_salt))
+    else
     {
-        Xv_vl=NAN;
-        Xl_vl=NAN;
+        Xl_vl = X_crit + g0*sqrt(P_crit - Pres) + g1*(P_crit - Pres) + g2*(pow((P_crit-Pres),2));  // to low for 1000°C 
+        
+        //Calculate Xv_vl in V+L Region  T> T_crit_H2O is ok but constnant minmal
+        //offset to Driesner paper
+        double P_norm = (Pres - PNacl)/(P_crit - PNacl);
+        double log10K2 = 1 + j0*(pow((1-P_norm),j1)) + j2*(1-P_norm) + j3*(pow((1-P_norm),2)) - (1+j0+j2+j3)*(pow((1-P_norm),3));
+        double log10K1 = log10K2*(log10(PNacl/P_crit) - log10(Xl_vlh)) + log10(Xl_vlh);
+        double log10K = log10K1 - log10(PNacl/Pres);
+        double K = pow(10,(log10K));
+        Xv_vl = Xl_vl/K;   // to low mole fraction for 1000°C and 1bar
     }
     // cout<<"Xl_vl: "<<Xl_vl<<" Xv_vl: "<<Xv_vl<<endl;
     //--------------------------------------------------------------------------
@@ -1452,9 +1579,8 @@ void cH2ONaCl:: calcRho(int reg, double T_in, double P_in, double X_l, double X_
         double T_star_v = n1_v + n2_v*T_in; // + D_v;  %only for low pres
         double P_star_v = P_in;
         // double Rho_star_l=water_tp_IAPS84(P_star_v*1e5, T_star_v, 50,dRhodP, h, Mu, 1e-9, true); 
-        // SteamState S = freesteam_set_pT(P_star_v*1e5, T_star_v+Kelvin);
-        // double Rho_star_v=freesteam_rho(S);
-        double Rho_star_v=water_rho_pT(P_star_v*1e5, T_star_v+Kelvin);
+        SteamState S = freesteam_set_pT(P_star_v*1e5, T_star_v+Kelvin);
+        double Rho_star_v=freesteam_rho(S);
         bool ind1 = (Rho_star_v > 321.89 && P_star_v <= P_crit); 
         bool ind2 = (isnan(Rho_star_v) && P_star_v <= P_crit);
         while (ind1 || ind2)
@@ -1482,9 +1608,8 @@ void cH2ONaCl:: calcRho(int reg, double T_in, double P_in, double X_l, double X_
         double n2_l = n20 + n21*sqrt(X_l+n22) + n23*X_l;
         double T_star_l = n1_l + n2_l*T_in; // + D_l; %only for low pres
         double P_star_l = P_in;
-        // SteamState S = freesteam_set_pT(P_star_l*1e5, T_star_l+Kelvin);
-        // double Rho_star_l=freesteam_rho(S);
-        double Rho_star_l=water_rho_pT(P_star_l*1e5, T_star_l+Kelvin);
+        SteamState S = freesteam_set_pT(P_star_l*1e5, T_star_l+Kelvin);
+        double Rho_star_l=freesteam_rho(S);
         // cout<<"P_star_l: "<<P_star_l<<" T_star_l: "<<T_star_l<<" Rho_star_l: "<<Rho_star_l<<endl;
         double Vol = 1/Rho_star_l;
         double V_l = Vol*mass_h2o;
@@ -1495,9 +1620,8 @@ void cH2ONaCl:: calcRho(int reg, double T_in, double P_in, double X_l, double X_
             double T_crit, Rho_star_crit_l, h_l, h_v, dpd_l, dpd_v, Rho_v, Mu_l, Mu_v;
             fluidProp_crit_P(P_star_l*1e5,1e-9,T_crit, Rho_star_crit_l, h_l, h_v, dpd_l, dpd_v, Rho_v, Mu_l, Mu_v);
             double Vol_l_crit = mass_h2o / Rho_star_crit_l;
-            // S = freesteam_set_pT(P_star_l*1e5, T_crit-1+Kelvin);
-            // double Rho_star_crit_l_minus=freesteam_rho(S);
-            double Rho_star_crit_l_minus=water_rho_pT(P_star_l*1e5, T_crit-1+Kelvin);
+            S = freesteam_set_pT(P_star_l*1e5, T_crit-1+Kelvin);
+            double Rho_star_crit_l_minus=freesteam_rho(S);
             double Vol_l_crit_minus = mass_h2o / Rho_star_crit_l_minus;
             double dVol_ldT = (Vol_l_crit - Vol_l_crit_minus)/1;
             double o1 = dVol_ldT ; //- 3*o2 * T_crit.^2;
@@ -1553,17 +1677,14 @@ void cH2ONaCl:: calcRho(int reg, double T_in, double P_in, double X_l, double X_
             double n2_l_P1 = n20_P1 + n21_P1*sqrt(X_l_ind_l+n22_P1) + n23_P1*X_l_ind_l;
             T_in_ind_l = T_in;
             double T_star_l_P1 = n1_l_P1 + n2_l_P1*T_in_ind_l;
-            // S = freesteam_set_pT(P_390*1e5, T_star_l_P+Kelvin);
-            // double Rho_l_390=freesteam_rho(S);
-            double Rho_l_390=water_rho_pT(P_390*1e5, T_star_l_P+Kelvin);
+            S = freesteam_set_pT(P_390*1e5, T_star_l_P+Kelvin);
+            double Rho_l_390=freesteam_rho(S);
             double Vol_390 = mass_h2o / Rho_l_390; 
-            // S = freesteam_set_pT(P_400*1e5, T_star_l_P4+Kelvin);
-            // double Rho_l_400=freesteam_rho(S);
-            double Rho_l_400=water_rho_pT(P_400*1e5, T_star_l_P4+Kelvin);
+            S = freesteam_set_pT(P_400*1e5, T_star_l_P4+Kelvin);
+            double Rho_l_400=freesteam_rho(S);
             double Vol_400 = mass_h2o / Rho_l_400;   
-            // S = freesteam_set_pT(P_1000*1e5, T_star_l_P1+Kelvin); 
-            // double Rho_l_1000=freesteam_rho(S);
-            double Rho_l_1000=water_rho_pT(P_1000*1e5, T_star_l_P1+Kelvin); 
+            S = freesteam_set_pT(P_1000*1e5, T_star_l_P1+Kelvin); 
+            double Rho_l_1000=freesteam_rho(S);
             double Vol_1000 = mass_h2o / Rho_l_1000; 
             double dVol_dP = (Vol_400 - Vol_390) / (P_400 - P_390);
 
@@ -1637,9 +1758,8 @@ void cH2ONaCl:: calcEnthalpy(int reg, double T_in, double P_in, double X_l, doub
 
         double T_star_v = q1_v + q2_v*T_in; 
         double P_star_v = P_in;
-        // SteamState S = freesteam_set_pT(P_star_v*1e5, T_star_v+Kelvin);
-        // h_v=freesteam_h(S);
-        h_v=water_h_pT(P_star_v*1e5, T_star_v+Kelvin);
+        SteamState S = freesteam_set_pT(P_star_v*1e5, T_star_v+Kelvin);
+        h_v=freesteam_h(S);
         bool ind1 = (h_v < 2.086e6 && P_star_v < P_crit);// & P_star_v > 40); 
         bool ind2 = (isnan(h_v) && P_star_v < P_crit);// & P_star_v > 40); 
         while (ind1 || ind2)
@@ -1661,9 +1781,8 @@ void cH2ONaCl:: calcEnthalpy(int reg, double T_in, double P_in, double X_l, doub
         double q2_lb = 1 - q21 * sqrt(q22) + q21 * sqrt(X_l+q22) + X_l * (q21 * sqrt(q22) - 1- q21 * sqrt(1+q22) + q2_1);
         double T_star_l = q1_l + q2_l*T_in;
         double P_star_l = P_in;
-        // SteamState S = freesteam_set_pT(P_star_l*1e5, T_star_l+Kelvin);
-        // h_l=freesteam_h(S);
-        h_l=water_h_pT(P_star_l*1e5, T_star_l+Kelvin);
+        SteamState S = freesteam_set_pT(P_star_l*1e5, T_star_l+Kelvin);
+        h_l=freesteam_h(S);
         //nedded for boiling temps from 180 to Tcri, is not in Driesners Paper
         bool ind_low = ( (h_l > 2.086e6 || isnan(h_l))  &&  P_star_l < P_crit  &&  T_in < 375 );
         if(ind_low)
@@ -1672,9 +1791,8 @@ void cH2ONaCl:: calcEnthalpy(int reg, double T_in, double P_in, double X_l, doub
             double T_crit, Rho_l0, h_l_crit, dpd_l0, dpd_v0, Rho_v0, Mu_l0, Mu_v0;
             fluidProp_crit_P(P_star_l*1e5, 1e-9,T_crit, Rho_l0, h_l_crit, h_v, dpd_l0, dpd_v0, Rho_v0, Mu_l0, Mu_v0);//P_star_l = P_l
             // find derivative of spec enthlapy at boiling temperature for given Pressure
-            // S = freesteam_set_pT(P_star_l*1e5, T_crit-1+Kelvin);
-            // double h_l_minus=freesteam_h(S);
-            double h_l_minus=water_h_pT(P_star_l*1e5, T_crit-1+Kelvin);
+            S = freesteam_set_pT(P_star_l*1e5, T_crit-1+Kelvin);
+            double h_l_minus=freesteam_h(S);
             double dh_ldT = (h_l_crit - h_l_minus)/1;
             double o1 = dh_ldT ; 
             double o0 = h_l_crit - o1 * T_crit ;
@@ -1720,17 +1838,14 @@ void cH2ONaCl:: calcEnthalpy(int reg, double T_in, double P_in, double X_l, doub
             q2_l = q20 + q21*sqrt(X_l+q22) + q23*X_l;
             double T_star_l_P1 = q1_l + q2_l*T_in;
 
-            // S = freesteam_set_pT(P_390*1e5, T_star_l_P390+Kelvin);
-            // double h_l_390=freesteam_h(S);
-            double h_l_390=water_h_pT(P_390*1e5, T_star_l_P390+Kelvin);
+            S = freesteam_set_pT(P_390*1e5, T_star_l_P390+Kelvin);
+            double h_l_390=freesteam_h(S);
 
-            // S = freesteam_set_pT(P4*1e5, T_star_l_P4+Kelvin);
-            // double h_l_400=freesteam_h(S);
-            double h_l_400=water_h_pT(P4*1e5, T_star_l_P4+Kelvin);
+            S = freesteam_set_pT(P4*1e5, T_star_l_P4+Kelvin);
+            double h_l_400=freesteam_h(S);
 
-            // S = freesteam_set_pT(P1*1e5, P1+Kelvin);
-            // double h_l_1000=freesteam_h(S);
-            double h_l_1000=water_h_pT(P1*1e5, P1+Kelvin);
+            S = freesteam_set_pT(P1*1e5, P1+Kelvin);
+            double h_l_1000=freesteam_h(S);
 
             double dh_l_dP = (h_l_400 - h_l_390) / (P4 - P_390);
             double P_610 = P1 - P_390;
@@ -1799,9 +1914,8 @@ void cH2ONaCl:: calcViscosity(int reg, double P, double T, double Xw_l, double X
         double e2 = 1 - b1 * pow(T,b2) - b3 * pow(Xw_l,a2) * pow(T,b2); 
         double T_star_l = e1 + e2 * T;
         if(isnan(T_star_l))T_star_l = 0;
-        // SteamState S = freesteam_set_pT(P, T_star_l+Kelvin);
-        // mu_l=freesteam_mu(S);
-        mu_l=water_mu_pT(P, T_star_l+Kelvin);
+        SteamState S = freesteam_set_pT(P, T_star_l+Kelvin);
+        mu_l=freesteam_mu(S);
         if(isnan(mu_l))
         {
             double T_2ph0, Rho_l0, h_l0,h_v0, dpd_l0, dpd_v0, Rho_v0, Mu_v0;
@@ -1818,9 +1932,8 @@ void cH2ONaCl:: calcViscosity(int reg, double P, double T, double Xw_l, double X
         bool ind_0 = (T_star_v > 0);
         if(ind_0)
         {
-            // SteamState S = freesteam_set_pT(P, T_star_v+Kelvin);
-            // mu_v=freesteam_mu(S);
-            mu_v=water_mu_pT(P, T_star_v+Kelvin);
+            SteamState S = freesteam_set_pT(P, T_star_v+Kelvin);
+            mu_v=freesteam_mu(S);
         }
         if(isnan(mu_v))
         {
@@ -1828,58 +1941,4 @@ void cH2ONaCl:: calcViscosity(int reg, double P, double T, double Xw_l, double X
             fluidProp_crit_P(P, 1e-10,T_2ph0, Rho_l0, h_l0, h_v0, dpd_l0, dpd_v0, Rho_v0, mu_l0, mu_v);
         }
     }
-}
-
-double cH2ONaCl::water_rho_pT(double p, double T_K)
-{
-    #ifdef PLATFORM_IOS
-        double d, s, h, dp, ds, dh;
-        Prop *prop0;
-        dp = 1.0e-8;
-        ds = 1.0e-8;
-        dh = 1.0e-8;
-        prop0 = newProp('t', 'p', 1);
-        d = 0.0;
-        water_tp(T_K,p,d,dp,prop0);
-        return prop0->d;
-    #else 
-        SteamState S = freesteam_set_pT(p, T_K);
-        return freesteam_rho(S);
-    #endif 
-}
-
-double cH2ONaCl::water_h_pT(double p, double T_K)
-{
-    #ifdef PLATFORM_IOS
-        double d, s, h, dp, ds, dh;
-        Prop *prop0;
-        dp = 1.0e-8;
-        ds = 1.0e-8;
-        dh = 1.0e-8;
-        prop0 = newProp('t', 'p', 1);
-        d = 0.0;
-        water_tp(T_K,p,d,dp,prop0);
-        return prop0->h;
-    #else 
-        SteamState S = freesteam_set_pT(p, T_K);
-        return freesteam_h(S);
-    #endif 
-}
-
-double cH2ONaCl::water_mu_pT(double p, double T_K)
-{
-    #ifdef PLATFORM_IOS
-        double d, s, h, dp, ds, dh;
-        Prop *prop0;
-        dp = 1.0e-8;
-        ds = 1.0e-8;
-        dh = 1.0e-8;
-        prop0 = newProp('t', 'p', 1);
-        d = 0.0;
-        water_tp(T_K,p,d,dp,prop0);
-        return viscos(prop0);
-    #else 
-        SteamState S = freesteam_set_pT(p, T_K);
-        return freesteam_mu(S);
-    #endif 
 }
