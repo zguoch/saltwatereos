@@ -58,30 +58,35 @@ MainWindow::MainWindow(QWidget *parent)
     m_IndependentVar1_old=ui->doubleSpinBox->value()*1e5;
     m_IndependentVar2_old=ui->doubleSpinBox_2->value();
     m_IndependentVar3_old=ui->doubleSpinBox_3->value();
-  // Geometry
-  vtkNew<vtkVectorText> text;
-  text->SetText("Salt Water EOS");
-  vtkNew<vtkElevationFilter> elevation;
-  elevation->SetInputConnection(text->GetOutputPort());
-  elevation->SetLowPoint(0,0,0);
-  elevation->SetHighPoint(10,0,0);
 
-  // Mapper
-  vtkNew<vtkPolyDataMapper> mapper;
-  mapper->SetInputConnection(elevation->GetOutputPort());
 
-  // Actor in scene
-  vtkNew<vtkActor> actor;
-  actor->SetMapper(mapper);
+    // Geometry
+    vtkNew<vtkVectorText> text;
+    text->SetText("Salt Water EOS");
+    vtkNew<vtkElevationFilter> elevation;
+    elevation->SetInputConnection(text->GetOutputPort());
+    elevation->SetLowPoint(0,0,0);
+    elevation->SetHighPoint(10,0,0);
 
-  // VTK Renderer
-  vtkNew<vtkRenderer> ren;
+    // Mapper
+    vtkNew<vtkPolyDataMapper> mapper;
+    mapper->SetInputConnection(elevation->GetOutputPort());
 
-  // Add Actor to renderer
-  ren->AddActor(actor);
-  // ren->AddActor(test());
+    // Actor in scene
+    vtkNew<vtkActor> actor;
+    actor->SetMapper(mapper);
 
-  ren->SetBackground( 0.1, 0.2, 0.4 );
+    // VTK Renderer
+    vtkNew<vtkRenderer> ren;
+
+    // Add Actor to renderer
+    ren->AddActor(actor);
+    // ren->AddActor(test());
+
+    ren->SetBackground( 0.1, 0.2, 0.4 );
+    vtkNew<vtkGenericOpenGLRenderWindow> renderWindow2;
+    this->ui->qvtkWidget2->SetRenderWindow(renderWindow2);
+    this->ui->qvtkWidget2->GetRenderWindow()->AddRenderer(ren);
 
 // ------2D line
 
@@ -328,6 +333,10 @@ void MainWindow::on_pushButton_clicked()
 
         break;
     case 2:
+    {
+
+
+    }
         ui->textEdit->append("2D is comming soon");
         break;
     case 3:
