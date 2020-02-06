@@ -78,7 +78,8 @@ source_group("Generated" FILES
 )
 
 # if want to generage mac os app, add MACOSX_BUNDLE follow ${PROGRAM_NAME} 
-add_executable(${PROGRAM_NAME} 
+# 如果不设置MACOSX_BUNDLE， 窗口变化后VTK渲染会卡顿. 但是设置了之后字体会变粗，估计是与系统设置有关
+add_executable(${PROGRAM_NAME}  MACOSX_BUNDLE
   ${Srcs} ${Hdrs} ${UI_Srcs} ${MOC_Hdrs} ${QRC_Srcs})
 target_link_libraries(${PROGRAM_NAME} Qt5::Core Qt5::Gui Qt5::Widgets eosH2ONaCl freesteam)
 target_link_libraries(${PROGRAM_NAME} ${VTK_LIBRARIES})
