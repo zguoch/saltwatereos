@@ -20,9 +20,27 @@
 #include "H2ONaCl.H"
 #include <QDateTime>
 #include <QTime>
+#include <QMessageBox>
+
+#include <vtkRenderer.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkRenderWindow.h>
+#include <vtkSmartPointer.h>
+#include <vtkChartXY.h>
+#include <vtkTable.h>
+#include <vtkPlot.h>
+#include <vtkFloatArray.h>
+#include <vtkContextView.h>
+#include <vtkContextScene.h>
+#include <vtkPen.h>
 
 #define CALCULATION_SINGLE_POINT 1
 #define CALCULATION_MULTI_POINTS 2
+
+//definition for 1,2,3Dimension
+#define oneDim_Temperature 1
+#define oneDim_Pressure 2
+#define oneDim_Salinity 3
 
 // Forward Qt class declarations
 class Ui_MainWindow;
@@ -53,6 +71,9 @@ public slots:
 protected:
   int m_calculationMode;
   double m_IndependentVar1_old, m_IndependentVar2_old, m_IndependentVar3_old;
+  int m_dimension, m_calculationMode_123Dim;
+//    vtk variable
+  vtkSmartPointer<vtkContextView> m_vtkChartView;
 
 protected slots:
 
@@ -65,6 +86,12 @@ private slots:
   void on_radioButton_clicked();
 
   void on_radioButton_2_clicked();
+
+  void on_tabWidget_currentChanged(int index);
+
+  void on_pushButton_clicked();
+
+
 
 private:
 
