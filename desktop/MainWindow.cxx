@@ -41,71 +41,6 @@
 #include <vtkRendererCollection.h>
 
 
-void test()
-{
-  // Create a table with some points in it
-  vtkSmartPointer<vtkTable> table = 
-    vtkSmartPointer<vtkTable>::New();
-
-  vtkSmartPointer<vtkFloatArray> arrX = 
-    vtkSmartPointer<vtkFloatArray>::New();
-  arrX->SetName("X Axis");
-  table->AddColumn(arrX);
-
-  vtkSmartPointer<vtkFloatArray> arrC = 
-    vtkSmartPointer<vtkFloatArray>::New();
-  arrC->SetName("Cosine");
-  table->AddColumn(arrC);
-
-  vtkSmartPointer<vtkFloatArray> arrS = 
-    vtkSmartPointer<vtkFloatArray>::New();
-  arrS->SetName("Sine");
-  table->AddColumn(arrS);
-
-  // Fill in the table with some example values
-  int numPoints = 69;
-  float inc = 7.5 / (numPoints-1);
-  table->SetNumberOfRows(numPoints);
-  for (int i = 0; i < numPoints; ++i)
-  {
-    table->SetValue(i, 0, i * inc);
-    table->SetValue(i, 1, cos(i * inc));
-    table->SetValue(i, 2, sin(i * inc));
-  }
-
-  // Set up the view
-  vtkSmartPointer<vtkContextView> view = 
-    vtkSmartPointer<vtkContextView>::New();
-  view->GetRenderer()->SetBackground(1.0, 1.0, 1.0);
-
-  // Add multiple line plots, setting the colors etc
-  vtkSmartPointer<vtkChartXY> chart = 
-    vtkSmartPointer<vtkChartXY>::New();
-  view->GetScene()->AddItem(chart);
-  vtkPlot *line = chart->AddPlot(vtkChart::LINE);
-  line->SetInputData(table, 0, 1);
-  line->SetColor(0, 255, 0, 255);
-  line->SetWidth(1.0);
-  line = chart->AddPlot(vtkChart::LINE);
-  line->SetInputData(table, 0, 2);
-  line->SetColor(255, 0, 0, 255);
-  line->SetWidth(5.0);
-
-  // For dotted line, the line type can be from 2 to 5 for different dash/dot
-  // patterns (see enum in vtkPen containing DASH_LINE, value 2):
-  #ifndef WIN32
-    line->GetPen()->SetLineType(vtkPen::DASH_LINE);
-  #endif
-  // (ifdef-ed out on Windows because DASH_LINE does not work on Windows
-  //  machines with built-in Intel HD graphics card...)
-
-  //view->GetRenderWindow()->SetMultiSamples(0);
-
-  // Start interactor
-  view->GetRenderWindow()->Render();
-  view->GetInteractor()->Initialize();
-  view->GetInteractor()->Start();
-}
 // Constructor
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -171,10 +106,10 @@ MainWindow::MainWindow(QWidget *parent)
   // VTK/Qt wedded
   vtkNew<vtkGenericOpenGLRenderWindow> renderWindow;
   this->ui->qvtkWidget->SetRenderWindow(renderWindow);
-this->ui->qvtkWidget->GetRenderWindow()->AddRenderer(ren);
+//this->ui->qvtkWidget->GetRenderWindow()->AddRenderer(ren);
 
   // 2. key for 2D charts
-   m_vtkChartView->SetRenderWindow(this->ui->qvtkWidget->GetRenderWindow());
+   m_vtkChartView->SetRenderWindow(this->ui->qvtkWidget->GetRenderWindow()); //must be here
 
 
 
@@ -353,7 +288,7 @@ void MainWindow::on_pushButton_clicked()
 
           // Fill in the table with some example values
 //          int numPoints = 69;
-          float inc = 7.5 / (numPoints-1);
+//          float inc = 7.5 / (numPoints-1);
           table->SetNumberOfRows(numPoints);
 //          for (int i = 0; i < numPoints; ++i)
 //          {
@@ -372,20 +307,20 @@ void MainWindow::on_pushButton_clicked()
               table->SetValue(i, 0, T);
               table->SetValue(i, 1, eos.m_prop.Rho);
           }
+          int num_oldItems=m_vtkChartView->GetScene()->GetNumberOfItems();
+          for (int i=0;i<num_oldItems;i++) {
+              m_vtkChartView->GetScene()->RemoveItem(m_vtkChartView->GetScene()->GetItem(0));
+          }
 
            vtkSmartPointer<vtkChartXY> chart =
              vtkSmartPointer<vtkChartXY>::New();
            m_vtkChartView->GetScene()->AddItem(chart);
-           m_vtkChartView->GetScene()->RemoveItem(m_vtkChartView->GetScene()->GetItem(0));
+
 //           (vtkChartXY*) chart0=m_vtkChartView->GetScene()->GetItem(0);
            vtkPlot *line = chart->AddPlot(vtkChart::LINE);
            line->SetInputData(table, 0, 1);
            line->SetColor(0, 255, 0, 255);
            line->SetWidth(1.0);
-           line = chart->AddPlot(vtkChart::LINE);
-           line->SetInputData(table, 0, 1);
-           line->SetColor(255, 0, 0, 255);
-           line->SetWidth(5.0);
 //        ui->textEdit->append(QString::number(m_vtkChartView->GetScene()->GetNumberOfItems()));
           m_vtkChartView->GetRenderWindow()->Render();
     }
@@ -399,5 +334,29 @@ void MainWindow::on_pushButton_clicked()
         ui->textEdit->append("3D is comming soon");
         break;
 
+    }
+}
+
+void MainWindow::on_radioButton_3_clicked()
+{
+    if(ui->radioButton_3->isChecked())
+    {
+        m_dimension=1;
+    }
+}
+
+void MainWindow::on_radioButton_4_clicked()
+{
+    if(ui->radioButton_4->isChecked())
+    {
+        m_dimension=2;
+    }
+}
+
+void MainWindow::on_radioButton_5_clicked()
+{
+    if(ui->radioButton_5->isChecked())
+    {
+        m_dimension=3;
     }
 }
