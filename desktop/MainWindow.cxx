@@ -38,6 +38,7 @@
 #include "vtkRenderer.h"
 #include <vtkRenderWindowInteractor.h>
 
+#include <vtkRendererCollection.h>
 
 
 void test()
@@ -118,34 +119,34 @@ MainWindow::MainWindow(QWidget *parent)
 //  // Qt Table View
 //  this->TableView = vtkSmartPointer<vtkQtTableView>::New();
 
-//  // Place the table view in the designer form
-//    m_IndependentVar1_old=ui->doubleSpinBox->value()*1e5;
-//    m_IndependentVar2_old=ui->doubleSpinBox_2->value();
-//    m_IndependentVar3_old=ui->doubleSpinBox_3->value();
-//  // Geometry
-//  vtkNew<vtkVectorText> text;
-//  text->SetText("Salt Water EOS");
-//  vtkNew<vtkElevationFilter> elevation;
-//  elevation->SetInputConnection(text->GetOutputPort());
-//  elevation->SetLowPoint(0,0,0);
-//  elevation->SetHighPoint(10,0,0);
+  // Place the table view in the designer form
+    m_IndependentVar1_old=ui->doubleSpinBox->value()*1e5;
+    m_IndependentVar2_old=ui->doubleSpinBox_2->value();
+    m_IndependentVar3_old=ui->doubleSpinBox_3->value();
+  // Geometry
+  vtkNew<vtkVectorText> text;
+  text->SetText("Salt Water EOS");
+  vtkNew<vtkElevationFilter> elevation;
+  elevation->SetInputConnection(text->GetOutputPort());
+  elevation->SetLowPoint(0,0,0);
+  elevation->SetHighPoint(10,0,0);
 
-//  // Mapper
-//  vtkNew<vtkPolyDataMapper> mapper;
-//  mapper->SetInputConnection(elevation->GetOutputPort());
+  // Mapper
+  vtkNew<vtkPolyDataMapper> mapper;
+  mapper->SetInputConnection(elevation->GetOutputPort());
 
-//  // Actor in scene
-//  vtkNew<vtkActor> actor;
-//  actor->SetMapper(mapper);
+  // Actor in scene
+  vtkNew<vtkActor> actor;
+  actor->SetMapper(mapper);
 
-//  // VTK Renderer
-//  vtkNew<vtkRenderer> ren;
+  // VTK Renderer
+  vtkNew<vtkRenderer> ren;
 
-//  // Add Actor to renderer
-//  ren->AddActor(actor);
-//  // ren->AddActor(test());
+  // Add Actor to renderer
+  ren->AddActor(actor);
+  // ren->AddActor(test());
 
-//  ren->SetBackground( 0.1, 0.2, 0.4 );
+  ren->SetBackground( 0.1, 0.2, 0.4 );
 
 // ------2D line
 
@@ -167,14 +168,16 @@ MainWindow::MainWindow(QWidget *parent)
 //  line->SetInputData(table, 0, 2);
 //  line->SetColor(255, 0, 0, 255);
 //  line->SetWidth(5.0);
+  // VTK/Qt wedded
+  vtkNew<vtkGenericOpenGLRenderWindow> renderWindow;
+  this->ui->qvtkWidget->SetRenderWindow(renderWindow);
+this->ui->qvtkWidget->GetRenderWindow()->AddRenderer(ren);
 
   // 2. key for 2D charts
    m_vtkChartView->SetRenderWindow(this->ui->qvtkWidget->GetRenderWindow());
 
-   // VTK/Qt wedded
- //  vtkNew<vtkGenericOpenGLRenderWindow> renderWindow;
- //  this->ui->qvtkWidget->SetRenderWindow(renderWindow);
- //  this->ui->qvtkWidget->GetRenderWindow()->AddRenderer(ren);
+
+
 
   // Just a bit of Qt interest: Culling off the
   // point data and handing it to a vtkQtTableView
@@ -386,7 +389,7 @@ void MainWindow::on_pushButton_clicked()
 //        ui->textEdit->append(QString::number(m_vtkChartView->GetScene()->GetNumberOfItems()));
           m_vtkChartView->GetRenderWindow()->Render();
     }
-//        ui->textEdit->append("1D is comming soon");
+        ui->textEdit->append("1D is comming soon");
 
         break;
     case 2:
