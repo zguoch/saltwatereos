@@ -430,8 +430,8 @@ void MainWindow::on_pushButton_clicked()
 
           m_structuredGrid->SetPoints(points);
 
-          m_structuredGrid->BlankPoint(27);
-          m_structuredGrid->Modified();
+          // m_structuredGrid->BlankPoint(27);
+          // m_structuredGrid->Modified();
 
           // Create a mapper and actor
           vtkSmartPointer<vtkDataSetMapper> gridMapper = vtkSmartPointer<vtkDataSetMapper>::New();
