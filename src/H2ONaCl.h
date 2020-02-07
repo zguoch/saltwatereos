@@ -16,17 +16,17 @@ using namespace std;
 namespace SWEOS
 {
     // const value define
-    #define TMIN 273.15
-    #define TMAX 1273.15
-    #define PMIN 5e5
-    #define PMAX 1000e5
-    #define XMIN 1e-5
-    #define XMAX 1
+    double const TMIN=273.15;
+    double const TMAX=1273.15;
+    double const PMIN=5e5;
+    double const PMAX = 1000e5;
+    double const XMIN = 1e-5;
+    double const XMAX = 1;
     // --------------
-    #define Kelvin 273.15
+    double const Kelvin= 273.15;
     // ------------
-    #define M_H2O   0.018015  // molar mass of water  [kg/mol]
-    #define M_NaCl  0.058443 // molar mass of salt(NaCl)   [kg/mol]
+    double const M_H2O = 0.018015; // molar mass of water  [kg/mol]
+    double const M_NaCl = 0.058443; // molar mass of salt(NaCl)   [kg/mol]
 
 
     // define index of region

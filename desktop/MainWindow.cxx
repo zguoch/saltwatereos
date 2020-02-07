@@ -54,10 +54,13 @@ MainWindow::MainWindow(QWidget *parent)
 //  // Qt Table View
 //  this->TableView = vtkSmartPointer<vtkQtTableView>::New();
 
-  // Place the table view in the designer form
     m_IndependentVar1_old=ui->doubleSpinBox->value()*1e5;
     m_IndependentVar2_old=ui->doubleSpinBox_2->value();
     m_IndependentVar3_old=ui->doubleSpinBox_3->value();
+
+    m_vtkTable=vtkSmartPointer<vtkTable>::New();
+    //default set 1D UI
+    update1dUI("Temperature");
 
 
     // Geometry
@@ -179,7 +182,7 @@ void MainWindow::on_pushButton_2_clicked()
     // Bulk rho, bulk H, bulk mu
     result_str+="<font color=Blue>Bulk density: </font> &nbsp; "+QString::number(eos.m_prop.Rho)+
               ",&nbsp;&nbsp;&nbsp; <font color=Blue>Bulk enthalpy: </font> &nbsp; "+QString::number(eos.m_prop.H)+
-              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Bulk viscosity: </font> &nbsp; "+QString::number(eos.m_prop.H)+"<br>";
+              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Bulk viscosity: </font> &nbsp; "+QString::number(eos.m_prop.Mu)+"<br>";
     // rhol, rhov, rhoh
     result_str+="<font color=Blue>Liquid density: </font> &nbsp; "+QString::number(eos.m_prop.Rho_l)+
               ",&nbsp;&nbsp;&nbsp; <font color=Blue>Vapour density: </font> &nbsp; "+QString::number(eos.m_prop.Rho_v)+
@@ -262,56 +265,107 @@ void MainWindow::on_pushButton_clicked()
     switch (m_dimension) {
     case 1:
     {
-        QString varName="Temperature (C)";
-        QString propName="Density (kg/m3)";
-        double p=ui->doubleSpinBox_4->value()*1e5;
-        double X=ui->doubleSpinBox_6->value();
-        double Tmin=ui->doubleSpinBox_10->value();
-        double Tmax=ui->doubleSpinBox_11->value();
-        double dT=ui->doubleSpinBox_12->value();
-        int numPoints=(int)((Tmax-Tmin)/dT+1);
+        QString varName;
+        int index_var=0;
+        vector<double>arrP,arrT,arrX;
+        switch (ui->comboBox_2->currentIndex()) {
+        case 0:   //temperature
+        {
+            varName="Temperature (C)";
+            index_var=0;
+            double dT=ui->doubleSpinBox_12->value();
+            double Tmin=ui->doubleSpinBox_10->value();
+            double Tmax=ui->doubleSpinBox_11->value();
+            double p0=ui->doubleSpinBox_4->value()*1e5;
+            double X0=ui->doubleSpinBox_6->value();
+            for (double T=Tmin;T<Tmax;T=T+dT) {
+                arrT.push_back(T);
+                arrP.push_back(p0);
+                arrX.push_back(X0);
+            }
 
-
+        }
+            break;
+        case 1:   //pressure
+        {
+            varName="Pressure (bar)";
+            index_var=1;
+            double dP=ui->doubleSpinBox_12->value()*1e5;
+            double Pmin=ui->doubleSpinBox_10->value()*1e5;
+            double Pmax=ui->doubleSpinBox_11->value()*1e5;
+            double T0=ui->doubleSpinBox_4->value();
+            double X0=ui->doubleSpinBox_6->value();
+            for (double P=Pmin;P<Pmax;P=P+dP) {
+                arrT.push_back(T0);
+                arrP.push_back(P);
+                arrX.push_back(X0);
+            }
+        }
+            break;
+        case 2:  //salinity
+        {
+            varName="Salinity";
+            index_var=2;
+            double dX=ui->doubleSpinBox_12->value();
+            double Xmin=ui->doubleSpinBox_10->value();
+            double Xmax=ui->doubleSpinBox_11->value();
+            double P0=ui->doubleSpinBox_4->value()*1e5;
+            double T0=ui->doubleSpinBox_6->value();
+            for (double X=Xmin;X<Xmax;X=X+dX) {
+                arrT.push_back(T0);
+                arrP.push_back(P0);
+                arrX.push_back(X);
+            }
+        }
+            break;
+        }
         // Create a table with some points in it
-          vtkSmartPointer<vtkTable> table =
-            vtkSmartPointer<vtkTable>::New();
+//          vtkSmartPointer<vtkTable> table =
+//            table=vtkSmartPointer<vtkTable>::New();
+        vtkSmartPointer<vtkFloatArray> varT =
+          vtkSmartPointer<vtkFloatArray>::New();
+        varT->SetName("Temperature(C)");
+        m_vtkTable->AddColumn(varT);
 
-          vtkSmartPointer<vtkFloatArray> arrX =
-            vtkSmartPointer<vtkFloatArray>::New();
-          arrX->SetName("Temperature (C)");
-          table->AddColumn(arrX);
+        vtkSmartPointer<vtkFloatArray> varP =
+          vtkSmartPointer<vtkFloatArray>::New();
+        varP->SetName("Pressure (bar)");
+        m_vtkTable->AddColumn(varP);
 
-          vtkSmartPointer<vtkFloatArray> arrC =
-            vtkSmartPointer<vtkFloatArray>::New();
-          arrC->SetName("Density (kg/m3)");
-          table->AddColumn(arrC);
+        vtkSmartPointer<vtkFloatArray> varX =
+          vtkSmartPointer<vtkFloatArray>::New();
+        varX->SetName("Salinity");
+        m_vtkTable->AddColumn(varX);
 
-//          vtkSmartPointer<vtkFloatArray> arrS =
-//            vtkSmartPointer<vtkFloatArray>::New();
-//          arrS->SetName("Sine");
-//          table->AddColumn(arrS);
+        vtkSmartPointer<vtkFloatArray> prop_density =
+          vtkSmartPointer<vtkFloatArray>::New();
+        prop_density->SetName("Density (kg/m3)");
+        m_vtkTable->AddColumn(prop_density);
 
-          // Fill in the table with some example values
-//          int numPoints = 69;
-//          float inc = 7.5 / (numPoints-1);
-          table->SetNumberOfRows(numPoints);
-//          for (int i = 0; i < numPoints; ++i)
-//          {
-//            table->SetValue(i, 0, i * inc);
-//            table->SetValue(i, 1, cos(i * inc));
-//            table->SetValue(i, 2, sin(i * inc));
-//          }
-//          vtkSmartPointer<vtkChartXY> chart;
-//          m_vtkChartLine->SetInputData(table);
-//          m_vtkChartView->GetRenderer()->SetBackground(1.0, 0, 1.0);
-//           m_vtkChartView->GetRenderer()->Render();
-          for (int i=0;i<numPoints;++i) {
-              double T=Tmin+i*dT;
-              SWEOS::cH2ONaCl eos(p, T, X);
-              eos.Calculate();
-              table->SetValue(i, 0, T);
-              table->SetValue(i, 1, eos.m_prop.Rho);
-          }
+        vtkSmartPointer<vtkFloatArray> prop_enthalpy =
+          vtkSmartPointer<vtkFloatArray>::New();
+        prop_enthalpy->SetName("Enthalpy (J/kg)");
+        m_vtkTable->AddColumn(prop_enthalpy);
+
+        vtkSmartPointer<vtkFloatArray> prop_viscosity =
+          vtkSmartPointer<vtkFloatArray>::New();
+        prop_viscosity->SetName("Viscosity (Pa s)");
+        m_vtkTable->AddColumn(prop_viscosity);
+
+        m_vtkTable->SetNumberOfRows(arrT.size());
+        for (size_t i=0;i<arrT.size();++i) {
+            SWEOS::cH2ONaCl eos(arrP[i],arrT[i],arrX[i]);
+            eos.Calculate();
+            m_vtkTable->SetValue(i, 0, arrT[i]);
+            m_vtkTable->SetValue(i, 1, arrP[i]);
+            m_vtkTable->SetValue(i, 2, arrX[i]);
+            m_vtkTable->SetValue(i, 3, eos.m_prop.Rho);
+            m_vtkTable->SetValue(i, 4, eos.m_prop.H);
+            m_vtkTable->SetValue(i, 5, eos.m_prop.Mu_l);
+        }
+
+        int index_prop=ui->comboBox_3->currentIndex()+3;
+
           int num_oldItems=m_vtkChartView->GetScene()->GetNumberOfItems();
           for (int i=0;i<num_oldItems;i++) {
               m_vtkChartView->GetScene()->RemoveItem(m_vtkChartView->GetScene()->GetItem(0));
@@ -321,13 +375,23 @@ void MainWindow::on_pushButton_clicked()
              vtkSmartPointer<vtkChartXY>::New();
            m_vtkChartView->GetScene()->AddItem(chart);
 
-//           (vtkChartXY*) chart0=m_vtkChartView->GetScene()->GetItem(0);
            vtkPlot *line = chart->AddPlot(vtkChart::LINE);
-           line->SetInputData(table, 0, 1);
+           line->SetInputData(m_vtkTable, index_var, index_prop);
            line->SetColor(0, 255, 0, 255);
-           line->SetWidth(1.0);
-//        ui->textEdit->append(QString::number(m_vtkChartView->GetScene()->GetNumberOfItems()));
+           line->SetWidth(3.0);
+
+//            chart->GetAxis(1)->SetRange(0, 11);
+//            chart->GetAxis(1)->SetBehavior(vtkAxis::FIXED);
+            chart->GetAxis(1)->SetTitle(m_vtkTable->GetColumn(index_var)->GetName());
+
+            chart->SetShowLegend(true);
+
+            chart->GetAxis(0)->SetTitle(m_vtkTable->GetColumn(index_prop)->GetName());
+
           m_vtkChartView->GetRenderWindow()->Render();
+
+          //print results into textedit box
+//          ui->textEdit->clear();
     }
         ui->textEdit->append("1D is comming soon");
 
@@ -351,6 +415,7 @@ void MainWindow::on_radioButton_3_clicked()
     if(ui->radioButton_3->isChecked())
     {
         m_dimension=1;
+        ui->vtkWindowTab->setCurrentIndex(0);
     }
 }
 
@@ -359,6 +424,7 @@ void MainWindow::on_radioButton_4_clicked()
     if(ui->radioButton_4->isChecked())
     {
         m_dimension=2;
+        ui->vtkWindowTab->setCurrentIndex(1);
     }
 }
 
@@ -367,5 +433,109 @@ void MainWindow::on_radioButton_5_clicked()
     if(ui->radioButton_5->isChecked())
     {
         m_dimension=3;
+        ui->vtkWindowTab->setCurrentIndex(1);
+    }
+}
+
+void MainWindow::update1dUI(QString arg)
+{
+    if(arg=="Temperature")
+    {
+        ui->label_5->setText("Pressure (bar)");
+        ui->doubleSpinBox_4->setDecimals(2);
+        ui->doubleSpinBox_4->setRange(SWEOS::PMIN/1e5, SWEOS::PMAX/1e5);
+        ui->doubleSpinBox_4->setSingleStep(1);
+        ui->doubleSpinBox_4->setValue(316);
+        ui->label_7->setText("Salinity");
+        ui->doubleSpinBox_6->setDecimals(4);
+        ui->doubleSpinBox_6->setRange(SWEOS::XMIN, SWEOS::XMAX);
+        ui->doubleSpinBox_6->setSingleStep(0.001);
+        ui->doubleSpinBox_6->setValue(0.032);
+
+        ui->label_14->setText("dT");
+        ui->doubleSpinBox_10->setDecimals(2);
+        ui->doubleSpinBox_10->setRange(SWEOS::TMIN, SWEOS::TMAX);
+        ui->doubleSpinBox_10->setSingleStep(1);
+        ui->doubleSpinBox_10->setValue(SWEOS::TMIN);
+
+        ui->doubleSpinBox_11->setDecimals(2);
+        ui->doubleSpinBox_11->setRange(SWEOS::TMIN, SWEOS::TMAX);
+        ui->doubleSpinBox_11->setSingleStep(1);
+        ui->doubleSpinBox_11->setValue(SWEOS::TMAX);
+
+        ui->doubleSpinBox_12->setDecimals(2);
+        ui->doubleSpinBox_12->setRange(0.1,100);
+        ui->doubleSpinBox_12->setSingleStep(1);
+        ui->doubleSpinBox_12->setValue(1);
+
+    }else if(arg=="Pressure")
+    {
+        ui->label_5->setText("Temperature (C)");
+        ui->doubleSpinBox_4->setDecimals(2);
+        ui->doubleSpinBox_4->setRange(SWEOS::TMIN, SWEOS::TMAX);
+        ui->doubleSpinBox_4->setSingleStep(1);
+        ui->doubleSpinBox_4->setValue(100);
+        ui->label_7->setText("Salinity");
+        ui->doubleSpinBox_6->setDecimals(4);
+        ui->doubleSpinBox_6->setRange(SWEOS::XMIN, SWEOS::XMAX);
+        ui->doubleSpinBox_6->setSingleStep(0.001);
+        ui->doubleSpinBox_6->setValue(0.032);
+
+        ui->label_14->setText("dP (bar)");
+        ui->doubleSpinBox_10->setDecimals(2);
+        ui->doubleSpinBox_10->setRange(SWEOS::PMIN/1E5, SWEOS::PMAX/1E5);
+        ui->doubleSpinBox_10->setSingleStep(1);
+        ui->doubleSpinBox_10->setValue(SWEOS::PMIN/1E5);
+
+        ui->doubleSpinBox_11->setDecimals(2);
+        ui->doubleSpinBox_11->setRange(SWEOS::PMIN/1E5, SWEOS::PMAX/1E5);
+        ui->doubleSpinBox_11->setSingleStep(1);
+        ui->doubleSpinBox_11->setValue(SWEOS::PMAX/1E5);
+
+        ui->doubleSpinBox_12->setDecimals(2);
+        ui->doubleSpinBox_12->setRange(0.1,100);
+        ui->doubleSpinBox_12->setSingleStep(1);
+        ui->doubleSpinBox_12->setValue(1);
+
+    }else if(arg=="Salinity")
+    {
+        ui->label_5->setText("Pressure (bar)");
+        ui->doubleSpinBox_4->setDecimals(2);
+        ui->doubleSpinBox_4->setRange(SWEOS::PMIN/1e5, SWEOS::PMAX/1e5);
+        ui->doubleSpinBox_4->setSingleStep(1);
+        ui->doubleSpinBox_4->setValue(316);
+        ui->label_7->setText("Temperature (C)");
+        ui->doubleSpinBox_6->setDecimals(2);
+        ui->doubleSpinBox_6->setRange(SWEOS::TMIN, SWEOS::TMAX);
+        ui->doubleSpinBox_6->setSingleStep(1);
+        ui->doubleSpinBox_6->setValue(100);
+
+        ui->label_14->setText("dX");
+        ui->doubleSpinBox_10->setDecimals(4);
+        ui->doubleSpinBox_10->setRange(SWEOS::XMIN, SWEOS::XMAX);
+        ui->doubleSpinBox_10->setSingleStep(0.001);
+        ui->doubleSpinBox_10->setValue(0.0001);
+
+        ui->doubleSpinBox_11->setDecimals(4);
+        ui->doubleSpinBox_11->setRange(SWEOS::XMIN, SWEOS::XMAX);
+        ui->doubleSpinBox_11->setSingleStep(0.001);
+        ui->doubleSpinBox_11->setValue(SWEOS::XMAX);
+
+        ui->doubleSpinBox_12->setDecimals(4);
+        ui->doubleSpinBox_12->setRange(0.0001,0.9);
+        ui->doubleSpinBox_12->setSingleStep(0.001);
+        ui->doubleSpinBox_12->setValue(0.1);
+    }else
+    {
+        std::cout<<"error: update1dUI, no such item: "<<arg.toStdString()<<std::endl;
+    }
+}
+void MainWindow::on_comboBox_2_activated(const QString &arg1)
+{
+    switch (m_dimension) {
+        case 1:
+            update1dUI(arg1);
+        break;
+
     }
 }

@@ -21,6 +21,8 @@
 #include <QDateTime>
 #include <QTime>
 #include <QMessageBox>
+#include <vector>
+using namespace std;
 
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
@@ -33,6 +35,7 @@
 #include <vtkContextView.h>
 #include <vtkContextScene.h>
 #include <vtkPen.h>
+#include <vtkAxis.h>
 
 #define CALCULATION_SINGLE_POINT 1
 #define CALCULATION_MULTI_POINTS 2
@@ -74,7 +77,7 @@ protected:
   int m_dimension, m_calculationMode_123Dim;
 //    vtk variable
   vtkSmartPointer<vtkContextView> m_vtkChartView;
-
+    vtkSmartPointer<vtkTable> m_vtkTable;
 protected slots:
 
 private slots:
@@ -99,6 +102,8 @@ private slots:
 
   void on_radioButton_5_clicked();
 
+  void on_comboBox_2_activated(const QString &arg1);
+    void update1dUI(QString arg);
 private:
 
   vtkSmartPointer<vtkQtTableView>         TableView;
