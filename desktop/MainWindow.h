@@ -82,6 +82,7 @@ protected:
   vtkSmartPointer<vtkContextView> m_vtkChartView;
   vtkSmartPointer<vtkGenericOpenGLRenderWindow> m_renderWindow;
     vtkSmartPointer<vtkTable> m_vtkTable;
+  vtkSmartPointer<vtkStructuredGrid> m_structuredGrid;
 protected slots:
 
 private slots:
@@ -108,6 +109,7 @@ private slots:
 
   void on_comboBox_2_activated(const QString &arg1);
     void update1dUI(QString arg);
+    void initRenderWindow();
 private:
 
   vtkSmartPointer<vtkQtTableView>         TableView;

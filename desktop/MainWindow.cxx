@@ -41,6 +41,7 @@
 #include <vtkRendererCollection.h>
 
 
+
 // Constructor
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -51,18 +52,56 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-//  // Qt Table View
-//  this->TableView = vtkSmartPointer<vtkQtTableView>::New();
+    //  // Qt Table View
+    //  this->TableView = vtkSmartPointer<vtkQtTableView>::New();
 
     m_IndependentVar1_old=ui->doubleSpinBox->value()*1e5;
     m_IndependentVar2_old=ui->doubleSpinBox_2->value();
     m_IndependentVar3_old=ui->doubleSpinBox_3->value();
 
-    m_vtkTable=vtkSmartPointer<vtkTable>::New();
     //default set 1D UI
     update1dUI("Temperature");
 
 
+    m_vtkTable=vtkSmartPointer<vtkTable>::New();
+    m_structuredGrid = vtkSmartPointer<vtkStructuredGrid>::New();
+    // ------------renderwindow------------
+    m_renderWindow=vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+    this->ui->qvtkWidget2->SetRenderWindow(m_renderWindow);
+    initRenderWindow();
+
+    // ------2D chart---------
+    // Set up the view
+  m_vtkChartView=vtkSmartPointer<vtkContextView>::New();
+  m_vtkChartView->GetRenderer()->SetBackground(1.0, 1.0, 1.0);
+  vtkSmartPointer<vtkChartXY> chart = 
+    vtkSmartPointer<vtkChartXY>::New();
+  m_vtkChartView->GetScene()->AddItem(chart);
+  // 2. key for 2D charts
+   m_vtkChartView->SetRenderWindow(this->ui->qvtkWidget->GetRenderWindow()); //must be here
+
+  // Just a bit of Qt interest: Culling off the
+  // point data and handing it to a vtkQtTableView
+  // vtkNew<vtkDataObjectToTable> toTable;
+  // toTable->SetInputConnection(elevation->GetOutputPort());
+  // toTable->SetFieldType(vtkDataObjectToTable::POINT_DATA);
+
+  // Here we take the end of the VTK pipeline and give it to a Qt View
+  // this->TableView->SetRepresentationFromInputConnection(toTable->GetOutputPort());
+
+  // Set up action signals and slots
+  connect(this->ui->actionOpenFile, SIGNAL(triggered()), this, SLOT(slotOpenFile()));
+  connect(this->ui->actionExit, SIGNAL(triggered()), this, SLOT(slotExit()));
+
+};
+
+MainWindow::~MainWindow()
+{
+  // The smart pointers should clean up for up
+
+}
+void MainWindow::initRenderWindow()
+{
     // Geometry
     vtkNew<vtkVectorText> text;
     text->SetText("Salt Water EOS");
@@ -87,63 +126,9 @@ MainWindow::MainWindow(QWidget *parent)
     // ren->AddActor(test());
 
     ren->SetBackground( 0.1, 0.2, 0.4 );
-    m_renderWindow=vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
-    this->ui->qvtkWidget2->SetRenderWindow(m_renderWindow);
     this->ui->qvtkWidget2->GetRenderWindow()->AddRenderer(ren);
     this->ui->qvtkWidget2->GetRenderWindow()->Render();
-
-// ------2D line
-
-
-  // Set up the view
-//  vtkSmartPointer<vtkContextView> view =
-//    vtkSmartPointer<vtkContextView>::New();
-  m_vtkChartView=vtkSmartPointer<vtkContextView>::New();
-  m_vtkChartView->GetRenderer()->SetBackground(1.0, 1.0, 1.0);
-  // Add multiple line plots, setting the colors etc
-  vtkSmartPointer<vtkChartXY> chart = 
-    vtkSmartPointer<vtkChartXY>::New();
-  m_vtkChartView->GetScene()->AddItem(chart);
-//  vtkPlot *line = chart->AddPlot(vtkChart::LINE);
-//  line->SetInputData(table, 0, 1);
-//  line->SetColor(0, 255, 0, 255);
-//  line->SetWidth(1.0);
-//  line = chart->AddPlot(vtkChart::LINE);
-//  line->SetInputData(table, 0, 2);
-//  line->SetColor(255, 0, 0, 255);
-//  line->SetWidth(5.0);
-  // VTK/Qt wedded
-//  vtkNew<vtkGenericOpenGLRenderWindow> renderWindow;
-//  this->ui->qvtkWidget->SetRenderWindow(renderWindow);
-//this->ui->qvtkWidget->GetRenderWindow()->AddRenderer(ren);
-
-  // 2. key for 2D charts
-   m_vtkChartView->SetRenderWindow(this->ui->qvtkWidget->GetRenderWindow()); //must be here
-
-
-
-
-  // Just a bit of Qt interest: Culling off the
-  // point data and handing it to a vtkQtTableView
-  // vtkNew<vtkDataObjectToTable> toTable;
-  // toTable->SetInputConnection(elevation->GetOutputPort());
-  // toTable->SetFieldType(vtkDataObjectToTable::POINT_DATA);
-
-  // Here we take the end of the VTK pipeline and give it to a Qt View
-  // this->TableView->SetRepresentationFromInputConnection(toTable->GetOutputPort());
-
-  // Set up action signals and slots
-  connect(this->ui->actionOpenFile, SIGNAL(triggered()), this, SLOT(slotOpenFile()));
-  connect(this->ui->actionExit, SIGNAL(triggered()), this, SLOT(slotExit()));
-
-};
-
-MainWindow::~MainWindow()
-{
-  // The smart pointers should clean up for up
-
 }
-
 // Action to be taken upon file open
 void MainWindow::slotOpenFile()
 {
@@ -398,60 +383,67 @@ void MainWindow::on_pushButton_clicked()
         break;
     case 2:
     {
-        vtkSmartPointer<vtkStructuredGrid> structuredGrid =
-            vtkSmartPointer<vtkStructuredGrid>::New();
+        double X0 = ui->doubleSpinBox_6->value();
+        double Tmin=ui->doubleSpinBox_10->value();
+        double Tmax=ui->doubleSpinBox_11->value();
+        double dT=ui->doubleSpinBox_12->value();
+        double Pmin=ui->doubleSpinBox_15->value();
+        double Pmax=ui->doubleSpinBox_14->value();
+        double dP=ui->doubleSpinBox_13->value();
+        vector<double> vectorT, vectorP;
+        for (double T=Tmin; T<Tmax;T=T+dT)
+        {
+          vectorT.push_back(T);
+        }
+        for (double P=Pmin; P<Pmax; P=P+dP)
+        {
+          vectorP.push_back(P);
+        }
+        
+        vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 
-          vtkSmartPointer<vtkPoints> points =
-            vtkSmartPointer<vtkPoints>::New();
-
-          unsigned int gridSize = 8;
-          unsigned int counter = 0;
+          // unsigned int gridSize = 8;
+          // unsigned int counter = 0;
           // Create a 5x5 grid of points
-          for(unsigned int j = 0; j < gridSize; j++)
+          for(size_t j = 0; j < vectorT.size(); j++)
           {
-            for(unsigned int i = 0; i < gridSize; i++)
+            for(size_t i = 0; i < vectorP.size(); i++)
             {
-              if(i == 3 && j == 3) // Make one point higher than the rest
-              {
-                points->InsertNextPoint(i, j, 2);
-            std::cout << "The different point is number " << counter << std::endl;
-              }
-              else
-              {
-                points->InsertNextPoint(i, j, 0); // Make most of the points the same height
-              }
-              counter++;
+              SWEOS::cH2ONaCl eos(vectorP[i],vectorT[j],X0);
+              eos.Calculate();
+              points->InsertNextPoint(i, j, eos.m_prop.Rho);
+              // if(i == 3 && j == 3) // Make one point higher than the rest
+              // {
+              //   points->InsertNextPoint(i, j, 2);
+              //   std::cout << "The different point is number " << counter << std::endl;
+              // }
+              // else
+              // {
+              //   points->InsertNextPoint(i, j, 0); // Make most of the points the same height
+              // }
+//              counter++;
             }
           }
 
           // Specify the dimensions of the grid
-          structuredGrid->SetDimensions(gridSize,gridSize,1);
+          m_structuredGrid->SetDimensions(vectorP.size(),vectorT.size(),1);
 
-          structuredGrid->SetPoints(points);
+          m_structuredGrid->SetPoints(points);
 
-          structuredGrid->BlankPoint(27);
-          structuredGrid->Modified();
+          m_structuredGrid->BlankPoint(27);
+          m_structuredGrid->Modified();
 
           // Create a mapper and actor
-          vtkSmartPointer<vtkDataSetMapper> gridMapper =
-            vtkSmartPointer<vtkDataSetMapper>::New();
-          gridMapper->SetInputData(structuredGrid);
+          vtkSmartPointer<vtkDataSetMapper> gridMapper = vtkSmartPointer<vtkDataSetMapper>::New();
+          gridMapper->SetInputData(m_structuredGrid);
 
-          vtkSmartPointer<vtkActor> gridActor =
-            vtkSmartPointer<vtkActor>::New();
+          vtkSmartPointer<vtkActor> gridActor = vtkSmartPointer<vtkActor>::New();
           gridActor->SetMapper(gridMapper);
           gridActor->GetProperty()->EdgeVisibilityOn();
           gridActor->GetProperty()->SetEdgeColor(0,0,1);
 
           // Create a renderer, render window, and interactor
-          vtkSmartPointer<vtkRenderer> renderer =
-            vtkSmartPointer<vtkRenderer>::New();
-//          vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow =
-//            vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
-    //      renderWindow->AddRenderer(renderer);
-    //      vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor =
-    //        vtkSmartPointer<vtkRenderWindowInteractor>::New();
-    //      renderWindowInteractor->SetRenderWindow(renderWindow);
+          vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
 
           // Add the actor to the scene
           renderer->AddActor(gridActor);

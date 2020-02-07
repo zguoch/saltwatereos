@@ -458,7 +458,7 @@
             <rect>
              <x>470</x>
              <y>-1</y>
-             <width>151</width>
+             <width>311</width>
              <height>111</height>
             </rect>
            </property>
@@ -468,14 +468,14 @@
            <widget class="QLabel" name="label_14">
             <property name="geometry">
              <rect>
-              <x>20</x>
+              <x>10</x>
               <y>50</y>
-              <width>21</width>
+              <width>41</width>
               <height>20</height>
              </rect>
             </property>
             <property name="text">
-             <string>dT:</string>
+             <string>dT(C):</string>
             </property>
            </widget>
            <widget class="QDoubleSpinBox" name="doubleSpinBox_10">
@@ -484,7 +484,7 @@
             </property>
             <property name="geometry">
              <rect>
-              <x>40</x>
+              <x>50</x>
               <y>80</y>
               <width>91</width>
               <height>22</height>
@@ -522,7 +522,7 @@
             </property>
             <property name="geometry">
              <rect>
-              <x>40</x>
+              <x>50</x>
               <y>50</y>
               <width>91</width>
               <height>22</height>
@@ -547,7 +547,7 @@
             </property>
             <property name="geometry">
              <rect>
-              <x>40</x>
+              <x>50</x>
               <y>20</y>
               <width>91</width>
               <height>22</height>
@@ -577,6 +577,120 @@
             </property>
             <property name="text">
              <string>Max:</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_15">
+            <property name="geometry">
+             <rect>
+              <x>151</x>
+              <y>50</y>
+              <width>51</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>dP(bar):</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_16">
+            <property name="geometry">
+             <rect>
+              <x>150</x>
+              <y>80</y>
+              <width>31</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Min:</string>
+            </property>
+           </widget>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_13">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="geometry">
+             <rect>
+              <x>200</x>
+              <y>50</y>
+              <width>91</width>
+              <height>22</height>
+             </rect>
+            </property>
+            <property name="minimum">
+             <double>0.100000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>100.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>1.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>1.000000000000000</double>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_17">
+            <property name="geometry">
+             <rect>
+              <x>150</x>
+              <y>20</y>
+              <width>31</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Max:</string>
+            </property>
+           </widget>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_14">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="geometry">
+             <rect>
+              <x>200</x>
+              <y>20</y>
+              <width>91</width>
+              <height>22</height>
+             </rect>
+            </property>
+            <property name="minimum">
+             <double>5.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>1000.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>1.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>400.000000000000000</double>
+            </property>
+           </widget>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_15">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="geometry">
+             <rect>
+              <x>200</x>
+              <y>80</y>
+              <width>91</width>
+              <height>22</height>
+             </rect>
+            </property>
+            <property name="minimum">
+             <double>5.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>1000.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>1.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>5.000000000000000</double>
             </property>
            </widget>
           </widget>
