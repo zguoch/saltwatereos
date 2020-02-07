@@ -12,7 +12,7 @@
 
 #include <vtkDataObjectToTable.h>
 #include <vtkElevationFilter.h>
-#include "vtkGenericOpenGLRenderWindow.h"
+
 #include <vtkNew.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkQtTableView.h>
@@ -87,9 +87,10 @@ MainWindow::MainWindow(QWidget *parent)
     // ren->AddActor(test());
 
     ren->SetBackground( 0.1, 0.2, 0.4 );
-    vtkNew<vtkGenericOpenGLRenderWindow> renderWindow2;
-    this->ui->qvtkWidget2->SetRenderWindow(renderWindow2);
+    m_renderWindow=vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+    this->ui->qvtkWidget2->SetRenderWindow(m_renderWindow);
     this->ui->qvtkWidget2->GetRenderWindow()->AddRenderer(ren);
+    this->ui->qvtkWidget2->GetRenderWindow()->Render();
 
 // ------2D line
 
@@ -112,8 +113,8 @@ MainWindow::MainWindow(QWidget *parent)
 //  line->SetColor(255, 0, 0, 255);
 //  line->SetWidth(5.0);
   // VTK/Qt wedded
-  vtkNew<vtkGenericOpenGLRenderWindow> renderWindow;
-  this->ui->qvtkWidget->SetRenderWindow(renderWindow);
+//  vtkNew<vtkGenericOpenGLRenderWindow> renderWindow;
+//  this->ui->qvtkWidget->SetRenderWindow(renderWindow);
 //this->ui->qvtkWidget->GetRenderWindow()->AddRenderer(ren);
 
   // 2. key for 2D charts
@@ -320,8 +321,8 @@ void MainWindow::on_pushButton_clicked()
             break;
         }
         // Create a table with some points in it
-//          vtkSmartPointer<vtkTable> table =
-//            table=vtkSmartPointer<vtkTable>::New();
+    //          vtkSmartPointer<vtkTable> table =
+    //            table=vtkSmartPointer<vtkTable>::New();
         vtkSmartPointer<vtkFloatArray> varT =
           vtkSmartPointer<vtkFloatArray>::New();
         varT->SetName("Temperature(C)");
@@ -380,8 +381,8 @@ void MainWindow::on_pushButton_clicked()
            line->SetColor(0, 255, 0, 255);
            line->SetWidth(3.0);
 
-//            chart->GetAxis(1)->SetRange(0, 11);
-//            chart->GetAxis(1)->SetBehavior(vtkAxis::FIXED);
+            //            chart->GetAxis(1)->SetRange(0, 11);
+            //            chart->GetAxis(1)->SetBehavior(vtkAxis::FIXED);
             chart->GetAxis(1)->SetTitle(m_vtkTable->GetColumn(index_var)->GetName());
 
             chart->SetShowLegend(true);
@@ -391,15 +392,77 @@ void MainWindow::on_pushButton_clicked()
           m_vtkChartView->GetRenderWindow()->Render();
 
           //print results into textedit box
-//          ui->textEdit->clear();
+    //          ui->textEdit->clear();
     }
-        ui->textEdit->append("1D is comming soon");
 
         break;
     case 2:
     {
+        vtkSmartPointer<vtkStructuredGrid> structuredGrid =
+            vtkSmartPointer<vtkStructuredGrid>::New();
 
+          vtkSmartPointer<vtkPoints> points =
+            vtkSmartPointer<vtkPoints>::New();
 
+          unsigned int gridSize = 8;
+          unsigned int counter = 0;
+          // Create a 5x5 grid of points
+          for(unsigned int j = 0; j < gridSize; j++)
+          {
+            for(unsigned int i = 0; i < gridSize; i++)
+            {
+              if(i == 3 && j == 3) // Make one point higher than the rest
+              {
+                points->InsertNextPoint(i, j, 2);
+            std::cout << "The different point is number " << counter << std::endl;
+              }
+              else
+              {
+                points->InsertNextPoint(i, j, 0); // Make most of the points the same height
+              }
+              counter++;
+            }
+          }
+
+          // Specify the dimensions of the grid
+          structuredGrid->SetDimensions(gridSize,gridSize,1);
+
+          structuredGrid->SetPoints(points);
+
+          structuredGrid->BlankPoint(27);
+          structuredGrid->Modified();
+
+          // Create a mapper and actor
+          vtkSmartPointer<vtkDataSetMapper> gridMapper =
+            vtkSmartPointer<vtkDataSetMapper>::New();
+          gridMapper->SetInputData(structuredGrid);
+
+          vtkSmartPointer<vtkActor> gridActor =
+            vtkSmartPointer<vtkActor>::New();
+          gridActor->SetMapper(gridMapper);
+          gridActor->GetProperty()->EdgeVisibilityOn();
+          gridActor->GetProperty()->SetEdgeColor(0,0,1);
+
+          // Create a renderer, render window, and interactor
+          vtkSmartPointer<vtkRenderer> renderer =
+            vtkSmartPointer<vtkRenderer>::New();
+//          vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow =
+//            vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+    //      renderWindow->AddRenderer(renderer);
+    //      vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor =
+    //        vtkSmartPointer<vtkRenderWindowInteractor>::New();
+    //      renderWindowInteractor->SetRenderWindow(renderWindow);
+
+          // Add the actor to the scene
+          renderer->AddActor(gridActor);
+          renderer->SetBackground(.3, .6, .3); // Background color green
+
+        // before adding new renderer, remove all the old renderer, always keep only renderer in m_renderwindow
+        m_renderWindow->GetRenderers()->RemoveAllItems();
+        this->ui->qvtkWidget2->GetRenderWindow()->AddRenderer(renderer);
+        // Render and interact
+        this->ui->qvtkWidget2->GetRenderWindow()->Render();
+        // ui->textEdit->append(QString::number(m_renderWindow->GetRenderers()->GetNumberOfItems()));
     }
         ui->textEdit->append("2D is comming soon");
         break;

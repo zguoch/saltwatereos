@@ -36,6 +36,9 @@ using namespace std;
 #include <vtkContextScene.h>
 #include <vtkPen.h>
 #include <vtkAxis.h>
+#include <vtkStructuredGrid.h>
+#include <vtkDataSetMapper.h>
+#include <vtkGenericOpenGLRenderWindow.h>
 
 #define CALCULATION_SINGLE_POINT 1
 #define CALCULATION_MULTI_POINTS 2
@@ -77,6 +80,7 @@ protected:
   int m_dimension, m_calculationMode_123Dim;
 //    vtk variable
   vtkSmartPointer<vtkContextView> m_vtkChartView;
+  vtkSmartPointer<vtkGenericOpenGLRenderWindow> m_renderWindow;
     vtkSmartPointer<vtkTable> m_vtkTable;
 protected slots:
 
