@@ -19,7 +19,7 @@ int main( int argc, char** argv )
 {
   // needed to ensure appropriate OpenGL context is created for VTK rendering.
   QSurfaceFormat::setDefaultFormat(QVTKOpenGLWidget::defaultFormat());   // must be here
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    // QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
   // QT Stuff
   QApplication app( argc, argv );
