@@ -1,0 +1,4 @@
+/Users/zguo/MyData/Research/3-CodeProject/EOS_H2ONaCl/desktop/CMakeFiles/rebuild_cache.dir
+/Users/zguo/MyData/Research/3-CodeProject/EOS_H2ONaCl/desktop/CMakeFiles/edit_cache.dir
+/Users/zguo/MyData/Research/3-CodeProject/EOS_H2ONaCl/desktop/CMakeFiles/swEOS.dir
+/Users/zguo/MyData/Research/3-CodeProject/EOS_H2ONaCl/desktop/CMakeFiles/swEOS_autogen.dir

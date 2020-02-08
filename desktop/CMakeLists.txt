@@ -83,3 +83,6 @@ add_executable(${PROGRAM_NAME}  MACOSX_BUNDLE
   ${Srcs} ${Hdrs} ${UI_Srcs} ${MOC_Hdrs} ${QRC_Srcs})
 target_link_libraries(${PROGRAM_NAME} Qt5::Core Qt5::Gui Qt5::Widgets eosH2ONaCl freesteam)
 target_link_libraries(${PROGRAM_NAME} ${VTK_LIBRARIES})
+
+# solve font blurry on UI
+# set_target_properties(${PROGRAM_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "/Users/zguo/MyData/Research/3-CodeProject/EOS_H2ONaCl/desktop/Info.plist")

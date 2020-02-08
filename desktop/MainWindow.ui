@@ -809,7 +809,7 @@
            </attribute>
            <layout class="QGridLayout" name="gridLayout_2">
             <item row="0" column="0">
-             <widget class="QVTKOpenGLWidget" name="qvtkWidget" native="true"/>
+             <widget class="QVTKOpenGLNativeWidget" name="qvtkWidget" native="true"/>
             </item>
            </layout>
           </widget>
@@ -819,7 +819,7 @@
            </attribute>
            <layout class="QGridLayout" name="gridLayout_2">
             <item row="0" column="0">
-             <widget class="QVTKOpenGLWidget" name="qvtkWidget2" native="true"/>
+             <widget class="QVTKOpenGLNativeWidget" name="qvtkWidget2" native="true"/>
             </item>
            </layout>
           </widget>
@@ -940,9 +940,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QVTKOpenGLWidget</class>
+   <class>QVTKOpenGLNativeWidget</class>
    <extends>QWidget</extends>
-   <header>QVTKOpenGLWidget.h</header>
+   <header>QVTKOpenGLNativeWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

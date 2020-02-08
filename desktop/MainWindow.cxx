@@ -93,6 +93,9 @@ MainWindow::MainWindow(QWidget *parent)
   connect(this->ui->actionOpenFile, SIGNAL(triggered()), this, SLOT(slotOpenFile()));
   connect(this->ui->actionExit, SIGNAL(triggered()), this, SLOT(slotExit()));
 
+
+    // init plot
+  on_pushButton_clicked();
 };
 
 MainWindow::~MainWindow()
