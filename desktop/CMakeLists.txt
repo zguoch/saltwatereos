@@ -85,4 +85,4 @@ target_link_libraries(${PROGRAM_NAME} Qt5::Core Qt5::Gui Qt5::Widgets eosH2ONaCl
 target_link_libraries(${PROGRAM_NAME} ${VTK_LIBRARIES})
 
 # solve font blurry on UI
-# set_target_properties(${PROGRAM_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "/Users/zguo/MyData/Research/3-CodeProject/EOS_H2ONaCl/desktop/Info.plist")
+set_target_properties(${PROGRAM_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "/Users/zguo/MyData/Research/3-CodeProject/EOS_H2ONaCl/desktop/Info.plist")

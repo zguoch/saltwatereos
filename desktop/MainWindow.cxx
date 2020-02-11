@@ -364,16 +364,57 @@ void MainWindow::on_pushButton_clicked()
              vtkSmartPointer<vtkChartXY>::New();
            m_vtkChartView->GetScene()->AddItem(chart);
 
+           vtkNew<vtkNamedColors> colors;
            vtkPlot *line = chart->AddPlot(vtkChart::LINE);
            line->SetInputData(m_vtkTable, index_var, index_prop);
-           line->SetColor(0, 255, 0, 255);
+           vtkColor3d color3d = colors->GetColor3d("banana");
+           line->SetColor(color3d.GetRed(), color3d.GetGreen(), color3d.GetBlue());
            line->SetWidth(3.0);
+
+           int fontsize=30;
 
             //            chart->GetAxis(1)->SetRange(0, 11);
             //            chart->GetAxis(1)->SetBehavior(vtkAxis::FIXED);
             chart->GetAxis(1)->SetTitle(m_vtkTable->GetColumn(index_var)->GetName());
+            // chart->GetAxis(1)->GetLabelProperties()->SetColor(1,0,0);
+            chart->GetAxis(1)->GetLabelProperties()->SetFontSize(fontsize);
+//            chart->GetAxis(1)->GetLabelProperties()->SetFontFamilyToArial();
+//            chart->GetAxis(1)->SetMinimum(273);
+//            chart->GetAxis(1)->SetMaximum(573);
+//            chart->GetAxis(1)->SetNumberOfTicks(5);
+            chart->GetAxis(1)->GetTitleProperties()->SetFontSize(fontsize);
+            chart->GetAxis(1)->GetTitleProperties()->SetBold(false);
+            chart->GetAxis(1)->GetTitleProperties()->SetFontFamilyToArial();
+//            chart->GetAxis(1)->SetTickLabelAlgorithm(vtkAxis::TICK_SIMPLE);
+//            chart->GetAxis(1)->RecalculateTickSpacing();
+//            chart->GetAxis(1)->SetBehavior(2);
+
+
+//            vtkAxisActor2D *axesX = vtkAxisActor2D::New();
+//            axesX->SetTitle("Test");
+//            axesX->SetTickLength(2);
+//            axesX->SetRange(0, 10);
+//            axesX->SetPoint1(0, 0);
+//            axesX->SetPoint2(10, 0);
+//            m_vtkChartView->AddViewProp(axesX);
+
+            chart->GetAxis(0)->GetLabelProperties()->SetFontSize(fontsize);
+            chart->GetAxis(0)->GetLabelProperties()->SetFontFamilyToArial();
+            chart->GetAxis(0)->SetLabelFormat("%.0f");
+//            chart->GetAxis(0)->SetTickLabelAlgorithm(vtkAxis::TICK_SIMPLE);
+//            chart->GetAxis(0)->SetMinimum(273);
+//            chart->GetAxis(0)->SetMaximum(573);
+//            chart->GetAxis(0)->SetNumberOfTicks(5);
+            chart->GetAxis(0)->GetTitleProperties()->SetFontSize(fontsize);
+            chart->GetAxis(0)->GetTitleProperties()->SetBold(false);
+            chart->GetAxis(0)->GetTitleProperties()->SetFontFamilyToArial();
+
+            chart->GetTooltip()->GetTextProperties()->SetFontSize(fontsize);
+
 
             chart->SetShowLegend(true);
+            chart->GetLegend()->GetLabelProperties()->SetFontSize(fontsize);
+
 
             chart->GetAxis(0)->SetTitle(m_vtkTable->GetColumn(index_prop)->GetName());
 

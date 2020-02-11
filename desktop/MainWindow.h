@@ -30,15 +30,25 @@ using namespace std;
 #include <vtkSmartPointer.h>
 #include <vtkChartXY.h>
 #include <vtkTable.h>
+#include <vtkDoubleArray.h>
 #include <vtkPlot.h>
 #include <vtkFloatArray.h>
 #include <vtkContextView.h>
 #include <vtkContextScene.h>
 #include <vtkPen.h>
 #include <vtkAxis.h>
+#include <vtkTextProperty.h>
+#include <vtkAxisActor2D.h>
+#include <vtkViewport.h>
+#include <vtkAxisActor.h>
+#include <vtkXYPlotActor.h>
+#include <vtkFieldData.h>
+#include <vtkNamedColors.h>
 #include <vtkStructuredGrid.h>
 #include <vtkDataSetMapper.h>
 #include <vtkGenericOpenGLRenderWindow.h>
+#include <vtkTooltipItem.h>
+#include <vtkChartLegend.h>
 
 #define CALCULATION_SINGLE_POINT 1
 #define CALCULATION_MULTI_POINTS 2
