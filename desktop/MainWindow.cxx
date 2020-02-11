@@ -434,7 +434,7 @@ void MainWindow::on_pushButton_clicked()
         double Pmin=ui->doubleSpinBox_15->value();
         double Pmax=ui->doubleSpinBox_14->value();
         double dP=ui->doubleSpinBox_13->value();
-        std::string xlabel="Temperature (C)";
+        std::string xlabel="Temperature (K)";
         std::string ylabel="Pressure (bar)";
         std::string zlabel="Salinity";
         vector<double> vectorT, vectorP;
@@ -489,17 +489,18 @@ void MainWindow::on_pushButton_clicked()
         vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
         // Add the actor to the scene
         renderer->AddActor(gridActor);
-        gridActor->SetScale(3,1,1);
+        gridActor->SetScale((SWEOS::PMAX-SWEOS::PMIN)/1e5/(SWEOS::TMAX-SWEOS::TMIN),1,(SWEOS::PMAX-SWEOS::PMIN)/1e5/(SWEOS::XMAX-SWEOS::XMIN));
+
         //axis actor
         vtkSmartPointer<vtkCubeAxesActor> axis=vtkSmartPointer<vtkCubeAxesActor>::New();
         axis->SetCamera(renderer->GetActiveCamera());
         axis->SetBounds(gridActor->GetBounds());
 
         renderer->AddActor(axis);
-        InitCubeAxes(axis,vtkBoundingBox(gridActor->GetBounds()),vtkBoundingBox(m_structuredGrid->GetBounds()),xlabel,ylabel,zlabel,1000);
+        InitCubeAxes(axis,vtkBoundingBox(gridActor->GetBounds()),vtkBoundingBox(m_structuredGrid->GetBounds()),xlabel,ylabel,zlabel);
         renderer->SetBackground(.3, .6, .3); // Background color green
         SetCamera(renderer,vtkBoundingBox(gridActor->GetBounds()));
-
+        axis->SetUse2DMode(1); //set font size
         // before adding new renderer, remove all the old renderer, always keep only renderer in m_renderwindow
         m_renderWindow->GetRenderers()->RemoveAllItems();
         this->ui->qvtkWidget2->GetRenderWindow()->AddRenderer(renderer);
