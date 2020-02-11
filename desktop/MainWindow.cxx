@@ -434,6 +434,9 @@ void MainWindow::on_pushButton_clicked()
         double Pmin=ui->doubleSpinBox_15->value();
         double Pmax=ui->doubleSpinBox_14->value();
         double dP=ui->doubleSpinBox_13->value();
+        std::string xlabel="Temperature (C)";
+        std::string ylabel="Pressure (bar)";
+        std::string zlabel="Salinity";
         vector<double> vectorT, vectorP;
         for (double T=Tmin; T<Tmax;T=T+dT)
         {
@@ -443,62 +446,70 @@ void MainWindow::on_pushButton_clicked()
         {
           vectorP.push_back(P);
         }
-        
+
         vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+        vtkSmartPointer<vtkDoubleArray> doublevalue = vtkSmartPointer<vtkDoubleArray>::New();
+        doublevalue->SetNumberOfComponents(1);
+        doublevalue->SetName("Density");
+        for(size_t j = 0; j < vectorP.size(); j++)
+        {
+        for(size_t i = 0; i < vectorT.size(); i++)
+        {
+        SWEOS::cH2ONaCl eos(vectorP[j],vectorT[i],X0);
+        eos.Calculate();
+        points->InsertNextPoint(vectorT[i],vectorP[j],X0);
+        doublevalue->InsertNextValue(eos.m_prop.Rho);
+        }
+        }
+        // Specify the dimensions of the grid
+        m_structuredGrid->SetDimensions(vectorT.size(),vectorP.size(),1);
+        m_structuredGrid->SetPoints(points);
+        m_structuredGrid->GetPointData()->SetScalars(doublevalue);
 
-          // unsigned int gridSize = 8;
-          // unsigned int counter = 0;
-          // Create a 5x5 grid of points
-          for(size_t j = 0; j < vectorT.size(); j++)
-          {
-            for(size_t i = 0; i < vectorP.size(); i++)
-            {
-              SWEOS::cH2ONaCl eos(vectorP[i],vectorT[j],X0);
-              eos.Calculate();
-              points->InsertNextPoint(i, j, eos.m_prop.Rho);
-              // if(i == 3 && j == 3) // Make one point higher than the rest
-              // {
-              //   points->InsertNextPoint(i, j, 2);
-              //   std::cout << "The different point is number " << counter << std::endl;
-              // }
-              // else
-              // {
-              //   points->InsertNextPoint(i, j, 0); // Make most of the points the same height
-              // }
-//              counter++;
-            }
-          }
 
-          // Specify the dimensions of the grid
-          m_structuredGrid->SetDimensions(vectorP.size(),vectorT.size(),1);
+        //          vtkSmartPointer<vtkStructuredGridWriter> writer = vtkSmartPointer<vtkStructuredGridWriter>::New();
+        //          writer->SetFileName("/Users/zguo/Downloads/rho.vtk");
+        //          writer->SetInputData(m_structuredGrid);
+        //          writer->Write();
 
-          m_structuredGrid->SetPoints(points);
 
-          // m_structuredGrid->BlankPoint(27);
-          // m_structuredGrid->Modified();
+        // Create a mapper and actor
+        vtkSmartPointer<vtkDataSetMapper> gridMapper = vtkSmartPointer<vtkDataSetMapper>::New();
+        gridMapper->SetInputData(m_structuredGrid);
+        gridMapper->SetScalarRange(m_structuredGrid->GetScalarRange());
+        vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::New();
+        lut->SetNumberOfColors(256);
+        lut->SetHueRange(0.0,0.667);
+        gridMapper->SetLookupTable(lut);
+        vtkSmartPointer<vtkActor> gridActor = vtkSmartPointer<vtkActor>::New();
+        gridActor->SetMapper(gridMapper);
 
-          // Create a mapper and actor
-          vtkSmartPointer<vtkDataSetMapper> gridMapper = vtkSmartPointer<vtkDataSetMapper>::New();
-          gridMapper->SetInputData(m_structuredGrid);
 
-          vtkSmartPointer<vtkActor> gridActor = vtkSmartPointer<vtkActor>::New();
-          gridActor->SetMapper(gridMapper);
-          gridActor->GetProperty()->EdgeVisibilityOn();
-          gridActor->GetProperty()->SetEdgeColor(0,0,1);
+        // Create a renderer, render window, and interactor
+        vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
+        // Add the actor to the scene
+        renderer->AddActor(gridActor);
+        gridActor->SetScale(3,1,1);
+        //axis actor
+        vtkSmartPointer<vtkCubeAxesActor> axis=vtkSmartPointer<vtkCubeAxesActor>::New();
+        axis->SetCamera(renderer->GetActiveCamera());
+        axis->SetBounds(gridActor->GetBounds());
 
-          // Create a renderer, render window, and interactor
-          vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
-
-          // Add the actor to the scene
-          renderer->AddActor(gridActor);
-          renderer->SetBackground(.3, .6, .3); // Background color green
+        renderer->AddActor(axis);
+        InitCubeAxes(axis,vtkBoundingBox(gridActor->GetBounds()),vtkBoundingBox(m_structuredGrid->GetBounds()),xlabel,ylabel,zlabel,1000);
+        renderer->SetBackground(.3, .6, .3); // Background color green
+        SetCamera(renderer,vtkBoundingBox(gridActor->GetBounds()));
 
         // before adding new renderer, remove all the old renderer, always keep only renderer in m_renderwindow
         m_renderWindow->GetRenderers()->RemoveAllItems();
         this->ui->qvtkWidget2->GetRenderWindow()->AddRenderer(renderer);
         // Render and interact
+        vtkSmartPointer<vtkInteractorStyleImage> style = vtkSmartPointer<vtkInteractorStyleImage>::New();
+//        vtkSmartPointer<vtkInteractorStyleTrackballCamera> style = vtkSmartPointer<vtkInteractorStyleTrackballCamera>::New();
+        vtkSmartPointer<vtkRenderWindowInteractor> iren=vtkSmartPointer<vtkRenderWindowInteractor>::New();
+        this->ui->qvtkWidget2->GetRenderWindow()->GetInteractor()->SetInteractorStyle(style);
         this->ui->qvtkWidget2->GetRenderWindow()->Render();
-        // ui->textEdit->append(QString::number(m_renderWindow->GetRenderers()->GetNumberOfItems()));
+
     }
         ui->textEdit->append("2D is comming soon");
         break;
@@ -507,6 +518,92 @@ void MainWindow::on_pushButton_clicked()
         break;
 
     }
+}
+int MainWindow::InitCubeAxes(vtkCubeAxesActor* axes, vtkBoundingBox boundingbox, vtkBoundingBox rangebox, std::string xlabel, std::string ylabel, std::string zlabel,int fontsize)
+{
+    axes->SetFlyModeToClosestTriad();
+//    axes->XAxisMinorTickVisibilityOff();
+//    axes->YAxisMinorTickVisibilityOff();
+//    axes->ZAxisMinorTickVisibilityOff();
+    double bounds[6];
+    boundingbox.GetBounds(bounds);
+    axes->SetBounds(bounds);
+    double ranges[6];
+    rangebox.GetBounds(ranges);
+    axes->SetXAxisRange(ranges[0], ranges[1]);//坐标轴上显示的坐标值
+    axes->SetYAxisRange(ranges[2], ranges[3]);
+    axes->SetZAxisRange(ranges[4], ranges[5]);
+    //m_CubeAxes->SetXLabelFormat("%6.4f");
+    axes->SetXTitle(xlabel.c_str());
+    axes->SetYTitle(ylabel.c_str());
+    axes->SetZTitle(zlabel.c_str());
+    //font color
+    for (int i = 0; i < 3; i++)
+    {
+        axes->GetTitleTextProperty(i)->SetFontSize(fontsize);
+        axes->GetTitleTextProperty(i)->SetFontFamilyToTimes();
+        axes->GetLabelTextProperty(i)->SetFontFamilyToTimes();
+        axes->GetLabelTextProperty(i)->SetFontSize(fontsize);
+    }
+    return 0;
+}
+int MainWindow::SetCamera(vtkSmartPointer<vtkRenderer> renderer, vtkBoundingBox boundingbox, int type)
+{
+    double center[3];
+    boundingbox.GetCenter(center);
+    double bounds[6];
+    boundingbox.GetBounds(bounds);
+    double xlength = bounds[1] - bounds[0];
+    double ylength = bounds[3] - bounds[2];
+//	double zlength = bounds[5] - bounds[4];
+//	double xyBiZhi = ylength / xlength;
+//	double viewup_x = 0.3;
+    switch (type)
+    {
+    case ID_CAMERA_FRONT:
+        center[1] = bounds[2];
+        renderer->GetActiveCamera()->SetFocalPoint(center);//焦点
+        renderer->GetActiveCamera()->SetPosition(center[0], bounds[2] - ylength, center[2]);//相机位置
+        renderer->GetActiveCamera()->SetViewUp(0.0, 0, 1);//相机“上”方向
+        break;
+    case ID_CAMERA_BACK:
+        center[1] = bounds[3];
+        renderer->GetActiveCamera()->SetFocalPoint(center);//焦点
+        renderer->GetActiveCamera()->SetPosition(center[0], bounds[3] + ylength, center[2]);//相机位置
+        renderer->GetActiveCamera()->SetViewUp(0.0, 0, 1);//相机“上”方向
+        break;
+    case ID_CAMERA_LEFT:
+        center[0] = bounds[0];
+        renderer->GetActiveCamera()->SetFocalPoint(center);//焦点
+        renderer->GetActiveCamera()->SetPosition(center[0] - xlength, center[1], center[2]);//相机位置
+        renderer->GetActiveCamera()->SetViewUp(0.0, 0, 1);//相机“上”方向
+        break;
+    case ID_CAMERA_RIGHT:
+        center[0] = bounds[1];
+        renderer->GetActiveCamera()->SetFocalPoint(center);//焦点
+        renderer->GetActiveCamera()->SetPosition(center[0] + xlength, center[1], center[2]);//相机位置
+        renderer->GetActiveCamera()->SetViewUp(0.0, 0, 1);//相机“上”方向
+        break;
+    case ID_CAMERA_UP:
+        center[2] = bounds[5];
+        renderer->GetActiveCamera()->SetFocalPoint(center);//焦点
+        renderer->GetActiveCamera()->SetPosition(center[0], center[1], center[2] + 2 * (xlength > ylength ? xlength : ylength));//相机位置
+        renderer->GetActiveCamera()->SetViewUp(0.0, 1, 0);//相机“上”方向
+        break;
+    case ID_CAMERA_DOWN:
+        center[2] = bounds[4];
+        renderer->GetActiveCamera()->SetFocalPoint(center);//焦点
+        renderer->GetActiveCamera()->SetPosition(center[0], center[1], center[2] - 2 * (xlength > ylength ? xlength : ylength));//相机位置
+        renderer->GetActiveCamera()->SetViewUp(0.0, 1, 0);//相机“上”方向
+        break;
+    default:
+        center[2] = bounds[5];
+        renderer->GetActiveCamera()->SetFocalPoint(center);//焦点
+        renderer->GetActiveCamera()->SetPosition(center[0], bounds[2] - 1.5*ylength, bounds[5] + ylength / 2.0);//相机位置
+        renderer->GetActiveCamera()->SetViewUp(0.0, 0, 1);//相机“上”方向
+        break;
+    }
+    return 0;
 }
 
 void MainWindow::on_radioButton_3_clicked()

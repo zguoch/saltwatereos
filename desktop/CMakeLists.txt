@@ -28,6 +28,7 @@ find_package(VTK COMPONENTS
   vtkRenderingGL2PSOpenGL2
   vtkRenderingOpenGL2
   vtkViewsContext2D
+  vtkIOLegacy
 )
 include(${VTK_USE_FILE})
 # add H2ONaCl source and library 

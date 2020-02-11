@@ -49,6 +49,23 @@ using namespace std;
 #include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkTooltipItem.h>
 #include <vtkChartLegend.h>
+#include <vtkStructuredGridGeometryFilter.h>
+#include <vtkWarpScalar.h>
+#include <vtkPolyDataNormals.h>
+#include <vtkClipPolyData.h>
+#include <vtkCleanPolyData.h>
+#include <vtkXMLStructuredGridWriter.h>
+#include <vtkStructuredGridWriter.h>
+#include <vtkStructuredData.h>
+#include <vtkPointData.h>
+#include <vtkImageMapToColors.h>
+#include <vtkCubeAxesActor.h>
+#include <vtkCubeAxesActor2D.h>
+#include <vtkAxisActor.h>
+#include <vtkBoundingBox.h>
+#include <vtkAxesActor.h>
+#include <vtkInteractorStyleTrackballCamera.h>
+#include <vtkInteractorStyleImage.h>
 
 #define CALCULATION_SINGLE_POINT 1
 #define CALCULATION_MULTI_POINTS 2
@@ -57,6 +74,15 @@ using namespace std;
 #define oneDim_Temperature 1
 #define oneDim_Pressure 2
 #define oneDim_Salinity 3
+
+//camera view
+#define ID_CAMERA_GENERAL	1
+#define ID_CAMERA_FRONT	2
+#define ID_CAMERA_BACK	3
+#define ID_CAMERA_LEFT	4
+#define ID_CAMERA_RIGHT	5
+#define ID_CAMERA_UP	6
+#define ID_CAMERA_DOWN	7
 
 // Forward Qt class declarations
 class Ui_MainWindow;
@@ -97,6 +123,8 @@ protected slots:
 
 private slots:
   void updateCalculationModelSelection(bool isSinglePoint);
+  int SetCamera(vtkSmartPointer<vtkRenderer> renderer, vtkBoundingBox boundingbox, int type=ID_CAMERA_UP);
+  int InitCubeAxes(vtkCubeAxesActor* axes, vtkBoundingBox boundingbox, vtkBoundingBox rangebox, std::string xlabel, std::string ylabel, std::string zlabel,int fontsize=30);
   void on_pushButton_2_clicked();
 
   void on_radioButton_pressed();
