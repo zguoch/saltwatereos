@@ -50,6 +50,9 @@ MainWindow::MainWindow(QWidget *parent)
     ,m_calculationMode_123Dim(oneDim_Temperature)
     ,m_vtkFontSize(25)
     ,m_index_var(0)
+    ,m_xlabel("xlabel")
+    ,m_ylabel("ylabel")
+    ,m_zlabel("zlabel")
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -60,6 +63,14 @@ MainWindow::MainWindow(QWidget *parent)
     m_IndependentVar1_old=ui->doubleSpinBox->value()*1e5;
     m_IndependentVar2_old=ui->doubleSpinBox_2->value();
     m_IndependentVar3_old=ui->doubleSpinBox_3->value();
+
+    // used to set actor to a nice width/height ratio
+    m_actorScale_T=(SWEOS::PMAX-SWEOS::PMIN)/1e5/(SWEOS::TMAX-SWEOS::TMIN);
+    m_actorScale_P=1;
+    m_actorScale_X=(SWEOS::PMAX-SWEOS::PMIN)/1e5/(SWEOS::XMAX-SWEOS::XMIN);
+    m_actorScale[0]=m_actorScale_T;
+    m_actorScale[1]=m_actorScale_P;
+    m_actorScale[2]=m_actorScale_X;
 
     //default set 1D UI
     m_geometry_Groupbox_variables=ui->groupBox_Variables->geometry();
@@ -305,11 +316,11 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     switch (index) {
     case 0:
         ui->textEdit->setEnabled(true);
-        ui->vtkWindowTab->setEnabled(false);
+        //ui->vtkWindowTab->setEnabled(false);
         break;
     case 1:
         ui->textEdit->setEnabled(false);
-        ui->vtkWindowTab->setEnabled(true);
+        //ui->vtkWindowTab->setEnabled(true);
         break;
 
     }
@@ -318,65 +329,65 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 
 void MainWindow::Calculate_Diagram1D()
 {
-            QString varName;
-//            int index_var=0;
-            vector<double>arrP,arrT,arrX;
-            switch (ui->comboBox_selectVariable->currentIndex()) {
-            case 0:   //temperature
-            {
-                varName="Temperature (C)";
-                m_index_var=0;
-                double dT=ui->doubleSpinBox_delta_firstVar->value();
-                double Tmin=ui->doubleSpinBox_min_firstVar->value();
-                double Tmax=ui->doubleSpinBox_max_firstVar->value();
-                double p0=ui->doubleSpinBox_fixed_firstVar->value()*1e5;
-                double X0=ui->doubleSpinBox_fixed_secondVar->value();
-                for (double T=Tmin;T<Tmax;T=T+dT) {
-                    arrT.push_back(T);
-                    arrP.push_back(p0);
-                    arrX.push_back(X0);
-                }
+    QString varName;
+    //            int index_var=0;
+    vector<double>arrP,arrT,arrX;
+    switch (ui->comboBox_selectVariable->currentIndex()) {
+    case 0:   //temperature
+    {
+        varName="Temperature (C)";
+        m_index_var=0;
+        double dT=ui->doubleSpinBox_delta_firstVar->value();
+        double Tmin=ui->doubleSpinBox_min_firstVar->value();
+        double Tmax=ui->doubleSpinBox_max_firstVar->value();
+        double p0=ui->doubleSpinBox_fixed_firstVar->value()*1e5;
+        double X0=ui->doubleSpinBox_fixed_secondVar->value();
+        for (double T=Tmin;T<Tmax;T=T+dT) {
+            arrT.push_back(T);
+            arrP.push_back(p0);
+            arrX.push_back(X0);
+        }
 
-            }
-                break;
-            case 1:   //pressure
-            {
-                varName="Pressure (bar)";
-                m_index_var=1;
-                double dP=ui->doubleSpinBox_delta_firstVar->value()*1e5;
-                double Pmin=ui->doubleSpinBox_min_firstVar->value()*1e5;
-                double Pmax=ui->doubleSpinBox_max_firstVar->value()*1e5;
-                double T0=ui->doubleSpinBox_fixed_firstVar->value();
-                double X0=ui->doubleSpinBox_fixed_secondVar->value();
-                for (double P=Pmin;P<Pmax;P=P+dP) {
-                    arrT.push_back(T0);
-                    arrP.push_back(P);
-                    arrX.push_back(X0);
-                }
-            }
-                break;
-            case 2:  //salinity
-            {
-                varName="Salinity";
-                m_index_var=2;
-                double dX=ui->doubleSpinBox_delta_firstVar->value();
-                double Xmin=ui->doubleSpinBox_min_firstVar->value();
-                double Xmax=ui->doubleSpinBox_max_firstVar->value();
-                double P0=ui->doubleSpinBox_fixed_firstVar->value()*1e5;
-                double T0=ui->doubleSpinBox_fixed_secondVar->value();
-                for (double X=Xmin;X<Xmax;X=X+dX) {
-                    arrT.push_back(T0);
-                    arrP.push_back(P0);
-                    arrX.push_back(X);
-                }
-            }
-                break;
-            }
+    }
+        break;
+    case 1:   //pressure
+    {
+        varName="Pressure (bar)";
+        m_index_var=1;
+        double dP=ui->doubleSpinBox_delta_firstVar->value()*1e5;
+        double Pmin=ui->doubleSpinBox_min_firstVar->value()*1e5;
+        double Pmax=ui->doubleSpinBox_max_firstVar->value()*1e5;
+        double T0=ui->doubleSpinBox_fixed_firstVar->value();
+        double X0=ui->doubleSpinBox_fixed_secondVar->value();
+        for (double P=Pmin;P<Pmax;P=P+dP) {
+            arrT.push_back(T0);
+            arrP.push_back(P);
+            arrX.push_back(X0);
+        }
+    }
+        break;
+    case 2:  //salinity
+    {
+        varName="Salinity";
+        m_index_var=2;
+        double dX=ui->doubleSpinBox_delta_firstVar->value();
+        double Xmin=ui->doubleSpinBox_min_firstVar->value();
+        double Xmax=ui->doubleSpinBox_max_firstVar->value();
+        double P0=ui->doubleSpinBox_fixed_firstVar->value()*1e5;
+        double T0=ui->doubleSpinBox_fixed_secondVar->value();
+        for (double X=Xmin;X<Xmax;X=X+dX) {
+            arrT.push_back(T0);
+            arrP.push_back(P0);
+            arrX.push_back(X);
+        }
+    }
+        break;
+    }
 
-            //calculate
-            CalculateProps_PTX(arrT, arrP,arrX, m_vtkTable);
-            //display
-            ShowProps(m_index_var, ui->comboBox_selectProps->currentIndex());
+    //calculate
+    CalculateProps_PTX(arrT, arrP,arrX, m_vtkTable);
+    //display
+    ShowProps(m_index_var, ui->comboBox_selectProps->currentIndex());
 
 }
 
@@ -573,121 +584,330 @@ void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector
     m_vtkChartView->GetRenderWindow()->Render();
 }
 
+void MainWindow::Calculate_Diagram2D()
+{
+//    vector<double>arrP,arrT,arrX;
+    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+    //phase region
+    vtkSmartPointer<vtkDoubleArray> arrPhaseRegion = vtkSmartPointer<vtkDoubleArray>::New();
+    arrPhaseRegion->SetNumberOfComponents(1);
+    arrPhaseRegion->SetName("PhaseRegion");
+    //density
+    vtkSmartPointer<vtkDoubleArray> arrDensity = vtkSmartPointer<vtkDoubleArray>::New();
+    arrDensity->SetNumberOfComponents(1);
+    arrDensity->SetName("Bulk density (kg/m3)");
+    vtkSmartPointer<vtkDoubleArray> arrDensity_l = vtkSmartPointer<vtkDoubleArray>::New();
+    arrDensity_l->SetNumberOfComponents(1);
+    arrDensity_l->SetName("Liquid density (kg/m3)");
+    vtkSmartPointer<vtkDoubleArray> arrDensity_v = vtkSmartPointer<vtkDoubleArray>::New();
+    arrDensity_v->SetNumberOfComponents(1);
+    arrDensity_v->SetName("Vapour density(kg/m3)");
+    vtkSmartPointer<vtkDoubleArray> arrDensity_h = vtkSmartPointer<vtkDoubleArray>::New();
+    arrDensity_h->SetNumberOfComponents(1);
+    arrDensity_h->SetName("Halite density (kg/m3)");
+    //enthalpy
+    vtkSmartPointer<vtkDoubleArray> arrH = vtkSmartPointer<vtkDoubleArray>::New();
+    arrH->SetNumberOfComponents(1);
+    arrH->SetName("Bulk enthalpy (J/kg)");
+    vtkSmartPointer<vtkDoubleArray> arrH_l = vtkSmartPointer<vtkDoubleArray>::New();
+    arrH_l->SetNumberOfComponents(1);
+    arrH_l->SetName("Liquid enthalpy (J/kg)");
+    vtkSmartPointer<vtkDoubleArray> arrH_v = vtkSmartPointer<vtkDoubleArray>::New();
+    arrH_v->SetNumberOfComponents(1);
+    arrH_v->SetName("Vapour enthalpy (J/kg)");
+    vtkSmartPointer<vtkDoubleArray> arrH_h = vtkSmartPointer<vtkDoubleArray>::New();
+    arrH_h->SetNumberOfComponents(1);
+    arrH_h->SetName("Halite enthalpy (J/kg)");
+    //saturation
+    vtkSmartPointer<vtkDoubleArray> arrS_l = vtkSmartPointer<vtkDoubleArray>::New();
+    arrS_l->SetNumberOfComponents(1);
+    arrS_l->SetName("Liquid saturation");
+    vtkSmartPointer<vtkDoubleArray> arrS_v = vtkSmartPointer<vtkDoubleArray>::New();
+    arrS_v->SetNumberOfComponents(1);
+    arrS_v->SetName("Vapour saturation");
+    vtkSmartPointer<vtkDoubleArray> arrS_h = vtkSmartPointer<vtkDoubleArray>::New();
+    arrS_h->SetNumberOfComponents(1);
+    arrS_h->SetName("Halite saturation");
+    //viscosity
+    vtkSmartPointer<vtkDoubleArray> arrMu_l = vtkSmartPointer<vtkDoubleArray>::New();
+    arrMu_l->SetNumberOfComponents(1);
+    arrMu_l->SetName("Liquid viscosity (Pa s)");
+    vtkSmartPointer<vtkDoubleArray> arrMu_v = vtkSmartPointer<vtkDoubleArray>::New();
+    arrMu_v->SetNumberOfComponents(1);
+    arrMu_v->SetName("Vapour viscosity (Pa s)");
+    //salinity
+    vtkSmartPointer<vtkDoubleArray> arrX_l = vtkSmartPointer<vtkDoubleArray>::New();
+    arrX_l->SetNumberOfComponents(1);
+    arrX_l->SetName("Liquid salinity");
+    vtkSmartPointer<vtkDoubleArray> arrX_v = vtkSmartPointer<vtkDoubleArray>::New();
+    arrX_v->SetNumberOfComponents(1);
+    arrX_v->SetName("Vapour salinity");
+
+    switch (ui->comboBox_selectVariable->currentIndex()) {
+        case 0:   //PT
+        {
+            m_xlabel="Temperature (C)";
+            m_ylabel="Pressure (bar)";
+            m_actorScale[0]=m_actorScale_T;
+            m_actorScale[1]=m_actorScale_P;
+            m_actorScale[2]=m_actorScale_X;
+            double dP=ui->doubleSpinBox_delta_firstVar->value();
+            double Pmin=ui->doubleSpinBox_min_firstVar->value();
+            double Pmax=ui->doubleSpinBox_max_firstVar->value();
+
+            double dT=ui->doubleSpinBox_delta_secondVar->value();
+            double Tmin=ui->doubleSpinBox_min_secondVar->value();
+            double Tmax=ui->doubleSpinBox_max_secondVar->value();
+
+            double X0=ui->doubleSpinBox_fixed_firstVar->value();
+
+            vector<double> vectorT, vectorP;
+            for (double T=Tmin; T<Tmax;T=T+dT)
+            {
+              vectorT.push_back(T);
+            }
+            for (double P=Pmin; P<Pmax; P=P+dP)
+            {
+              vectorP.push_back(P);
+            }
+            //calculate
+            for(size_t j = 0; j < vectorP.size(); j++)
+            {
+                for(size_t i = 0; i < vectorT.size(); i++)
+                {
+                    SWEOS::cH2ONaCl eos(vectorP[j]*1e5,vectorT[i],X0);
+                    eos.Calculate();
+                    points->InsertNextPoint(vectorT[i],vectorP[j],X0);
+                    arrPhaseRegion->InsertNextValue(eos.m_prop.Region);
+                    arrDensity->InsertNextValue(eos.m_prop.Rho);
+                    arrDensity_l->InsertNextValue(eos.m_prop.Rho_l);
+                    arrDensity_v->InsertNextValue(eos.m_prop.Rho_v);
+                    arrDensity_h->InsertNextValue(eos.m_prop.Rho_h);
+                    arrH->InsertNextValue(eos.m_prop.H);
+                    arrH_l->InsertNextValue(eos.m_prop.H_l);
+                    arrH_v->InsertNextValue(eos.m_prop.H_v);
+                    arrH_h->InsertNextValue(eos.m_prop.H_h);
+                    arrS_l->InsertNextValue(eos.m_prop.S_l);
+                    arrS_v->InsertNextValue(eos.m_prop.S_v);
+                    arrS_h->InsertNextValue(eos.m_prop.S_h);
+                    arrMu_l->InsertNextValue(eos.m_prop.Mu_l);
+                    arrMu_v->InsertNextValue(eos.m_prop.Mu_v);
+                    arrX_l->InsertNextValue(eos.m_prop.X_l);
+                    arrX_v->InsertNextValue(eos.m_prop.X_v);
+                }
+            }
+            // Specify the dimensions of the grid
+            m_structuredGrid->SetDimensions(vectorT.size(),vectorP.size(),1);
+        }
+        break;
+        case 1:   //PX
+        {
+            m_xlabel="Salinity";
+            m_ylabel="Pressure (bar)";
+            m_actorScale[0]=m_actorScale_X;
+            m_actorScale[1]=m_actorScale_P;
+            m_actorScale[2]=m_actorScale_T;
+            double dP=ui->doubleSpinBox_delta_firstVar->value();
+            double Pmin=ui->doubleSpinBox_min_firstVar->value();
+            double Pmax=ui->doubleSpinBox_max_firstVar->value();
+
+            double dX=ui->doubleSpinBox_delta_secondVar->value();
+            double Xmin=ui->doubleSpinBox_min_secondVar->value();
+            double Xmax=ui->doubleSpinBox_max_secondVar->value();
+
+            double T0=ui->doubleSpinBox_fixed_firstVar->value();
+
+            vector<double> vectorX, vectorP;
+            for (double X=Xmin; X<Xmax;X=X+dX)
+            {
+              vectorX.push_back(X);
+            }
+            for (double P=Pmin; P<Pmax; P=P+dP)
+            {
+              vectorP.push_back(P);
+            }
+            //calculate
+            for(size_t j = 0; j < vectorP.size(); j++)
+            {
+                for(size_t i = 0; i < vectorX.size(); i++)
+                {
+                    SWEOS::cH2ONaCl eos(vectorP[j]*1e5,T0,vectorX[i]);
+                    eos.Calculate();
+                    points->InsertNextPoint(vectorX[i],vectorP[j],T0);
+                    arrPhaseRegion->InsertNextValue(eos.m_prop.Region);
+                    arrDensity->InsertNextValue(eos.m_prop.Rho);
+                    arrDensity_l->InsertNextValue(eos.m_prop.Rho_l);
+                    arrDensity_v->InsertNextValue(eos.m_prop.Rho_v);
+                    arrDensity_h->InsertNextValue(eos.m_prop.Rho_h);
+                    arrH->InsertNextValue(eos.m_prop.H);
+                    arrH_l->InsertNextValue(eos.m_prop.H_l);
+                    arrH_v->InsertNextValue(eos.m_prop.H_v);
+                    arrH_h->InsertNextValue(eos.m_prop.H_h);
+                    arrS_l->InsertNextValue(eos.m_prop.S_l);
+                    arrS_v->InsertNextValue(eos.m_prop.S_v);
+                    arrS_h->InsertNextValue(eos.m_prop.S_h);
+                    arrMu_l->InsertNextValue(eos.m_prop.Mu_l);
+                    arrMu_v->InsertNextValue(eos.m_prop.Mu_v);
+                    arrX_l->InsertNextValue(eos.m_prop.X_l);
+                    arrX_v->InsertNextValue(eos.m_prop.X_v);
+                }
+            }
+            // Specify the dimensions of the grid
+            m_structuredGrid->SetDimensions(vectorX.size(),vectorP.size(),1);
+        }
+        break;
+        case 2:  //TX
+        {
+            m_xlabel="Temperature (C)";
+            m_ylabel="Salinity";
+            m_actorScale[0]=m_actorScale_T;
+            m_actorScale[1]=m_actorScale_X;
+            m_actorScale[2]=m_actorScale_P;
+            double dT=ui->doubleSpinBox_delta_firstVar->value();
+            double Tmin=ui->doubleSpinBox_min_firstVar->value();
+            double Tmax=ui->doubleSpinBox_max_firstVar->value();
+
+            double dX=ui->doubleSpinBox_delta_secondVar->value();
+            double Xmin=ui->doubleSpinBox_min_secondVar->value();
+            double Xmax=ui->doubleSpinBox_max_secondVar->value();
+
+            double P0=ui->doubleSpinBox_fixed_firstVar->value();
+
+            vector<double> vectorX, vectorT;
+            for (double X=Xmin; X<Xmax;X=X+dX)
+            {
+              vectorX.push_back(X);
+            }
+            for (double T=Tmin; T<Tmax; T=T+dT)
+            {
+              vectorT.push_back(T);
+            }
+            //calculate
+            for(size_t j = 0; j < vectorX.size(); j++)
+            {
+                for(size_t i = 0; i < vectorT.size(); i++)
+                {
+                    SWEOS::cH2ONaCl eos(P0*1e5,vectorT[i],vectorX[j]);
+                    eos.Calculate();
+                    points->InsertNextPoint(vectorT[i],vectorX[j],P0);
+                    arrPhaseRegion->InsertNextValue(eos.m_prop.Region);
+                    arrDensity->InsertNextValue(eos.m_prop.Rho);
+                    arrDensity_l->InsertNextValue(eos.m_prop.Rho_l);
+                    arrDensity_v->InsertNextValue(eos.m_prop.Rho_v);
+                    arrDensity_h->InsertNextValue(eos.m_prop.Rho_h);
+                    arrH->InsertNextValue(eos.m_prop.H);
+                    arrH_l->InsertNextValue(eos.m_prop.H_l);
+                    arrH_v->InsertNextValue(eos.m_prop.H_v);
+                    arrH_h->InsertNextValue(eos.m_prop.H_h);
+                    arrS_l->InsertNextValue(eos.m_prop.S_l);
+                    arrS_v->InsertNextValue(eos.m_prop.S_v);
+                    arrS_h->InsertNextValue(eos.m_prop.S_h);
+                    arrMu_l->InsertNextValue(eos.m_prop.Mu_l);
+                    arrMu_v->InsertNextValue(eos.m_prop.Mu_v);
+                    arrX_l->InsertNextValue(eos.m_prop.X_l);
+                    arrX_v->InsertNextValue(eos.m_prop.X_v);
+                }
+            }
+            // Specify the dimensions of the grid
+            m_structuredGrid->SetDimensions(vectorT.size(),vectorX.size(),1);
+        }
+        break;
+    }
+    m_structuredGrid->SetPoints(points);
+    //        m_structuredGrid->GetPointData()->SetScalars(doublevalue);
+    m_structuredGrid->GetPointData()->AddArray(arrPhaseRegion);
+    m_structuredGrid->GetPointData()->AddArray(arrDensity);
+    m_structuredGrid->GetPointData()->AddArray(arrDensity_l);
+    m_structuredGrid->GetPointData()->AddArray(arrDensity_v);
+    m_structuredGrid->GetPointData()->AddArray(arrDensity_h);
+    m_structuredGrid->GetPointData()->AddArray(arrH);
+    m_structuredGrid->GetPointData()->AddArray(arrH_l);
+    m_structuredGrid->GetPointData()->AddArray(arrH_v);
+    m_structuredGrid->GetPointData()->AddArray(arrH_h);
+    m_structuredGrid->GetPointData()->AddArray(arrS_l);
+    m_structuredGrid->GetPointData()->AddArray(arrS_v);
+    m_structuredGrid->GetPointData()->AddArray(arrS_h);
+    m_structuredGrid->GetPointData()->AddArray(arrMu_l);
+    m_structuredGrid->GetPointData()->AddArray(arrMu_v);
+    m_structuredGrid->GetPointData()->AddArray(arrX_l);
+    m_structuredGrid->GetPointData()->AddArray(arrX_v);
+
+    ShowProps_2D(ui->comboBox_selectProps->currentIndex(), m_xlabel, m_ylabel, m_zlabel,m_actorScale);
+
+}
+
+void MainWindow::ShowProps_2D(int index_prop, std::string xlabel,std::string ylabel, std::string zlabel , double scale_actor[3])
+{
+    if(m_structuredGrid->GetPointData()->GetNumberOfArrays()==0)return;
+
+    vtkSmartPointer<vtkStructuredGrid> grid=vtkSmartPointer<vtkStructuredGrid>::New();
+    grid->SetDimensions(m_structuredGrid->GetDimensions());
+    grid->SetPoints(m_structuredGrid->GetPoints());
+    grid->GetPointData()->SetScalars(m_structuredGrid->GetPointData()->GetArray(index_prop));
+
+    // Create a mapper and actor
+    vtkSmartPointer<vtkDataSetMapper> gridMapper = vtkSmartPointer<vtkDataSetMapper>::New();
+    gridMapper->SetInputData(grid);
+    gridMapper->SetScalarRange(grid->GetScalarRange());
+
+    // lookup table
+    vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::New();
+    lut->SetNumberOfColors(256);
+    lut->SetHueRange(0.0,0.667);
+    gridMapper->SetLookupTable(lut);
+    vtkSmartPointer<vtkActor> gridActor = vtkSmartPointer<vtkActor>::New();
+    gridActor->SetMapper(gridMapper);
+
+    // Create a renderer, render window, and interactor
+    vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
+    renderer->AddActor(gridActor);
+    //    gridActor->SetScale((SWEOS::PMAX-SWEOS::PMIN)/1e5/(SWEOS::TMAX-SWEOS::TMIN),1,(SWEOS::PMAX-SWEOS::PMIN)/1e5/(SWEOS::XMAX-SWEOS::XMIN));
+    gridActor->SetScale(scale_actor);
+
+    //axis actor
+    vtkSmartPointer<vtkCubeAxesActor> axis=vtkSmartPointer<vtkCubeAxesActor>::New();
+    axis->SetCamera(renderer->GetActiveCamera());
+    axis->SetBounds(gridActor->GetBounds());
+    renderer->AddActor(axis);
+    axis->SetUse2DMode(1); //set font size
+
+    //color scale
+    vtkSmartPointer<vtkScalarBarActor> scalarBar = vtkSmartPointer<vtkScalarBarActor>::New();
+    scalarBar->SetLookupTable(gridMapper->GetLookupTable());
+    scalarBar->SetLookupTable( lut );
+    scalarBar->SetTitle(grid->GetPointData()->GetArray(0)->GetName());
+    scalarBar->SetDrawFrame(true);
+    scalarBar->SetWidth(scalarBar->GetWidth()/2);
+    renderer->AddActor2D(scalarBar);
+
+    InitCubeAxes(axis,vtkBoundingBox(gridActor->GetBounds()),vtkBoundingBox(m_structuredGrid->GetBounds()),xlabel,ylabel,zlabel);
+    renderer->SetBackground(0,0,0); //
+    SetCamera(renderer,vtkBoundingBox(gridActor->GetBounds()));
+
+    // before adding new renderer, remove all the old renderer, always keep only renderer in m_renderwindow
+    m_renderWindow->GetRenderers()->RemoveAllItems();
+    this->ui->qvtkWidget2->GetRenderWindow()->AddRenderer(renderer);
+    renderer->Render();
+    // Render and interact
+    vtkSmartPointer<vtkInteractorStyleImage> style = vtkSmartPointer<vtkInteractorStyleImage>::New();
+    // vtkSmartPointer<vtkInteractorStyleTrackballCamera> style = vtkSmartPointer<vtkInteractorStyleTrackballCamera>::New();
+    vtkSmartPointer<vtkRenderWindowInteractor> iren=vtkSmartPointer<vtkRenderWindowInteractor>::New();
+    this->ui->qvtkWidget2->GetRenderWindow()->GetInteractor()->SetInteractorStyle(style);
+    this->ui->qvtkWidget2->GetRenderWindow()->Render();
+}
+
 void MainWindow::on_pushButton_clicked()
 {
     switch (m_dimension) {
-    case 1:
-    {
-        Calculate_Diagram1D();
-    }
-
+        case 1:
+        {
+            Calculate_Diagram1D();
+        }
         break;
-    case 2:
-    {
-//        double X0 = ui->doubleSpinBox_6->value();
-//        double Tmin=ui->doubleSpinBox_10->value();
-//        double Tmax=ui->doubleSpinBox_11->value();
-//        double dT=ui->doubleSpinBox_12->value();
-//        double Pmin=ui->doubleSpinBox_15->value();
-//        double Pmax=ui->doubleSpinBox_14->value();
-//        double dP=ui->doubleSpinBox_13->value();
-//        std::string xlabel="Temperature (K)";
-//        std::string ylabel="Pressure (bar)";
-//        std::string zlabel="Salinity";
-//        std::string propleName="Density (kg/m3)";
-//        vector<double> vectorT, vectorP;
-//        for (double T=Tmin; T<Tmax;T=T+dT)
-//        {
-//          vectorT.push_back(T);
-//        }
-//        for (double P=Pmin; P<Pmax; P=P+dP)
-//        {
-//          vectorP.push_back(P);
-//        }
-
-//        vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-//        vtkSmartPointer<vtkDoubleArray> doublevalue = vtkSmartPointer<vtkDoubleArray>::New();
-//        doublevalue->SetNumberOfComponents(1);
-//        doublevalue->SetName("Density");
-//        for(size_t j = 0; j < vectorP.size(); j++)
-//        {
-//        for(size_t i = 0; i < vectorT.size(); i++)
-//        {
-//        SWEOS::cH2ONaCl eos(vectorP[j]*1e5,vectorT[i],X0);
-//        eos.Calculate();
-//        points->InsertNextPoint(vectorT[i],vectorP[j],X0);
-//        doublevalue->InsertNextValue(eos.m_prop.Rho_l);
-//        }
-//        }
-//        // Specify the dimensions of the grid
-//        m_structuredGrid->SetDimensions(vectorT.size(),vectorP.size(),1);
-//        m_structuredGrid->SetPoints(points);
-//        m_structuredGrid->GetPointData()->SetScalars(doublevalue);
-
-
-//        vtkSmartPointer<vtkStructuredGridWriter> writer = vtkSmartPointer<vtkStructuredGridWriter>::New();
-//        writer->SetFileName("/Users/zguo/Downloads/rho.vtk");
-//        writer->SetInputData(m_structuredGrid);
-//        writer->Write();
-
-
-//        // Create a mapper and actor
-//        vtkSmartPointer<vtkDataSetMapper> gridMapper = vtkSmartPointer<vtkDataSetMapper>::New();
-//        gridMapper->SetInputData(m_structuredGrid);
-//        gridMapper->SetScalarRange(m_structuredGrid->GetScalarRange());
-
-//        // lookup table
-//        vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::New();
-//        lut->SetNumberOfColors(256);
-//        lut->SetHueRange(0.0,0.667);
-//        //        lut->SetTableRange(100,1000);
-//        //        lut->Build();
-//        gridMapper->SetLookupTable(lut);
-//        vtkSmartPointer<vtkActor> gridActor = vtkSmartPointer<vtkActor>::New();
-//        gridActor->SetMapper(gridMapper);
-
-
-//        // Create a renderer, render window, and interactor
-//        vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
-//        // Add the actor to the scene
-//        renderer->AddActor(gridActor);
-//        gridActor->SetScale((SWEOS::PMAX-SWEOS::PMIN)/1e5/(SWEOS::TMAX-SWEOS::TMIN),1,(SWEOS::PMAX-SWEOS::PMIN)/1e5/(SWEOS::XMAX-SWEOS::XMIN));
-
-//        //axis actor
-//        vtkSmartPointer<vtkCubeAxesActor> axis=vtkSmartPointer<vtkCubeAxesActor>::New();
-//        axis->SetCamera(renderer->GetActiveCamera());
-//        axis->SetBounds(gridActor->GetBounds());
-
-//        //color scale
-//        vtkSmartPointer<vtkScalarBarActor> scalarBar = vtkSmartPointer<vtkScalarBarActor>::New();
-//          scalarBar->SetLookupTable(gridMapper->GetLookupTable());
-//          scalarBar->SetLookupTable( lut );
-//          scalarBar->SetTitle(propleName.c_str());
-//          scalarBar->SetDrawFrame(true);
-//          scalarBar->SetWidth(scalarBar->GetWidth()/2);
-////          scalarBar->GetLabelTextProperty()->SetFontSize(scalarBar->GetLabelTextProperty()->GetFontSize()*6);
-////          scalarBar->SetTextureGridWidth(20);
-////          scalarBar->SetNumberOfLabels(4);
-//          renderer->AddActor2D(scalarBar);
-
-//        renderer->AddActor(axis);
-//        InitCubeAxes(axis,vtkBoundingBox(gridActor->GetBounds()),vtkBoundingBox(m_structuredGrid->GetBounds()),xlabel,ylabel,zlabel);
-//        renderer->SetBackground(0,0,0); // Background color green
-//        SetCamera(renderer,vtkBoundingBox(gridActor->GetBounds()));
-//        axis->SetUse2DMode(1); //set font size
-//        // before adding new renderer, remove all the old renderer, always keep only renderer in m_renderwindow
-//        m_renderWindow->GetRenderers()->RemoveAllItems();
-//        this->ui->qvtkWidget2->GetRenderWindow()->AddRenderer(renderer);
-//        renderer->Render();
-//        // Render and interact
-//        vtkSmartPointer<vtkInteractorStyleImage> style = vtkSmartPointer<vtkInteractorStyleImage>::New();
-////        vtkSmartPointer<vtkInteractorStyleTrackballCamera> style = vtkSmartPointer<vtkInteractorStyleTrackballCamera>::New();
-//        vtkSmartPointer<vtkRenderWindowInteractor> iren=vtkSmartPointer<vtkRenderWindowInteractor>::New();
-//        this->ui->qvtkWidget2->GetRenderWindow()->GetInteractor()->SetInteractorStyle(style);
-//        this->ui->qvtkWidget2->GetRenderWindow()->Render();
-
-    }
-        ui->textEdit->append("2D is comming soon");
+        case 2:
+        {
+            Calculate_Diagram2D();
+        }
         break;
     case 3:
         ui->textEdit->append("3D is comming soon");
@@ -900,6 +1120,14 @@ void MainWindow::updateUILayout(bool show_secondVariable, bool show_thirdVariabl
 
 void MainWindow::update1dUI(QString arg)
 {
+    //update properties selection
+    ui->comboBox_selectProps->clear();
+    ui->comboBox_selectProps->addItem("Phase Region");
+    ui->comboBox_selectProps->addItem("Density");
+    ui->comboBox_selectProps->addItem("Enthalpy");
+    ui->comboBox_selectProps->addItem("Saturation");
+    ui->comboBox_selectProps->addItem("Viscosity");
+    ui->comboBox_selectProps->addItem("Salinity");
     if(arg=="Temperature")
     {
         //fixed vars
@@ -981,7 +1209,7 @@ void MainWindow::UpdateUI_T(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
     maxBox->setDecimals(2);
     maxBox->setRange(SWEOS::TMIN, SWEOS::TMAX);
     maxBox->setSingleStep(1);
-    maxBox->setValue(SWEOS::TMAX);
+    maxBox->setValue(673);
 
     minBox->setDecimals(2);
     minBox->setRange(SWEOS::TMIN,SWEOS::TMAX);
@@ -999,7 +1227,7 @@ void MainWindow::UpdateUI_P(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
     maxBox->setDecimals(2);
     maxBox->setRange(SWEOS::PMIN/1E5, SWEOS::PMAX/1E5);
     maxBox->setSingleStep(1);
-    maxBox->setValue(SWEOS::PMAX/1E5);
+    maxBox->setValue(400);
 
     minBox->setDecimals(2);
     minBox->setRange(SWEOS::PMIN/1E5, SWEOS::PMAX/1E5);
@@ -1008,10 +1236,28 @@ void MainWindow::UpdateUI_P(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
 }
 void MainWindow::update2dUI(QString arg)
 {
+    //update properties selection
+    ui->comboBox_selectProps->clear();
+    ui->comboBox_selectProps->addItem("Phase Region");
+    ui->comboBox_selectProps->addItem("Bulk density");
+    ui->comboBox_selectProps->addItem("Liquid density");
+    ui->comboBox_selectProps->addItem("Vapour density");
+    ui->comboBox_selectProps->addItem("Halite density");
+    ui->comboBox_selectProps->addItem("Bulk enthalpy");
+    ui->comboBox_selectProps->addItem("Liquid enthalpy");
+    ui->comboBox_selectProps->addItem("Vapour enthalpy");
+    ui->comboBox_selectProps->addItem("Halite enthalpy");
+    ui->comboBox_selectProps->addItem("Liquid saturation");
+    ui->comboBox_selectProps->addItem("Vapour saturation");
+    ui->comboBox_selectProps->addItem("Halite saturation");
+    ui->comboBox_selectProps->addItem("Liquid viscosity");
+    ui->comboBox_selectProps->addItem("Vapour viscosity");
+    ui->comboBox_selectProps->addItem("Liquid salinity");
+    ui->comboBox_selectProps->addItem("Vapour salinity");
     if(arg=="PT")
     {
         //fixed vars
-        UpdateUI_fixedX(ui->label_fixed_secondVar,ui->doubleSpinBox_fixed_secondVar);
+        UpdateUI_fixedX(ui->label_fixed_firsVar,ui->doubleSpinBox_fixed_firstVar);
         //independent variable
         UpdateUI_P(ui->label_delta_firstVar, ui->doubleSpinBox_delta_firstVar, ui->doubleSpinBox_max_firstVar, ui->doubleSpinBox_min_firstVar);
         UpdateUI_T(ui->label_delta_secondVar, ui->doubleSpinBox_delta_secondVar, ui->doubleSpinBox_max_secondVar, ui->doubleSpinBox_min_secondVar);
@@ -1019,7 +1265,7 @@ void MainWindow::update2dUI(QString arg)
     }else if(arg=="PX")
     {
         //fixed vars
-        UpdateUI_fixedT(ui->label_fixed_secondVar,ui->doubleSpinBox_fixed_secondVar);
+        UpdateUI_fixedT(ui->label_fixed_firsVar,ui->doubleSpinBox_fixed_firstVar);
         //independent variable
         UpdateUI_P(ui->label_delta_firstVar, ui->doubleSpinBox_delta_firstVar, ui->doubleSpinBox_max_firstVar, ui->doubleSpinBox_min_firstVar);
         UpdateUI_X(ui->label_delta_secondVar, ui->doubleSpinBox_delta_secondVar, ui->doubleSpinBox_max_secondVar, ui->doubleSpinBox_min_secondVar);
@@ -1027,7 +1273,7 @@ void MainWindow::update2dUI(QString arg)
     }else if(arg=="TX")
     {
         //fixed vars
-        UpdateUI_fixedP(ui->label_fixed_secondVar,ui->doubleSpinBox_fixed_secondVar);
+        UpdateUI_fixedP(ui->label_fixed_firsVar,ui->doubleSpinBox_fixed_firstVar);
         //independent variable
         UpdateUI_T(ui->label_delta_firstVar, ui->doubleSpinBox_delta_firstVar, ui->doubleSpinBox_max_firstVar, ui->doubleSpinBox_min_firstVar);
         UpdateUI_X(ui->label_delta_secondVar, ui->doubleSpinBox_delta_secondVar, ui->doubleSpinBox_max_secondVar, ui->doubleSpinBox_min_secondVar);
@@ -1038,6 +1284,24 @@ void MainWindow::update2dUI(QString arg)
 }
 void MainWindow::update3dUI(QString arg)
 {
+    //update properties selection
+    ui->comboBox_selectProps->clear();
+    ui->comboBox_selectProps->addItem("Phase Region");
+    ui->comboBox_selectProps->addItem("Bulk density");
+    ui->comboBox_selectProps->addItem("Liquid density");
+    ui->comboBox_selectProps->addItem("Vapour density");
+    ui->comboBox_selectProps->addItem("Halite density");
+    ui->comboBox_selectProps->addItem("Bulk enthalpy");
+    ui->comboBox_selectProps->addItem("Liquid enthalpy");
+    ui->comboBox_selectProps->addItem("Vapour enthalpy");
+    ui->comboBox_selectProps->addItem("Halite enthalpy");
+    ui->comboBox_selectProps->addItem("Liquid saturation");
+    ui->comboBox_selectProps->addItem("Vapour saturation");
+    ui->comboBox_selectProps->addItem("Halite saturation");
+    ui->comboBox_selectProps->addItem("Liquid viscosity");
+    ui->comboBox_selectProps->addItem("Vapour viscosity");
+    ui->comboBox_selectProps->addItem("Liquid salinity");
+    ui->comboBox_selectProps->addItem("Vapour salinity");
     if(arg=="Temperature")
     {
         ui->label_fixed_firsVar->setText("Pressure (bar)");
@@ -1191,6 +1455,24 @@ void MainWindow::on_actionSave_triggered()
                     }
                 }
                 break;
+            case 2:
+            {
+                filter_ext="VTK File (*.vtk)";
+                title_dlg="Save Diagram Calculation Results to File: 2D";
+                fileName = QFileDialog::getSaveFileName(this, tr(title_dlg.c_str()), "", tr(filter_ext.c_str()));
+                if (!fileName.isNull())
+                {
+                    vtkSmartPointer<vtkStructuredGridWriter> writer = vtkSmartPointer<vtkStructuredGridWriter>::New();
+                    writer->SetFileName(fileName.toStdString().c_str());
+                    writer->SetInputData(m_structuredGrid);
+                    writer->Write();
+                }
+                else
+                {
+
+                }
+            }
+                break;
             }
         }
         break;
@@ -1200,5 +1482,12 @@ void MainWindow::on_actionSave_triggered()
 
 void MainWindow::on_comboBox_selectProps_activated(const QString &arg1)
 {
-    ShowProps(m_index_var, ui->comboBox_selectProps->currentIndex());
+    switch (m_dimension) {
+    case 1:
+        ShowProps(m_index_var, ui->comboBox_selectProps->currentIndex());
+        break;
+    case 2:
+        ShowProps_2D(ui->comboBox_selectProps->currentIndex(),m_xlabel,m_ylabel,m_zlabel,m_actorScale);
+        break;
+    }
 }

@@ -129,6 +129,9 @@ protected:
   vtkSmartPointer<vtkStructuredGrid> m_structuredGrid;
   int m_vtkFontSize;
   int m_index_var;
+  double m_actorScale_T, m_actorScale_P, m_actorScale_X;
+  std::string m_xlabel, m_ylabel, m_zlabel;
+  double m_actorScale[3];
 protected slots:
 
 private slots:
@@ -136,6 +139,7 @@ private slots:
   int SetCamera(vtkSmartPointer<vtkRenderer> renderer, vtkBoundingBox boundingbox, int type=ID_CAMERA_UP);
   int InitCubeAxes(vtkCubeAxesActor* axes, vtkBoundingBox boundingbox, vtkBoundingBox rangebox, std::string xlabel, std::string ylabel, std::string zlabel,int fontsize=30);
   void Calculate_Diagram1D();
+  void Calculate_Diagram2D();
   void on_pushButton_2_clicked();
 
   void on_radioButton_pressed();
@@ -147,8 +151,6 @@ private slots:
   void on_tabWidget_currentChanged(int index);
 
   void on_pushButton_clicked();
-
-
 
   void on_radioButton_3_clicked();
 
@@ -169,6 +171,7 @@ private slots:
     void on_actionSave_triggered();
     void update1dChart(int index_var, std::string name_prop, std::vector<int> index_props, std::vector<std::string> names_color);
     void ShowProps(int index_var, int index_prop_combox);
+    void ShowProps_2D(int index_prop, std::string xlabel,std::string ylabel, std::string zlabel , double scale_actor[3]);
     void SinglePointCalculation();
     void on_comboBox_selectProps_activated(const QString &arg1);
     void CalculateProps_PTX(std::vector<double> arrT,std::vector<double> arrP, std::vector<double> arrX , vtkSmartPointer<vtkTable> table);

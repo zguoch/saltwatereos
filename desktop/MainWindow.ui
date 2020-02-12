@@ -192,11 +192,6 @@
              <string>PTX</string>
             </property>
            </item>
-           <item>
-            <property name="text">
-             <string>PHX</string>
-            </property>
-           </item>
           </widget>
           <widget class="QLabel" name="label">
            <property name="geometry">
@@ -930,7 +925,7 @@
            </size>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_3">
            <attribute name="title">
