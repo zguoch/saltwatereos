@@ -24,6 +24,7 @@
 #include <QFileDialog>
 
 #include <vector>
+#include <fstream>
 using namespace std;
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
@@ -72,6 +73,7 @@ using namespace std;
 #include <vtkInteractorStyleImage.h>
 #include <vtkScalarBarActor.h>
 #include <vtkColorSeries.h>
+#include <vtkDelimitedTextWriter.h>
 
 #define CALCULATION_SINGLE_POINT 1
 #define CALCULATION_MULTI_POINTS 2
@@ -167,8 +169,9 @@ private slots:
     void on_actionSave_triggered();
     void update1dChart(int index_var, std::string name_prop, std::vector<int> index_props, std::vector<std::string> names_color);
     void ShowProps(int index_var, int index_prop_combox);
-
+    void SinglePointCalculation();
     void on_comboBox_selectProps_activated(const QString &arg1);
+    void CalculateProps_PTX(std::vector<double> arrT,std::vector<double> arrP, std::vector<double> arrX , vtkSmartPointer<vtkTable> table);
 
 private:
     QRect m_geometry_Groupbox_variables;

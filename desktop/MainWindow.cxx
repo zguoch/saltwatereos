@@ -149,60 +149,123 @@ void MainWindow::slotExit() {
 
 void MainWindow::on_pushButton_2_clicked()
 {
-     double p=ui->doubleSpinBox->value()*1e5;
-     double T=ui->doubleSpinBox_2->value();
-     double X=ui->doubleSpinBox_3->value();
-     QString color_value_1="Black", color_value_2="Black", color_value_3="Black";
-     color_value_1=(m_IndependentVar1_old==p ? color_value_1="Black": color_value_1="Green");
-     color_value_2=(m_IndependentVar2_old==T ? color_value_2="Black": color_value_2="Green");
-     color_value_3=(m_IndependentVar3_old==X ? color_value_3="Black": color_value_3="Green");
+    switch (m_calculationMode) {
+        case CALCULATION_SINGLE_POINT:
+        {
+            SinglePointCalculation();
+        }
+        break;
+        case CALCULATION_MULTI_POINTS:
+        {
+            QString fileName;
+            fileName = QFileDialog::getOpenFileName(this, tr("Open T(K) P(bar) X File: three columns separated by spaces"), "", tr("Text File (*.txt)"));
 
-    SWEOS::cH2ONaCl eos(p, T, X);
-    eos.Calculate();
+            if (!fileName.isNull())
+            {
+                ifstream fin(fileName.toStdString());
+                if(!fin)
+                {
+                    std::cout<<"error: open file failed, "<<fileName.toStdString()<<endl;
+                    return;
+                }
+                vector<double>arrT,arrP,arrX;
+                double T,P,X;
+                while (!fin.eof()) {
+                    fin>>T>>P>>X;
+                    arrT.push_back(T);
+                    arrP.push_back(P*1e5);
+                    arrX.push_back(X);
+                }
+                fin.close();
 
-    QString result_str;
-    // T, P, X
-    result_str="<font color=Purple>Pressure</font> = <font color="+color_value_1+">"+QString::number(p)
-            +"</font> Pa, <font color=Purple>Perssure</font> = <font color="+color_value_2+">"+QString::number(T)
-            +"</font> deg. C, <font color=Purple>Salinity</font>  = <font color="+color_value_3+">"+QString::number(X*100)
-            +"</font> wt. % NaCl<br>";
-    result_str+="======================================================================<br>";
-    // Region
-    result_str+="<font color=Blue>Phase Region</font>: "+QString::fromStdString(eos.m_phaseRegion_name[eos.m_prop.Region])+"<br>";
-    // Xl, Xv
-    result_str+="<font color=Blue>Xl: </font> &nbsp; "+QString::number(eos.m_prop.X_l)+
-              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Xv: </font> &nbsp; "+QString::number(eos.m_prop.X_v)+"<br>";
-    // Bulk rho, bulk H, bulk mu
-    result_str+="<font color=Blue>Bulk density: </font> &nbsp; "+QString::number(eos.m_prop.Rho)+
-              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Bulk enthalpy: </font> &nbsp; "+QString::number(eos.m_prop.H)+
-              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Bulk viscosity: </font> &nbsp; "+QString::number(eos.m_prop.Mu)+"<br>";
-    // rhol, rhov, rhoh
-    result_str+="<font color=Blue>Liquid density: </font> &nbsp; "+QString::number(eos.m_prop.Rho_l)+
-              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Vapour density: </font> &nbsp; "+QString::number(eos.m_prop.Rho_v)+
-              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Halite density: </font> &nbsp; "+QString::number(eos.m_prop.Rho_h)+"<br>";
+                // calculate
+                CalculateProps_PTX(arrT,arrP,arrX,m_vtkTable);
 
-    // Hl, Hv, Hh
-    result_str+="<font color=Blue>Liquid enthalpy: </font> &nbsp; "+QString::number(eos.m_prop.H_l)+
-              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Vapour enthalpy: </font> &nbsp; "+QString::number(eos.m_prop.H_v)+
-              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Halite enthalpy: </font> &nbsp; "+QString::number(eos.m_prop.H_h)+"<br>";
-    // Mul, Muv
-    result_str+="<font color=Blue>Liquid viscosity: </font> &nbsp; "+QString::number(eos.m_prop.Mu_l)+
-              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Vapour viscosity: </font> &nbsp; "+QString::number(eos.m_prop.Mu_v)+"<br>";
-    // Time stamp
-    QDateTime current_date_time =QDateTime::currentDateTime();
-    QString current_date =current_date_time.toString("yyyy.MM.dd hh:mm:ss ddd");
-    result_str+="<br> ----------------------------------- <font color=Grey>"+current_date+" </font> ----------------------------------- <br><br>";
+                // display in textedit
+                ui->textEdit->clear();
+                // head
+                QString str_line="";
+                for (int j=0;j<m_vtkTable->GetNumberOfColumns();j++) {
+                    QString str;
+                    str.sprintf("%30s, ",m_vtkTable->GetColumn(j)->GetName());
+                    str_line+=str;
+                }
+                ui->textEdit->append(str_line);
+                for (int i=0;i<m_vtkTable->GetNumberOfRows();i++) {
+                    QString str_line="";
+                    for (int j=0;j<m_vtkTable->GetNumberOfColumns();j++) {
+                        QString str;
+                        str.sprintf("%30.2f, ",m_vtkTable->GetValue(i,j).ToDouble());
+//                        str_line+=QString::number(m_vtkTable->GetValue(i,j).ToDouble(), 'f', 2)+", ";
+                        str_line+=str;
+                    }
+                    ui->textEdit->append(str_line);
+                }
+            }
+            else
+            {
+
+            }
+        }
+        break;
+    }
+}
+void MainWindow::SinglePointCalculation()
+{
+    double p=ui->doubleSpinBox->value()*1e5;
+    double T=ui->doubleSpinBox_2->value();
+    double X=ui->doubleSpinBox_3->value();
+    QString color_value_1="Black", color_value_2="Black", color_value_3="Black";
+    color_value_1=(m_IndependentVar1_old==p ? color_value_1="Black": color_value_1="Green");
+    color_value_2=(m_IndependentVar2_old==T ? color_value_2="Black": color_value_2="Green");
+    color_value_3=(m_IndependentVar3_old==X ? color_value_3="Black": color_value_3="Green");
+
+   SWEOS::cH2ONaCl eos(p, T, X);
+   eos.Calculate();
+
+   QString result_str;
+   // T, P, X
+   result_str="<font color=Purple>Pressure</font> = <font color="+color_value_1+">"+QString::number(p)
+           +"</font> Pa, <font color=Purple>Perssure</font> = <font color="+color_value_2+">"+QString::number(T)
+           +"</font> deg. C, <font color=Purple>Salinity</font>  = <font color="+color_value_3+">"+QString::number(X*100)
+           +"</font> wt. % NaCl<br>";
+   result_str+="======================================================================<br>";
+   // Region
+   result_str+="<font color=Blue>Phase Region</font>: "+QString::fromStdString(eos.m_phaseRegion_name[eos.m_prop.Region])+"<br>";
+   // Xl, Xv
+   result_str+="<font color=Blue>Xl: </font> &nbsp; "+QString::number(eos.m_prop.X_l)+
+             ",&nbsp;&nbsp;&nbsp; <font color=Blue>Xv: </font> &nbsp; "+QString::number(eos.m_prop.X_v)+"<br>";
+   // Bulk rho, bulk H, bulk mu
+   result_str+="<font color=Blue>Bulk density: </font> &nbsp; "+QString::number(eos.m_prop.Rho)+
+             ",&nbsp;&nbsp;&nbsp; <font color=Blue>Bulk enthalpy: </font> &nbsp; "+QString::number(eos.m_prop.H)+
+             ",&nbsp;&nbsp;&nbsp; <font color=Blue>Bulk viscosity: </font> &nbsp; "+QString::number(eos.m_prop.Mu)+"<br>";
+   // rhol, rhov, rhoh
+   result_str+="<font color=Blue>Liquid density: </font> &nbsp; "+QString::number(eos.m_prop.Rho_l)+
+             ",&nbsp;&nbsp;&nbsp; <font color=Blue>Vapour density: </font> &nbsp; "+QString::number(eos.m_prop.Rho_v)+
+             ",&nbsp;&nbsp;&nbsp; <font color=Blue>Halite density: </font> &nbsp; "+QString::number(eos.m_prop.Rho_h)+"<br>";
+
+   // Hl, Hv, Hh
+   result_str+="<font color=Blue>Liquid enthalpy: </font> &nbsp; "+QString::number(eos.m_prop.H_l)+
+             ",&nbsp;&nbsp;&nbsp; <font color=Blue>Vapour enthalpy: </font> &nbsp; "+QString::number(eos.m_prop.H_v)+
+             ",&nbsp;&nbsp;&nbsp; <font color=Blue>Halite enthalpy: </font> &nbsp; "+QString::number(eos.m_prop.H_h)+"<br>";
+   // Mul, Muv
+   result_str+="<font color=Blue>Liquid viscosity: </font> &nbsp; "+QString::number(eos.m_prop.Mu_l)+
+             ",&nbsp;&nbsp;&nbsp; <font color=Blue>Vapour viscosity: </font> &nbsp; "+QString::number(eos.m_prop.Mu_v)+"<br>";
+   // Time stamp
+   QDateTime current_date_time =QDateTime::currentDateTime();
+   QString current_date =current_date_time.toString("yyyy.MM.dd hh:mm:ss ddd");
+   result_str+="<br> ----------------------------------- <font color=Grey>"+current_date+" </font> ----------------------------------- <br><br>";
 
 
-    ui->textEdit->setText(ui->textEdit->toPlainText());
-    ui->textEdit->moveCursor(QTextCursor::Start);
-    ui->textEdit->insertHtml(result_str);
+   ui->textEdit->setText(ui->textEdit->toPlainText());
+   ui->textEdit->moveCursor(QTextCursor::Start);
+   ui->textEdit->insertHtml(result_str);
 
 
-    //update old value
-    m_IndependentVar1_old=p;
-    m_IndependentVar2_old=T;
-    m_IndependentVar3_old=X;
+   //update old value
+   m_IndependentVar1_old=p;
+   m_IndependentVar2_old=T;
+   m_IndependentVar3_old=X;
 }
 
 void MainWindow::on_radioButton_pressed()
@@ -310,114 +373,121 @@ void MainWindow::Calculate_Diagram1D()
                 break;
             }
 
-            // add columns to table
-            //ui->textEdit->append(QString::number(m_vtkTable->GetNumberOfColumns()));
-            vtkSmartPointer<vtkFloatArray> varT = vtkSmartPointer<vtkFloatArray>::New();
-            varT->SetName("Temperature(C)");
-            m_vtkTable->AddColumn(varT);
-
-            vtkSmartPointer<vtkFloatArray> varP = vtkSmartPointer<vtkFloatArray>::New();
-            varP->SetName("Pressure (bar)");
-            m_vtkTable->AddColumn(varP);
-
-            vtkSmartPointer<vtkFloatArray> varX = vtkSmartPointer<vtkFloatArray>::New();
-            varX->SetName("Salinity");
-            m_vtkTable->AddColumn(varX);
-
-            //phase region
-            vtkSmartPointer<vtkIntArray> prop_region = vtkSmartPointer<vtkIntArray>::New();
-            prop_region->SetName("Phase Region");
-            m_vtkTable->AddColumn(prop_region);
-            //density
-            vtkSmartPointer<vtkFloatArray> prop_density = vtkSmartPointer<vtkFloatArray>::New();
-            prop_density->SetName("Bulk density (kg/m3)");
-            m_vtkTable->AddColumn(prop_density);
-            vtkSmartPointer<vtkFloatArray> prop_rho_l = vtkSmartPointer<vtkFloatArray>::New();
-            prop_rho_l->SetName("Liquid density (kg/m3)");
-            m_vtkTable->AddColumn(prop_rho_l);
-            vtkSmartPointer<vtkFloatArray> prop_rho_v = vtkSmartPointer<vtkFloatArray>::New();
-            prop_rho_v->SetName("Vapour density (kg/m3)");
-            m_vtkTable->AddColumn(prop_rho_v);
-            vtkSmartPointer<vtkFloatArray> prop_rho_h = vtkSmartPointer<vtkFloatArray>::New();
-            prop_rho_h->SetName("Halite density (kg/m3)");
-            m_vtkTable->AddColumn(prop_rho_h);
-            //Enthalpy
-            vtkSmartPointer<vtkFloatArray> prop_enthalpy = vtkSmartPointer<vtkFloatArray>::New();
-            prop_enthalpy->SetName("Bulk enthalpy (J/kg)");
-            m_vtkTable->AddColumn(prop_enthalpy);
-            vtkSmartPointer<vtkFloatArray> prop_enthalpy_l = vtkSmartPointer<vtkFloatArray>::New();
-            prop_enthalpy_l->SetName("Liquid enthalpy (J/kg)");
-            m_vtkTable->AddColumn(prop_enthalpy_l);
-            vtkSmartPointer<vtkFloatArray> prop_enthalpy_v = vtkSmartPointer<vtkFloatArray>::New();
-            prop_enthalpy_v->SetName("Vapour enthalpy (J/kg)");
-            m_vtkTable->AddColumn(prop_enthalpy_v);
-            vtkSmartPointer<vtkFloatArray> prop_enthalpy_h = vtkSmartPointer<vtkFloatArray>::New();
-            prop_enthalpy_h->SetName("Halite enthalpy (J/kg)");
-            m_vtkTable->AddColumn(prop_enthalpy_h);
-
-            //Saturation
-            vtkSmartPointer<vtkFloatArray> prop_S_l = vtkSmartPointer<vtkFloatArray>::New();
-            prop_S_l->SetName("Liquid saturation");
-            m_vtkTable->AddColumn(prop_S_l);
-            vtkSmartPointer<vtkFloatArray> prop_S_v = vtkSmartPointer<vtkFloatArray>::New();
-            prop_S_v->SetName("Vapour saturation");
-            m_vtkTable->AddColumn(prop_S_v);
-            vtkSmartPointer<vtkFloatArray> prop_S_h = vtkSmartPointer<vtkFloatArray>::New();
-            prop_S_h->SetName("Halite saturation");
-            m_vtkTable->AddColumn(prop_S_h);
-
-            //viscosity
-            vtkSmartPointer<vtkFloatArray> prop_Mu_l = vtkSmartPointer<vtkFloatArray>::New();
-            prop_Mu_l->SetName("Liquid viscosity (Pa s)");
-            m_vtkTable->AddColumn(prop_Mu_l);
-            vtkSmartPointer<vtkFloatArray> prop_Mu_v = vtkSmartPointer<vtkFloatArray>::New();
-            prop_Mu_v->SetName("Vapour viscosity (Pa s)");
-            m_vtkTable->AddColumn(prop_Mu_v);
-
-            //salinity
-            vtkSmartPointer<vtkFloatArray> prop_X_l = vtkSmartPointer<vtkFloatArray>::New();
-            prop_X_l->SetName("Liquid salinity");
-            m_vtkTable->AddColumn(prop_X_l);
-            vtkSmartPointer<vtkFloatArray> prop_X_v = vtkSmartPointer<vtkFloatArray>::New();
-            prop_X_v->SetName("Vapour salinity");
-            m_vtkTable->AddColumn(prop_X_v);
-
-            //calculate and set value to vtktable
-            m_vtkTable->SetNumberOfRows(arrT.size());
-            for (size_t i=0;i<arrT.size();++i) {
-                SWEOS::cH2ONaCl eos(arrP[i],arrT[i],arrX[i]);
-                eos.Calculate();
-                m_vtkTable->SetValue(i, 0, arrT[i]);
-                m_vtkTable->SetValue(i, 1, arrP[i]/1e5);
-                m_vtkTable->SetValue(i, 2, arrX[i]);
-                m_vtkTable->SetValue(i, 3, eos.m_prop.Region);
-
-                m_vtkTable->SetValue(i, 4, eos.m_prop.Rho);
-                m_vtkTable->SetValue(i, 5, eos.m_prop.Rho_l);
-                m_vtkTable->SetValue(i, 6, eos.m_prop.Rho_v);
-                m_vtkTable->SetValue(i, 7, eos.m_prop.Rho_h);
-
-                m_vtkTable->SetValue(i, 8, eos.m_prop.H);
-                m_vtkTable->SetValue(i, 9, eos.m_prop.H_l);
-                m_vtkTable->SetValue(i, 10, eos.m_prop.H_v);
-                m_vtkTable->SetValue(i, 11, eos.m_prop.H_h);
-
-                m_vtkTable->SetValue(i, 12, eos.m_prop.S_l);
-                m_vtkTable->SetValue(i, 13, eos.m_prop.S_v);
-                m_vtkTable->SetValue(i, 14, eos.m_prop.S_h);
-
-                m_vtkTable->SetValue(i, 15, eos.m_prop.Mu_l);
-                m_vtkTable->SetValue(i, 16, eos.m_prop.Mu_v);
-
-                m_vtkTable->SetValue(i, 17, eos.m_prop.X_l);
-                m_vtkTable->SetValue(i, 18, eos.m_prop.X_v);
-            }
-
+            //calculate
+            CalculateProps_PTX(arrT, arrP,arrX, m_vtkTable);
             //display
             ShowProps(m_index_var, ui->comboBox_selectProps->currentIndex());
 
-
 }
+
+void MainWindow::CalculateProps_PTX(std::vector<double> arrT,std::vector<double> arrP, std::vector<double> arrX, vtkSmartPointer<vtkTable> table )
+{
+    // add columns to table
+    //ui->textEdit->append(QString::number(m_vtkTable->GetNumberOfColumns()));
+//    vtkSmartPointer<vtkTable> table=vtkSmartPointer<vtkTable>::New();
+
+    vtkSmartPointer<vtkFloatArray> varT = vtkSmartPointer<vtkFloatArray>::New();
+    varT->SetName("Temperature(C)");
+    table->AddColumn(varT);
+
+    vtkSmartPointer<vtkFloatArray> varP = vtkSmartPointer<vtkFloatArray>::New();
+    varP->SetName("Pressure (bar)");
+    table->AddColumn(varP);
+
+    vtkSmartPointer<vtkFloatArray> varX = vtkSmartPointer<vtkFloatArray>::New();
+    varX->SetName("Salinity");
+    table->AddColumn(varX);
+
+    //phase region
+    vtkSmartPointer<vtkIntArray> prop_region = vtkSmartPointer<vtkIntArray>::New();
+    prop_region->SetName("Phase Region");
+    table->AddColumn(prop_region);
+    //density
+    vtkSmartPointer<vtkFloatArray> prop_density = vtkSmartPointer<vtkFloatArray>::New();
+    prop_density->SetName("Bulk density (kg/m3)");
+    table->AddColumn(prop_density);
+    vtkSmartPointer<vtkFloatArray> prop_rho_l = vtkSmartPointer<vtkFloatArray>::New();
+    prop_rho_l->SetName("Liquid density (kg/m3)");
+    table->AddColumn(prop_rho_l);
+    vtkSmartPointer<vtkFloatArray> prop_rho_v = vtkSmartPointer<vtkFloatArray>::New();
+    prop_rho_v->SetName("Vapour density (kg/m3)");
+    table->AddColumn(prop_rho_v);
+    vtkSmartPointer<vtkFloatArray> prop_rho_h = vtkSmartPointer<vtkFloatArray>::New();
+    prop_rho_h->SetName("Halite density (kg/m3)");
+    table->AddColumn(prop_rho_h);
+    //Enthalpy
+    vtkSmartPointer<vtkFloatArray> prop_enthalpy = vtkSmartPointer<vtkFloatArray>::New();
+    prop_enthalpy->SetName("Bulk enthalpy (J/kg)");
+    table->AddColumn(prop_enthalpy);
+    vtkSmartPointer<vtkFloatArray> prop_enthalpy_l = vtkSmartPointer<vtkFloatArray>::New();
+    prop_enthalpy_l->SetName("Liquid enthalpy (J/kg)");
+    table->AddColumn(prop_enthalpy_l);
+    vtkSmartPointer<vtkFloatArray> prop_enthalpy_v = vtkSmartPointer<vtkFloatArray>::New();
+    prop_enthalpy_v->SetName("Vapour enthalpy (J/kg)");
+    table->AddColumn(prop_enthalpy_v);
+    vtkSmartPointer<vtkFloatArray> prop_enthalpy_h = vtkSmartPointer<vtkFloatArray>::New();
+    prop_enthalpy_h->SetName("Halite enthalpy (J/kg)");
+    table->AddColumn(prop_enthalpy_h);
+
+    //Saturation
+    vtkSmartPointer<vtkFloatArray> prop_S_l = vtkSmartPointer<vtkFloatArray>::New();
+    prop_S_l->SetName("Liquid saturation");
+    table->AddColumn(prop_S_l);
+    vtkSmartPointer<vtkFloatArray> prop_S_v = vtkSmartPointer<vtkFloatArray>::New();
+    prop_S_v->SetName("Vapour saturation");
+    table->AddColumn(prop_S_v);
+    vtkSmartPointer<vtkFloatArray> prop_S_h = vtkSmartPointer<vtkFloatArray>::New();
+    prop_S_h->SetName("Halite saturation");
+    table->AddColumn(prop_S_h);
+
+    //viscosity
+    vtkSmartPointer<vtkFloatArray> prop_Mu_l = vtkSmartPointer<vtkFloatArray>::New();
+    prop_Mu_l->SetName("Liquid viscosity (Pa s)");
+    table->AddColumn(prop_Mu_l);
+    vtkSmartPointer<vtkFloatArray> prop_Mu_v = vtkSmartPointer<vtkFloatArray>::New();
+    prop_Mu_v->SetName("Vapour viscosity (Pa s)");
+    table->AddColumn(prop_Mu_v);
+
+    //salinity
+    vtkSmartPointer<vtkFloatArray> prop_X_l = vtkSmartPointer<vtkFloatArray>::New();
+    prop_X_l->SetName("Liquid salinity");
+    table->AddColumn(prop_X_l);
+    vtkSmartPointer<vtkFloatArray> prop_X_v = vtkSmartPointer<vtkFloatArray>::New();
+    prop_X_v->SetName("Vapour salinity");
+    table->AddColumn(prop_X_v);
+
+    //calculate and set value to vtktable
+    table->SetNumberOfRows(arrT.size());
+    for (size_t i=0;i<arrT.size();++i) {
+        SWEOS::cH2ONaCl eos(arrP[i],arrT[i],arrX[i]);
+        eos.Calculate();
+        table->SetValue(i, 0, arrT[i]);
+        table->SetValue(i, 1, arrP[i]/1e5);
+        table->SetValue(i, 2, arrX[i]);
+        table->SetValue(i, 3, eos.m_prop.Region);
+
+        table->SetValue(i, 4, eos.m_prop.Rho);
+        table->SetValue(i, 5, eos.m_prop.Rho_l);
+        table->SetValue(i, 6, eos.m_prop.Rho_v);
+        table->SetValue(i, 7, eos.m_prop.Rho_h);
+
+        table->SetValue(i, 8, eos.m_prop.H);
+        table->SetValue(i, 9, eos.m_prop.H_l);
+        table->SetValue(i, 10, eos.m_prop.H_v);
+        table->SetValue(i, 11, eos.m_prop.H_h);
+
+        table->SetValue(i, 12, eos.m_prop.S_l);
+        table->SetValue(i, 13, eos.m_prop.S_v);
+        table->SetValue(i, 14, eos.m_prop.S_h);
+
+        table->SetValue(i, 15, eos.m_prop.Mu_l);
+        table->SetValue(i, 16, eos.m_prop.Mu_v);
+
+        table->SetValue(i, 17, eos.m_prop.X_l);
+        table->SetValue(i, 18, eos.m_prop.X_v);
+    }
+}
+
 void MainWindow::ShowProps(int index_var, int index_prop_combox)
 {
     std::vector<std::string> names_color={"banana", "Chartreuse", "DeepPink", "Cyan"};
@@ -460,6 +530,7 @@ void MainWindow::ShowProps(int index_var, int index_prop_combox)
             break;
     }
 }
+
 void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector<int> index_props, std::vector<std::string> names_color)
 {
     //clean old charts
@@ -624,6 +695,7 @@ void MainWindow::on_pushButton_clicked()
 
     }
 }
+
 int MainWindow::InitCubeAxes(vtkCubeAxesActor* axes, vtkBoundingBox boundingbox, vtkBoundingBox rangebox, std::string xlabel, std::string ylabel, std::string zlabel,int fontsize)
 {
     axes->SetFlyModeToClosestTriad();
@@ -652,6 +724,7 @@ int MainWindow::InitCubeAxes(vtkCubeAxesActor* axes, vtkBoundingBox boundingbox,
     }
     return 0;
 }
+
 int MainWindow::SetCamera(vtkSmartPointer<vtkRenderer> renderer, vtkBoundingBox boundingbox, int type)
 {
     double center[3];
@@ -740,6 +813,7 @@ void MainWindow::on_radioButton_5_clicked()
         updateUI(m_dimension);
     }
 }
+
 void MainWindow::updateUI(int dim)
 {
     switch (dim) {
@@ -757,6 +831,7 @@ void MainWindow::updateUI(int dim)
         break;
     }
 }
+
 void MainWindow::updateUILayout(bool show_secondVariable, bool show_thirdVariable, bool show_firstFixedVar, bool show_secondFixedVar,bool show_groupbox_fixedVars, double shinkWidth_groupbox_Vars)
 {
     if(show_thirdVariable)
@@ -1069,40 +1144,55 @@ void MainWindow::on_comboBox_selectVariable_activated(const QString &arg1)
     }
 }
 
-
 void MainWindow::on_actionSave_triggered()
 {
     int index_tab=ui->tabWidget->currentIndex();
     switch (index_tab) {
-    case 0:
-    {
-        QString fileName;
-        fileName = QFileDialog::getSaveFileName(this, tr("Save Scatter Calculation Results to File"), "", tr("Text File (*.txt);;CSV files (*.csv)"));
-
-        if (!fileName.isNull())
+        case 0:
         {
+            if(m_calculationMode==CALCULATION_MULTI_POINTS)
+            {
+                std::string filter_ext, title_dlg;
+                QString fileName;
+                filter_ext="CSV File (*.csv);;Delimited Text File (*.txt)";
+                title_dlg="Save Multiple Points Calculation Results to File: Scatter";
+                fileName = QFileDialog::getSaveFileName(this, tr(title_dlg.c_str()), "", tr(filter_ext.c_str()));
+                if (!fileName.isNull())
+                {
+                    vtkSmartPointer<vtkDelimitedTextWriter> writer =  vtkSmartPointer<vtkDelimitedTextWriter>::New();
+                    writer->SetFileName(fileName.toStdString().c_str());
+                    writer->SetInputData(m_vtkTable);
+                    writer->Write();
+                }
+            }
 
         }
-        else
-        {
-
-        }
-    }
         break;
-    case 1:
-    {
-        QString fileName;
-        fileName = QFileDialog::getSaveFileName(this, tr("Save Diagram Calculation Results to File"), "", tr("VTK File (*.vtk);;Text files (*.txt)"));
-
-        if (!fileName.isNull())
+        case 1:
         {
+            std::string filter_ext, title_dlg;
+            QString fileName;
+            switch (m_dimension) {
+                case 1:
+                {
+                    filter_ext="CSV File (*.csv);;Delimited Text File (*.txt)";
+                    title_dlg="Save Diagram Calculation Results to File: 1D";
+                    fileName = QFileDialog::getSaveFileName(this, tr(title_dlg.c_str()), "", tr(filter_ext.c_str()));
+                    if (!fileName.isNull())
+                    {
+                        vtkSmartPointer<vtkDelimitedTextWriter> writer =  vtkSmartPointer<vtkDelimitedTextWriter>::New();
+                        writer->SetFileName(fileName.toStdString().c_str());
+                        writer->SetInputData(m_vtkTable);
+                        writer->Write();
+                    }
+                    else
+                    {
 
+                    }
+                }
+                break;
+            }
         }
-        else
-        {
-
-        }
-    }
         break;
     }
 

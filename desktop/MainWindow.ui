@@ -95,7 +95,7 @@
           </font>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="tab">
           <attribute name="title">
@@ -897,19 +897,6 @@
            </property>
            <property name="text">
             <string>Select Property</string>
-           </property>
-          </widget>
-          <widget class="QCheckBox" name="checkBox">
-           <property name="geometry">
-            <rect>
-             <x>1050</x>
-             <y>40</y>
-             <width>86</width>
-             <height>20</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>CheckBox</string>
            </property>
           </widget>
          </widget>
