@@ -21,6 +21,8 @@
 #include <QDateTime>
 #include <QTime>
 #include <QMessageBox>
+#include <QFileDialog>
+
 #include <vector>
 using namespace std;
 #include "MainWindow.h"
@@ -123,12 +125,15 @@ protected:
   vtkSmartPointer<vtkGenericOpenGLRenderWindow> m_renderWindow;
     vtkSmartPointer<vtkTable> m_vtkTable;
   vtkSmartPointer<vtkStructuredGrid> m_structuredGrid;
+  int m_vtkFontSize;
+  int m_index_var;
 protected slots:
 
 private slots:
   void updateCalculationModelSelection(bool isSinglePoint);
   int SetCamera(vtkSmartPointer<vtkRenderer> renderer, vtkBoundingBox boundingbox, int type=ID_CAMERA_UP);
   int InitCubeAxes(vtkCubeAxesActor* axes, vtkBoundingBox boundingbox, vtkBoundingBox rangebox, std::string xlabel, std::string ylabel, std::string zlabel,int fontsize=30);
+  void Calculate_Diagram1D();
   void on_pushButton_2_clicked();
 
   void on_radioButton_pressed();
@@ -159,6 +164,12 @@ private slots:
     void initRenderWindow();
     void updateUI(int dim); //update UI of phase diagram
     void updateUILayout(bool show_secondVariable, bool show_thirdVariable, bool show_firstFixedVar, bool show_secondFixedVar,bool show_groupbox_fixedVars, double shinkWidth_groupbox_Vars);
+    void on_actionSave_triggered();
+    void update1dChart(int index_var, std::string name_prop, std::vector<int> index_props, std::vector<std::string> names_color);
+    void ShowProps(int index_var, int index_prop_combox);
+
+    void on_comboBox_selectProps_activated(const QString &arg1);
+
 private:
     QRect m_geometry_Groupbox_variables;
     void UpdateUI_P(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox);
@@ -172,3 +183,4 @@ private:
 };
 
 #endif // MainWindow_H
+

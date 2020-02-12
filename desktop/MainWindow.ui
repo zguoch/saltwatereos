@@ -95,7 +95,7 @@
           </font>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="tab">
           <attribute name="title">
@@ -846,7 +846,7 @@
             </property>
            </item>
           </widget>
-          <widget class="QComboBox" name="comboBox_3">
+          <widget class="QComboBox" name="comboBox_selectProps">
            <property name="geometry">
             <rect>
              <x>96</x>
@@ -872,7 +872,17 @@
            </item>
            <item>
             <property name="text">
+             <string>Saturation</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
              <string>Viscosity</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Salinity</string>
             </property>
            </item>
           </widget>
@@ -887,6 +897,19 @@
            </property>
            <property name="text">
             <string>Select Property</string>
+           </property>
+          </widget>
+          <widget class="QCheckBox" name="checkBox">
+           <property name="geometry">
+            <rect>
+             <x>1050</x>
+             <y>40</y>
+             <width>86</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>CheckBox</string>
            </property>
           </widget>
          </widget>
@@ -936,7 +959,7 @@
            <attribute name="title">
             <string>Renderwindow</string>
            </attribute>
-           <layout class="QGridLayout" name="gridLayout_2">
+           <layout class="QGridLayout" name="gridLayout_3">
             <item row="0" column="0">
              <widget class="QVTKOpenGLNativeWidget" name="qvtkWidget2" native="true"/>
             </item>
@@ -1008,9 +1031,6 @@
    </attribute>
    <addaction name="actionOpenFile"/>
    <addaction name="actionSave"/>
-   <addaction name="separator"/>
-   <addaction name="actionPrint"/>
-   <addaction name="actionHelp"/>
   </widget>
   <action name="actionOpenFile">
    <property name="enabled">

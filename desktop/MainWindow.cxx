@@ -48,6 +48,8 @@ MainWindow::MainWindow(QWidget *parent)
     , m_calculationMode(CALCULATION_SINGLE_POINT)
     , m_dimension(1)
     ,m_calculationMode_123Dim(oneDim_Temperature)
+    ,m_vtkFontSize(25)
+    ,m_index_var(0)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -251,184 +253,266 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 
 }
 
+void MainWindow::Calculate_Diagram1D()
+{
+            QString varName;
+//            int index_var=0;
+            vector<double>arrP,arrT,arrX;
+            switch (ui->comboBox_selectVariable->currentIndex()) {
+            case 0:   //temperature
+            {
+                varName="Temperature (C)";
+                m_index_var=0;
+                double dT=ui->doubleSpinBox_delta_firstVar->value();
+                double Tmin=ui->doubleSpinBox_min_firstVar->value();
+                double Tmax=ui->doubleSpinBox_max_firstVar->value();
+                double p0=ui->doubleSpinBox_fixed_firstVar->value()*1e5;
+                double X0=ui->doubleSpinBox_fixed_secondVar->value();
+                for (double T=Tmin;T<Tmax;T=T+dT) {
+                    arrT.push_back(T);
+                    arrP.push_back(p0);
+                    arrX.push_back(X0);
+                }
+
+            }
+                break;
+            case 1:   //pressure
+            {
+                varName="Pressure (bar)";
+                m_index_var=1;
+                double dP=ui->doubleSpinBox_delta_firstVar->value()*1e5;
+                double Pmin=ui->doubleSpinBox_min_firstVar->value()*1e5;
+                double Pmax=ui->doubleSpinBox_max_firstVar->value()*1e5;
+                double T0=ui->doubleSpinBox_fixed_firstVar->value();
+                double X0=ui->doubleSpinBox_fixed_secondVar->value();
+                for (double P=Pmin;P<Pmax;P=P+dP) {
+                    arrT.push_back(T0);
+                    arrP.push_back(P);
+                    arrX.push_back(X0);
+                }
+            }
+                break;
+            case 2:  //salinity
+            {
+                varName="Salinity";
+                m_index_var=2;
+                double dX=ui->doubleSpinBox_delta_firstVar->value();
+                double Xmin=ui->doubleSpinBox_min_firstVar->value();
+                double Xmax=ui->doubleSpinBox_max_firstVar->value();
+                double P0=ui->doubleSpinBox_fixed_firstVar->value()*1e5;
+                double T0=ui->doubleSpinBox_fixed_secondVar->value();
+                for (double X=Xmin;X<Xmax;X=X+dX) {
+                    arrT.push_back(T0);
+                    arrP.push_back(P0);
+                    arrX.push_back(X);
+                }
+            }
+                break;
+            }
+
+            // add columns to table
+            //ui->textEdit->append(QString::number(m_vtkTable->GetNumberOfColumns()));
+            vtkSmartPointer<vtkFloatArray> varT = vtkSmartPointer<vtkFloatArray>::New();
+            varT->SetName("Temperature(C)");
+            m_vtkTable->AddColumn(varT);
+
+            vtkSmartPointer<vtkFloatArray> varP = vtkSmartPointer<vtkFloatArray>::New();
+            varP->SetName("Pressure (bar)");
+            m_vtkTable->AddColumn(varP);
+
+            vtkSmartPointer<vtkFloatArray> varX = vtkSmartPointer<vtkFloatArray>::New();
+            varX->SetName("Salinity");
+            m_vtkTable->AddColumn(varX);
+
+            //phase region
+            vtkSmartPointer<vtkIntArray> prop_region = vtkSmartPointer<vtkIntArray>::New();
+            prop_region->SetName("Phase Region");
+            m_vtkTable->AddColumn(prop_region);
+            //density
+            vtkSmartPointer<vtkFloatArray> prop_density = vtkSmartPointer<vtkFloatArray>::New();
+            prop_density->SetName("Bulk density (kg/m3)");
+            m_vtkTable->AddColumn(prop_density);
+            vtkSmartPointer<vtkFloatArray> prop_rho_l = vtkSmartPointer<vtkFloatArray>::New();
+            prop_rho_l->SetName("Liquid density (kg/m3)");
+            m_vtkTable->AddColumn(prop_rho_l);
+            vtkSmartPointer<vtkFloatArray> prop_rho_v = vtkSmartPointer<vtkFloatArray>::New();
+            prop_rho_v->SetName("Vapour density (kg/m3)");
+            m_vtkTable->AddColumn(prop_rho_v);
+            vtkSmartPointer<vtkFloatArray> prop_rho_h = vtkSmartPointer<vtkFloatArray>::New();
+            prop_rho_h->SetName("Halite density (kg/m3)");
+            m_vtkTable->AddColumn(prop_rho_h);
+            //Enthalpy
+            vtkSmartPointer<vtkFloatArray> prop_enthalpy = vtkSmartPointer<vtkFloatArray>::New();
+            prop_enthalpy->SetName("Bulk enthalpy (J/kg)");
+            m_vtkTable->AddColumn(prop_enthalpy);
+            vtkSmartPointer<vtkFloatArray> prop_enthalpy_l = vtkSmartPointer<vtkFloatArray>::New();
+            prop_enthalpy_l->SetName("Liquid enthalpy (J/kg)");
+            m_vtkTable->AddColumn(prop_enthalpy_l);
+            vtkSmartPointer<vtkFloatArray> prop_enthalpy_v = vtkSmartPointer<vtkFloatArray>::New();
+            prop_enthalpy_v->SetName("Vapour enthalpy (J/kg)");
+            m_vtkTable->AddColumn(prop_enthalpy_v);
+            vtkSmartPointer<vtkFloatArray> prop_enthalpy_h = vtkSmartPointer<vtkFloatArray>::New();
+            prop_enthalpy_h->SetName("Halite enthalpy (J/kg)");
+            m_vtkTable->AddColumn(prop_enthalpy_h);
+
+            //Saturation
+            vtkSmartPointer<vtkFloatArray> prop_S_l = vtkSmartPointer<vtkFloatArray>::New();
+            prop_S_l->SetName("Liquid saturation");
+            m_vtkTable->AddColumn(prop_S_l);
+            vtkSmartPointer<vtkFloatArray> prop_S_v = vtkSmartPointer<vtkFloatArray>::New();
+            prop_S_v->SetName("Vapour saturation");
+            m_vtkTable->AddColumn(prop_S_v);
+            vtkSmartPointer<vtkFloatArray> prop_S_h = vtkSmartPointer<vtkFloatArray>::New();
+            prop_S_h->SetName("Halite saturation");
+            m_vtkTable->AddColumn(prop_S_h);
+
+            //viscosity
+            vtkSmartPointer<vtkFloatArray> prop_Mu_l = vtkSmartPointer<vtkFloatArray>::New();
+            prop_Mu_l->SetName("Liquid viscosity (Pa s)");
+            m_vtkTable->AddColumn(prop_Mu_l);
+            vtkSmartPointer<vtkFloatArray> prop_Mu_v = vtkSmartPointer<vtkFloatArray>::New();
+            prop_Mu_v->SetName("Vapour viscosity (Pa s)");
+            m_vtkTable->AddColumn(prop_Mu_v);
+
+            //salinity
+            vtkSmartPointer<vtkFloatArray> prop_X_l = vtkSmartPointer<vtkFloatArray>::New();
+            prop_X_l->SetName("Liquid salinity");
+            m_vtkTable->AddColumn(prop_X_l);
+            vtkSmartPointer<vtkFloatArray> prop_X_v = vtkSmartPointer<vtkFloatArray>::New();
+            prop_X_v->SetName("Vapour salinity");
+            m_vtkTable->AddColumn(prop_X_v);
+
+            //calculate and set value to vtktable
+            m_vtkTable->SetNumberOfRows(arrT.size());
+            for (size_t i=0;i<arrT.size();++i) {
+                SWEOS::cH2ONaCl eos(arrP[i],arrT[i],arrX[i]);
+                eos.Calculate();
+                m_vtkTable->SetValue(i, 0, arrT[i]);
+                m_vtkTable->SetValue(i, 1, arrP[i]/1e5);
+                m_vtkTable->SetValue(i, 2, arrX[i]);
+                m_vtkTable->SetValue(i, 3, eos.m_prop.Region);
+
+                m_vtkTable->SetValue(i, 4, eos.m_prop.Rho);
+                m_vtkTable->SetValue(i, 5, eos.m_prop.Rho_l);
+                m_vtkTable->SetValue(i, 6, eos.m_prop.Rho_v);
+                m_vtkTable->SetValue(i, 7, eos.m_prop.Rho_h);
+
+                m_vtkTable->SetValue(i, 8, eos.m_prop.H);
+                m_vtkTable->SetValue(i, 9, eos.m_prop.H_l);
+                m_vtkTable->SetValue(i, 10, eos.m_prop.H_v);
+                m_vtkTable->SetValue(i, 11, eos.m_prop.H_h);
+
+                m_vtkTable->SetValue(i, 12, eos.m_prop.S_l);
+                m_vtkTable->SetValue(i, 13, eos.m_prop.S_v);
+                m_vtkTable->SetValue(i, 14, eos.m_prop.S_h);
+
+                m_vtkTable->SetValue(i, 15, eos.m_prop.Mu_l);
+                m_vtkTable->SetValue(i, 16, eos.m_prop.Mu_v);
+
+                m_vtkTable->SetValue(i, 17, eos.m_prop.X_l);
+                m_vtkTable->SetValue(i, 18, eos.m_prop.X_v);
+            }
+
+            //display
+            ShowProps(m_index_var, ui->comboBox_selectProps->currentIndex());
+
+
+}
+void MainWindow::ShowProps(int index_var, int index_prop_combox)
+{
+    std::vector<std::string> names_color={"banana", "Chartreuse", "DeepPink", "Cyan"};
+    switch (index_prop_combox) {
+        case 0: //phase region
+        {
+            std::vector<int> index_props={3};
+            update1dChart(index_var, "Phase region", index_props, names_color);
+        }
+            break;
+        case 1: //Density, rho_l, rho_v, rho_h
+        {
+            std::vector<int> index_props={4,5,6,7};
+            update1dChart(index_var, "Density (kg/m3)", index_props, names_color);
+        }
+            break;
+        case 2: //Enthalpy
+        {
+            std::vector<int> index_props={8, 9, 10, 11};
+            update1dChart(index_var, "Specific enthalpy (J/kg)", index_props, names_color);
+        }
+            break;
+        case 3://saturation
+        {
+            std::vector<int> index_props={12,13,14};
+            update1dChart(index_var, "Saturation", index_props, names_color);
+        }
+            break;
+        case 4://viscosity
+        {
+            std::vector<int> index_props={15, 16};
+            update1dChart(index_var, "Dynamic viscosity (Pa s)", index_props, names_color);
+        }
+            break;
+        case 5://salinity
+        {
+            std::vector<int> index_props={17, 18};
+            update1dChart(index_var, "Salinity", index_props, names_color);
+        }
+            break;
+    }
+}
+void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector<int> index_props, std::vector<std::string> names_color)
+{
+    //clean old charts
+    int num_oldItems=m_vtkChartView->GetScene()->GetNumberOfItems();
+    for (int i=0;i<num_oldItems;i++) {
+        m_vtkChartView->GetScene()->RemoveItem(m_vtkChartView->GetScene()->GetItem(0));
+    }
+    // add new chart
+    vtkSmartPointer<vtkChartXY> chart = vtkSmartPointer<vtkChartXY>::New();
+    m_vtkChartView->GetScene()->AddItem(chart);
+
+    vtkNew<vtkNamedColors> colors;
+    vtkColor3d color3d;
+    for (size_t i=0;i<index_props.size();i++) {
+        vtkPlot *line = chart->AddPlot(vtkChart::LINE);
+        line->SetInputData(m_vtkTable, index_var, index_props[i]);
+        color3d = colors->GetColor3d(names_color[i]);
+        line->SetColor(color3d.GetRed(), color3d.GetGreen(), color3d.GetBlue());
+        line->SetWidth(3.0);
+    }
+
+    chart->GetAxis(1)->SetTitle(m_vtkTable->GetColumn(index_var)->GetName());
+    chart->GetAxis(1)->GetLabelProperties()->SetFontSize(m_vtkFontSize);
+    chart->GetAxis(1)->GetLabelProperties()->SetFontFamilyToArial();
+    chart->GetAxis(1)->GetTitleProperties()->SetFontSize(m_vtkFontSize);
+    chart->GetAxis(1)->GetTitleProperties()->SetBold(false);
+    chart->GetAxis(1)->GetTitleProperties()->SetFontFamilyToArial();
+
+    chart->GetAxis(0)->SetTitle(name_prop);
+    chart->GetAxis(0)->GetLabelProperties()->SetFontSize(m_vtkFontSize);
+    chart->GetAxis(0)->GetLabelProperties()->SetFontFamilyToArial();
+    chart->GetAxis(0)->GetTitleProperties()->SetFontSize(m_vtkFontSize);
+    chart->GetAxis(0)->GetTitleProperties()->SetBold(false);
+    chart->GetAxis(0)->GetTitleProperties()->SetFontFamilyToArial();
+
+    chart->GetTooltip()->GetTextProperties()->SetFontSize(m_vtkFontSize);
+    chart->SetShowLegend(true);
+    chart->GetLegend()->GetLabelProperties()->SetFontSize(m_vtkFontSize);
+
+    m_vtkChartView->GetRenderWindow()->Render();
+}
+
 void MainWindow::on_pushButton_clicked()
 {
-//    switch (m_dimension) {
-//    case 1:
-//    {
-//        QString varName;
-//        int index_var=0;
-//        vector<double>arrP,arrT,arrX;
-//        switch (ui->comboBox_2->currentIndex()) {
-//        case 0:   //temperature
-//        {
-//            varName="Temperature (C)";
-//            index_var=0;
-//            double dT=ui->doubleSpinBox_12->value();
-//            double Tmin=ui->doubleSpinBox_10->value();
-//            double Tmax=ui->doubleSpinBox_11->value();
-//            double p0=ui->doubleSpinBox_4->value()*1e5;
-//            double X0=ui->doubleSpinBox_6->value();
-//            for (double T=Tmin;T<Tmax;T=T+dT) {
-//                arrT.push_back(T);
-//                arrP.push_back(p0);
-//                arrX.push_back(X0);
-//            }
+    switch (m_dimension) {
+    case 1:
+    {
+        Calculate_Diagram1D();
+    }
 
-//        }
-//            break;
-//        case 1:   //pressure
-//        {
-//            varName="Pressure (bar)";
-//            index_var=1;
-//            double dP=ui->doubleSpinBox_12->value()*1e5;
-//            double Pmin=ui->doubleSpinBox_10->value()*1e5;
-//            double Pmax=ui->doubleSpinBox_11->value()*1e5;
-//            double T0=ui->doubleSpinBox_4->value();
-//            double X0=ui->doubleSpinBox_6->value();
-//            for (double P=Pmin;P<Pmax;P=P+dP) {
-//                arrT.push_back(T0);
-//                arrP.push_back(P);
-//                arrX.push_back(X0);
-//            }
-//        }
-//            break;
-//        case 2:  //salinity
-//        {
-//            varName="Salinity";
-//            index_var=2;
-//            double dX=ui->doubleSpinBox_12->value();
-//            double Xmin=ui->doubleSpinBox_10->value();
-//            double Xmax=ui->doubleSpinBox_11->value();
-//            double P0=ui->doubleSpinBox_4->value()*1e5;
-//            double T0=ui->doubleSpinBox_6->value();
-//            for (double X=Xmin;X<Xmax;X=X+dX) {
-//                arrT.push_back(T0);
-//                arrP.push_back(P0);
-//                arrX.push_back(X);
-//            }
-//        }
-//            break;
-//        }
-//        // Create a table with some points in it
-//    //          vtkSmartPointer<vtkTable> table =
-//    //            table=vtkSmartPointer<vtkTable>::New();
-//        vtkSmartPointer<vtkFloatArray> varT =
-//          vtkSmartPointer<vtkFloatArray>::New();
-//        varT->SetName("Temperature(C)");
-//        m_vtkTable->AddColumn(varT);
-
-//        vtkSmartPointer<vtkFloatArray> varP =
-//          vtkSmartPointer<vtkFloatArray>::New();
-//        varP->SetName("Pressure (bar)");
-//        m_vtkTable->AddColumn(varP);
-
-//        vtkSmartPointer<vtkFloatArray> varX =
-//          vtkSmartPointer<vtkFloatArray>::New();
-//        varX->SetName("Salinity");
-//        m_vtkTable->AddColumn(varX);
-
-//        vtkSmartPointer<vtkFloatArray> prop_density =
-//          vtkSmartPointer<vtkFloatArray>::New();
-//        prop_density->SetName("Density (kg/m3)");
-//        m_vtkTable->AddColumn(prop_density);
-
-//        vtkSmartPointer<vtkFloatArray> prop_enthalpy =
-//          vtkSmartPointer<vtkFloatArray>::New();
-//        prop_enthalpy->SetName("Enthalpy (J/kg)");
-//        m_vtkTable->AddColumn(prop_enthalpy);
-
-//        vtkSmartPointer<vtkFloatArray> prop_viscosity =
-//          vtkSmartPointer<vtkFloatArray>::New();
-//        prop_viscosity->SetName("Viscosity (Pa s)");
-//        m_vtkTable->AddColumn(prop_viscosity);
-
-//        m_vtkTable->SetNumberOfRows(arrT.size());
-//        for (size_t i=0;i<arrT.size();++i) {
-//            SWEOS::cH2ONaCl eos(arrP[i],arrT[i],arrX[i]);
-//            eos.Calculate();
-//            m_vtkTable->SetValue(i, 0, arrT[i]);
-//            m_vtkTable->SetValue(i, 1, arrP[i]);
-//            m_vtkTable->SetValue(i, 2, arrX[i]);
-//            m_vtkTable->SetValue(i, 3, eos.m_prop.Rho);
-//            m_vtkTable->SetValue(i, 4, eos.m_prop.H);
-//            m_vtkTable->SetValue(i, 5, eos.m_prop.Mu_l);
-//        }
-
-//        int index_prop=ui->comboBox_3->currentIndex()+3;
-
-//          int num_oldItems=m_vtkChartView->GetScene()->GetNumberOfItems();
-//          for (int i=0;i<num_oldItems;i++) {
-//              m_vtkChartView->GetScene()->RemoveItem(m_vtkChartView->GetScene()->GetItem(0));
-//          }
-
-//           vtkSmartPointer<vtkChartXY> chart =
-//             vtkSmartPointer<vtkChartXY>::New();
-//           m_vtkChartView->GetScene()->AddItem(chart);
-
-//           vtkNew<vtkNamedColors> colors;
-//           vtkPlot *line = chart->AddPlot(vtkChart::LINE);
-//           line->SetInputData(m_vtkTable, index_var, index_prop);
-//           vtkColor3d color3d = colors->GetColor3d("banana");
-//           line->SetColor(color3d.GetRed(), color3d.GetGreen(), color3d.GetBlue());
-//           line->SetWidth(3.0);
-
-//           int fontsize=20;
-
-//            //            chart->GetAxis(1)->SetRange(0, 11);
-//            //            chart->GetAxis(1)->SetBehavior(vtkAxis::FIXED);
-//            chart->GetAxis(1)->SetTitle(m_vtkTable->GetColumn(index_var)->GetName());
-//            // chart->GetAxis(1)->GetLabelProperties()->SetColor(1,0,0);
-//            chart->GetAxis(1)->GetLabelProperties()->SetFontSize(fontsize);
-//            chart->GetAxis(1)->GetLabelProperties()->SetFontFamilyToArial();
-////            chart->GetAxis(1)->SetMinimum(273);
-////            chart->GetAxis(1)->SetMaximum(573);
-////            chart->GetAxis(1)->SetNumberOfTicks(5);
-//            chart->GetAxis(1)->GetTitleProperties()->SetFontSize(fontsize);
-//            chart->GetAxis(1)->GetTitleProperties()->SetBold(false);
-//            chart->GetAxis(1)->GetTitleProperties()->SetFontFamilyToArial();
-////            chart->GetAxis(1)->SetTickLabelAlgorithm(vtkAxis::TICK_SIMPLE);
-////            chart->GetAxis(1)->RecalculateTickSpacing();
-////            chart->GetAxis(1)->SetBehavior(2);
-
-
-////            vtkAxisActor2D *axesX = vtkAxisActor2D::New();
-////            axesX->SetTitle("Test");
-////            axesX->SetTickLength(2);
-////            axesX->SetRange(0, 10);
-////            axesX->SetPoint1(0, 0);
-////            axesX->SetPoint2(10, 0);
-////            m_vtkChartView->AddViewProp(axesX);
-
-//            chart->GetAxis(0)->GetLabelProperties()->SetFontSize(fontsize);
-//            chart->GetAxis(0)->GetLabelProperties()->SetFontFamilyToArial();
-////            chart->GetAxis(0)->SetLabelFormat("%.0f");
-////            chart->GetAxis(0)->SetTickLabelAlgorithm(vtkAxis::TICK_SIMPLE);
-////            chart->GetAxis(0)->SetMinimum(273);
-////            chart->GetAxis(0)->SetMaximum(573);
-////            chart->GetAxis(0)->SetNumberOfTicks(5);
-//            chart->GetAxis(0)->GetTitleProperties()->SetFontSize(fontsize);
-//            chart->GetAxis(0)->GetTitleProperties()->SetBold(false);
-//            chart->GetAxis(0)->GetTitleProperties()->SetFontFamilyToArial();
-
-//            chart->GetTooltip()->GetTextProperties()->SetFontSize(fontsize);
-
-
-//            chart->SetShowLegend(true);
-//            chart->GetLegend()->GetLabelProperties()->SetFontSize(fontsize);
-
-
-//            chart->GetAxis(0)->SetTitle(m_vtkTable->GetColumn(index_prop)->GetName());
-
-//          m_vtkChartView->GetRenderWindow()->Render();
-
-//          //print results into textedit box
-//    //          ui->textEdit->clear();
-//    }
-
-//        break;
-//    case 2:
-//    {
+        break;
+    case 2:
+    {
 //        double X0 = ui->doubleSpinBox_6->value();
 //        double Tmin=ui->doubleSpinBox_10->value();
 //        double Tmax=ui->doubleSpinBox_11->value();
@@ -531,14 +615,14 @@ void MainWindow::on_pushButton_clicked()
 //        this->ui->qvtkWidget2->GetRenderWindow()->GetInteractor()->SetInteractorStyle(style);
 //        this->ui->qvtkWidget2->GetRenderWindow()->Render();
 
-//    }
-//        ui->textEdit->append("2D is comming soon");
-//        break;
-//    case 3:
-//        ui->textEdit->append("3D is comming soon");
-//        break;
+    }
+        ui->textEdit->append("2D is comming soon");
+        break;
+    case 3:
+        ui->textEdit->append("3D is comming soon");
+        break;
 
-//    }
+    }
 }
 int MainWindow::InitCubeAxes(vtkCubeAxesActor* axes, vtkBoundingBox boundingbox, vtkBoundingBox rangebox, std::string xlabel, std::string ylabel, std::string zlabel,int fontsize)
 {
@@ -983,4 +1067,48 @@ void MainWindow::on_comboBox_selectVariable_activated(const QString &arg1)
         update3dUI(arg1);
     break;
     }
+}
+
+
+void MainWindow::on_actionSave_triggered()
+{
+    int index_tab=ui->tabWidget->currentIndex();
+    switch (index_tab) {
+    case 0:
+    {
+        QString fileName;
+        fileName = QFileDialog::getSaveFileName(this, tr("Save Scatter Calculation Results to File"), "", tr("Text File (*.txt);;CSV files (*.csv)"));
+
+        if (!fileName.isNull())
+        {
+
+        }
+        else
+        {
+
+        }
+    }
+        break;
+    case 1:
+    {
+        QString fileName;
+        fileName = QFileDialog::getSaveFileName(this, tr("Save Diagram Calculation Results to File"), "", tr("VTK File (*.vtk);;Text files (*.txt)"));
+
+        if (!fileName.isNull())
+        {
+
+        }
+        else
+        {
+
+        }
+    }
+        break;
+    }
+
+}
+
+void MainWindow::on_comboBox_selectProps_activated(const QString &arg1)
+{
+    ShowProps(m_index_var, ui->comboBox_selectProps->currentIndex());
 }
