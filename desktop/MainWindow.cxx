@@ -688,8 +688,8 @@ void MainWindow::Calculate_Diagram2D()
                     arrH_v->InsertNextValue(eos.m_prop.H_v);
                     arrH_h->InsertNextValue(eos.m_prop.H_h);
                     arrS_l->InsertNextValue(eos.m_prop.S_l);
-                    arrS_v->InsertNextValue(eos.m_prop.S_v);
-                    arrS_h->InsertNextValue(eos.m_prop.S_h);
+                    arrS_v->InsertNextValue(eos.m_prop.S_v < 1e-30 ? 0 : eos.m_prop.S_v);
+                    arrS_h->InsertNextValue(eos.m_prop.S_h < 1e-30 ? 0: eos.m_prop.S_h);
                     arrMu_l->InsertNextValue(eos.m_prop.Mu_l);
                     arrMu_v->InsertNextValue(eos.m_prop.Mu_v);
                     arrX_l->InsertNextValue(eos.m_prop.X_l);
@@ -744,8 +744,8 @@ void MainWindow::Calculate_Diagram2D()
                     arrH_v->InsertNextValue(eos.m_prop.H_v);
                     arrH_h->InsertNextValue(eos.m_prop.H_h);
                     arrS_l->InsertNextValue(eos.m_prop.S_l);
-                    arrS_v->InsertNextValue(eos.m_prop.S_v);
-                    arrS_h->InsertNextValue(eos.m_prop.S_h);
+                    arrS_v->InsertNextValue(eos.m_prop.S_v < 1e-30 ? 0 : eos.m_prop.S_v);
+                    arrS_h->InsertNextValue(eos.m_prop.S_h < 1e-30 ? 0: eos.m_prop.S_h);
                     arrMu_l->InsertNextValue(eos.m_prop.Mu_l);
                     arrMu_v->InsertNextValue(eos.m_prop.Mu_v);
                     arrX_l->InsertNextValue(eos.m_prop.X_l);
@@ -800,8 +800,8 @@ void MainWindow::Calculate_Diagram2D()
                     arrH_v->InsertNextValue(eos.m_prop.H_v);
                     arrH_h->InsertNextValue(eos.m_prop.H_h);
                     arrS_l->InsertNextValue(eos.m_prop.S_l);
-                    arrS_v->InsertNextValue(eos.m_prop.S_v);
-                    arrS_h->InsertNextValue(eos.m_prop.S_h);
+                    arrS_v->InsertNextValue(eos.m_prop.S_v < 1e-30 ? 0 : eos.m_prop.S_v);
+                    arrS_h->InsertNextValue(eos.m_prop.S_h < 1e-30 ? 0: eos.m_prop.S_h);
                     arrMu_l->InsertNextValue(eos.m_prop.Mu_l);
                     arrMu_v->InsertNextValue(eos.m_prop.Mu_v);
                     arrX_l->InsertNextValue(eos.m_prop.X_l);
