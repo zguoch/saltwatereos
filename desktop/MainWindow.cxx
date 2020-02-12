@@ -240,11 +240,11 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     switch (index) {
     case 0:
         ui->textEdit->setEnabled(true);
-//        ui->qvtkWidget->setEnabled(false);
+        ui->vtkWindowTab->setEnabled(false);
         break;
     case 1:
         ui->textEdit->setEnabled(false);
-//        ui->qvtkWidget->setEnabled(true);
+        ui->vtkWindowTab->setEnabled(true);
         break;
 
     }
@@ -797,9 +797,9 @@ void MainWindow::UpdateUI_X(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
 {
     label->setText("dX:");
     deltaBox->setDecimals(4);
-    deltaBox->setRange(SWEOS::XMIN, SWEOS::XMAX);
+    deltaBox->setRange(0.0001, 1);
     deltaBox->setSingleStep(0.001);
-    deltaBox->setValue(0.0001);
+    deltaBox->setValue(0.01);
 
     maxBox->setDecimals(4);
     maxBox->setRange(SWEOS::XMIN, SWEOS::XMAX);
@@ -807,9 +807,9 @@ void MainWindow::UpdateUI_X(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
     maxBox->setValue(SWEOS::XMAX);
 
     minBox->setDecimals(4);
-    minBox->setRange(0.0001,0.9);
+    minBox->setRange(SWEOS::XMIN, SWEOS::XMAX);
     minBox->setSingleStep(0.001);
-    minBox->setValue(0.01);
+    minBox->setValue(0.0001);
 }
 void MainWindow::UpdateUI_T(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox)
 {
@@ -833,9 +833,9 @@ void MainWindow::UpdateUI_P(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
 {
     label->setText("dP (bar):");
     deltaBox->setDecimals(2);
-    deltaBox->setRange(SWEOS::PMIN/1E5, SWEOS::PMAX/1E5);
+    deltaBox->setRange(0.1, 100);
     deltaBox->setSingleStep(1);
-    deltaBox->setValue(SWEOS::PMIN/1E5);
+    deltaBox->setValue(1);
 
     maxBox->setDecimals(2);
     maxBox->setRange(SWEOS::PMIN/1E5, SWEOS::PMAX/1E5);
@@ -843,9 +843,9 @@ void MainWindow::UpdateUI_P(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
     maxBox->setValue(SWEOS::PMAX/1E5);
 
     minBox->setDecimals(2);
-    minBox->setRange(0.1,100);
+    minBox->setRange(SWEOS::PMIN/1E5, SWEOS::PMAX/1E5);
     minBox->setSingleStep(1);
-    minBox->setValue(1);
+    minBox->setValue(SWEOS::PMIN/1E5);
 }
 void MainWindow::update2dUI(QString arg)
 {
