@@ -23,6 +23,8 @@
 #include <QMessageBox>
 #include <vector>
 using namespace std;
+#include "MainWindow.h"
+#include "ui_MainWindow.h"
 
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
@@ -66,6 +68,8 @@ using namespace std;
 #include <vtkAxesActor.h>
 #include <vtkInteractorStyleTrackballCamera.h>
 #include <vtkInteractorStyleImage.h>
+#include <vtkScalarBarActor.h>
+#include <vtkColorSeries.h>
 
 #define CALCULATION_SINGLE_POINT 1
 #define CALCULATION_MULTI_POINTS 2
@@ -145,10 +149,21 @@ private slots:
 
   void on_radioButton_5_clicked();
 
-  void on_comboBox_2_activated(const QString &arg1);
+  void on_comboBox_selectVariable_activated(const QString &arg1);
+    void UpdateUI_fixedT(QLabel* label, QDoubleSpinBox* box, double defaultValue=373);
+    void UpdateUI_fixedP(QLabel* label, QDoubleSpinBox* box, double defaultValue=316);
+    void UpdateUI_fixedX(QLabel* label, QDoubleSpinBox* box, double defaultValue=0.032);
     void update1dUI(QString arg);
+    void update2dUI(QString arg);
+    void update3dUI(QString arg);
     void initRenderWindow();
+    void updateUI(int dim); //update UI of phase diagram
+    void updateUILayout(bool show_secondVariable, bool show_thirdVariable, bool show_firstFixedVar, bool show_secondFixedVar,bool show_groupbox_fixedVars, double shinkWidth_groupbox_Vars);
 private:
+    QRect m_geometry_Groupbox_variables;
+    void UpdateUI_P(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox);
+    void UpdateUI_T(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox);
+    void UpdateUI_X(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox);
 
   vtkSmartPointer<vtkQtTableView>         TableView;
 
