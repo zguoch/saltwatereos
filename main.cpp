@@ -6,13 +6,15 @@ using namespace std;
 using namespace SWEOS;
 
 void PhaseRegion_PTX(double P, double T, double X);
+void Prop_PHX(double P, double T_K, double Xwt);
 void PhaseRegion3D_PTX();
 void Figure2_Driesner2007(double T, string filename, double pmax=400e5);
 void Figure2_Driesner2007_log(double T, string filename, double pmax=400e5, double xmin=-11);
 int main()
 {
     // 1. one point calculation
-    PhaseRegion_PTX(31600000,100+273.15,0.3);
+    // PhaseRegion_PTX(31600000,100+273.15,0.3);
+    Prop_PHX(1e7, 2e6, 0.03);
 
     // 2. 3D P-T-X calculation
     // PhaseRegion3D_PTX();
@@ -33,6 +35,21 @@ int main()
 
     return 0;
 }
+void Prop_PHX(double P, double T_K, double Xwt)
+{
+    cout.precision(8);//control cout precision of float
+    cH2ONaCl eos;
+    eos.prop_pHX(P,T_K,Xwt);
+
+    cout<<"Region: "<<eos.m_phaseRegion_name[eos.m_prop.Region]<<" Xl: "<<eos.m_prop.X_l<<" Xv: "<<eos.m_prop.X_v<<endl;
+    cout<<"Rho: "<<eos.m_prop.Rho<<" H: "<<eos.m_prop.H<<endl;
+    cout<<"Rho_l: "<<eos.m_prop.Rho_l<<" Rho_v: "<<eos.m_prop.Rho_v<<" Rho_h: "<<eos.m_prop.Rho_h<<endl;
+    cout<<"h_l: "<<eos.m_prop.H_l<<" h_v: "<<eos.m_prop.H_v<<" h_h: "<<eos.m_prop.H_h<<endl;
+    cout<<"Rho: "<<eos.m_prop.Rho<<" H: "<<eos.m_prop.H<<endl;
+    cout<<"S_l: "<<eos.m_prop.S_l<<" S_v: "<<eos.m_prop.S_v<<" S_h: "<<eos.m_prop.S_h<<endl;
+    cout<<"Mu_l: "<<eos.m_prop.Mu_l<<" Mu_v: "<<eos.m_prop.Mu_v<<endl;
+}
+
 void Figure2_Driesner2007_log(double T, string filename,double pmax, double xmin)
 {
     double xmax=2, dx=0.01;

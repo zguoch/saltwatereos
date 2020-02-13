@@ -89,6 +89,145 @@ void cH2ONaCl:: init_prop()
     m_prop.Mu_v=0;
 }
 
+void cH2ONaCl:: prop_pHX(double p, double H, double X_wt)
+{
+    double T1, T2;
+    guess_T_PhX(p, H, X_wt, T1, T2);
+}
+
+void cH2ONaCl:: guess_T_PhX(double P, double h, double X, double& T1, double& T2)
+{
+    P = P*1e-6;
+    h = h*1e-3;
+    double tol = 1e-6;
+    double P_crit = 22.054915;   //MPa
+    double P_creg = 21.839129;
+
+    T1=0;
+    T2=0;
+    
+    //1. calculate reg value
+    int reg=2; //2 =  two phase pure water region
+    if(P>P_crit) reg=4;
+    if(reg == 4 && h > 2086) reg=5;
+
+    if(reg==2)
+    {
+        double hl = 0;
+        double hv = 0;
+        double hl1[10] = { 0.8733214860, 0.3139052092, 0.09683295123, 0.02789725252, 0.006097758153,
+                           0.0009363482053, 0.00009698796863, 0.000006435851441, 0.0000002467695234, 0.000000004155400906
+                         };
+        double hv1[10] = {1.191055872, -0.237600508, -0.1495666133, -0.05331935637, -0.01282450167,
+                         -0.002106161251, -0.0002309312619, -0.00001609217758, -0.000000642634847, -0.00000001117696881
+                         };
+        double hl2[10] = {0.9506622997, 1.144019695, -8.981135832, 22.05395845, 10.71497685,
+                         -183.1514846, 441.2001644, -517.5797252, 310.7525469, -76.7287569
+                         };
+        double hv2[10] = {0.8378327686, 2.500557338, -14.09731747, 46.9525944977, -85.16478445,
+                          70.61754229, 19.13336011, -94.08040182, 75.79109507, -21.14194941
+                         };
+        double hlr = 0;
+        double hvr = 0;
+        double P_ind=P;
+        if(P_ind < 7) //ind2a
+        {
+            double pr_ind2a = log(P_ind/22.055);
+            // cout<<"pr_ind2a: "<<pr_ind2a<<endl;
+            for (size_t i = 0; i < 10; i++)
+            {
+                hlr = hlr* pr_ind2a + hl1[9-i];
+                hvr = hvr* pr_ind2a + hv1[9-i];
+            }
+            hl = hlr * 2086;
+            hv = hvr * 2086;
+        }else if (P_ind >= 7 && P_ind <= P_creg)//ind2c
+        {
+            double pr_ind2c = pow(( 1 - P_ind/22.055 ), 0.25);
+            // cout<<"pr_ind2c: "<<pr_ind2c<<endl;
+            for (size_t i = 0; i < 10; i++)
+            {
+                hlr = hlr * pr_ind2c + hl2[9-i];
+                hvr = hvr * pr_ind2c + hv2[9-i];
+            }
+            // cout<<"hlr: "<<hlr<<endl;
+            // cout<<"hvr: "<<hvr<<endl;
+            hl = hlr * 2086;
+            hv = hvr * 2086;
+        }else //ind2b
+        {
+            hl = 1975;
+            hv = 2235; 
+        }
+        double reg2 = 2;
+        if( h < (hl - 80) ) reg2 = 1 ;
+        if( h > (hv + 80) ) reg2= 3 ;
+
+        reg = reg2;
+    }
+    
+    // 2. case calculation based on reg value
+    switch (reg)
+    {
+    case 2:
+        {
+            double h_l0, h_v0, dpd_l0, dpd_v0, Mu_l0, Mu_v0,Rho_l,Rho_v;
+            fluidProp_crit_P(P*1e6 , tol, T1, Rho_l, h_l0, h_v0, dpd_l0, dpd_v0, Rho_v, Mu_l0, Mu_v0);
+            if(X > 0.6) T1= T1 - 200*X;
+            if(X > 0.8) T1= 2;
+            if(X <= 0.1) T1 = T1 - 15;
+            T2 = T1 + 30 + X*800; //old
+            if(X >= 0.4) T2 = T1 + 30 + X*1200;
+            if(X < 1e-4) T2= T2 + 15;
+            if(T2> 1000) T2 = 1000;
+            // cout<<"T1: "<<T1<<" T2: "<<T2<<endl;
+        }
+        break;
+    case 1:
+        {
+            T1=0;
+            double h_l0, h_v0, dpd_l0, dpd_v0, Mu_l0, Mu_v0,Rho_l,Rho_v;
+            fluidProp_crit_P(P*1e6 , tol, T2, Rho_l, h_l0, h_v0, dpd_l0, dpd_v0, Rho_v, Mu_l0, Mu_v0);
+            T2 = T2 + 1e-7;
+            if(X >= 0.4) T2=  T2 + X *200;
+            if(X<0.2 && X >= 0.1) T2=  T2 + X *100;
+            if(X>0.2 && X <= 0.4) T2=  T2 + X *100;
+            if(X>0.4 && X <= 1)  T2=  T2 + X *500;
+            if(T2> 1000) T2= 1000;
+        }
+        break;
+    case 3:
+        {
+            double h_l0, h_v0, dpd_l0, dpd_v0, Mu_l0, Mu_v0,Rho_l,Rho_v;
+            fluidProp_crit_P(P*1e6 , tol, T1, Rho_l, h_l0, h_v0, dpd_l0, dpd_v0, Rho_v, Mu_l0, Mu_v0);
+            T1 = T1 - 2e-9; 
+            if(X >= 0.1  ) T1= T1 + 28;
+            // if(X < 1e-3 ) T1= T1; 
+            //T1(reg == 3) = T1(reg == 3) - X(reg == 3)*50;
+            T2 = 1000;
+        }
+        break;
+    case 4:
+        {
+            T1 = 0;
+            T2 = 450;
+            if(X >= 0.3 && X <= 0.5) T2 =  T2 + X *800;
+            if(X >= 0.5 && X <= 1) T2 =  T2 + X *1800;
+            if(T2> 1000) T2 = 1000;
+        }
+        break;
+    case 5:
+        {
+            T1 = 350;
+            //T1(reg == 5 & X >= 0.3) =  T1(reg == 5 & X >= 0.3) + X(reg == 5 & X >= 0.3) *800;
+            T2 = 1000;
+        }
+        break;
+    default:
+        break;
+    }
+}
+
 void cH2ONaCl:: prop_pTX(double p, double T_K, double X_wt)
 {
     double T=T_K-Kelvin,Xl_all,Xv_all;

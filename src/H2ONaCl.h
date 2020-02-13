@@ -28,6 +28,8 @@ namespace SWEOS
     double const M_H2O = 0.018015; // molar mass of water  [kg/mol]
     double const M_NaCl = 0.058443; // molar mass of salt(NaCl)   [kg/mol]
 
+    // double const P_crit =2.2054915e7;
+
 
     // define index of region
     enum PhaseRegion {SinglePhase_L, TwoPhase_L_V_X0, SinglePhase_V, 
@@ -108,6 +110,7 @@ namespace SWEOS
         void calcViscosity(int reg, double P, double T, double Xw_l, double Xw_v, double& mu_l, double& mu_v);
         void fluidProp_crit_T(double T, double tol, double& P,double& Rho_l, double& Rho_v, double& h_l, double& h_v);
         void fluidProp_crit_P(double P, double tol, double& T_2ph, double& Rho_l, double& h_l, double& h_v, double& dpd_l, double& dpd_v, double& Rho_v, double& Mu_l, double& Mu_v);
+        void guess_T_PhX(double P, double h, double X, double& T1, double& T2);
     public:
         // cH2ONaCl(double P, double T_K, double X);//P: Pa. T: K  X, wt%: (0, 1]
         cH2ONaCl();
@@ -115,6 +118,7 @@ namespace SWEOS
         ~cH2ONaCl();
         MAP_PHASE_REGION m_phaseRegion_name;
         void prop_pTX(double p, double T_K, double X_wt);
+        void prop_pHX(double p, double H, double X_wt); /** Calculate properties by P, H, X */
         double rho_pTX(double p, double T_K, double X_wt); //get bulk density. p: Pa; T: K; X: wt%
         double rho_l_pTX(double p, double T_K, double X_wt); //get density of liquid. p: Pa; T: K; X: wt%
         double mu_l_pTX(double p, double T_K, double X_wt); //get dynamic viscosity of liquid. p: Pa; T: K; X: wt%
