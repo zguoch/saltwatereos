@@ -46,6 +46,8 @@ namespace SWEOS
         double S_l, S_v, S_h; //saturation
         double X_l, X_v; // volume fraction of NaCl in vaper and liquid, it is a composition fraction. H2O + NaCl
         double Mu_l, Mu_v;//viscosity
+        // derivertive
+        // double dS_hdh, dS_vdh, dS_ldh, dRhodh;
     };
 
     struct MP_STRUCT
@@ -111,13 +113,15 @@ namespace SWEOS
         void fluidProp_crit_T(double T, double tol, double& P,double& Rho_l, double& Rho_v, double& h_l, double& h_v);
         void fluidProp_crit_P(double P, double tol, double& T_2ph, double& Rho_l, double& h_l, double& h_v, double& dpd_l, double& dpd_v, double& Rho_v, double& Mu_l, double& Mu_v);
         void guess_T_PhX(double P, double h, double X, double& T1, double& T2);
+        void calc_sat_lvh(PROP_H2ONaCl& prop, double h, double X, bool isDeriv=false);
+        void calc_halit_liqidus(double Pres, double Temp, double& X_hal_liq, double& T_hm);
     public:
         // cH2ONaCl(double P, double T_K, double X);//P: Pa. T: K  X, wt%: (0, 1]
         cH2ONaCl();
         // cH2ONaCl(const std::vector<double> P, const std::vector<double> T, const std::vector<double> X);//P, T, X has same size of n
         ~cH2ONaCl();
         MAP_PHASE_REGION m_phaseRegion_name;
-        void prop_pTX(double p, double T_K, double X_wt);
+        void prop_pTX(double p, double T_K, double X_wt, bool visc_on=true);
         void prop_pHX(double p, double H, double X_wt); /** Calculate properties by P, H, X */
         double rho_pTX(double p, double T_K, double X_wt); //get bulk density. p: Pa; T: K; X: wt%
         double rho_l_pTX(double p, double T_K, double X_wt); //get density of liquid. p: Pa; T: K; X: wt%

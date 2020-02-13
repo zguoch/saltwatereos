@@ -92,7 +92,271 @@ void cH2ONaCl:: init_prop()
 void cH2ONaCl:: prop_pHX(double p, double H, double X_wt)
 {
     double T1, T2;
+    double tol=1e-4;
     guess_T_PhX(p, H, X_wt, T1, T2);
+    // cout<<"T1: "<<T1<<" T2: "<<T2<<endl;
+    PROP_H2ONaCl prop1, prop2;
+    prop_pTX(p,T1+Kelvin,X_wt, false); prop1=m_prop;
+    prop_pTX(p,T2+Kelvin,X_wt, false); prop2=m_prop;
+
+    double h1 = prop1.H;
+    double h2 = prop2.H;
+    // cout<<"h1: "<<h1<<" h2: "<<h2<<endl;
+    double h_l = prop2.H_l;
+    while(h2 < H)
+    {
+        T2 = T2 + 1;
+        PROP_H2ONaCl prop22;
+        prop_pTX(p,T2+Kelvin,X_wt, false);
+        prop22=m_prop;
+        h2 = prop22.H;
+        h_l = prop22.H_l;
+        if(h2<H && T2>1000) break;
+        if(X_wt==0) break;
+    }
+    if(h1>H)
+    {
+        T1=0;
+        prop_pTX(p,T1+Kelvin,X_wt, false); prop1=m_prop;
+        prop1=m_prop;
+        h1=prop1.H;
+    }
+    if((T2 > 1000 || h1 > H) || (h2 < H && T2 == 1000  && p >= 1.7e7) )
+    {
+        // m_prop.Region=NAN;
+        m_prop.Rho=NAN;
+        m_prop.Rho_l=NAN;
+        m_prop.Rho_v=NAN;
+        m_prop.Rho_h=NAN;
+        m_prop.H=NAN;
+        m_prop.H_l=NAN;
+        m_prop.H_v=NAN;
+        m_prop.H_h=NAN;
+        m_prop.S_l=NAN;
+        m_prop.S_v=NAN;
+        m_prop.S_h=NAN;
+        m_prop.Mu=NAN;
+        m_prop.Mu_l=NAN;
+        m_prop.X_l=NAN;
+        m_prop.X_v=NAN;
+    }else
+    {
+        int iteri=0;
+        double T_new_mid=0;
+        double h_search=H;
+        bool ind_iter=true, indmu=true;
+        while (ind_iter)
+        {
+            iteri = iteri +1;
+            // find new T with regula falsi method
+            double T_new=0;
+            if(T_new_mid == 0)
+            {
+                double dT = (H - h1) * (T2 - T1) / (h2-h1);
+                T_new = T1 +  (H - h1) * (T2 - T1) / (h2-h1); 
+                T_new_mid = 1;
+            }else
+            {
+                T_new = (T1 +  T2) / 2; 
+                T_new_mid = 0; 
+            }
+            // claculate new h
+            PROP_H2ONaCl PROP_new;
+            prop_pTX(p,T_new+Kelvin,X_wt, false); PROP_new=m_prop;
+            // cout<<"new H: "<<PROP_new.H<<" region: "<<m_phaseRegion_name[PROP_new.Region]<<endl; exit(0);
+            // claculate new h in  L+V+H region 
+            calc_sat_lvh(PROP_new, H ,X_wt, false);
+            switch (PROP_new.Region)
+            {
+            case ThreePhase_V_L_H:
+                {
+                    //could happen that S_l is negative, if h is outside of vlh region 
+                    PROP_new.H = (PROP_new.S_l * PROP_new.Rho_l * PROP_new.H_l + 
+                                  PROP_new.S_v * PROP_new.Rho_v * PROP_new.H_v +
+                                  PROP_new.S_h * PROP_new.Rho_h * PROP_new.H_h) / PROP_new.Rho;
+                    if(PROP_new.S_l < 0) //calc S_h and S_v 
+                    {
+                        PROP_new.S_h = (PROP_new.Rho_v * (PROP_new.X_v - X_wt))/(PROP_new.Rho_h * (X_wt-1) + PROP_new.Rho_v * (PROP_new.X_v - X_wt));
+                        PROP_new.S_v = 1 - PROP_new.S_h;  
+                        PROP_new.Rho = PROP_new.S_v * PROP_new.Rho_v + PROP_new.S_h * PROP_new.Rho_h ;
+                        PROP_new.H   = (PROP_new.S_v * PROP_new.Rho_v * PROP_new.H_v + PROP_new.S_h * PROP_new.Rho_h * PROP_new.H_h )/ PROP_new.Rho;
+                    }
+                    if(PROP_new.S_v<0) //calc S_h and S_l 
+                    {
+                        PROP_new.S_h = (PROP_new.Rho_l*(PROP_new.X_l-X_wt))/(PROP_new.Rho_h*(X_wt-1) + PROP_new.Rho_l*(PROP_new.X_l-X_wt));
+                        PROP_new.S_l = 1 - PROP_new.S_h;  
+                        PROP_new.Rho = PROP_new.S_l * PROP_new.Rho_l + PROP_new.S_h * PROP_new.Rho_h ;
+                        PROP_new.H   = ( PROP_new.S_l * PROP_new.Rho_l * PROP_new.H_l + PROP_new.S_h * PROP_new.Rho_h * PROP_new.H_h )/ PROP_new.Rho;
+                    }
+                    if(PROP_new.S_h<0) //calc S_l and S_v 
+                    {
+                        PROP_new.S_l = (PROP_new.Rho_v*(PROP_new.X_v - X_wt))/(PROP_new.Rho_v*(PROP_new.X_v-X_wt)+ PROP_new.Rho_l*(X_wt-PROP_new.X_l)); 
+                        PROP_new.S_v = 1 - PROP_new.S_l;  
+                        PROP_new.Rho = PROP_new.S_l * PROP_new.Rho_l + PROP_new.S_v * PROP_new.Rho_v ;
+                        PROP_new.H   = ( PROP_new.S_l * PROP_new.Rho_l * PROP_new.H_l + PROP_new.S_v * PROP_new.Rho_v * PROP_new.H_v )/ PROP_new.Rho;                 
+                    }
+                }
+                break;
+            case TwoPhase_L_V_X0:
+                {
+                    // this function has slightly different resutls than fluidprop_TP_Rho
+                    // for single pahse X = 0
+                    double T_crit, Rho_l, h_l, h_v, dpd_l0, dpd_v0, Rho_v, Mu_l0, Mu_v0;
+                    fluidProp_crit_P(p , 1e-12, T_crit, Rho_l, h_l, h_v, dpd_l0, dpd_v0, Rho_v, Mu_l0, Mu_v0);
+                    double S_l = (Rho_v*(h_v - H))/(Rho_v*(h_v-H) + Rho_l*(H-h_l)); 
+                    double S_v = 1- S_l;
+                    double Rho = S_l * Rho_l + S_v * Rho_v; 
+
+                    T_new = T_crit;
+                    PROP_new.H     = H;
+                    PROP_new.Rho   = Rho;
+                    PROP_new.Rho_l = Rho_l;
+                    PROP_new.Rho_v = Rho_v;
+                    PROP_new.H_l   = h_l;
+                    PROP_new.H_v   = h_v;
+                    PROP_new.S_l   = S_l;
+                    PROP_new.S_v   = S_v;
+                    if(S_l>1)
+                    {
+                        PROP_new.H    = h_l;
+                        PROP_new.S_l  = 1;
+                        PROP_new.S_v  = 0;
+                        PROP_new.Region  = SinglePhase_L;
+                        PROP_new.H_v  = 0;
+                        PROP_new.Rho_v= 0;
+                    }
+                    if(S_l<0)
+                    {
+                        PROP_new.H     = h_v;
+                        PROP_new.S_l   = 0;
+                        PROP_new.S_v   = 1;
+                        PROP_new.Region   = SinglePhase_V;
+                        PROP_new.H_l   = 0;
+                        PROP_new.Rho_l = 0;
+                    }
+    
+                }
+                break;
+            default:
+                break;
+            }
+            if(X_wt==1)
+            {
+                double X_hal_liq, T_hm;
+                calc_halit_liqidus(p, T_new,X_hal_liq, T_hm);  // T not important 
+                if(T_new <= T_hm && T_new > (T_hm - 1e-4))
+                {
+                    double Nenner = ( H * (PROP_new.Rho_l - PROP_new.Rho_h) - (PROP_new.H_l * PROP_new.Rho_l - PROP_new.H_h * PROP_new.Rho_h ) );
+                    double S_l_hm = PROP_new.Rho_h * (PROP_new.H_h - H)/ Nenner;
+                    double S_h_hm = 1 - S_l_hm;
+                    double Rho_hm = S_l_hm * PROP_new.Rho_l + (1-S_l_hm) * PROP_new.Rho_h;
+                    double h_hm = ( S_l_hm * PROP_new.Rho_l * PROP_new.H_l + S_h_hm * PROP_new.Rho_h * PROP_new.H_h )/Rho_hm;
+                    PROP_new.S_l  = S_l_hm; 
+                    PROP_new.S_h  = S_h_hm; 
+                    PROP_new.Rho  = Rho_hm; 
+                    PROP_new.H    = h_hm; 
+                }
+            }
+            //  writing global storage
+            m_prop.Region = PROP_new.Region;
+            m_prop.T = T_new;
+            m_prop.H = PROP_new.H;
+            m_prop.Rho = PROP_new.Rho;
+            m_prop.Rho_l = PROP_new.Rho_l;
+            m_prop.Rho_v = PROP_new.Rho_v;
+            m_prop.Rho_h = PROP_new.Rho_h;
+            m_prop.H_l = PROP_new.H_l;
+            m_prop.H_v = PROP_new.H_v;
+            m_prop.H_h = PROP_new.H_h;
+            m_prop.S_l = PROP_new.S_l;
+            m_prop.S_v = PROP_new.S_v;
+            m_prop.S_h = PROP_new.S_h;
+            m_prop.X_l = PROP_new.X_l;
+            m_prop.X_v = PROP_new.X_v;
+
+            if(abs(PROP_new.H - H)/H  < tol) ind_iter=false;
+            if(m_prop.H> H)
+            {
+                T2 = m_prop.T; 
+                h2= m_prop.H;  
+            }
+            if(m_prop.H< H)
+            {
+                T1=m_prop.T;
+                h1=m_prop.H;
+            }
+            // what's this meaning ?????
+            //  T1( abs(PROP_new.h - h(ind_iter))./h(ind_iter)  < tol ) = [];  
+            // T2( abs(PROP_new.h - h(ind_iter))./h(ind_iter)  < tol ) = [];  
+            // h1( abs(PROP_new.h - h(ind_iter))./h(ind_iter)  < tol ) = [];  
+            // h2( abs(PROP_new.h - h(ind_iter))./h(ind_iter)  < tol ) = [];   
+            
+            // ind_iter( abs(PROP_new.h - h(ind_iter))./h(ind_iter)  < tol ) = []; 
+            if(iteri==500)
+            {
+                break;
+            }
+        }
+        
+    }
+
+    calcViscosity(m_prop.Region, p, m_prop.T, m_prop.X_l, m_prop.X_v, m_prop.Mu_l, m_prop.Mu_v);
+}
+
+void cH2ONaCl:: calc_halit_liqidus(double Pres, double Temp, double& X_hal_liq, double& T_hm)
+{
+    Pres = Pres/1e5;  //[bar]
+    double a = 2.4726e-2;
+    double P_trip_salt = 5e-4;
+    double T_trip_salt = 800.7;
+
+    double e[6] = {0.0989944 + 3.30796e-6*Pres - 4.71759e-10*pow(Pres,2),
+                0.00947257 - 8.66460e-6*Pres + 1.69417e-9*pow(Pres,2),
+                0.610863 - 1.51716e-5*Pres + 1.19290e-8*pow(Pres,2),
+                -1.64994 + 2.03441e-4*Pres - 6.46015e-8*pow(Pres,2),
+                3.36474 - 1.54023e-4*Pres + 8.17048e-8*pow(Pres,2),
+                0
+                };
+    e[5]=1 - e[0] - e[1] - e[2] - e[3] - e[4];
+    T_hm = T_trip_salt + a*(Pres - P_trip_salt);  // melting temperature of halite is pressure dependent
+
+    X_hal_liq = (e[0]*pow((Temp/T_hm), (1-1))) + 
+                (e[1]*pow((Temp/T_hm), (2-1))) + 
+                (e[2]*pow((Temp/T_hm), (3-1))) +
+                (e[3]*pow((Temp/T_hm), (4-1))) + 
+                (e[4]*pow((Temp/T_hm), (5-1))) + 
+                (e[5]*pow((Temp/T_hm), (6-1)));
+}
+
+void cH2ONaCl:: calc_sat_lvh(PROP_H2ONaCl& PROP, double h, double X, bool isDeriv)
+{
+    double dh = 1;
+    double dX = 1e6;
+    if(PROP.Region==ThreePhase_V_L_H)
+    {
+        double a = PROP.Rho_l * PROP.X_l - PROP.Rho_l * X;
+        double b = PROP.Rho_v * PROP.X_v - PROP.Rho_v * X;
+        double c = PROP.Rho_h - PROP.Rho_h * X;
+
+        double e = PROP.Rho_l * PROP.H_l - PROP.Rho_l * h;
+        double f = PROP.Rho_v * PROP.H_v - PROP.Rho_v * h;
+        double g = PROP.Rho_h * PROP.H_h - PROP.Rho_h * h;
+
+        PROP.S_h = ( a * (f-e) / (b-a)  - e ) /  ( (g - e - ( f-e)* (c-a) / (b-a) ) );
+        PROP.S_v = ( - (g-e) * PROP.S_h - e ) / (f-e);
+        PROP.S_l = 1 - PROP.S_v - PROP.S_h;
+        PROP.Rho =   PROP.S_l * PROP.Rho_l + PROP.S_v * PROP.Rho_v + PROP.S_h * PROP.Rho_h;
+        //Deriviation for h
+        if(isDeriv)
+        {
+            double e_plus = PROP.Rho_l * PROP.H_l - PROP.Rho_l * (h +dh);
+            double f_plus = PROP.Rho_v * PROP.H_v - PROP.Rho_v * (h +dh);
+            double g_plus = PROP.Rho_h * PROP.H_h - PROP.Rho_h * (h +dh);
+            double S_h_plus = ( a * (f_plus-e_plus) / (b-a)  - e_plus ) /  ( (g_plus - e_plus - ( f_plus-e_plus)* (c-a) / (b-a) ) );
+            double S_v_plus = ( - (g_plus-e_plus) * S_h_plus - e_plus ) / (f_plus-e_plus); 
+            double S_l_plus = 1 - S_v_plus - S_h_plus;   
+        }
+    }
 }
 
 void cH2ONaCl:: guess_T_PhX(double P, double h, double X, double& T1, double& T2)
@@ -228,7 +492,7 @@ void cH2ONaCl:: guess_T_PhX(double P, double h, double X, double& T1, double& T2
     }
 }
 
-void cH2ONaCl:: prop_pTX(double p, double T_K, double X_wt)
+void cH2ONaCl:: prop_pTX(double p, double T_K, double X_wt, bool visc_on)
 {
     double T=T_K-Kelvin,Xl_all,Xv_all;
     // 1. 
@@ -246,7 +510,7 @@ void cH2ONaCl:: prop_pTX(double p, double T_K, double X_wt)
     double Xw_v = Xv_all * M_NaCl / (Xv_all * M_NaCl + (1-Xv_all) * M_H2O);
 
     // 4. calcViscosity
-    calcViscosity(m_prop.Region, p, T, Xw_l, Xw_v, m_prop.Mu_l, m_prop.Mu_v);
+    if(visc_on) calcViscosity(m_prop.Region, p, T, Xw_l, Xw_v, m_prop.Mu_l, m_prop.Mu_v);
 
 
     if(m_prop.Region==SinglePhase_L)m_prop.S_l=1;
