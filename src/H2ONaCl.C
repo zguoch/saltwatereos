@@ -552,6 +552,12 @@ void cH2ONaCl:: prop_pTX(double p, double T_K, double X_wt, bool visc_on)
     
     m_prop.X_l = Xw_l;
     m_prop.X_v = Xw_v;
+
+    m_prop.Mu = m_prop.S_l*m_prop.Mu_l + m_prop.S_v*m_prop.Mu_v; //need to fix later!!! This is not correct, but to test thermophysical model in OpenFoam, use this at this moment
+    // v+l+h-region
+    if(m_prop.Region==ThreePhase_V_L_H) m_prop.Mu= NAN; 
+    // v+l-region X = 0;
+    if(m_prop.Region==TwoPhase_L_V_X0) m_prop.Mu = NAN; 
 }
 
 double cH2ONaCl:: rho_pTX(double p, double T_K, double X_wt)

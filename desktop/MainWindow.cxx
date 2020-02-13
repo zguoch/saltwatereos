@@ -177,7 +177,7 @@ void MainWindow::on_pushButton_2_clicked()
         case CALCULATION_MULTI_POINTS:
         {
             QString fileName;
-            fileName = QFileDialog::getOpenFileName(this, tr("Open T(K) P(bar) X File: three columns separated by spaces"), "", tr("Text File (*.txt)"));
+            fileName = QFileDialog::getOpenFileName(this, tr("Open T(C) P(bar) X File: three columns separated by spaces"), "", tr("Text File (*.txt)"));
 
             if (!fileName.isNull())
             {
@@ -239,13 +239,13 @@ void MainWindow::SinglePointCalculation()
     color_value_2=(m_IndependentVar2_old==T ? color_value_2="Black": color_value_2="Green");
     color_value_3=(m_IndependentVar3_old==X ? color_value_3="Black": color_value_3="Green");
 
-   SWEOS::cH2ONaCl eos(p, T, X);
-   eos.Calculate();
+   SWEOS::cH2ONaCl eos;
+   eos.prop_pTX(p, T+SWEOS::Kelvin, X);
 
    QString result_str;
    // T, P, X
    result_str="<font color=Purple>Pressure</font> = <font color="+color_value_1+">"+QString::number(p)
-           +"</font> Pa, <font color=Purple>Perssure</font> = <font color="+color_value_2+">"+QString::number(T)
+           +"</font> Pa, <font color=Purple>Temperature</font> = <font color="+color_value_2+">"+QString::number(T)
            +"</font> deg. C, <font color=Purple>Salinity</font>  = <font color="+color_value_3+">"+QString::number(X*100)
            +"</font> wt. % NaCl<br>";
    result_str+="======================================================================<br>";
@@ -478,8 +478,8 @@ void MainWindow::CalculateProps_PTX(std::vector<double> arrT,std::vector<double>
     //calculate and set value to vtktable
     table->SetNumberOfRows(arrT.size());
     for (size_t i=0;i<arrT.size();++i) {
-        SWEOS::cH2ONaCl eos(arrP[i],arrT[i],arrX[i]);
-        eos.Calculate();
+        SWEOS::cH2ONaCl eos;
+        eos.prop_pTX(arrP[i],arrT[i]+SWEOS::Kelvin,arrX[i]);
         table->SetValue(i, 0, arrT[i]);
         table->SetValue(i, 1, arrP[i]/1e5);
         table->SetValue(i, 2, arrX[i]);
@@ -684,8 +684,8 @@ void MainWindow::Calculate_Diagram2D()
             {
                 for(size_t i = 0; i < vectorT.size(); i++)
                 {
-                    SWEOS::cH2ONaCl eos(vectorP[j]*1e5,vectorT[i],X0);
-                    eos.Calculate();
+                    SWEOS::cH2ONaCl eos;
+                    eos.prop_pTX(vectorP[j]*1e5,vectorT[i]+SWEOS::Kelvin,X0);
                     points->InsertNextPoint(vectorT[i],vectorP[j],X0);
                     arrPhaseRegion->InsertNextValue(eos.m_prop.Region);
                     arrDensity->InsertNextValue(eos.m_prop.Rho);
@@ -743,8 +743,8 @@ void MainWindow::Calculate_Diagram2D()
             {
                 for(size_t i = 0; i < vectorX.size(); i++)
                 {
-                    SWEOS::cH2ONaCl eos(vectorP[j]*1e5,T0,vectorX[i]);
-                    eos.Calculate();
+                    SWEOS::cH2ONaCl eos;
+                    eos.prop_pTX(vectorP[j]*1e5,T0+SWEOS::Kelvin,vectorX[i]);
                     points->InsertNextPoint(vectorX[i],vectorP[j],T0);
                     arrPhaseRegion->InsertNextValue(eos.m_prop.Region);
                     arrDensity->InsertNextValue(eos.m_prop.Rho);
@@ -799,8 +799,8 @@ void MainWindow::Calculate_Diagram2D()
             {
                 for(size_t i = 0; i < vectorT.size(); i++)
                 {
-                    SWEOS::cH2ONaCl eos(P0*1e5,vectorT[i],vectorX[j]);
-                    eos.Calculate();
+                    SWEOS::cH2ONaCl eos;
+                    eos.prop_pTX(P0*1e5,vectorT[i]+SWEOS::Kelvin,vectorX[j]);
                     points->InsertNextPoint(vectorT[i],vectorX[j],P0);
                     arrPhaseRegion->InsertNextValue(eos.m_prop.Region);
                     arrDensity->InsertNextValue(eos.m_prop.Rho);
@@ -1186,9 +1186,9 @@ void MainWindow::UpdateUI_fixedX(QLabel* label, QDoubleSpinBox* box, double defa
 }
 void MainWindow::UpdateUI_fixedT(QLabel* label, QDoubleSpinBox* box, double defaultValue)
 {
-    label->setText("Temperature (K)");
+    label->setText("Temperature (C)");
     box->setDecimals(2);
-    box->setRange(SWEOS::TMIN, SWEOS::TMAX);
+    box->setRange(SWEOS::TMIN-SWEOS::Kelvin, SWEOS::TMAX-SWEOS::Kelvin);
     box->setSingleStep(1);
     box->setValue(defaultValue);
 }
@@ -1212,21 +1212,21 @@ void MainWindow::UpdateUI_X(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
 }
 void MainWindow::UpdateUI_T(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox)
 {
-    label->setText("dT(K):");
+    label->setText("dT(C):");
     deltaBox->setDecimals(2);
     deltaBox->setRange(0.01, 100);
     deltaBox->setSingleStep(1);
     deltaBox->setValue(1);
 
     maxBox->setDecimals(2);
-    maxBox->setRange(SWEOS::TMIN, SWEOS::TMAX);
+    maxBox->setRange(SWEOS::TMIN-SWEOS::Kelvin, SWEOS::TMAX-SWEOS::Kelvin);
     maxBox->setSingleStep(1);
     maxBox->setValue(673);
 
     minBox->setDecimals(2);
-    minBox->setRange(SWEOS::TMIN,SWEOS::TMAX);
+    minBox->setRange(SWEOS::TMIN-SWEOS::Kelvin,SWEOS::TMAX-SWEOS::Kelvin);
     minBox->setSingleStep(1);
-    minBox->setValue(SWEOS::TMIN);
+    minBox->setValue(SWEOS::TMIN-SWEOS::Kelvin);
 }
 void MainWindow::UpdateUI_P(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox)
 {
@@ -1327,29 +1327,29 @@ void MainWindow::update3dUI(QString arg)
         ui->doubleSpinBox_fixed_secondVar->setSingleStep(0.001);
         ui->doubleSpinBox_fixed_secondVar->setValue(0.032);
 
-        ui->label_delta_firstVar->setText("dT(K):");
+        ui->label_delta_firstVar->setText("dT(C):");
         ui->doubleSpinBox_delta_firstVar->setDecimals(2);
-        ui->doubleSpinBox_delta_firstVar->setRange(SWEOS::TMIN, SWEOS::TMAX);
+        ui->doubleSpinBox_delta_firstVar->setRange(SWEOS::TMIN-SWEOS::Kelvin, SWEOS::TMAX-SWEOS::Kelvin);
         ui->doubleSpinBox_delta_firstVar->setSingleStep(1);
-        ui->doubleSpinBox_delta_firstVar->setValue(SWEOS::TMIN);
+        ui->doubleSpinBox_delta_firstVar->setValue(SWEOS::TMIN-SWEOS::Kelvin);
 
         ui->doubleSpinBox_max_firstVar->setDecimals(2);
-        ui->doubleSpinBox_max_firstVar->setRange(SWEOS::TMIN, SWEOS::TMAX);
+        ui->doubleSpinBox_max_firstVar->setRange(SWEOS::TMIN-SWEOS::Kelvin, SWEOS::TMAX-SWEOS::Kelvin);
         ui->doubleSpinBox_max_firstVar->setSingleStep(1);
-        ui->doubleSpinBox_max_firstVar->setValue(SWEOS::TMAX);
+        ui->doubleSpinBox_max_firstVar->setValue(SWEOS::TMAX-SWEOS::Kelvin);
 
         ui->doubleSpinBox_min_firstVar->setDecimals(2);
         ui->doubleSpinBox_min_firstVar->setRange(0.1,100);
         ui->doubleSpinBox_min_firstVar->setSingleStep(1);
-        ui->doubleSpinBox_min_firstVar->setValue(SWEOS::TMIN);
+        ui->doubleSpinBox_min_firstVar->setValue(SWEOS::TMIN-SWEOS::Kelvin);
 
     }else if(arg=="Pressure")
     {
-        ui->label_fixed_firsVar->setText("Temperature (K)");
+        ui->label_fixed_firsVar->setText("Temperature (C)");
         ui->doubleSpinBox_fixed_firstVar->setDecimals(2);
-        ui->doubleSpinBox_fixed_firstVar->setRange(SWEOS::TMIN, SWEOS::TMAX);
+        ui->doubleSpinBox_fixed_firstVar->setRange(SWEOS::TMIN-SWEOS::Kelvin, SWEOS::TMAX-SWEOS::Kelvin);
         ui->doubleSpinBox_fixed_firstVar->setSingleStep(1);
-        ui->doubleSpinBox_fixed_firstVar->setValue(373);
+        ui->doubleSpinBox_fixed_firstVar->setValue(100);
         ui->label_fixed_secondVar->setText("Salinity");
         ui->doubleSpinBox_fixed_secondVar->setDecimals(4);
         ui->doubleSpinBox_fixed_secondVar->setRange(SWEOS::XMIN, SWEOS::XMAX);
@@ -1379,11 +1379,11 @@ void MainWindow::update3dUI(QString arg)
         ui->doubleSpinBox_fixed_firstVar->setRange(SWEOS::PMIN/1e5, SWEOS::PMAX/1e5);
         ui->doubleSpinBox_fixed_firstVar->setSingleStep(1);
         ui->doubleSpinBox_fixed_firstVar->setValue(316);
-        ui->label_fixed_secondVar->setText("Temperature (K)");
+        ui->label_fixed_secondVar->setText("Temperature (C)");
         ui->doubleSpinBox_fixed_secondVar->setDecimals(2);
-        ui->doubleSpinBox_fixed_secondVar->setRange(SWEOS::TMIN, SWEOS::TMAX);
+        ui->doubleSpinBox_fixed_secondVar->setRange(SWEOS::TMIN-SWEOS::Kelvin, SWEOS::TMAX-SWEOS::Kelvin);
         ui->doubleSpinBox_fixed_secondVar->setSingleStep(1);
-        ui->doubleSpinBox_fixed_secondVar->setValue(373);
+        ui->doubleSpinBox_fixed_secondVar->setValue(100);
 
         ui->label_delta_firstVar->setText("dX:");
         ui->doubleSpinBox_delta_firstVar->setDecimals(4);

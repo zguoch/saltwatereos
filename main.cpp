@@ -14,7 +14,7 @@ int main()
 {
     // 1. one point calculation
     // PhaseRegion_PTX(31600000,100+273.15,0.3);
-    Prop_PHX(1e7, 2e6, 0.03);
+    Prop_PHX(500e5, 3e6, 0.03);
 
     // 2. 3D P-T-X calculation
     // PhaseRegion3D_PTX();

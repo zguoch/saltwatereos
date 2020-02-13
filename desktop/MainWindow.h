@@ -17,7 +17,7 @@
 
 #include "vtkSmartPointer.h"    // Required for smart pointer internal ivars.
 #include <QMainWindow>
-#include "H2ONaCl.h"
+#include "H2ONaCl.H"
 #include <QDateTime>
 #include <QTime>
 #include <QMessageBox>
