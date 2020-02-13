@@ -1,0 +1,1 @@
+macdeployqt build/swEOS.app -dmg

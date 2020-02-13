@@ -24,7 +24,7 @@
 		8E620F4923F34B5C00CC8CDD /* more.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E620F3E23F34B5B00CC8CDD /* more.c */; };
 		8E620F4A23F34B5C00CC8CDD /* H2ONaCl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8E620F4023F34B5C00CC8CDD /* H2ONaCl.cpp */; };
 		8E620F4B23F34B5C00CC8CDD /* meta.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E620F4123F34B5C00CC8CDD /* meta.c */; };
-		8E620F5223F360D100CC8CDD /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E620F5123F360D100CC8CDD /* TableViewController.swift */; };
+		8E9B411D23F4B17F005BC3E2 /* logo.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8E9B411C23F4B17E005BC3E2 /* logo.icns */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,7 +76,8 @@
 		8E620F4023F34B5C00CC8CDD /* H2ONaCl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = H2ONaCl.cpp; sourceTree = "<group>"; };
 		8E620F4123F34B5C00CC8CDD /* meta.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = meta.c; sourceTree = "<group>"; };
 		8E620F4223F34B5C00CC8CDD /* more.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = more.h; sourceTree = "<group>"; };
-		8E620F5123F360D100CC8CDD /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
+		8E9B411C23F4B17E005BC3E2 /* logo.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = logo.icns; path = ../../../desktop/Icons/logo.icns; sourceTree = "<group>"; };
+		8E9B411E23F4B203005BC3E2 /* SaltWaterEOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SaltWaterEOS.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,7 +108,6 @@
 		8E620EEE23F34A5400CC8CDD = {
 			isa = PBXGroup;
 			children = (
-				8E620F5123F360D100CC8CDD /* TableViewController.swift */,
 				8E620EF923F34A5400CC8CDD /* SaltWaterEOS */,
 				8E620EF823F34A5400CC8CDD /* Products */,
 			);
@@ -126,6 +126,7 @@
 		8E620EF923F34A5400CC8CDD /* SaltWaterEOS */ = {
 			isa = PBXGroup;
 			children = (
+				8E9B411E23F4B203005BC3E2 /* SaltWaterEOS.entitlements */,
 				8E620F3723F34B5B00CC8CDD /* cpp_wrapper.h */,
 				8E620F3323F34B5B00CC8CDD /* cpp_wrapper.mm */,
 				8E620F3923F34B5B00CC8CDD /* cpptest.cpp */,
@@ -143,6 +144,7 @@
 				8E620F0823F34A5500CC8CDD /* Assets.xcassets */,
 				8E620F0A23F34A5500CC8CDD /* LaunchScreen.storyboard */,
 				8E620F0D23F34A5500CC8CDD /* Info.plist */,
+				8E9B411C23F4B17E005BC3E2 /* logo.icns */,
 				8E620F0523F34A5400CC8CDD /* SaltWaterEOS.xcdatamodeld */,
 				8E620F2F23F34B5B00CC8CDD /* SaltWaterEOS-Bridging-Header.h */,
 			);
@@ -272,6 +274,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E620F0C23F34A5500CC8CDD /* LaunchScreen.storyboard in Resources */,
+				8E9B411D23F4B17F005BC3E2 /* logo.icns in Resources */,
 				8E620F0923F34A5500CC8CDD /* Assets.xcassets in Resources */,
 				8E620F0423F34A5400CC8CDD /* Main.storyboard in Resources */,
 			);
@@ -311,7 +314,6 @@
 				8E620EFF23F34A5400CC8CDD /* FirstViewController.swift in Sources */,
 				8E620EFB23F34A5400CC8CDD /* AppDelegate.swift in Sources */,
 				8E620EFD23F34A5400CC8CDD /* SceneDelegate.swift in Sources */,
-				8E620F5223F360D100CC8CDD /* TableViewController.swift in Sources */,
 				8E620F4523F34B5C00CC8CDD /* decl.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -484,7 +486,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = SaltWaterEOS/SaltWaterEOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = AFCJBNSQCL;
 				INFOPLIST_FILE = SaltWaterEOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -493,6 +497,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = gzk.SaltWaterEOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "SaltWaterEOS/SaltWaterEOS-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -505,7 +510,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = SaltWaterEOS/SaltWaterEOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = AFCJBNSQCL;
 				INFOPLIST_FILE = SaltWaterEOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -514,6 +521,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = gzk.SaltWaterEOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "SaltWaterEOS/SaltWaterEOS-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

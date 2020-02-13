@@ -22,6 +22,10 @@
 #include <QTime>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QProgressBar>
+#include <QThread>
+#include <QtConcurrent>
+#include <QFuture>
 
 #include <vector>
 #include <fstream>
@@ -132,6 +136,7 @@ protected:
   double m_actorScale_T, m_actorScale_P, m_actorScale_X;
   std::string m_xlabel, m_ylabel, m_zlabel;
   double m_actorScale[3];
+  QProgressBar* m_progressBar;
 protected slots:
 
 private slots:

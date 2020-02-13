@@ -57,6 +57,13 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    //progressbar
+    m_progressBar = new QProgressBar();
+    m_progressBar->setRange(0, 100);
+    m_progressBar->setValue(0);
+    m_progressBar->setTextVisible(true);
+    m_progressBar->setFormat("");
+    ui->statusbar->addPermanentWidget(m_progressBar, 2);
     //  // Qt Table View
     //  this->TableView = vtkSmartPointer<vtkQtTableView>::New();
 
@@ -116,7 +123,7 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
   // The smart pointers should clean up for up
-
+  if(m_progressBar) delete m_progressBar;
 }
 void MainWindow::initRenderWindow()
 {
@@ -316,11 +323,11 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     switch (index) {
     case 0:
         ui->textEdit->setEnabled(true);
-        //ui->vtkWindowTab->setEnabled(false);
+        ui->vtkWindowTab->setEnabled(false);
         break;
     case 1:
         ui->textEdit->setEnabled(false);
-        //ui->vtkWindowTab->setEnabled(true);
+        ui->vtkWindowTab->setEnabled(true);
         break;
 
     }
@@ -694,7 +701,10 @@ void MainWindow::Calculate_Diagram2D()
                     arrMu_v->InsertNextValue(eos.m_prop.Mu_v);
                     arrX_l->InsertNextValue(eos.m_prop.X_l);
                     arrX_v->InsertNextValue(eos.m_prop.X_v);
+//                    QApplication::processEvents();
                 }
+                m_progressBar->setValue(j/(vectorP.size()-1)*100);
+                m_progressBar->setFormat("Calculating");
             }
             // Specify the dimensions of the grid
             m_structuredGrid->SetDimensions(vectorT.size(),vectorP.size(),1);

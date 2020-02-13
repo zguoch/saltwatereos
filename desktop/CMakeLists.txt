@@ -13,6 +13,12 @@ project(SaltWaterEOS LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+# set icon
+set(MACOSX_BUNDLE_ICON_FILE logo.icns)
+set(myApp_ICON ${CMAKE_CURRENT_SOURCE_DIR}/Icons/logo.icns)
+set_source_files_properties(${myApp_ICON} PROPERTIES 
+    MACOSX_PACKAGE_LOCATION "Resources")
+
 find_package(VTK COMPONENTS
   vtkCommonCore
   vtkFiltersCore
@@ -31,9 +37,10 @@ find_package(VTK COMPONENTS
   vtkIOLegacy
 )
 include(${VTK_USE_FILE})
+
 # add H2ONaCl source and library 
 include_directories(../src)
-link_directories("../lib" "/usr/local/lib")
+link_directories("../lib" "/usr/local/lib" "/Users/zguo/Qt/5.9.9/clang_64/lib")
 
 if("${VTK_QT_VERSION}" STREQUAL "")
   message(FATAL_ERROR "VTK was not built with Qt")
@@ -62,7 +69,7 @@ set(CMAKE_AUTOMOC ON)
 
 # The rest should just work (sure...)
 # We have ui files, this will bring in the macro: qt5_wrap_ui
-find_package(Qt5 COMPONENTS Widgets REQUIRED QUIET)
+find_package(Qt5 COMPONENTS Widgets Core Concurrent REQUIRED QUIET)
 qt5_wrap_ui(UI_Srcs ${UIs})
 qt5_add_resources(QRC_Srcs ${QRCs} )
 
@@ -79,10 +86,17 @@ source_group("Generated" FILES
 )
 
 # if want to generage mac os app, add MACOSX_BUNDLE follow ${PROGRAM_NAME} 
-# 如果不设置MACOSX_BUNDLE， 窗口变化后VTK渲染会卡顿. 但是设置了之后字体会变粗，估计是与系统设置有关
-add_executable(${PROGRAM_NAME}  MACOSX_BUNDLE
-  ${Srcs} ${Hdrs} ${UI_Srcs} ${MOC_Hdrs} ${QRC_Srcs})
-target_link_libraries(${PROGRAM_NAME} Qt5::Core Qt5::Gui Qt5::Widgets eosH2ONaCl freesteam)
+add_executable(
+  ${PROGRAM_NAME}  
+  MACOSX_BUNDLE
+  ${Srcs} 
+  ${Hdrs} 
+  ${UI_Srcs} 
+  ${MOC_Hdrs} 
+  ${QRC_Srcs}
+  ${myApp_ICON}
+  )
+target_link_libraries(${PROGRAM_NAME} Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Concurrent eosH2ONaCl freesteam)
 target_link_libraries(${PROGRAM_NAME} ${VTK_LIBRARIES})
 
 # solve font blurry on UI
