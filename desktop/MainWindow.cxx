@@ -53,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
     ,m_xlabel("xlabel")
     ,m_ylabel("ylabel")
     ,m_zlabel("zlabel")
+    ,m_showScatter_1Dchart(false)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -82,7 +83,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     //default set 1D UI
     m_geometry_Groupbox_variables=ui->groupBox_Variables->geometry();
-    //update1dUI("Temperature");
     updateUI(m_dimension);
 
 
@@ -395,7 +395,7 @@ void MainWindow::Calculate_Diagram1D()
     //calculate
     CalculateProps_PTX(arrT, arrP,arrX, m_vtkTable);
     //display
-    ShowProps(m_index_var, ui->comboBox_selectProps->currentIndex());
+    ShowProps_1D();
 
 }
 
@@ -507,51 +507,59 @@ void MainWindow::CalculateProps_PTX(std::vector<double> arrT,std::vector<double>
     }
 }
 
-void MainWindow::ShowProps(int index_var, int index_prop_combox)
+void MainWindow::ShowProps_1D()
 {
+    int index_var=m_index_var;
+    int index_prop_combox=ui->comboBox_selectProps->currentIndex();
     if(m_vtkTable->GetNumberOfRows()==0)return;
     std::vector<std::string> names_color={"banana", "Chartreuse", "DeepPink", "Cyan"};
     switch (index_prop_combox) {
         case 0: //phase region
         {
             std::vector<int> index_props={3};
-            update1dChart(index_var, "Phase region", index_props, names_color);
+            std::vector<bool> showcomponents={true};
+            update1dChart(index_var, "Phase region", index_props, showcomponents, names_color);
         }
             break;
         case 1: //Density, rho_l, rho_v, rho_h
         {
             std::vector<int> index_props={4,5,6,7};
-            update1dChart(index_var, "Density (kg/m3)", index_props, names_color);
+            std::vector<bool> showcomponents={ui->checkBox_2->isChecked(), ui->checkBox_3->isChecked(), ui->checkBox_4->isChecked(), ui->checkBox_5->isChecked()};
+            update1dChart(index_var, "Density (kg/m3)", index_props,showcomponents, names_color);
         }
             break;
         case 2: //Enthalpy
         {
             std::vector<int> index_props={8, 9, 10, 11};
-            update1dChart(index_var, "Specific enthalpy (J/kg)", index_props, names_color);
+            std::vector<bool> showcomponents={ui->checkBox_2->isChecked(), ui->checkBox_3->isChecked(), ui->checkBox_4->isChecked(), ui->checkBox_5->isChecked()};
+            update1dChart(index_var, "Specific enthalpy (J/kg)", index_props,showcomponents, names_color);
         }
             break;
         case 3://saturation
         {
             std::vector<int> index_props={12,13,14};
-            update1dChart(index_var, "Saturation", index_props, names_color);
+            std::vector<bool> showcomponents={ui->checkBox_2->isChecked(), ui->checkBox_3->isChecked(), ui->checkBox_4->isChecked(), ui->checkBox_5->isChecked()};
+            update1dChart(index_var, "Saturation", index_props,showcomponents, names_color);
         }
             break;
         case 4://viscosity
         {
             std::vector<int> index_props={15, 16};
-            update1dChart(index_var, "Dynamic viscosity (Pa s)", index_props, names_color);
+            std::vector<bool> showcomponents={ui->checkBox_2->isChecked(), ui->checkBox_3->isChecked(), ui->checkBox_4->isChecked(), ui->checkBox_5->isChecked()};
+            update1dChart(index_var, "Dynamic viscosity (Pa s)", index_props,showcomponents, names_color);
         }
             break;
         case 5://salinity
         {
             std::vector<int> index_props={17, 18};
-            update1dChart(index_var, "Salinity", index_props, names_color);
+            std::vector<bool> showcomponents={ui->checkBox_2->isChecked(), ui->checkBox_3->isChecked(), ui->checkBox_4->isChecked(), ui->checkBox_5->isChecked()};
+            update1dChart(index_var, "Salinity", index_props,showcomponents, names_color);
         }
             break;
     }
 }
 
-void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector<int> index_props, std::vector<std::string> names_color)
+void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector<int> index_props, std::vector<bool> components, std::vector<std::string> names_color)
 {
     //clean old charts
     int num_oldItems=m_vtkChartView->GetScene()->GetNumberOfItems();
@@ -565,11 +573,22 @@ void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector
     vtkNew<vtkNamedColors> colors;
     vtkColor3d color3d;
     for (size_t i=0;i<index_props.size();i++) {
+        if(!components[i]) continue;
         vtkPlot *line = chart->AddPlot(vtkChart::LINE);
         line->SetInputData(m_vtkTable, index_var, index_props[i]);
         color3d = colors->GetColor3d(names_color[i]);
         line->SetColor(color3d.GetRed(), color3d.GetGreen(), color3d.GetBlue());
         line->SetWidth(3.0);
+        // scatter
+        if(m_showScatter_1Dchart)
+        {
+            vtkPlot *points = chart->AddPlot(vtkChart::POINTS);
+            points->SetInputData(m_vtkTable, index_var, index_props[i]);
+            points->SetColor(0, 0, 0, 50);
+            points->SetWidth(1.0);
+            points->LegendVisibilityOff();
+            dynamic_cast<vtkPlotPoints*>(points)->SetMarkerStyle(vtkPlotPoints::CIRCLE);
+        }
     }
 
     chart->GetAxis(1)->SetTitle(m_vtkTable->GetColumn(index_var)->GetName());
@@ -1051,7 +1070,7 @@ void MainWindow::updateUI(int dim)
     switch (dim) {
     case 1:
         updateUILayout(false,false, true, true,true,1/3.0);
-        update1dUI(ui->comboBox_selectVariable->currentText());
+        update1dUI(ui->comboBox_selectVariable->currentText(), ui->comboBox_selectProps->currentIndex());
         break;
     case 2:
         updateUILayout(true,false, true, false,true,2/3.0);
@@ -1118,19 +1137,127 @@ void MainWindow::updateUILayout(bool show_secondVariable, bool show_thirdVariabl
     ui->groupBox_fixed_Var->setVisible(show_groupbox_fixedVars);
     if(show_groupbox_fixedVars)
     {
-        // button of calculation
-        QRect geometry3=ui->pushButton->geometry();
-        ui->pushButton->setGeometry(ui->groupBox_fixed_Var->geometry().x()+ui->groupBox_fixed_Var->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
+        if(m_dimension==1)
+        {
+            // chart options
+            ui->groupBox_chartOptions->setVisible(true);
+            QRect geometry=ui->groupBox_chartOptions->geometry();
+            ui->groupBox_chartOptions->setGeometry(ui->groupBox_fixed_Var->geometry().x()+ui->groupBox_fixed_Var->geometry().width()+10, geometry.y(),geometry.width(),geometry.height());
+            // button of calculation
+            QRect geometry3=ui->pushButton->geometry();
+            ui->pushButton->setGeometry(ui->groupBox_chartOptions->geometry().x()+ui->groupBox_chartOptions->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
+        }else
+        {
+            // chart options
+            ui->groupBox_chartOptions->setVisible(false);
+            QRect geometry3=ui->pushButton->geometry();
+            ui->pushButton->setGeometry(ui->groupBox_fixed_Var->geometry().x()+ui->groupBox_fixed_Var->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
+        }
     }else
     {
-        // button of calculation
-        QRect geometry3=ui->pushButton->geometry();
-        ui->pushButton->setGeometry(ui->groupBox_Variables->geometry().x()+ui->groupBox_Variables->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
+        if(m_dimension==1)
+        {
+            //chart options
+            ui->groupBox_chartOptions->setVisible(true);
+            QRect geometry=ui->groupBox_chartOptions->geometry();
+            ui->groupBox_chartOptions->setGeometry(ui->groupBox_Variables->geometry().x()+ui->groupBox_Variables->geometry().width()+10, geometry.y(),geometry.width(),geometry.height());
+            // button of calculation
+            QRect geometry3=ui->pushButton->geometry();
+            ui->pushButton->setGeometry(ui->groupBox_chartOptions->geometry().x()+ui->groupBox_chartOptions->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
+        }else
+        {
+            // chart options
+            ui->groupBox_chartOptions->setVisible(false);
+            // button of calculation
+            QRect geometry3=ui->pushButton->geometry();
+            ui->pushButton->setGeometry(ui->groupBox_Variables->geometry().x()+ui->groupBox_Variables->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
+        }
     }
 
 }
-
-void MainWindow::update1dUI(QString arg)
+void MainWindow::update1dUI_chartOptions(int index_propSelection)
+{
+    //update UI of chart options for 1D chart
+    ui->checkBox->setVisible(true);
+    ui->checkBox->setText("Point marker");
+    ui->checkBox_2->setVisible(false);
+    ui->checkBox_3->setVisible(false);
+    ui->checkBox_4->setVisible(false);
+    ui->checkBox_5->setVisible(false);
+    switch (index_propSelection) {
+        case 0: //phase region
+        {
+            ui->checkBox->setText("Point marker");
+        }
+        break;
+        case 1: //density
+        {
+            ui->checkBox_2->setVisible(true);
+            ui->checkBox_2->setChecked(true);
+            ui->checkBox_2->setText("Bulk density");
+            ui->checkBox_3->setVisible(true);
+            ui->checkBox_3->setChecked(true);
+            ui->checkBox_3->setText("Liquid density");
+            ui->checkBox_4->setVisible(true);
+            ui->checkBox_4->setChecked(true);
+            ui->checkBox_4->setText("Vapour density");
+            ui->checkBox_5->setVisible(true);
+            ui->checkBox_5->setChecked(true);
+            ui->checkBox_5->setText("Halite density");
+        }
+        break;
+        case 2: //enthalpy
+        {
+            ui->checkBox_2->setVisible(true);
+            ui->checkBox_2->setChecked(true);
+            ui->checkBox_2->setText("Bulk enthalpy");
+            ui->checkBox_3->setVisible(true);
+            ui->checkBox_3->setChecked(true);
+            ui->checkBox_3->setText("Liquid enthalpy");
+            ui->checkBox_4->setVisible(true);
+            ui->checkBox_4->setChecked(true);
+            ui->checkBox_4->setText("Vapour enthalpy");
+            ui->checkBox_5->setVisible(true);
+            ui->checkBox_5->setChecked(true);
+            ui->checkBox_5->setText("Halite enthalpy");
+        }
+        break;
+        case 3: //saturation
+        {
+            ui->checkBox_2->setVisible(true);
+            ui->checkBox_2->setChecked(true);
+            ui->checkBox_2->setText("Liquid saturation");
+            ui->checkBox_3->setVisible(true);
+            ui->checkBox_3->setChecked(true);
+            ui->checkBox_3->setText("Vapour saturation");
+            ui->checkBox_4->setVisible(true);
+            ui->checkBox_4->setChecked(true);
+            ui->checkBox_4->setText("Halite saturation");
+        }
+        break;
+        case 4: //viscosity
+        {
+            ui->checkBox_2->setVisible(true);
+            ui->checkBox_2->setChecked(true);
+            ui->checkBox_2->setText("Liquid viscosity");
+            ui->checkBox_3->setVisible(true);
+            ui->checkBox_3->setChecked(true);
+            ui->checkBox_3->setText("Vapour viscosity");
+        }
+        break;
+        case 5: //viscosity
+        {
+            ui->checkBox_2->setVisible(true);
+            ui->checkBox_2->setChecked(true);
+            ui->checkBox_2->setText("Liquid salinity");
+            ui->checkBox_3->setVisible(true);
+            ui->checkBox_3->setChecked(true);
+            ui->checkBox_3->setText("Vapour salinity");
+        }
+        break;
+    }
+}
+void MainWindow::update1dUI(QString arg, int index_propSelection)
 {
     //update properties selection
     ui->comboBox_selectProps->clear();
@@ -1167,6 +1294,9 @@ void MainWindow::update1dUI(QString arg)
     {
         std::cout<<"error: update1dUI, no such item: "<<arg.toStdString()<<std::endl;
     }
+
+    // chart options
+    update1dUI_chartOptions(index_propSelection);
 }
 void MainWindow::UpdateUI_fixedP(QLabel* label, QDoubleSpinBox* box, double defaultValue)
 {
@@ -1409,7 +1539,7 @@ void MainWindow::on_comboBox_selectVariable_activated(const QString &arg1)
 {
     switch (m_dimension) {
     case 1:
-        update1dUI(arg1);
+        update1dUI(arg1, ui->comboBox_selectProps->currentIndex());
     break;
     case 2:
         update2dUI(arg1);
@@ -1496,10 +1626,37 @@ void MainWindow::on_comboBox_selectProps_activated(const QString &arg1)
 {
     switch (m_dimension) {
     case 1:
-        ShowProps(m_index_var, ui->comboBox_selectProps->currentIndex());
+        update1dUI_chartOptions(ui->comboBox_selectProps->currentIndex());
+        ShowProps_1D();
         break;
     case 2:
         ShowProps_2D(ui->comboBox_selectProps->currentIndex(),m_xlabel,m_ylabel,m_zlabel,m_actorScale);
         break;
     }
+}
+
+void MainWindow::on_checkBox_stateChanged(int )
+{
+    m_showScatter_1Dchart=ui->checkBox->isChecked();
+    ShowProps_1D();
+}
+
+void MainWindow::on_checkBox_2_stateChanged(int )
+{
+    ShowProps_1D();
+}
+
+void MainWindow::on_checkBox_3_stateChanged(int )
+{
+    ShowProps_1D();
+}
+
+void MainWindow::on_checkBox_4_stateChanged(int )
+{
+    ShowProps_1D();
+}
+
+void MainWindow::on_checkBox_5_stateChanged(int )
+{
+    ShowProps_1D();
 }

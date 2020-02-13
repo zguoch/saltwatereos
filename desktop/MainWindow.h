@@ -78,6 +78,7 @@ using namespace std;
 #include <vtkScalarBarActor.h>
 #include <vtkColorSeries.h>
 #include <vtkDelimitedTextWriter.h>
+#include <vtkPlotPoints.h>
 
 #define CALCULATION_SINGLE_POINT 1
 #define CALCULATION_MULTI_POINTS 2
@@ -137,6 +138,7 @@ protected:
   std::string m_xlabel, m_ylabel, m_zlabel;
   double m_actorScale[3];
   QProgressBar* m_progressBar;
+  bool m_showScatter_1Dchart;
 protected slots:
 
 private slots:
@@ -167,19 +169,31 @@ private slots:
     void UpdateUI_fixedT(QLabel* label, QDoubleSpinBox* box, double defaultValue=373);
     void UpdateUI_fixedP(QLabel* label, QDoubleSpinBox* box, double defaultValue=316);
     void UpdateUI_fixedX(QLabel* label, QDoubleSpinBox* box, double defaultValue=0.032);
-    void update1dUI(QString arg);
+    void update1dUI(QString arg, int index_propSelection);
+    void update1dUI_chartOptions(int index_propSelection);
     void update2dUI(QString arg);
     void update3dUI(QString arg);
     void initRenderWindow();
     void updateUI(int dim); //update UI of phase diagram
     void updateUILayout(bool show_secondVariable, bool show_thirdVariable, bool show_firstFixedVar, bool show_secondFixedVar,bool show_groupbox_fixedVars, double shinkWidth_groupbox_Vars);
     void on_actionSave_triggered();
-    void update1dChart(int index_var, std::string name_prop, std::vector<int> index_props, std::vector<std::string> names_color);
-    void ShowProps(int index_var, int index_prop_combox);
+    void update1dChart(int index_var, std::string name_prop, std::vector<int> index_props, std::vector<bool> components, std::vector<std::string> names_color);
+
+    void ShowProps_1D();
     void ShowProps_2D(int index_prop, std::string xlabel,std::string ylabel, std::string zlabel , double scale_actor[3]);
     void SinglePointCalculation();
     void on_comboBox_selectProps_activated(const QString &arg1);
     void CalculateProps_PTX(std::vector<double> arrT,std::vector<double> arrP, std::vector<double> arrX , vtkSmartPointer<vtkTable> table);
+
+    void on_checkBox_stateChanged(int arg1);
+
+    void on_checkBox_2_stateChanged(int arg1);
+
+    void on_checkBox_3_stateChanged(int arg1);
+
+    void on_checkBox_4_stateChanged(int arg1);
+
+    void on_checkBox_5_stateChanged(int arg1);
 
 private:
     QRect m_geometry_Groupbox_variables;
