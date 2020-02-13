@@ -2,11 +2,7 @@
 using namespace SWEOS;
 
 cH2ONaCl::cH2ONaCl()
-:m_P(1e5),
-m_T(100),
-m_Xwt(0.3),
-m_Xmol(Xwt2Xmol(m_Xwt)),
-m_Parray(NULL),
+:m_Parray(NULL),
 m_Tarray(NULL),
 m_Xarray(NULL),
 m_number(1),
@@ -15,22 +11,6 @@ m_f(init_f())
 {
     init_PhaseRegionName();
 }
-
-cH2ONaCl::cH2ONaCl(double P, double T_K, double X)
-:m_P(P),
-m_T(T_K-Kelvin),
-m_Xwt(X),
-m_Xmol(Xwt2Xmol(m_Xwt)),
-m_Parray(NULL),
-m_Tarray(NULL),
-m_Xarray(NULL),
-m_number(1),
-m_Cr(init_Cr()),
-m_f(init_f())
-{
-    init_PhaseRegionName();
-}
-
 cH2ONaCl::~cH2ONaCl()
 {
 }
@@ -109,29 +89,29 @@ void cH2ONaCl:: init_prop()
     m_prop.Mu_v=0;
 }
 
-void cH2ONaCl:: Calculate()
+void cH2ONaCl:: prop_pTX(double p, double T_K, double X_wt)
 {
+    double T=T_K-Kelvin,Xl_all,Xv_all;
     // 1. 
-    double Xl_all,Xv_all;
-    m_prop.Region=findRegion(m_T, m_P, m_Xmol, Xl_all,Xv_all);
+    m_prop.Region=findRegion(T, p, Xwt2Xmol(X_wt), Xl_all,Xv_all);
     // 2. calculate rho
     // still problematic at high T & low P
     double V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out;
-    calcRho(m_prop.Region, m_T, m_P, Xl_all, Xv_all, 
+    calcRho(m_prop.Region, T, p, Xl_all, Xv_all, 
             m_prop.Rho_l, m_prop.Rho_v, m_prop.Rho_h, V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out);
     // 3. calculate enthalpy
-    calcEnthalpy(m_prop.Region, m_T, m_P, Xl_all, Xv_all, 
+    calcEnthalpy(m_prop.Region, T, p, Xl_all, Xv_all, 
                         m_prop.H_l, m_prop.H_v, m_prop.H_h);
     // 4. 
     double Xw_l = Xl_all * M_NaCl / (Xl_all * M_NaCl + (1-Xl_all) * M_H2O);
     double Xw_v = Xv_all * M_NaCl / (Xv_all * M_NaCl + (1-Xv_all) * M_H2O);
 
     // 4. calcViscosity
-    calcViscosity(m_prop.Region, m_P, m_T, Xw_l, Xw_v, m_prop.Mu_l, m_prop.Mu_v);
+    calcViscosity(m_prop.Region, p, T, Xw_l, Xw_v, m_prop.Mu_l, m_prop.Mu_v);
 
 
     if(m_prop.Region==SinglePhase_L)m_prop.S_l=1;
-    double Xw=m_Xwt;
+    double Xw=X_wt;
     //  Calculate saturation of liquid in L+V region
     if(m_prop.Region==TwoPhase_V_L_L | m_prop.Region==TwoPhase_V_L_V)
     {
@@ -254,8 +234,6 @@ double cH2ONaCl:: mu_pTX(double p, double T_K, double X_wt)
     double V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out;
     calcRho(m_prop.Region, T, p, Xl_all, Xv_all, 
             m_prop.Rho_l, m_prop.Rho_v, m_prop.Rho_h, V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out);
-    // 3. calculate enthalpy
-    // calcEnthalpy(m_prop.Region, m_T, m_P, Xl_all, Xv_all, m_prop.H_l, m_prop.H_v, m_prop.H_h);
     // 4. 
     double Xw_l = Xl_all * M_NaCl / (Xl_all * M_NaCl + (1-Xl_all) * M_H2O);
     double Xw_v = Xv_all * M_NaCl / (Xv_all * M_NaCl + (1-Xv_all) * M_H2O);

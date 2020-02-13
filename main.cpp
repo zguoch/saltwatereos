@@ -49,8 +49,8 @@ void Figure2_Driesner2007_log(double T, string filename,double pmax, double xmin
         double X=pow(10,logX)/100.0;
         for (double P = pmin; P < pmax; P=P+dp)
         {
-            cH2ONaCl eos(P,T,X);
-            eos.Calculate();
+            cH2ONaCl eos;
+            eos.prop_pTX(P,T,X);
             fpout<<T<<", "<<P<<", "<<logX<<", "<<eos.m_prop.Region<<", "
                  <<eos.m_prop.Rho<<", "<<eos.m_prop.H<<", "
                  <<eos.m_prop.Rho_l<<", "<<eos.m_prop.Rho_v<<", "<<eos.m_prop.Rho_h<<", "
@@ -74,8 +74,8 @@ void Figure2_Driesner2007(double T, string filename,double pmax)
     {
         for (double P = pmin; P < pmax; P=P+dp)
         {
-            cH2ONaCl eos(P,T,X);
-            eos.Calculate();
+            cH2ONaCl eos;
+            eos.prop_pTX(P,T,X);
             fpout<<T<<", "<<P<<", "<<X<<", "<<eos.m_prop.Region<<", "
                  <<eos.m_prop.Rho<<", "<<eos.m_prop.H<<", "
                  <<eos.m_prop.Rho_l<<", "<<eos.m_prop.Rho_v<<", "<<eos.m_prop.Rho_h<<", "
@@ -88,10 +88,11 @@ void Figure2_Driesner2007(double T, string filename,double pmax)
 void PhaseRegion_PTX(double P, double T, double X)
 {
     cout.precision(8);//control cout precision of float
-    cH2ONaCl eos(P,T,X);
-    eos.Calculate();
+    cH2ONaCl eos;
+    eos.prop_pTX(P,T,X);
 
     cout<<"Region: "<<eos.m_phaseRegion_name[eos.m_prop.Region]<<" Xl: "<<eos.m_prop.X_l<<" Xv: "<<eos.m_prop.X_v<<endl;
+    cout<<"Rho: "<<eos.m_prop.Rho<<" H: "<<eos.m_prop.H<<endl;
     cout<<"Rho_l: "<<eos.m_prop.Rho_l<<" Rho_v: "<<eos.m_prop.Rho_v<<" Rho_h: "<<eos.m_prop.Rho_h<<endl;
     cout<<"h_l: "<<eos.m_prop.H_l<<" h_v: "<<eos.m_prop.H_v<<" h_h: "<<eos.m_prop.H_h<<endl;
     cout<<"Rho: "<<eos.m_prop.Rho<<" H: "<<eos.m_prop.H<<endl;
@@ -155,8 +156,8 @@ void PhaseRegion3D_PTX()
         {
                 for (size_t k = 0; k < T.size(); k++)
                 {
-                    cH2ONaCl eos(P[j],T[k],X[i]);
-                    eos.Calculate();
+                    cH2ONaCl eos;
+                    eos.prop_pTX(P[j],T[k],X[i]);
                     props.push_back(eos.m_prop);
                     // cout<<eos.m_phaseRegion_name[eos.m_prop.Region]<<" Xl: "<<eos.m_prop.X_l<<" Xv: "<<eos.m_prop.X_v<<endl;
                     // fpout<<eos.m_prop.Region<<" ";
