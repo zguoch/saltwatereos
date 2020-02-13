@@ -65,7 +65,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_progressBar->setFormat("");
     ui->statusbar->addPermanentWidget(m_progressBar, 2);
     //  // Qt Table View
-    //  this->TableView = vtkSmartPointer<vtkQtTableView>::New();
+    ui->tabWidget->setCurrentIndex(0);
+    ui->vtkWindowTab->setCurrentIndex(0);
 
     m_IndependentVar1_old=ui->doubleSpinBox->value()*1e5;
     m_IndependentVar2_old=ui->doubleSpinBox_2->value();
@@ -117,7 +118,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     // init plot
-  on_pushButton_clicked();
+//  on_pushButton_clicked();
 };
 
 MainWindow::~MainWindow()
@@ -508,6 +509,7 @@ void MainWindow::CalculateProps_PTX(std::vector<double> arrT,std::vector<double>
 
 void MainWindow::ShowProps(int index_var, int index_prop_combox)
 {
+    if(m_vtkTable->GetNumberOfRows()==0)return;
     std::vector<std::string> names_color={"banana", "Chartreuse", "DeepPink", "Cyan"};
     switch (index_prop_combox) {
         case 0: //phase region
