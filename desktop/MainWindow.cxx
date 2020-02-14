@@ -57,6 +57,7 @@ MainWindow::MainWindow(QWidget *parent)
     ,m_alphaPhaseRegion(0.4)
     ,m_vtkLineWidth(5)
     ,m_showPhaseRegion_1Dchart(true)
+    ,m_vtkCameraInitialized(false)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -1069,10 +1070,11 @@ void MainWindow::ShowProps_2D(int index_prop, std::string xlabel,std::string yla
     vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::New();
     lut->SetNumberOfColors(256);
     lut->SetHueRange(0.0,0.667);
+    lut->SetTableRange(grid->GetScalarRange());
+    lut->Build(); //important
     gridMapper->SetLookupTable(lut);
     vtkSmartPointer<vtkActor> gridActor = vtkSmartPointer<vtkActor>::New();
     gridActor->SetMapper(gridMapper);
-
     // Create a renderer, render window, and interactor
     vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
     renderer->AddActor(gridActor);
@@ -1086,18 +1088,76 @@ void MainWindow::ShowProps_2D(int index_prop, std::string xlabel,std::string yla
     renderer->AddActor(axis);
     axis->SetUse2DMode(1); //set font size
 
-    //color scale
-    vtkSmartPointer<vtkScalarBarActor> scalarBar = vtkSmartPointer<vtkScalarBarActor>::New();
-    scalarBar->SetLookupTable(gridMapper->GetLookupTable());
-    scalarBar->SetLookupTable( lut );
-    scalarBar->SetTitle(grid->GetPointData()->GetArray(0)->GetName());
-    scalarBar->SetDrawFrame(true);
-    scalarBar->SetWidth(scalarBar->GetWidth()/2);
-    renderer->AddActor2D(scalarBar);
-
+    //    legend of phase region
+    if(index_prop==0) //using legend instead of color scale for phase region
+    {
+        double PhaseRegion_present[8]={-1, -1, -1, -1,-1, -1, -1, -1};
+        //extract phase region
+        vtkDataArray* phaseRegionArray=m_structuredGrid->GetPointData()->GetArray(index_prop);
+        int reg;
+        for (int i=0;i<phaseRegionArray->GetNumberOfValues();i++) {
+            reg=phaseRegionArray->GetVariantValue(i).ToInt();
+            for (int j=0;j<8;j++) {
+                if(reg==j)PhaseRegion_present[j]=j;
+            }
+        }
+        vector<int> phaseRegionVector;
+        for (int i=0;i<8;i++) {
+            if(PhaseRegion_present[i]>=0)phaseRegionVector.push_back(i);
+        }
+        vtkSmartPointer<vtkLegendBoxActor> legend = vtkSmartPointer<vtkLegendBoxActor>::New();
+        legend->SetNumberOfEntries(phaseRegionVector.size());
+        vtkSmartPointer<vtkNamedColors> colors = vtkSmartPointer<vtkNamedColors>::New();
+        double color[3];
+        vtkSmartPointer<vtkCubeSource> legendBox = vtkSmartPointer<vtkCubeSource>::New();
+        legendBox->SetXLength(40);
+        legendBox->SetYLength(10);
+        legendBox->Update();
+//        colors->GetColor("tomato", color);
+        SWEOS::cH2ONaCl eos;
+        for (size_t i=0;i<phaseRegionVector.size();i++) {
+            gridMapper->GetLookupTable()->GetColor(phaseRegionVector[i],color);
+            legend->SetEntry(i, legendBox->GetOutput(), eos.m_phaseRegion_name[phaseRegionVector[i]].c_str(), color);
+        }
+        legend->UseBackgroundOn();
+        double background[4];
+        colors->GetColor("black", background);
+        legend->SetBackgroundColor(background);
+        legend->GetEntryTextProperty()->SetFontSize(m_vtkFontSize);
+        legend->GetEntryTextProperty()->SetFontFamilyToTimes();
+        legend->GetEntryTextProperty()->BoldOn();
+        legend->GetEntryTextProperty()->SetColor(1,1,1);
+        //lower left corner coordinate. x: [-1,1]; y:[-1, 1]
+        legend->GetPositionCoordinate()->SetCoordinateSystemToView();
+        legend->GetPositionCoordinate()->SetValue(0.4,0.7);
+        //upper right corner coordinate. x: [-1,1]; y:[-1, 1]
+        legend->GetPosition2Coordinate()->SetCoordinateSystemToView();
+        legend->GetPosition2Coordinate()->SetValue(1,1);
+        // Add the actors to the scene
+        renderer->AddActor(legend);
+    }else
+    {
+        //color scale
+        vtkSmartPointer<vtkScalarBarActor> scalarBar = vtkSmartPointer<vtkScalarBarActor>::New();
+        scalarBar->SetLookupTable(gridMapper->GetLookupTable());
+        scalarBar->SetLookupTable( lut );
+        scalarBar->SetTitle(grid->GetPointData()->GetArray(0)->GetName());
+        scalarBar->SetDrawFrame(true);
+        scalarBar->SetWidth(scalarBar->GetWidth()/2);
+        renderer->AddActor2D(scalarBar);
+    }
     InitCubeAxes(axis,vtkBoundingBox(gridActor->GetBounds()),vtkBoundingBox(m_structuredGrid->GetBounds()),xlabel,ylabel,zlabel);
     renderer->SetBackground(0,0,0); //
-    SetCamera(renderer,vtkBoundingBox(gridActor->GetBounds()));
+    if(!m_vtkCameraInitialized)
+    {
+        SetCamera(renderer,vtkBoundingBox(gridActor->GetBounds()));
+    }else
+    {
+        vtkCamera* oldCamera=this->ui->qvtkWidget2->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->GetActiveCamera();
+        renderer->GetActiveCamera()->SetFocalPoint(oldCamera->GetFocalPoint());//焦点
+        renderer->GetActiveCamera()->SetPosition(oldCamera->GetPosition());//相机位置
+        renderer->GetActiveCamera()->SetViewUp(oldCamera->GetViewUp());//相机“上”方向
+    }
 
     // before adding new renderer, remove all the old renderer, always keep only renderer in m_renderwindow
     m_renderWindow->GetRenderers()->RemoveAllItems();
@@ -1122,6 +1182,7 @@ void MainWindow::on_pushButton_clicked()
         case 2:
         {
             Calculate_Diagram2D();
+            m_vtkCameraInitialized=true;
         }
         break;
     case 3:

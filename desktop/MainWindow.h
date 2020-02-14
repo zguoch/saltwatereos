@@ -82,6 +82,8 @@ using namespace std;
 #include <vtkPlotArea.h>
 #include <vtkBrush.h>
 #include <vtkColorSeries.h>
+#include <vtkLegendBoxActor.h>
+#include <vtkCubeSource.h>
 
 #define CALCULATION_SINGLE_POINT 1
 #define CALCULATION_MULTI_POINTS 2
@@ -176,6 +178,7 @@ protected:
   double m_alphaPhaseRegion;
   int m_vtkLineWidth;
   bool m_showPhaseRegion_1Dchart;
+  bool m_vtkCameraInitialized;
 protected slots:
 
 private slots:
