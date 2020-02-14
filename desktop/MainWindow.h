@@ -81,6 +81,7 @@ using namespace std;
 #include <vtkPlotPoints.h>
 #include <vtkPlotArea.h>
 #include <vtkBrush.h>
+#include <vtkColorSeries.h>
 
 #define CALCULATION_SINGLE_POINT 1
 #define CALCULATION_MULTI_POINTS 2
@@ -142,9 +143,10 @@ protected:
   QProgressBar* m_progressBar;
   bool m_showScatter_1Dchart;
   vtkColor3d m_VTKbackgroundColor;
-  vector<std::string> m_vtkColorName_PhaseRegion;
+  vtkSmartPointer<vtkColorSeries> m_vtkColorSeries_Lines_1Dchart, m_vtkColorSeries_PhaseRegion;
   double m_alphaPhaseRegion;
   int m_vtkLineWidth;
+  bool m_showPhaseRegion_1Dchart;
 protected slots:
 
 private slots:
@@ -183,7 +185,7 @@ private slots:
     void updateUI(int dim); //update UI of phase diagram
     void updateUILayout(bool show_secondVariable, bool show_thirdVariable, bool show_firstFixedVar, bool show_secondFixedVar,bool show_groupbox_fixedVars, double shinkWidth_groupbox_Vars);
     void on_actionSave_triggered();
-    void update1dChart(int index_var, std::string name_prop, std::vector<int> index_props, std::vector<bool> components, std::vector<std::string> names_color);
+    void update1dChart(int index_var, std::string name_prop, std::vector<int> index_props, std::vector<bool> components, vtkSmartPointer<vtkColorSeries> colorseries);
 
     void ShowProps_1D();
     void ShowProps_2D(int index_prop, std::string xlabel,std::string ylabel, std::string zlabel , double scale_actor[3]);
@@ -202,6 +204,8 @@ private slots:
     void on_checkBox_5_stateChanged(int arg1);
     void GetMaxMin_vtkTableColumn(const vtkSmartPointer<vtkTable> table, int index_col, double& min, double& max);
 
+    void on_checkBox_6_stateChanged(int arg1);
+
 private:
     QRect m_geometry_Groupbox_variables;
     void UpdateUI_P(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox);
@@ -215,4 +219,6 @@ private:
 };
 
 #endif // MainWindow_H
+
+
 

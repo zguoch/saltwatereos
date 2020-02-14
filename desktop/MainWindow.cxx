@@ -56,18 +56,16 @@ MainWindow::MainWindow(QWidget *parent)
     ,m_showScatter_1Dchart(false)
     ,m_alphaPhaseRegion(0.4)
     ,m_vtkLineWidth(5)
+    ,m_showPhaseRegion_1Dchart(true)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-    m_vtkColorName_PhaseRegion.push_back("red");
-    m_vtkColorName_PhaseRegion.push_back("blue");
-    m_vtkColorName_PhaseRegion.push_back("cyan");
-    m_vtkColorName_PhaseRegion.push_back("yellow");
-    m_vtkColorName_PhaseRegion.push_back("magenta");
-    m_vtkColorName_PhaseRegion.push_back("turquoise_blue");
-    m_vtkColorName_PhaseRegion.push_back("rose_madder");
-    m_vtkColorName_PhaseRegion.push_back("orange");
+    m_vtkColorSeries_PhaseRegion=vtkSmartPointer<vtkColorSeries>::New();
+    m_vtkColorSeries_PhaseRegion->SetColorScheme(vtkColorSeries::BREWER_DIVERGING_PURPLE_ORANGE_8);
+
+    m_vtkColorSeries_Lines_1Dchart=vtkSmartPointer<vtkColorSeries>::New();
+    m_vtkColorSeries_Lines_1Dchart->SetColorScheme(vtkColorSeries::BREWER_DIVERGING_SPECTRAL_4); //SPECTRUM: 7 colors
 
     //progressbar
     m_progressBar = new QProgressBar();
@@ -523,48 +521,47 @@ void MainWindow::ShowProps_1D()
     int index_var=m_index_var;
     int index_prop_combox=ui->comboBox_selectProps->currentIndex();
     if(m_vtkTable->GetNumberOfRows()==0)return;
-    std::vector<std::string> names_color={"banana", "Chartreuse", "DeepPink", "Cyan"};
     switch (index_prop_combox) {
         case 0: //phase region
         {
             std::vector<int> index_props={3};
             std::vector<bool> showcomponents={true};
-            update1dChart(index_var, "Phase region", index_props, showcomponents, names_color);
+            update1dChart(index_var, "Phase region", index_props, showcomponents, m_vtkColorSeries_Lines_1Dchart);
         }
             break;
         case 1: //Density, rho_l, rho_v, rho_h
         {
             std::vector<int> index_props={4,5,6,7};
             std::vector<bool> showcomponents={ui->checkBox_2->isChecked(), ui->checkBox_3->isChecked(), ui->checkBox_4->isChecked(), ui->checkBox_5->isChecked()};
-            update1dChart(index_var, "Density (kg/m3)", index_props,showcomponents, names_color);
+            update1dChart(index_var, "Density (kg/m3)", index_props,showcomponents, m_vtkColorSeries_Lines_1Dchart);
         }
             break;
         case 2: //Enthalpy
         {
             std::vector<int> index_props={8, 9, 10, 11};
             std::vector<bool> showcomponents={ui->checkBox_2->isChecked(), ui->checkBox_3->isChecked(), ui->checkBox_4->isChecked(), ui->checkBox_5->isChecked()};
-            update1dChart(index_var, "Specific enthalpy (J/kg)", index_props,showcomponents, names_color);
+            update1dChart(index_var, "Specific enthalpy (J/kg)", index_props,showcomponents, m_vtkColorSeries_Lines_1Dchart);
         }
             break;
         case 3://saturation
         {
             std::vector<int> index_props={12,13,14};
             std::vector<bool> showcomponents={ui->checkBox_2->isChecked(), ui->checkBox_3->isChecked(), ui->checkBox_4->isChecked(), ui->checkBox_5->isChecked()};
-            update1dChart(index_var, "Saturation", index_props,showcomponents, names_color);
+            update1dChart(index_var, "Saturation", index_props,showcomponents, m_vtkColorSeries_Lines_1Dchart);
         }
             break;
         case 4://viscosity
         {
             std::vector<int> index_props={15, 16};
             std::vector<bool> showcomponents={ui->checkBox_2->isChecked(), ui->checkBox_3->isChecked(), ui->checkBox_4->isChecked(), ui->checkBox_5->isChecked()};
-            update1dChart(index_var, "Dynamic viscosity (Pa s)", index_props,showcomponents, names_color);
+            update1dChart(index_var, "Dynamic viscosity (Pa s)", index_props,showcomponents, m_vtkColorSeries_Lines_1Dchart);
         }
             break;
         case 5://salinity
         {
             std::vector<int> index_props={17, 18};
             std::vector<bool> showcomponents={ui->checkBox_2->isChecked(), ui->checkBox_3->isChecked(), ui->checkBox_4->isChecked(), ui->checkBox_5->isChecked()};
-            update1dChart(index_var, "Salinity", index_props,showcomponents, names_color);
+            update1dChart(index_var, "Salinity", index_props,showcomponents, m_vtkColorSeries_Lines_1Dchart);
         }
             break;
     }
@@ -582,7 +579,7 @@ void MainWindow::GetMaxMin_vtkTableColumn(const vtkSmartPointer<vtkTable> table,
     }
 }
 
-void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector<int> index_props, std::vector<bool> components, std::vector<std::string> names_color)
+void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector<int> index_props, std::vector<bool> components, vtkSmartPointer<vtkColorSeries> colorseries)
 {
     //clean old charts
     int num_oldItems=m_vtkChartView->GetScene()->GetNumberOfItems();
@@ -605,69 +602,74 @@ void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector
         min_allProps=(min< min_allProps ? min: min_allProps);
         max_allProps=(max>max_allProps ? max: max_allProps);
     }
-    //extract phase region
-    const int index_col_table_phaseRegion=3;
-    vector<int> indexInTable_phaseRegion;
-    int phaseRegion_start=m_vtkTable->GetValue(0,index_col_table_phaseRegion).ToInt();
-    indexInTable_phaseRegion.push_back(0);
-    for (int i=1;i<m_vtkTable->GetNumberOfRows();i++) {
-        if(phaseRegion_start!=m_vtkTable->GetValue(i,index_col_table_phaseRegion).ToInt())
+    //extract phase region and plot
+    if(m_showPhaseRegion_1Dchart)
+    {
+        const int index_col_table_phaseRegion=3;
+        vector<int> indexInTable_phaseRegion;
+        int phaseRegion_start=m_vtkTable->GetValue(0,index_col_table_phaseRegion).ToInt();
+        indexInTable_phaseRegion.push_back(0);
+        for (int i=1;i<m_vtkTable->GetNumberOfRows();i++) {
+            if(phaseRegion_start!=m_vtkTable->GetValue(i,index_col_table_phaseRegion).ToInt())
+            {
+                indexInTable_phaseRegion.push_back(i);
+                phaseRegion_start=m_vtkTable->GetValue(i,index_col_table_phaseRegion).ToInt();
+            }
+        }
+        if(indexInTable_phaseRegion[indexInTable_phaseRegion.size()-1]!=(m_vtkTable->GetNumberOfRows()-1))
+            indexInTable_phaseRegion.push_back(m_vtkTable->GetNumberOfRows()-1);
+        // plot region area
+        min_allProps=min_allProps-(max_allProps-min_allProps)*0.1;
+        max_allProps=max_allProps+(max_allProps-min_allProps)*0.1;
+        SWEOS::cH2ONaCl eos;
+        bool PhaseRegion_present[8]={false, false, false, false,false, false, false, false};
+        for (size_t i=1;i<indexInTable_phaseRegion.size();i++)
         {
-            indexInTable_phaseRegion.push_back(i);
-            phaseRegion_start=m_vtkTable->GetValue(i,index_col_table_phaseRegion).ToInt();
+            int phaseRegion=m_vtkTable->GetValue(indexInTable_phaseRegion[i-1],index_col_table_phaseRegion).ToInt();
+            vtkNew<vtkTable> table_region;
+              vtkNew<vtkFloatArray> arrX;
+              arrX->SetName("X Axis");
+              table_region->AddColumn(arrX);
+              vtkNew<vtkFloatArray> arrBottom;
+              arrBottom->SetName(eos.m_phaseRegion_name[phaseRegion].c_str());
+              table_region->AddColumn(arrBottom);
+              vtkNew<vtkFloatArray> arrTop;
+              arrTop->SetName("Top");
+              table_region->AddColumn(arrTop);
+              int numPoints = indexInTable_phaseRegion[i]-indexInTable_phaseRegion[i-1] +1;
+              table_region->SetNumberOfRows(numPoints);
+              for (int j = indexInTable_phaseRegion[i-1]; j <= indexInTable_phaseRegion[i]; j++)
+              {
+                int ind=j-indexInTable_phaseRegion[i-1];
+                table_region->SetValue(ind, 0, m_vtkTable->GetValue(j,index_var).ToDouble());
+                table_region->SetValue(ind, 1, min_allProps);
+                table_region->SetValue(ind, 2, max_allProps);
+              }
+              // Add multiple line plots, setting the colors etc
+              vtkPlotArea* area = dynamic_cast<vtkPlotArea*>(chart->AddPlot(vtkChart::AREA));
+              area->SetInputData(table_region);
+              area->SetInputArray(0, "X Axis");
+              area->SetInputArray(1, arrBottom->GetName());
+              area->SetInputArray(2, "Top");
+              area->GetBrush()->SetColorF(m_vtkColorSeries_PhaseRegion->GetColor(phaseRegion).GetRed()/255.0,
+                                          m_vtkColorSeries_PhaseRegion->GetColor(phaseRegion).GetGreen()/255.0,
+                                          m_vtkColorSeries_PhaseRegion->GetColor(phaseRegion).GetBlue()/255.0,
+                                          m_alphaPhaseRegion);
+              if(PhaseRegion_present[phaseRegion])area->LegendVisibilityOff();
+              if(!PhaseRegion_present[phaseRegion]) PhaseRegion_present[phaseRegion]=true; //used to mark duplicated phase region legend
         }
     }
-    if(indexInTable_phaseRegion[indexInTable_phaseRegion.size()-1]!=(m_vtkTable->GetNumberOfRows()-1))
-        indexInTable_phaseRegion.push_back(m_vtkTable->GetNumberOfRows()-1);
-    // plot region area
-    min_allProps=min_allProps-(max_allProps-min_allProps)*0.1;
-    max_allProps=max_allProps+(max_allProps-min_allProps)*0.1;
-    SWEOS::cH2ONaCl eos;
-    for (size_t i=1;i<indexInTable_phaseRegion.size();i++) {
-        vtkNew<vtkTable> table_region;
-          vtkNew<vtkFloatArray> arrX;
-          arrX->SetName("X Axis");
-          table_region->AddColumn(arrX);
-          vtkNew<vtkFloatArray> arrBottom;
-          arrBottom->SetName(eos.m_phaseRegion_name[m_vtkTable->GetValue(indexInTable_phaseRegion[i-1],index_col_table_phaseRegion).ToInt()].c_str());
-          table_region->AddColumn(arrBottom);
-          vtkNew<vtkFloatArray> arrTop;
-          arrTop->SetName("Top");
-          table_region->AddColumn(arrTop);
-          int numPoints = indexInTable_phaseRegion[i]-indexInTable_phaseRegion[i-1] +1;
-          table_region->SetNumberOfRows(numPoints);
-          for (int j = indexInTable_phaseRegion[i-1]; j <= indexInTable_phaseRegion[i]; j++)
-          {
-            int ind=j-indexInTable_phaseRegion[i-1];
-            table_region->SetValue(ind, 0, m_vtkTable->GetValue(j,index_var).ToDouble());
-            table_region->SetValue(ind, 1, min_allProps);
-            table_region->SetValue(ind, 2, max_allProps);
-          }
-          // Add multiple line plots, setting the colors etc
-          vtkColor3d color3d = colors->GetColor3d(m_vtkColorName_PhaseRegion[m_vtkTable->GetValue(indexInTable_phaseRegion[i-1],index_col_table_phaseRegion).ToInt()]);
-          vtkPlotArea* area = dynamic_cast<vtkPlotArea*>(chart->AddPlot(vtkChart::AREA));
-          area->SetInputData(table_region);
-          area->SetInputArray(0, "X Axis");
-          area->SetInputArray(1, arrBottom->GetName());
-          area->SetInputArray(2, "Top");
-//          area->SetValidPointMaskName("ValidMask");
-          area->GetBrush()->SetColorF(color3d.GetRed(),
-                                      color3d.GetGreen(),
-                                      color3d.GetBlue(),
-                                      m_alphaPhaseRegion);
-    }
 
+    // plot properties curve
     for (size_t i=0;i<index_props.size();i++) {
         if(!components[i]) continue;
         vtkPlot *line = chart->AddPlot(vtkChart::LINE);
         line->SetInputData(m_vtkTable, index_var, index_props[i]);
-        color3d = colors->GetColor3d(names_color[i]);
         line->SetColor(color3d.GetRed(), color3d.GetGreen(), color3d.GetBlue());
+        line->SetColor(colorseries->GetColor(i).GetRed()/255.0,
+                       colorseries->GetColor(i).GetGreen()/255.0,
+                       colorseries->GetColor(i).GetBlue()/255.0);
         line->SetWidth(m_vtkLineWidth);
-//        double min,max;
-//        GetMaxMin_vtkTableColumn(m_vtkTable, index_props[i], min,max);
-//        min_allProps=(min< min_allProps ? min: min_allProps);
-//        max_allProps=(max>max_allProps ? max: max_allProps);
         // scatter
         if(m_showScatter_1Dchart)
         {
@@ -1750,5 +1752,10 @@ void MainWindow::on_checkBox_4_stateChanged(int )
 
 void MainWindow::on_checkBox_5_stateChanged(int )
 {
+    ShowProps_1D();
+}
+void MainWindow::on_checkBox_6_stateChanged(int arg1)
+{
+    m_showPhaseRegion_1Dchart=ui->checkBox_6->isChecked();
     ShowProps_1D();
 }
