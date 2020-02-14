@@ -79,6 +79,8 @@ using namespace std;
 #include <vtkColorSeries.h>
 #include <vtkDelimitedTextWriter.h>
 #include <vtkPlotPoints.h>
+#include <vtkPlotArea.h>
+#include <vtkBrush.h>
 
 #define CALCULATION_SINGLE_POINT 1
 #define CALCULATION_MULTI_POINTS 2
@@ -139,6 +141,10 @@ protected:
   double m_actorScale[3];
   QProgressBar* m_progressBar;
   bool m_showScatter_1Dchart;
+  vtkColor3d m_VTKbackgroundColor;
+  vector<std::string> m_vtkColorName_PhaseRegion;
+  double m_alphaPhaseRegion;
+  int m_vtkLineWidth;
 protected slots:
 
 private slots:
@@ -194,6 +200,7 @@ private slots:
     void on_checkBox_4_stateChanged(int arg1);
 
     void on_checkBox_5_stateChanged(int arg1);
+    void GetMaxMin_vtkTableColumn(const vtkSmartPointer<vtkTable> table, int index_col, double& min, double& max);
 
 private:
     QRect m_geometry_Groupbox_variables;

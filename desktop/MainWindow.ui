@@ -909,66 +909,82 @@
            <widget class="QCheckBox" name="checkBox">
             <property name="geometry">
              <rect>
-              <x>10</x>
+              <x>150</x>
               <y>23</y>
               <width>141</width>
               <height>20</height>
              </rect>
             </property>
             <property name="text">
-             <string>Points</string>
+             <string>Scatter Points</string>
             </property>
            </widget>
            <widget class="QCheckBox" name="checkBox_2">
             <property name="geometry">
              <rect>
-              <x>160</x>
-              <y>23</y>
+              <x>10</x>
+              <y>50</y>
               <width>131</width>
               <height>20</height>
              </rect>
             </property>
             <property name="text">
-             <string>CheckBox</string>
+             <string>Bulk density</string>
             </property>
            </widget>
            <widget class="QCheckBox" name="checkBox_3">
             <property name="geometry">
              <rect>
-              <x>10</x>
+              <x>150</x>
               <y>50</y>
               <width>141</width>
               <height>20</height>
              </rect>
             </property>
             <property name="text">
-             <string>CheckBox</string>
+             <string>Liquid density</string>
             </property>
            </widget>
            <widget class="QCheckBox" name="checkBox_4">
             <property name="geometry">
              <rect>
-              <x>160</x>
-              <y>50</y>
+              <x>10</x>
+              <y>80</y>
               <width>131</width>
               <height>20</height>
              </rect>
             </property>
             <property name="text">
-             <string>CheckBox</string>
+             <string>Vapour density</string>
             </property>
            </widget>
            <widget class="QCheckBox" name="checkBox_5">
             <property name="geometry">
              <rect>
-              <x>10</x>
+              <x>150</x>
               <y>80</y>
               <width>141</width>
               <height>20</height>
              </rect>
             </property>
             <property name="text">
-             <string>CheckBox</string>
+             <string>Halite density</string>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="checkBox_6">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>23</y>
+              <width>141</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Phase Region</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </widget>

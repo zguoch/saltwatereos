@@ -54,9 +54,20 @@ MainWindow::MainWindow(QWidget *parent)
     ,m_ylabel("ylabel")
     ,m_zlabel("zlabel")
     ,m_showScatter_1Dchart(false)
+    ,m_alphaPhaseRegion(0.4)
+    ,m_vtkLineWidth(5)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    m_vtkColorName_PhaseRegion.push_back("red");
+    m_vtkColorName_PhaseRegion.push_back("blue");
+    m_vtkColorName_PhaseRegion.push_back("cyan");
+    m_vtkColorName_PhaseRegion.push_back("yellow");
+    m_vtkColorName_PhaseRegion.push_back("magenta");
+    m_vtkColorName_PhaseRegion.push_back("turquoise_blue");
+    m_vtkColorName_PhaseRegion.push_back("rose_madder");
+    m_vtkColorName_PhaseRegion.push_back("orange");
 
     //progressbar
     m_progressBar = new QProgressBar();
@@ -559,6 +570,18 @@ void MainWindow::ShowProps_1D()
     }
 }
 
+void MainWindow::GetMaxMin_vtkTableColumn(const vtkSmartPointer<vtkTable> table, int index_col, double& min, double& max)
+{
+    min=1e30;
+    max=-1e30;
+    double value_tab;
+    for (int i=0;i<table->GetNumberOfRows();i++) {
+        value_tab=table->GetValue(i,index_col).ToDouble();
+        min=(value_tab<min ? value_tab: min);
+        max=(value_tab>max ? value_tab: max);
+    }
+}
+
 void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector<int> index_props, std::vector<bool> components, std::vector<std::string> names_color)
 {
     //clean old charts
@@ -570,15 +593,81 @@ void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector
     vtkSmartPointer<vtkChartXY> chart = vtkSmartPointer<vtkChartXY>::New();
     m_vtkChartView->GetScene()->AddItem(chart);
 
+
     vtkNew<vtkNamedColors> colors;
     vtkColor3d color3d;
+    double min_allProps=1e20, max_allProps=-1e20;
+
+    for (size_t i=0;i<index_props.size();i++) {
+        if(!components[i]) continue;
+        double min,max;
+        GetMaxMin_vtkTableColumn(m_vtkTable, index_props[i], min,max);
+        min_allProps=(min< min_allProps ? min: min_allProps);
+        max_allProps=(max>max_allProps ? max: max_allProps);
+    }
+    //extract phase region
+    const int index_col_table_phaseRegion=3;
+    vector<int> indexInTable_phaseRegion;
+    int phaseRegion_start=m_vtkTable->GetValue(0,index_col_table_phaseRegion).ToInt();
+    indexInTable_phaseRegion.push_back(0);
+    for (int i=1;i<m_vtkTable->GetNumberOfRows();i++) {
+        if(phaseRegion_start!=m_vtkTable->GetValue(i,index_col_table_phaseRegion).ToInt())
+        {
+            indexInTable_phaseRegion.push_back(i);
+            phaseRegion_start=m_vtkTable->GetValue(i,index_col_table_phaseRegion).ToInt();
+        }
+    }
+    if(indexInTable_phaseRegion[indexInTable_phaseRegion.size()-1]!=(m_vtkTable->GetNumberOfRows()-1))
+        indexInTable_phaseRegion.push_back(m_vtkTable->GetNumberOfRows()-1);
+    // plot region area
+    min_allProps=min_allProps-(max_allProps-min_allProps)*0.1;
+    max_allProps=max_allProps+(max_allProps-min_allProps)*0.1;
+    SWEOS::cH2ONaCl eos;
+    for (size_t i=1;i<indexInTable_phaseRegion.size();i++) {
+        vtkNew<vtkTable> table_region;
+          vtkNew<vtkFloatArray> arrX;
+          arrX->SetName("X Axis");
+          table_region->AddColumn(arrX);
+          vtkNew<vtkFloatArray> arrBottom;
+          arrBottom->SetName(eos.m_phaseRegion_name[m_vtkTable->GetValue(indexInTable_phaseRegion[i-1],index_col_table_phaseRegion).ToInt()].c_str());
+          table_region->AddColumn(arrBottom);
+          vtkNew<vtkFloatArray> arrTop;
+          arrTop->SetName("Top");
+          table_region->AddColumn(arrTop);
+          int numPoints = indexInTable_phaseRegion[i]-indexInTable_phaseRegion[i-1] +1;
+          table_region->SetNumberOfRows(numPoints);
+          for (int j = indexInTable_phaseRegion[i-1]; j <= indexInTable_phaseRegion[i]; j++)
+          {
+            int ind=j-indexInTable_phaseRegion[i-1];
+            table_region->SetValue(ind, 0, m_vtkTable->GetValue(j,index_var).ToDouble());
+            table_region->SetValue(ind, 1, min_allProps);
+            table_region->SetValue(ind, 2, max_allProps);
+          }
+          // Add multiple line plots, setting the colors etc
+          vtkColor3d color3d = colors->GetColor3d(m_vtkColorName_PhaseRegion[m_vtkTable->GetValue(indexInTable_phaseRegion[i-1],index_col_table_phaseRegion).ToInt()]);
+          vtkPlotArea* area = dynamic_cast<vtkPlotArea*>(chart->AddPlot(vtkChart::AREA));
+          area->SetInputData(table_region);
+          area->SetInputArray(0, "X Axis");
+          area->SetInputArray(1, arrBottom->GetName());
+          area->SetInputArray(2, "Top");
+//          area->SetValidPointMaskName("ValidMask");
+          area->GetBrush()->SetColorF(color3d.GetRed(),
+                                      color3d.GetGreen(),
+                                      color3d.GetBlue(),
+                                      m_alphaPhaseRegion);
+    }
+
     for (size_t i=0;i<index_props.size();i++) {
         if(!components[i]) continue;
         vtkPlot *line = chart->AddPlot(vtkChart::LINE);
         line->SetInputData(m_vtkTable, index_var, index_props[i]);
         color3d = colors->GetColor3d(names_color[i]);
         line->SetColor(color3d.GetRed(), color3d.GetGreen(), color3d.GetBlue());
-        line->SetWidth(3.0);
+        line->SetWidth(m_vtkLineWidth);
+//        double min,max;
+//        GetMaxMin_vtkTableColumn(m_vtkTable, index_props[i], min,max);
+//        min_allProps=(min< min_allProps ? min: min_allProps);
+//        max_allProps=(max>max_allProps ? max: max_allProps);
         // scatter
         if(m_showScatter_1Dchart)
         {
@@ -590,6 +679,7 @@ void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector
             dynamic_cast<vtkPlotPoints*>(points)->SetMarkerStyle(vtkPlotPoints::CIRCLE);
         }
     }
+
 
     chart->GetAxis(1)->SetTitle(m_vtkTable->GetColumn(index_var)->GetName());
     chart->GetAxis(1)->GetLabelProperties()->SetFontSize(m_vtkFontSize);
@@ -606,8 +696,10 @@ void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector
     chart->GetAxis(0)->GetTitleProperties()->SetFontFamilyToArial();
 
     chart->GetTooltip()->GetTextProperties()->SetFontSize(m_vtkFontSize);
+
     chart->SetShowLegend(true);
     chart->GetLegend()->GetLabelProperties()->SetFontSize(m_vtkFontSize);
+    chart->GetLegend()->SetSymbolWidth(60);
 
     m_vtkChartView->GetRenderWindow()->Render();
 }

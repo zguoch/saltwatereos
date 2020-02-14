@@ -57,7 +57,7 @@ void cH2ONaCl:: init_PhaseRegionName()
     m_phaseRegion_name[TwoPhase_L_V_X0]="Liquid + Vapor at X=0";
     m_phaseRegion_name[SinglePhase_V]="Pure vapour phase";
     m_phaseRegion_name[TwoPhase_L_H]="Liquid + Halite";
-    m_phaseRegion_name[TwoPhase_V_H]="Vaper + Halite";
+    m_phaseRegion_name[TwoPhase_V_H]="Vapour + Halite";
     m_phaseRegion_name[ThreePhase_V_L_H]="Vapour + Liquid + Halite";
     m_phaseRegion_name[TwoPhase_V_L_L]="Vapour + Liquid on the liquid side";
     m_phaseRegion_name[TwoPhase_V_L_V]="Vapour + Liquid on the vapour side";
