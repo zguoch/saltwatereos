@@ -186,7 +186,14 @@ void MainWindow::on_pushButton_2_clicked()
         case CALCULATION_MULTI_POINTS:
         {
             QString fileName;
-            fileName = QFileDialog::getOpenFileName(this, tr("Open T(C) P(bar) X File: three columns separated by spaces"), "", tr("Text File (*.txt)"));
+            switch (ui->comboBox->currentIndex()) {
+            case 0: //PTX
+                fileName = QFileDialog::getOpenFileName(this, tr("Open P(bar) T(C) X File: three columns separated by spaces"), "", tr("Text File (*.txt);;Text File (*.dat)"));
+                break;
+            case 1:
+                fileName = QFileDialog::getOpenFileName(this, tr("Open P(bar) H(kJ/kg) X File: three columns separated by spaces"), "", tr("Text File (*.txt);;Text File (*.dat)"));
+                break;
+            }
 
             if (!fileName.isNull())
             {
@@ -196,18 +203,18 @@ void MainWindow::on_pushButton_2_clicked()
                     std::cout<<"error: open file failed, "<<fileName.toStdString()<<endl;
                     return;
                 }
-                vector<double>arrT,arrP,arrX;
-                double T,P,X;
+                vector<double>arrT_H,arrP,arrX;
+                double T_H,P,X;
                 while (!fin.eof()) {
-                    fin>>T>>P>>X;
-                    arrT.push_back(T);
+                    fin>>P>>T_H>>X;
+                    arrT_H.push_back(T_H*1000);
                     arrP.push_back(P*1e5);
                     arrX.push_back(X);
                 }
                 fin.close();
 
                 // calculate
-                CalculateProps_PTX(arrT,arrP,arrX,m_vtkTable);
+                CalculateProps_PTX_PHX(ui->comboBox->currentIndex(),arrT_H,arrP,arrX,m_vtkTable);
 
                 // display in textedit
                 ui->textEdit->clear();
@@ -322,7 +329,7 @@ void MainWindow::on_radioButton_pressed()
 
 void MainWindow::updateCalculationModelSelection(bool isSinglePoint)
 {
-    ui->comboBox->setEnabled(isSinglePoint);
+//    ui->comboBox->setEnabled(isSinglePoint);
     ui->doubleSpinBox->setEnabled(isSinglePoint);
     ui->doubleSpinBox_2->setEnabled(isSinglePoint);
     ui->doubleSpinBox_3->setEnabled(isSinglePoint);
@@ -366,8 +373,8 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 void MainWindow::Calculate_Diagram1D()
 {
     QString varName;
-    //            int index_var=0;
-    vector<double>arrP,arrT,arrX;
+    int index_uising_ptx_phx;
+    vector<double>arrP,arrT_H,arrX;
     switch (ui->comboBox_selectVariable->currentIndex()) {
     case 0:   //temperature
     {
@@ -379,11 +386,11 @@ void MainWindow::Calculate_Diagram1D()
         double p0=ui->doubleSpinBox_fixed_firstVar->value()*1e5;
         double X0=ui->doubleSpinBox_fixed_secondVar->value();
         for (double T=Tmin;T<Tmax;T=T+dT) {
-            arrT.push_back(T);
+            arrT_H.push_back(T);
             arrP.push_back(p0);
             arrX.push_back(X0);
         }
-
+        index_uising_ptx_phx=USING_PTX;
     }
         break;
     case 1:   //pressure
@@ -396,10 +403,11 @@ void MainWindow::Calculate_Diagram1D()
         double T0=ui->doubleSpinBox_fixed_firstVar->value();
         double X0=ui->doubleSpinBox_fixed_secondVar->value();
         for (double P=Pmin;P<Pmax;P=P+dP) {
-            arrT.push_back(T0);
+            arrT_H.push_back(T0);
             arrP.push_back(P);
             arrX.push_back(X0);
         }
+        index_uising_ptx_phx=USING_PTX;
     }
         break;
     case 2:  //salinity
@@ -412,22 +420,40 @@ void MainWindow::Calculate_Diagram1D()
         double P0=ui->doubleSpinBox_fixed_firstVar->value()*1e5;
         double T0=ui->doubleSpinBox_fixed_secondVar->value();
         for (double X=Xmin;X<Xmax;X=X+dX) {
-            arrT.push_back(T0);
+            arrT_H.push_back(T0);
             arrP.push_back(P0);
             arrX.push_back(X);
         }
+        index_uising_ptx_phx=USING_PTX;
+    }
+        break;
+    case 3:   //enthalpy
+    {
+        varName="Enthalpy (kJ/kg)";
+        m_index_var=INDEX_H_VTKTABLE;
+        double dH=ui->doubleSpinBox_delta_firstVar->value();
+        double Hmin=ui->doubleSpinBox_min_firstVar->value();
+        double Hmax=ui->doubleSpinBox_max_firstVar->value();
+        double p0=ui->doubleSpinBox_fixed_firstVar->value()*1e5;
+        double X0=ui->doubleSpinBox_fixed_secondVar->value();
+        for (double H=Hmin;H<Hmax;H=H+dH) {
+            arrT_H.push_back(H*1000);
+            arrP.push_back(p0);
+            arrX.push_back(X0);
+        }
+        index_uising_ptx_phx=USING_PHX;
     }
         break;
     }
 
     //calculate
-    CalculateProps_PTX(arrT, arrP,arrX, m_vtkTable);
+    CalculateProps_PTX_PHX(index_uising_ptx_phx,arrT_H, arrP,arrX, m_vtkTable);
     //display
     ShowProps_1D();
 
 }
 
-void MainWindow::CalculateProps_PTX(std::vector<double> arrT,std::vector<double> arrP, std::vector<double> arrX, vtkSmartPointer<vtkTable> table )
+void MainWindow::CalculateProps_PTX_PHX(int PTX_PHX, std::vector<double> arrT_H,std::vector<double> arrP, std::vector<double> arrX, vtkSmartPointer<vtkTable> table)
 {
     // add columns to table
     //ui->textEdit->append(QString::number(m_vtkTable->GetNumberOfColumns()));
@@ -464,16 +490,16 @@ void MainWindow::CalculateProps_PTX(std::vector<double> arrT,std::vector<double>
     table->AddColumn(prop_rho_h);
     //Enthalpy
     vtkSmartPointer<vtkFloatArray> prop_enthalpy = vtkSmartPointer<vtkFloatArray>::New();
-    prop_enthalpy->SetName("Bulk enthalpy (J/kg)");
+    prop_enthalpy->SetName("Bulk enthalpy (kJ/kg)");
     table->AddColumn(prop_enthalpy);
     vtkSmartPointer<vtkFloatArray> prop_enthalpy_l = vtkSmartPointer<vtkFloatArray>::New();
-    prop_enthalpy_l->SetName("Liquid enthalpy (J/kg)");
+    prop_enthalpy_l->SetName("Liquid enthalpy (kJ/kg)");
     table->AddColumn(prop_enthalpy_l);
     vtkSmartPointer<vtkFloatArray> prop_enthalpy_v = vtkSmartPointer<vtkFloatArray>::New();
-    prop_enthalpy_v->SetName("Vapour enthalpy (J/kg)");
+    prop_enthalpy_v->SetName("Vapour enthalpy (kJ/kg)");
     table->AddColumn(prop_enthalpy_v);
     vtkSmartPointer<vtkFloatArray> prop_enthalpy_h = vtkSmartPointer<vtkFloatArray>::New();
-    prop_enthalpy_h->SetName("Halite enthalpy (J/kg)");
+    prop_enthalpy_h->SetName("Halite enthalpy (kJ/kg)");
     table->AddColumn(prop_enthalpy_h);
 
     //Saturation
@@ -504,34 +530,72 @@ void MainWindow::CalculateProps_PTX(std::vector<double> arrT,std::vector<double>
     table->AddColumn(prop_X_v);
 
     //calculate and set value to vtktable
-    table->SetNumberOfRows(arrT.size());
-    for (size_t i=0;i<arrT.size();++i) {
-        SWEOS::cH2ONaCl eos;
-        eos.prop_pTX(arrP[i],arrT[i]+SWEOS::Kelvin,arrX[i]);
-        table->SetValue(i, 0, arrT[i]);
-        table->SetValue(i, 1, arrP[i]/1e5);
-        table->SetValue(i, 2, arrX[i]);
-        table->SetValue(i, 3, eos.m_prop.Region);
+    table->SetNumberOfRows(arrT_H.size());
+    switch (PTX_PHX) {
+        case USING_PTX: //PTX
+        {
+            for (size_t i=0;i<arrT_H.size();++i) {
+                SWEOS::cH2ONaCl eos;
+                eos.prop_pTX(arrP[i],arrT_H[i]+SWEOS::Kelvin,arrX[i]);
+                table->SetValue(i, 0, arrT_H[i]);
+                table->SetValue(i, 1, arrP[i]/1e5);
+                table->SetValue(i, 2, arrX[i]);
+                table->SetValue(i, 3, eos.m_prop.Region);
 
-        table->SetValue(i, 4, eos.m_prop.Rho);
-        table->SetValue(i, 5, eos.m_prop.Rho_l);
-        table->SetValue(i, 6, eos.m_prop.Rho_v);
-        table->SetValue(i, 7, eos.m_prop.Rho_h);
+                table->SetValue(i, 4, eos.m_prop.Rho);
+                table->SetValue(i, 5, eos.m_prop.Rho_l);
+                table->SetValue(i, 6, eos.m_prop.Rho_v);
+                table->SetValue(i, 7, eos.m_prop.Rho_h);
 
-        table->SetValue(i, 8, eos.m_prop.H);
-        table->SetValue(i, 9, eos.m_prop.H_l);
-        table->SetValue(i, 10, eos.m_prop.H_v);
-        table->SetValue(i, 11, eos.m_prop.H_h);
+                table->SetValue(i, 8, eos.m_prop.H/1000);
+                table->SetValue(i, 9, eos.m_prop.H_l/1000);
+                table->SetValue(i, 10, eos.m_prop.H_v/1000);
+                table->SetValue(i, 11, eos.m_prop.H_h/1000);
 
-        table->SetValue(i, 12, eos.m_prop.S_l);
-        table->SetValue(i, 13, eos.m_prop.S_v);
-        table->SetValue(i, 14, eos.m_prop.S_h);
+                table->SetValue(i, 12, eos.m_prop.S_l);
+                table->SetValue(i, 13, eos.m_prop.S_v);
+                table->SetValue(i, 14, eos.m_prop.S_h);
 
-        table->SetValue(i, 15, eos.m_prop.Mu_l);
-        table->SetValue(i, 16, eos.m_prop.Mu_v);
+                table->SetValue(i, 15, eos.m_prop.Mu_l);
+                table->SetValue(i, 16, eos.m_prop.Mu_v);
 
-        table->SetValue(i, 17, eos.m_prop.X_l);
-        table->SetValue(i, 18, eos.m_prop.X_v);
+                table->SetValue(i, 17, eos.m_prop.X_l);
+                table->SetValue(i, 18, eos.m_prop.X_v);
+            }
+        }
+        break;
+        case USING_PHX:
+        {
+            for (size_t i=0;i<arrT_H.size();++i) {
+                SWEOS::cH2ONaCl eos;
+                eos.prop_pHX(arrP[i],arrT_H[i],arrX[i]); //enthalpy unit in UI is kJ/kg
+                table->SetValue(i, 0, eos.m_prop.T);
+                table->SetValue(i, 1, arrP[i]/1e5);
+                table->SetValue(i, 2, arrX[i]);
+                table->SetValue(i, 3, eos.m_prop.Region);
+
+                table->SetValue(i, 4, eos.m_prop.Rho);
+                table->SetValue(i, 5, eos.m_prop.Rho_l);
+                table->SetValue(i, 6, eos.m_prop.Rho_v);
+                table->SetValue(i, 7, eos.m_prop.Rho_h);
+
+                table->SetValue(i, 8, arrT_H[i]/1000);
+                table->SetValue(i, 9, eos.m_prop.H_l/1000);
+                table->SetValue(i, 10, eos.m_prop.H_v/1000);
+                table->SetValue(i, 11, eos.m_prop.H_h/1000);
+
+                table->SetValue(i, 12, eos.m_prop.S_l);
+                table->SetValue(i, 13, eos.m_prop.S_v);
+                table->SetValue(i, 14, eos.m_prop.S_h);
+
+                table->SetValue(i, 15, eos.m_prop.Mu_l);
+                table->SetValue(i, 16, eos.m_prop.Mu_v);
+
+                table->SetValue(i, 17, eos.m_prop.X_l);
+                table->SetValue(i, 18, eos.m_prop.X_v);
+            }
+        }
+        break;
     }
 }
 
@@ -583,6 +647,13 @@ void MainWindow::ShowProps_1D()
             update1dChart(index_var, "Salinity", index_props,showcomponents, m_vtkColorSeries_Lines_1Dchart);
         }
             break;
+        case 6: //temperature
+        {
+            std::vector<int> index_props={INDEX_T_VTKTABLE};
+            std::vector<bool> showcomponents={true};
+            update1dChart(index_var, "Temperature", index_props, showcomponents, m_vtkColorSeries_Lines_1Dchart);
+        }
+        break;
     }
 }
 
@@ -1215,6 +1286,7 @@ void MainWindow::updateUILayout(bool show_secondVariable, bool show_thirdVariabl
         ui->comboBox_selectVariable->addItem("Temperature");
         ui->comboBox_selectVariable->addItem("Pressure");
         ui->comboBox_selectVariable->addItem("Salinity");
+        ui->comboBox_selectVariable->addItem("Enthalpy");
     }
     //second variable
     ui->label_max_secondVar->setVisible(show_secondVariable);
@@ -1368,6 +1440,11 @@ void MainWindow::update1dUI_chartOptions(int index_propSelection)
             ui->checkBox_3->setText("Vapour salinity");
         }
         break;
+        case 6: //temperature
+        {
+            ui->checkBox->setText("Point marker");
+        }
+        break;
     }
 }
 void MainWindow::update1dUI(QString arg, int index_propSelection)
@@ -1380,6 +1457,7 @@ void MainWindow::update1dUI(QString arg, int index_propSelection)
     ui->comboBox_selectProps->addItem("Saturation");
     ui->comboBox_selectProps->addItem("Viscosity");
     ui->comboBox_selectProps->addItem("Salinity");
+    ui->comboBox_selectProps->addItem("Temperature");
     if(arg=="Temperature")
     {
         //fixed vars
@@ -1403,7 +1481,15 @@ void MainWindow::update1dUI(QString arg, int index_propSelection)
         UpdateUI_fixedT(ui->label_fixed_secondVar,ui->doubleSpinBox_fixed_secondVar);
         //independent variable
         UpdateUI_X(ui->label_delta_firstVar, ui->doubleSpinBox_delta_firstVar, ui->doubleSpinBox_max_firstVar, ui->doubleSpinBox_min_firstVar);
-    }else
+    }else if(arg=="Enthalpy")
+    {
+        //fixed vars
+        UpdateUI_fixedP(ui->label_fixed_firsVar,ui->doubleSpinBox_fixed_firstVar);
+        UpdateUI_fixedX(ui->label_fixed_secondVar,ui->doubleSpinBox_fixed_secondVar);
+        //independent variable
+        UpdateUI_H(ui->label_delta_firstVar, ui->doubleSpinBox_delta_firstVar, ui->doubleSpinBox_max_firstVar, ui->doubleSpinBox_min_firstVar);
+    }
+    else
     {
         std::cout<<"error: update1dUI, no such item: "<<arg.toStdString()<<std::endl;
     }
@@ -1439,7 +1525,7 @@ void MainWindow::UpdateUI_fixedH(QLabel* label, QDoubleSpinBox* box, double defa
 {
     label->setText("Enthalpy (kJ/kg)");
     box->setDecimals(4);
-    box->setRange(1, 5000);
+    box->setRange(MIN_ENTHALPY, MAX_ENTHALPY);
     box->setSingleStep(1);
     box->setValue(defaultValue);
 }
@@ -1478,6 +1564,24 @@ void MainWindow::UpdateUI_T(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
     minBox->setRange(SWEOS::TMIN-SWEOS::Kelvin,SWEOS::TMAX-SWEOS::Kelvin);
     minBox->setSingleStep(1);
     minBox->setValue(SWEOS::TMIN-SWEOS::Kelvin);
+}
+void MainWindow::UpdateUI_H(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox)
+{
+    label->setText("dH(kJ/kg):");
+    deltaBox->setDecimals(4);
+    deltaBox->setRange(MIN_ENTHALPY, MAX_ENTHALPY);
+    deltaBox->setSingleStep(1);
+    deltaBox->setValue(1);
+
+    maxBox->setDecimals(4);
+    maxBox->setRange(MIN_ENTHALPY, MAX_ENTHALPY);
+    maxBox->setSingleStep(1);
+    maxBox->setValue(3000);
+
+    minBox->setDecimals(4);
+    minBox->setRange(MIN_ENTHALPY, MAX_ENTHALPY);
+    minBox->setSingleStep(1);
+    minBox->setValue(50);
 }
 void MainWindow::UpdateUI_P(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox)
 {

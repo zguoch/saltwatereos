@@ -95,7 +95,7 @@
           </font>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="tab">
           <attribute name="title">
@@ -173,6 +173,15 @@
              <width>91</width>
              <height>51</height>
             </rect>
+           </property>
+           <property name="toolTip">
+            <string extracomment="Calculate Scatter point"/>
+           </property>
+           <property name="toolTipDuration">
+            <number>10</number>
+           </property>
+           <property name="statusTip">
+            <string/>
            </property>
            <property name="text">
             <string>Calculate</string>
@@ -360,7 +369,7 @@
           <widget class="QGroupBox" name="groupBox_fixed_Var">
            <property name="geometry">
             <rect>
-             <x>710</x>
+             <x>780</x>
              <y>0</y>
              <width>221</width>
              <height>111</height>
@@ -458,7 +467,7 @@
             <rect>
              <x>230</x>
              <y>-1</y>
-             <width>471</width>
+             <width>541</width>
              <height>111</height>
             </rect>
            </property>
@@ -470,12 +479,12 @@
              <rect>
               <x>10</x>
               <y>53</y>
-              <width>51</width>
+              <width>71</width>
               <height>20</height>
              </rect>
             </property>
             <property name="text">
-             <string>dT(C):</string>
+             <string>dT(kJ/kg):</string>
             </property>
            </widget>
            <widget class="QDoubleSpinBox" name="doubleSpinBox_min_firstVar">
@@ -484,7 +493,7 @@
             </property>
             <property name="geometry">
              <rect>
-              <x>60</x>
+              <x>80</x>
               <y>83</y>
               <width>91</width>
               <height>22</height>
@@ -522,7 +531,7 @@
             </property>
             <property name="geometry">
              <rect>
-              <x>60</x>
+              <x>80</x>
               <y>53</y>
               <width>91</width>
               <height>22</height>
@@ -547,7 +556,7 @@
             </property>
             <property name="geometry">
              <rect>
-              <x>60</x>
+              <x>80</x>
               <y>23</y>
               <width>91</width>
               <height>22</height>
@@ -582,9 +591,9 @@
            <widget class="QLabel" name="label_delta_secondVar">
             <property name="geometry">
              <rect>
-              <x>171</x>
+              <x>191</x>
               <y>53</y>
-              <width>51</width>
+              <width>71</width>
               <height>20</height>
              </rect>
             </property>
@@ -595,7 +604,7 @@
            <widget class="QLabel" name="label_min_secondVar">
             <property name="geometry">
              <rect>
-              <x>170</x>
+              <x>190</x>
               <y>83</y>
               <width>31</width>
               <height>20</height>
@@ -611,7 +620,7 @@
             </property>
             <property name="geometry">
              <rect>
-              <x>220</x>
+              <x>260</x>
               <y>53</y>
               <width>91</width>
               <height>22</height>
@@ -633,7 +642,7 @@
            <widget class="QLabel" name="label_max_secondVar">
             <property name="geometry">
              <rect>
-              <x>170</x>
+              <x>190</x>
               <y>23</y>
               <width>31</width>
               <height>20</height>
@@ -649,7 +658,7 @@
             </property>
             <property name="geometry">
              <rect>
-              <x>220</x>
+              <x>260</x>
               <y>23</y>
               <width>91</width>
               <height>22</height>
@@ -674,7 +683,7 @@
             </property>
             <property name="geometry">
              <rect>
-              <x>220</x>
+              <x>260</x>
               <y>83</y>
               <width>91</width>
               <height>22</height>
@@ -696,9 +705,9 @@
            <widget class="QLabel" name="label_delta_thirdVar">
             <property name="geometry">
              <rect>
-              <x>321</x>
+              <x>371</x>
               <y>53</y>
-              <width>51</width>
+              <width>71</width>
               <height>20</height>
              </rect>
             </property>
@@ -709,7 +718,7 @@
            <widget class="QLabel" name="label_min_thirdVar">
             <property name="geometry">
              <rect>
-              <x>320</x>
+              <x>370</x>
               <y>83</y>
               <width>31</width>
               <height>20</height>
@@ -725,7 +734,7 @@
             </property>
             <property name="geometry">
              <rect>
-              <x>370</x>
+              <x>440</x>
               <y>53</y>
               <width>91</width>
               <height>22</height>
@@ -750,7 +759,7 @@
             </property>
             <property name="geometry">
              <rect>
-              <x>370</x>
+              <x>440</x>
               <y>23</y>
               <width>91</width>
               <height>22</height>
@@ -772,7 +781,7 @@
            <widget class="QLabel" name="label_max_thirdVar">
             <property name="geometry">
              <rect>
-              <x>320</x>
+              <x>370</x>
               <y>23</y>
               <width>31</width>
               <height>20</height>
@@ -788,7 +797,7 @@
             </property>
             <property name="geometry">
              <rect>
-              <x>370</x>
+              <x>440</x>
               <y>83</y>
               <width>91</width>
               <height>22</height>
@@ -902,7 +911,7 @@
           <widget class="QGroupBox" name="groupBox_chartOptions">
            <property name="geometry">
             <rect>
-             <x>940</x>
+             <x>1010</x>
              <y>-1</y>
              <width>301</width>
              <height>111</height>

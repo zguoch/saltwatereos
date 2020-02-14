@@ -91,6 +91,35 @@ using namespace std;
 #define oneDim_Pressure 2
 #define oneDim_Salinity 3
 
+//define using PTX or PHX
+#define USING_PTX 0
+#define USING_PHX 1
+
+//define range of enthalpy kJ/kg
+#define MIN_ENTHALPY 1
+#define MAX_ENTHALPY 5000
+
+//define props index in vtkTable
+#define INDEX_T_VTKTABLE 0
+#define INDEX_P_VTKTABLE 1
+#define INDEX_X_VTKTABLE 2
+#define INDEX_REGION_VTKTABLE 3
+#define INDEX_RHO_VTKTABLE 4
+#define INDEX_RHO_L_VTKTABLE 5
+#define INDEX_RHO_V_VTKTABLE 6
+#define INDEX_RHO_H_VTKTABLE 7
+#define INDEX_H_VTKTABLE 8
+#define INDEX_H_L_VTKTABLE 9
+#define INDEX_H_V_VTKTABLE 10
+#define INDEX_H_H_VTKTABLE 11
+#define INDEX_S_L_VTKTABLE 12
+#define INDEX_S_V_VTKTABLE 13
+#define INDEX_S_H_VTKTABLE 14
+#define INDEX_MU_L_VTKTABLE 15
+#define INDEX_MU_V_VTKTABLE 16
+#define INDEX_X_L_VTKTABLE 17
+#define INDEX_X_V_VTKTABLE 18
+
 //camera view
 #define ID_CAMERA_GENERAL	1
 #define ID_CAMERA_FRONT	2
@@ -193,7 +222,7 @@ private slots:
     void ShowProps_2D(int index_prop, std::string xlabel,std::string ylabel, std::string zlabel , double scale_actor[3]);
     void SinglePointCalculation(int index_varsSelection);
     void on_comboBox_selectProps_activated(const QString &arg1);
-    void CalculateProps_PTX(std::vector<double> arrT,std::vector<double> arrP, std::vector<double> arrX , vtkSmartPointer<vtkTable> table);
+    void CalculateProps_PTX_PHX(int PTX_PHX, std::vector<double> arrT_H,std::vector<double> arrP, std::vector<double> arrX, vtkSmartPointer<vtkTable> table);
 
     void on_checkBox_stateChanged(int arg1);
 
@@ -214,6 +243,7 @@ private:
     QRect m_geometry_Groupbox_variables;
     void UpdateUI_P(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox);
     void UpdateUI_T(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox);
+    void UpdateUI_H(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox);
     void UpdateUI_X(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox);
 
   vtkSmartPointer<vtkQtTableView>         TableView;
