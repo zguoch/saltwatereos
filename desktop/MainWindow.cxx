@@ -62,10 +62,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     m_vtkColorSeries_PhaseRegion=vtkSmartPointer<vtkColorSeries>::New();
-    m_vtkColorSeries_PhaseRegion->SetColorScheme(vtkColorSeries::BREWER_DIVERGING_PURPLE_ORANGE_8);
+    m_vtkColorSeries_PhaseRegion->SetColorScheme(vtkColorSeries::BREWER_QUALITATIVE_SET3);
 
     m_vtkColorSeries_Lines_1Dchart=vtkSmartPointer<vtkColorSeries>::New();
-    m_vtkColorSeries_Lines_1Dchart->SetColorScheme(vtkColorSeries::BREWER_DIVERGING_SPECTRAL_4); //SPECTRUM: 7 colors
+    m_vtkColorSeries_Lines_1Dchart->SetColorScheme(0); //SPECTRUM: 7 colors
 
     //progressbar
     m_progressBar = new QProgressBar();
@@ -619,8 +619,8 @@ void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector
         if(indexInTable_phaseRegion[indexInTable_phaseRegion.size()-1]!=(m_vtkTable->GetNumberOfRows()-1))
             indexInTable_phaseRegion.push_back(m_vtkTable->GetNumberOfRows()-1);
         // plot region area
-        min_allProps=min_allProps-(max_allProps-min_allProps)*0.1;
-        max_allProps=max_allProps+(max_allProps-min_allProps)*0.1;
+        min_allProps=min_allProps-(max_allProps-min_allProps)*0.02;
+        max_allProps=max_allProps+(max_allProps-min_allProps)*0.02;
         SWEOS::cH2ONaCl eos;
         bool PhaseRegion_present[8]={false, false, false, false,false, false, false, false};
         for (size_t i=1;i<indexInTable_phaseRegion.size();i++)
@@ -675,10 +675,10 @@ void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector
         {
             vtkPlot *points = chart->AddPlot(vtkChart::POINTS);
             points->SetInputData(m_vtkTable, index_var, index_props[i]);
-            points->SetColor(0, 0, 0, 50);
-            points->SetWidth(1.0);
+            points->SetColor(0, 0, 0);
+            points->SetWidth(m_vtkLineWidth*2);
             points->LegendVisibilityOff();
-            dynamic_cast<vtkPlotPoints*>(points)->SetMarkerStyle(vtkPlotPoints::CIRCLE);
+            dynamic_cast<vtkPlotPoints*>(points)->SetMarkerStyle(vtkPlotPoints::PLUS);
         }
     }
 
