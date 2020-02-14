@@ -1099,6 +1099,7 @@
     <addaction name="actionPrint"/>
     <addaction name="actionHelp"/>
     <addaction name="actionExit"/>
+    <addaction name="separator"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -1121,6 +1122,7 @@
    </attribute>
    <addaction name="actionOpenFile"/>
    <addaction name="actionSave"/>
+   <addaction name="vtkCameraControl_pqXPlus"/>
   </widget>
   <action name="actionOpenFile">
    <property name="enabled">
@@ -1158,6 +1160,15 @@
    </property>
   </action>
   <action name="actionSave">
+   <property name="icon">
+    <iconset resource="Icons/icons.qrc">
+     <normaloff>:/Icons/filesave.png</normaloff>:/Icons/filesave.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="vtkCameraControl_pqXPlus">
    <property name="icon">
     <iconset resource="Icons/icons.qrc">
      <normaloff>:/Icons/filesave.png</normaloff>:/Icons/filesave.png</iconset>

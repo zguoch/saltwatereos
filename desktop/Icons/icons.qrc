@@ -5,7 +5,18 @@
     <file>fileopen.png</file>
     <file>filesave.png</file>
     <file>print.png</file>
-
+    <file>Icons_PV/pqXMinus.png</file>
+    <file>Icons_PV/pqXMinus@2x.png</file>
+    <file>Icons_PV/pqXPlus.png</file>
+    <file>Icons_PV/pqXPlus@2x.png</file>
+    <file>Icons_PV/pqYMinus.png</file>
+    <file>Icons_PV/pqYMinus@2x.png</file>
+    <file>Icons_PV/pqYPlus.png</file>
+    <file>Icons_PV/pqYPlus@2x.png</file>
+    <file>Icons_PV/pqZMinus.png</file>
+    <file>Icons_PV/pqZMinus@2x.png</file>
+    <file>Icons_PV/pqZPlus.png</file>
+    <file>Icons_PV/pqZPlus@2x.png</file>
     <!-- Help -->
     <file>help.png</file>
   </qresource>
