@@ -174,9 +174,11 @@ private slots:
   void on_radioButton_5_clicked();
 
   void on_comboBox_selectVariable_activated(const QString &arg1);
-    void UpdateUI_fixedT(QLabel* label, QDoubleSpinBox* box, double defaultValue=373);
+    void UpdateUI_fixedT(QLabel* label, QDoubleSpinBox* box, double defaultValue=100);
+    void UpdateUI_fixedH(QLabel* label, QDoubleSpinBox* box, double defaultValue=2000);
     void UpdateUI_fixedP(QLabel* label, QDoubleSpinBox* box, double defaultValue=316);
     void UpdateUI_fixedX(QLabel* label, QDoubleSpinBox* box, double defaultValue=0.032);
+    void updateScatterCalculationUI(int index_varsSelection); //PTX, PHX
     void update1dUI(QString arg, int index_propSelection);
     void update1dUI_chartOptions(int index_propSelection);
     void update2dUI(QString arg);
@@ -189,7 +191,7 @@ private slots:
 
     void ShowProps_1D();
     void ShowProps_2D(int index_prop, std::string xlabel,std::string ylabel, std::string zlabel , double scale_actor[3]);
-    void SinglePointCalculation();
+    void SinglePointCalculation(int index_varsSelection);
     void on_comboBox_selectProps_activated(const QString &arg1);
     void CalculateProps_PTX(std::vector<double> arrT,std::vector<double> arrP, std::vector<double> arrX , vtkSmartPointer<vtkTable> table);
 
@@ -206,6 +208,8 @@ private slots:
 
     void on_checkBox_6_stateChanged(int arg1);
 
+    void on_comboBox_activated(const QString &arg1);
+
 private:
     QRect m_geometry_Groupbox_variables;
     void UpdateUI_P(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox);
@@ -219,6 +223,3 @@ private:
 };
 
 #endif // MainWindow_H
-
-
-

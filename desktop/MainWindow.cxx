@@ -180,7 +180,7 @@ void MainWindow::on_pushButton_2_clicked()
     switch (m_calculationMode) {
         case CALCULATION_SINGLE_POINT:
         {
-            SinglePointCalculation();
+            SinglePointCalculation(ui->comboBox->currentIndex());
         }
         break;
         case CALCULATION_MULTI_POINTS:
@@ -238,24 +238,43 @@ void MainWindow::on_pushButton_2_clicked()
         break;
     }
 }
-void MainWindow::SinglePointCalculation()
+void MainWindow::SinglePointCalculation(int index_varsSelection)
 {
     double p=ui->doubleSpinBox->value()*1e5;
-    double T=ui->doubleSpinBox_2->value();
     double X=ui->doubleSpinBox_3->value();
+    double T_H=ui->doubleSpinBox_2->value();
     QString color_value_1="Black", color_value_2="Black", color_value_3="Black";
     color_value_1=(m_IndependentVar1_old==p ? color_value_1="Black": color_value_1="Green");
-    color_value_2=(m_IndependentVar2_old==T ? color_value_2="Black": color_value_2="Green");
+    color_value_2=(m_IndependentVar2_old==T_H ? color_value_2="Black": color_value_2="Green");
     color_value_3=(m_IndependentVar3_old==X ? color_value_3="Black": color_value_3="Green");
-
-   SWEOS::cH2ONaCl eos;
-   eos.prop_pTX(p, T+SWEOS::Kelvin, X);
-
+    QString name_T_H, name_unit_T_H, name_T_H_display;
+    double value_T_H_display;
+    SWEOS::cH2ONaCl eos;
+    switch (index_varsSelection) {
+    case 0: //PTX
+    {
+        eos.prop_pTX(p, T_H+SWEOS::Kelvin, X);
+        name_T_H="Temperature";
+        name_unit_T_H="deg. C";
+        name_T_H_display="Bulk enthalpy";
+        value_T_H_display=eos.m_prop.H;
+    }
+        break;
+    case 1: //PHX
+    {
+        eos.prop_pHX(p, T_H*1000, X); //Enthalpy unit in UI is kJ/kg
+        name_T_H="Enthalpy";
+        name_unit_T_H="kJ/kg";
+        name_T_H_display="Temperature";
+        value_T_H_display=eos.m_prop.T;
+    }
+        break;
+    }
    QString result_str;
    // T, P, X
    result_str="<font color=Purple>Pressure</font> = <font color="+color_value_1+">"+QString::number(p)
-           +"</font> Pa, <font color=Purple>Temperature</font> = <font color="+color_value_2+">"+QString::number(T)
-           +"</font> deg. C, <font color=Purple>Salinity</font>  = <font color="+color_value_3+">"+QString::number(X*100)
+           +"</font> Pa, <font color=Purple>"+name_T_H+"</font> = <font color="+color_value_2+">"+QString::number(T_H)
+           +"</font> "+name_unit_T_H+", <font color=Purple>Salinity</font>  = <font color="+color_value_3+">"+QString::number(X*100)
            +"</font> wt. % NaCl<br>";
    result_str+="======================================================================<br>";
    // Region
@@ -265,8 +284,8 @@ void MainWindow::SinglePointCalculation()
              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Xv: </font> &nbsp; "+QString::number(eos.m_prop.X_v)+"<br>";
    // Bulk rho, bulk H, bulk mu
    result_str+="<font color=Blue>Bulk density: </font> &nbsp; "+QString::number(eos.m_prop.Rho)+
-             ",&nbsp;&nbsp;&nbsp; <font color=Blue>Bulk enthalpy: </font> &nbsp; "+QString::number(eos.m_prop.H)+
-             ",&nbsp;&nbsp;&nbsp; <font color=Blue>Bulk viscosity: </font> &nbsp; "+QString::number(eos.m_prop.Mu)+"<br>";
+             ",&nbsp;&nbsp;&nbsp; <font color=Blue>"+name_T_H_display+": </font> &nbsp; "+QString::number(value_T_H_display)+"<br>";
+//             ",&nbsp;&nbsp;&nbsp; <font color=Blue>Bulk viscosity: </font> &nbsp; "+QString::number(eos.m_prop.Mu)
    // rhol, rhov, rhoh
    result_str+="<font color=Blue>Liquid density: </font> &nbsp; "+QString::number(eos.m_prop.Rho_l)+
              ",&nbsp;&nbsp;&nbsp; <font color=Blue>Vapour density: </font> &nbsp; "+QString::number(eos.m_prop.Rho_v)+
@@ -292,7 +311,7 @@ void MainWindow::SinglePointCalculation()
 
    //update old value
    m_IndependentVar1_old=p;
-   m_IndependentVar2_old=T;
+   m_IndependentVar2_old=T_H;
    m_IndependentVar3_old=X;
 }
 
@@ -1416,6 +1435,14 @@ void MainWindow::UpdateUI_fixedT(QLabel* label, QDoubleSpinBox* box, double defa
     box->setSingleStep(1);
     box->setValue(defaultValue);
 }
+void MainWindow::UpdateUI_fixedH(QLabel* label, QDoubleSpinBox* box, double defaultValue)
+{
+    label->setText("Enthalpy (kJ/kg)");
+    box->setDecimals(4);
+    box->setRange(1, 5000);
+    box->setSingleStep(1);
+    box->setValue(defaultValue);
+}
 void MainWindow::UpdateUI_X(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox)
 {
     label->setText("dX:");
@@ -1716,7 +1743,7 @@ void MainWindow::on_actionSave_triggered()
 
 }
 
-void MainWindow::on_comboBox_selectProps_activated(const QString &arg1)
+void MainWindow::on_comboBox_selectProps_activated(const QString &)
 {
     switch (m_dimension) {
     case 1:
@@ -1754,8 +1781,29 @@ void MainWindow::on_checkBox_5_stateChanged(int )
 {
     ShowProps_1D();
 }
-void MainWindow::on_checkBox_6_stateChanged(int arg1)
+void MainWindow::on_checkBox_6_stateChanged(int )
 {
     m_showPhaseRegion_1Dchart=ui->checkBox_6->isChecked();
     ShowProps_1D();
+}
+
+void MainWindow::on_comboBox_activated(const QString &)
+{
+    updateScatterCalculationUI(ui->comboBox->currentIndex());
+}
+
+void MainWindow::updateScatterCalculationUI(int index_varsSelection)
+{
+    switch (index_varsSelection) {
+    case 0:
+    {
+        UpdateUI_fixedT(ui->label_3,ui->doubleSpinBox_2);
+    }
+        break;
+    case 1:
+    {
+        UpdateUI_fixedH(ui->label_3, ui->doubleSpinBox_2);
+    }
+        break;
+    }
 }
