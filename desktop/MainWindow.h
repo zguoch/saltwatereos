@@ -179,6 +179,7 @@ protected:
   int m_vtkLineWidth;
   bool m_showPhaseRegion_1Dchart;
   bool m_vtkCameraInitialized;
+  bool m_resetChartRange;
 protected slots:
 
 private slots:
@@ -242,11 +243,18 @@ private slots:
 
     void on_comboBox_activated(const QString &arg1);
 
+    void on_doubleSpinBox_fixed_firstVar_valueChanged(double arg1);
+
+    void on_doubleSpinBox_fixed_secondVar_valueChanged(double arg1);
+    void updateEnthalpyRange_UI_1D();
+
+    void on_vtkCameraControl_reset_triggered();
+
 private:
     QRect m_geometry_Groupbox_variables;
     void UpdateUI_P(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox);
     void UpdateUI_T(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox);
-    void UpdateUI_H(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox);
+    void UpdateUI_H(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox, double pMinMax[2], double XMinMax[2]);
     void UpdateUI_X(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox);
 
   vtkSmartPointer<vtkQtTableView>         TableView;
@@ -256,3 +264,6 @@ private:
 };
 
 #endif // MainWindow_H
+
+
+

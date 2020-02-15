@@ -98,6 +98,10 @@
           <number>1</number>
          </property>
          <widget class="QWidget" name="tab">
+          <attribute name="icon">
+           <iconset resource="Icons/icons.qrc">
+            <normaloff>:/Icons/Icons_PV/pqPolygonSelectSurfacePoint.svg</normaloff>:/Icons/Icons_PV/pqPolygonSelectSurfacePoint.svg</iconset>
+          </attribute>
           <attribute name="title">
            <string>Scatter Calculation</string>
           </attribute>
@@ -138,14 +142,18 @@
            <widget class="QRadioButton" name="radioButton">
             <property name="geometry">
              <rect>
-              <x>20</x>
+              <x>10</x>
               <y>30</y>
-              <width>100</width>
+              <width>121</width>
               <height>20</height>
              </rect>
             </property>
             <property name="text">
              <string>Single Point</string>
+            </property>
+            <property name="icon">
+             <iconset resource="Icons/icons.qrc">
+              <normaloff>:/Icons/Icons_PV/pqInsituBreakpoint16.png</normaloff>:/Icons/Icons_PV/pqInsituBreakpoint16.png</iconset>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -154,14 +162,18 @@
            <widget class="QRadioButton" name="radioButton_2">
             <property name="geometry">
              <rect>
-              <x>20</x>
+              <x>10</x>
               <y>50</y>
-              <width>100</width>
+              <width>121</width>
               <height>20</height>
              </rect>
             </property>
             <property name="text">
              <string>Multipoints</string>
+            </property>
+            <property name="icon">
+             <iconset resource="Icons/icons.qrc">
+              <normaloff>:/Icons/Icons_PV/pqSelectChartPolygon.svg</normaloff>:/Icons/Icons_PV/pqSelectChartPolygon.svg</iconset>
             </property>
            </widget>
           </widget>
@@ -176,9 +188,6 @@
            </property>
            <property name="toolTip">
             <string extracomment="Calculate Scatter point"/>
-           </property>
-           <property name="toolTipDuration">
-            <number>10</number>
            </property>
            <property name="statusTip">
             <string/>
@@ -265,7 +274,7 @@
             </rect>
            </property>
            <property name="text">
-            <string>Temperature (C)</string>
+            <string>Temperature(°C)</string>
            </property>
           </widget>
           <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
@@ -308,6 +317,10 @@
           </widget>
          </widget>
          <widget class="QWidget" name="tab_2">
+          <attribute name="icon">
+           <iconset resource="Icons/icons.qrc">
+            <normaloff>:/Icons/Icons_PV/pqProbeLocation.svg</normaloff>:/Icons/Icons_PV/pqProbeLocation.svg</iconset>
+          </attribute>
           <attribute name="title">
            <string>Phase Diagram and Properties</string>
           </attribute>
@@ -326,14 +339,18 @@
            <widget class="QRadioButton" name="radioButton_3">
             <property name="geometry">
              <rect>
-              <x>20</x>
+              <x>10</x>
               <y>20</y>
-              <width>51</width>
+              <width>61</width>
               <height>20</height>
              </rect>
             </property>
             <property name="text">
              <string>1D</string>
+            </property>
+            <property name="icon">
+             <iconset resource="Icons/icons.qrc">
+              <normaloff>:/Icons/Icons_PV/pqPlotLineOverTime24.png</normaloff>:/Icons/Icons_PV/pqPlotLineOverTime24.png</iconset>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -342,27 +359,35 @@
            <widget class="QRadioButton" name="radioButton_4">
             <property name="geometry">
              <rect>
-              <x>20</x>
+              <x>10</x>
               <y>50</y>
-              <width>51</width>
+              <width>61</width>
               <height>20</height>
              </rect>
             </property>
             <property name="text">
              <string>2D</string>
             </property>
+            <property name="icon">
+             <iconset resource="Icons/icons.qrc">
+              <normaloff>:/Icons/Icons_PV/pqSlice.svg</normaloff>:/Icons/Icons_PV/pqSlice.svg</iconset>
+            </property>
            </widget>
            <widget class="QRadioButton" name="radioButton_5">
             <property name="geometry">
              <rect>
-              <x>20</x>
+              <x>10</x>
               <y>80</y>
-              <width>51</width>
+              <width>61</width>
               <height>20</height>
              </rect>
             </property>
             <property name="text">
              <string>3D</string>
+            </property>
+            <property name="icon">
+             <iconset resource="Icons/icons.qrc">
+              <normaloff>:/Icons/Icons_PV/pq3DView16.png</normaloff>:/Icons/Icons_PV/pq3DView16.png</iconset>
             </property>
            </widget>
           </widget>
@@ -371,7 +396,7 @@
             <rect>
              <x>780</x>
              <y>0</y>
-             <width>221</width>
+             <width>231</width>
              <height>111</height>
             </rect>
            </property>
@@ -394,7 +419,7 @@
            <widget class="QDoubleSpinBox" name="doubleSpinBox_fixed_firstVar">
             <property name="geometry">
              <rect>
-              <x>121</x>
+              <x>130</x>
               <y>23</y>
               <width>91</width>
               <height>22</height>
@@ -426,7 +451,7 @@
            <widget class="QDoubleSpinBox" name="doubleSpinBox_fixed_secondVar">
             <property name="geometry">
              <rect>
-              <x>121</x>
+              <x>130</x>
               <y>80</y>
               <width>91</width>
               <height>22</height>
@@ -460,6 +485,12 @@
            </property>
            <property name="text">
             <string>Calculate</string>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>50</width>
+             <height>50</height>
+            </size>
            </property>
           </widget>
           <widget class="QGroupBox" name="groupBox_Variables">
@@ -822,7 +853,7 @@
             <rect>
              <x>110</x>
              <y>10</y>
-             <width>111</width>
+             <width>91</width>
              <height>20</height>
             </rect>
            </property>
@@ -900,7 +931,7 @@
             <rect>
              <x>110</x>
              <y>60</y>
-             <width>111</width>
+             <width>101</width>
              <height>20</height>
             </rect>
            </property>
@@ -911,7 +942,7 @@
           <widget class="QGroupBox" name="groupBox_chartOptions">
            <property name="geometry">
             <rect>
-             <x>1010</x>
+             <x>1020</x>
              <y>-1</y>
              <width>301</width>
              <height>111</height>
@@ -1036,6 +1067,10 @@
            <number>1</number>
           </property>
           <widget class="QWidget" name="tab_3">
+           <attribute name="icon">
+            <iconset resource="Icons/icons.qrc">
+             <normaloff>:/Icons/Icons_PV/pqPlotLineOverTime24.png</normaloff>:/Icons/Icons_PV/pqPlotLineOverTime24.png</iconset>
+           </attribute>
            <attribute name="title">
             <string>Chart</string>
            </attribute>
@@ -1046,6 +1081,10 @@
            </layout>
           </widget>
           <widget class="QWidget" name="tab_4">
+           <attribute name="icon">
+            <iconset resource="Icons/icons.qrc">
+             <normaloff>:/Icons/Icons_PV/pqRenameWindow.svg</normaloff>:/Icons/Icons_PV/pqRenameWindow.svg</iconset>
+           </attribute>
            <attribute name="title">
             <string>Renderwindow</string>
            </attribute>
@@ -1122,7 +1161,20 @@
    </attribute>
    <addaction name="actionOpenFile"/>
    <addaction name="actionSave"/>
+   <addaction name="separator"/>
+   <addaction name="vtkCameraControl_reset"/>
+   <addaction name="vtkCameraControl_zoomToData"/>
+   <addaction name="vtkCameraControl_zoomToBox"/>
    <addaction name="vtkCameraControl_pqXPlus"/>
+   <addaction name="vtkCameraControl_pqXMinus"/>
+   <addaction name="vtkCameraControl_pqYPlus"/>
+   <addaction name="vtkCameraControl_pqYMinus"/>
+   <addaction name="vtkCameraControl_pqZPlus"/>
+   <addaction name="vtkCameraControl_pqZMinus"/>
+   <addaction name="vtkCameraControl_rotate90ClockWise"/>
+   <addaction name="vtkCameraControl_rotate90CounterClockWise"/>
+   <addaction name="separator"/>
+   <addaction name="chooseColorbar"/>
   </widget>
   <action name="actionOpenFile">
    <property name="enabled">
@@ -1168,13 +1220,115 @@
     <string>Save</string>
    </property>
   </action>
+  <action name="vtkCameraControl_reset">
+   <property name="icon">
+    <iconset resource="Icons/icons.qrc">
+     <normaloff>:/Icons/Icons_PV/pqResetCamera.png</normaloff>:/Icons/Icons_PV/pqResetCamera.png</iconset>
+   </property>
+   <property name="toolTip">
+    <string>Reset camera</string>
+   </property>
+  </action>
+  <action name="vtkCameraControl_zoomToData">
+   <property name="icon">
+    <iconset resource="Icons/icons.qrc">
+     <normaloff>:/Icons/Icons_PV/pqZoomToData.svg</normaloff>:/Icons/Icons_PV/pqZoomToData.svg</iconset>
+   </property>
+   <property name="toolTip">
+    <string>Zoom to Data</string>
+   </property>
+  </action>
+  <action name="vtkCameraControl_zoomToBox">
+   <property name="icon">
+    <iconset resource="Icons/icons.qrc">
+     <normaloff>:/Icons/Icons_PV/pqZoomToSelection.png</normaloff>:/Icons/Icons_PV/pqZoomToSelection.png</iconset>
+   </property>
+   <property name="toolTip">
+    <string>Zoom to Data</string>
+   </property>
+  </action>
   <action name="vtkCameraControl_pqXPlus">
    <property name="icon">
     <iconset resource="Icons/icons.qrc">
-     <normaloff>:/Icons/filesave.png</normaloff>:/Icons/filesave.png</iconset>
+     <normaloff>:/Icons/Icons_PV/pqXPlus.png</normaloff>:/Icons/Icons_PV/pqXPlus.png</iconset>
+   </property>
+   <property name="toolTip">
+    <string>Set view direction to +x</string>
+   </property>
+  </action>
+  <action name="vtkCameraControl_pqXMinus">
+   <property name="icon">
+    <iconset resource="Icons/icons.qrc">
+     <normaloff>:/Icons/Icons_PV/pqXPlus.png</normaloff>:/Icons/Icons_PV/pqXPlus.png</iconset>
+   </property>
+   <property name="toolTip">
+    <string>Set view direction to +x</string>
+   </property>
+  </action>
+  <action name="vtkCameraControl_pqYPlus">
+   <property name="icon">
+    <iconset resource="Icons/icons.qrc">
+     <normaloff>:/Icons/Icons_PV/pqXPlus.png</normaloff>:/Icons/Icons_PV/pqXPlus.png</iconset>
+   </property>
+   <property name="toolTip">
+    <string>Set view direction to +x</string>
+   </property>
+  </action>
+  <action name="vtkCameraControl_pqYMinus">
+   <property name="icon">
+    <iconset resource="Icons/icons.qrc">
+     <normaloff>:/Icons/Icons_PV/pqXPlus.png</normaloff>:/Icons/Icons_PV/pqXPlus.png</iconset>
+   </property>
+   <property name="toolTip">
+    <string>Set view direction to +x</string>
+   </property>
+  </action>
+  <action name="vtkCameraControl_pqZPlus">
+   <property name="icon">
+    <iconset resource="Icons/icons.qrc">
+     <normaloff>:/Icons/Icons_PV/pqXPlus.png</normaloff>:/Icons/Icons_PV/pqXPlus.png</iconset>
+   </property>
+   <property name="toolTip">
+    <string>Set view direction to +x</string>
+   </property>
+  </action>
+  <action name="vtkCameraControl_pqZMinus">
+   <property name="icon">
+    <iconset resource="Icons/icons.qrc">
+     <normaloff>:/Icons/Icons_PV/pqXPlus.png</normaloff>:/Icons/Icons_PV/pqXPlus.png</iconset>
+   </property>
+   <property name="toolTip">
+    <string>Set view direction to +x</string>
+   </property>
+  </action>
+  <action name="vtkCameraControl_rotate90ClockWise">
+   <property name="icon">
+    <iconset resource="Icons/icons.qrc">
+     <normaloff>:/Icons/Icons_PV/pqRotateCameraCW.png</normaloff>:/Icons/Icons_PV/pqRotateCameraCW.png</iconset>
+   </property>
+   <property name="toolTip">
+    <string>Rotate 90° clockwise</string>
+   </property>
+  </action>
+  <action name="vtkCameraControl_rotate90CounterClockWise">
+   <property name="icon">
+    <iconset resource="Icons/icons.qrc">
+     <normaloff>:/Icons/Icons_PV/pqRotateCameraCCW.png</normaloff>:/Icons/Icons_PV/pqRotateCameraCCW.png</iconset>
+   </property>
+   <property name="toolTip">
+    <string>Rotate 90° counterclockwise</string>
+   </property>
+  </action>
+  <action name="chooseColorbar">
+   <property name="icon">
+    <iconset resource="Icons/icons.qrc">
+     <normaloff>:/Icons/Icons_PV/pqEditColor.svg</normaloff>:/Icons/Icons_PV/pqEditColor.svg</iconset>
    </property>
    <property name="text">
-    <string>Save</string>
+    <string>Choose colorbar</string>
+   </property>
+   <property name="toolTip">
+    <string>Set view direction to +x</string>
    </property>
   </action>
  </widget>

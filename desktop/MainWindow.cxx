@@ -58,10 +58,13 @@ MainWindow::MainWindow(QWidget *parent)
     ,m_vtkLineWidth(5)
     ,m_showPhaseRegion_1Dchart(true)
     ,m_vtkCameraInitialized(false)
+    ,m_resetChartRange(true)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
+    ui->toolBar->setFixedHeight(36);
+    ui->toolBar->setIconSize(QSize(36, 36));
     m_vtkColorSeries_PhaseRegion=vtkSmartPointer<vtkColorSeries>::New();
     m_vtkColorSeries_PhaseRegion->SetColorScheme(vtkColorSeries::BREWER_QUALITATIVE_SET3);
 
@@ -189,7 +192,7 @@ void MainWindow::on_pushButton_2_clicked()
             QString fileName;
             switch (ui->comboBox->currentIndex()) {
             case 0: //PTX
-                fileName = QFileDialog::getOpenFileName(this, tr("Open P(bar) T(C) X File: three columns separated by spaces"), "", tr("Text File (*.txt);;Text File (*.dat)"));
+                fileName = QFileDialog::getOpenFileName(this, tr("Open P(bar) T(°C) X File: three columns separated by spaces"), "", tr("Text File (*.txt);;Text File (*.dat)"));
                 break;
             case 1:
                 fileName = QFileDialog::getOpenFileName(this, tr("Open P(bar) H(kJ/kg) X File: three columns separated by spaces"), "", tr("Text File (*.txt);;Text File (*.dat)"));
@@ -341,6 +344,7 @@ void MainWindow::on_radioButton_clicked()
     {
         m_calculationMode=CALCULATION_SINGLE_POINT;
         ui->pushButton_2->setText("Calculatet");
+        ui->pushButton_2->setToolTip("Single point calculation");
         updateCalculationModelSelection(true);
     }
 }
@@ -351,6 +355,14 @@ void MainWindow::on_radioButton_2_clicked()
     {
         m_calculationMode=CALCULATION_MULTI_POINTS;
         ui->pushButton_2->setText("Open File");
+        if(ui->comboBox->currentIndex()==0)
+        {
+            ui->pushButton_2->setToolTip("Read file: p(bar) T(°C) X");
+        }else if(ui->comboBox->currentIndex()==1)
+        {
+            ui->pushButton_2->setToolTip("Read file: p(bar) H(J/kg) X");
+        }
+
         updateCalculationModelSelection(false);
     }
 }
@@ -379,7 +391,7 @@ void MainWindow::Calculate_Diagram1D()
     switch (ui->comboBox_selectVariable->currentIndex()) {
     case 0:   //temperature
     {
-        varName="Temperature (C)";
+        varName="Temperature (°C)";
         m_index_var=0;
         double dT=ui->doubleSpinBox_delta_firstVar->value();
         double Tmin=ui->doubleSpinBox_min_firstVar->value();
@@ -461,7 +473,7 @@ void MainWindow::CalculateProps_PTX_PHX(int PTX_PHX, std::vector<double> arrT_H,
 //    vtkSmartPointer<vtkTable> table=vtkSmartPointer<vtkTable>::New();
 
     vtkSmartPointer<vtkFloatArray> varT = vtkSmartPointer<vtkFloatArray>::New();
-    varT->SetName("Temperature(C)");
+    varT->SetName("Temperature(°C)");
     table->AddColumn(varT);
 
     vtkSmartPointer<vtkFloatArray> varP = vtkSmartPointer<vtkFloatArray>::New();
@@ -670,13 +682,30 @@ void MainWindow::GetMaxMin_vtkTableColumn(const vtkSmartPointer<vtkTable> table,
     }
 }
 
+void MainWindow::on_vtkCameraControl_reset_triggered()
+{
+//    ui->textEdit->append(QString::number(m_vtkChartView->GetScene()->GetNumberOfItems()));
+    vtkChartXY* chart=(vtkChartXY*)m_vtkChartView->GetScene()->GetItem(0);
+    ui->textEdit->append(QString::number(chart->GetAxis(1)->GetMaximum()));
+    chart->GetAxis(1)->SetMaximum(600);
+    m_vtkChartView->GetRenderWindow()->Render();
+
+}
+
 void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector<int> index_props, std::vector<bool> components, vtkSmartPointer<vtkColorSeries> colorseries)
 {
+    //get axis range before cleaning charts
+    vtkChartXY* chart_old=(vtkChartXY*)m_vtkChartView->GetScene()->GetItem(0);
+    double xmin_old=chart_old->GetAxis(1)->GetMinimum();
+    double xmax_old=chart_old->GetAxis(1)->GetMaximum();
+    double ymin_old=chart_old->GetAxis(0)->GetMinimum();
+    double ymax_old=chart_old->GetAxis(0)->GetMaximum();
     //clean old charts
     int num_oldItems=m_vtkChartView->GetScene()->GetNumberOfItems();
     for (int i=0;i<num_oldItems;i++) {
         m_vtkChartView->GetScene()->RemoveItem(m_vtkChartView->GetScene()->GetItem(0));
     }
+
     // add new chart
     vtkSmartPointer<vtkChartXY> chart = vtkSmartPointer<vtkChartXY>::New();
     m_vtkChartView->GetScene()->AddItem(chart);
@@ -793,8 +822,16 @@ void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector
     chart->SetShowLegend(true);
     chart->GetLegend()->GetLabelProperties()->SetFontSize(m_vtkFontSize);
     chart->GetLegend()->SetSymbolWidth(60);
-
     m_vtkChartView->GetRenderWindow()->Render();
+    if(!m_resetChartRange)
+    {
+        vtkChartXY* chart_tmp=(vtkChartXY*)m_vtkChartView->GetScene()->GetItem(0);
+        chart_tmp->GetAxis(0)->SetMinimum(ymin_old);
+        chart_tmp->GetAxis(0)->SetMaximum(ymax_old);
+        chart_tmp->GetAxis(1)->SetMinimum(xmin_old);
+        chart_tmp->GetAxis(1)->SetMaximum(xmax_old);
+        m_vtkChartView->GetRenderWindow()->Render();
+    }
 }
 
 void MainWindow::Calculate_Diagram2D()
@@ -859,7 +896,7 @@ void MainWindow::Calculate_Diagram2D()
     switch (ui->comboBox_selectVariable->currentIndex()) {
         case 0:   //PT
         {
-            m_xlabel="Temperature (C)";
+            m_xlabel="Temperature (°C)";
             m_ylabel="Pressure (bar)";
             m_actorScale[0]=m_actorScale_T;
             m_actorScale[1]=m_actorScale_P;
@@ -974,7 +1011,7 @@ void MainWindow::Calculate_Diagram2D()
         break;
         case 2:  //TX
         {
-            m_xlabel="Temperature (C)";
+            m_xlabel="Temperature (°C)";
             m_ylabel="Salinity";
             m_actorScale[0]=m_actorScale_T;
             m_actorScale[1]=m_actorScale_X;
@@ -1548,7 +1585,9 @@ void MainWindow::update1dUI(QString arg, int index_propSelection)
         UpdateUI_fixedP(ui->label_fixed_firsVar,ui->doubleSpinBox_fixed_firstVar);
         UpdateUI_fixedX(ui->label_fixed_secondVar,ui->doubleSpinBox_fixed_secondVar);
         //independent variable
-        UpdateUI_H(ui->label_delta_firstVar, ui->doubleSpinBox_delta_firstVar, ui->doubleSpinBox_max_firstVar, ui->doubleSpinBox_min_firstVar);
+        double pMinMax[2]={ui->doubleSpinBox_fixed_firstVar->value()*1e5, ui->doubleSpinBox_fixed_firstVar->value()*1e5};
+        double XMinMax[2]={ui->doubleSpinBox_fixed_secondVar->value(), ui->doubleSpinBox_fixed_secondVar->value()};
+        UpdateUI_H(ui->label_delta_firstVar, ui->doubleSpinBox_delta_firstVar, ui->doubleSpinBox_max_firstVar, ui->doubleSpinBox_min_firstVar, pMinMax, XMinMax);
     }
     else
     {
@@ -1558,6 +1597,41 @@ void MainWindow::update1dUI(QString arg, int index_propSelection)
     // chart options
     update1dUI_chartOptions(index_propSelection);
 }
+
+void MainWindow::updateEnthalpyRange_UI_1D()
+{
+    if(ui->comboBox_selectVariable->currentText()=="Enthalpy")//Enthalpy
+    {
+        //independent variable
+        double pMinMax[2]={ui->doubleSpinBox_fixed_firstVar->value()*1e5, ui->doubleSpinBox_fixed_firstVar->value()*1e5};
+        double XMinMax[2]={ui->doubleSpinBox_fixed_secondVar->value(), ui->doubleSpinBox_fixed_secondVar->value()};
+        UpdateUI_H(ui->label_delta_firstVar, ui->doubleSpinBox_delta_firstVar, ui->doubleSpinBox_max_firstVar, ui->doubleSpinBox_min_firstVar, pMinMax, XMinMax);
+
+    }
+}
+void MainWindow::on_doubleSpinBox_fixed_firstVar_valueChanged(double )
+{
+    switch (m_dimension) {
+        case 1:
+        {
+            updateEnthalpyRange_UI_1D();
+        }
+        break;
+    }
+
+}
+
+void MainWindow::on_doubleSpinBox_fixed_secondVar_valueChanged(double )
+{
+    switch (m_dimension) {
+        case 1:
+        {
+            updateEnthalpyRange_UI_1D();
+        }
+        break;
+    }
+}
+
 void MainWindow::UpdateUI_fixedP(QLabel* label, QDoubleSpinBox* box, double defaultValue)
 {
     label->setText("Pressure (bar)");
@@ -1576,7 +1650,7 @@ void MainWindow::UpdateUI_fixedX(QLabel* label, QDoubleSpinBox* box, double defa
 }
 void MainWindow::UpdateUI_fixedT(QLabel* label, QDoubleSpinBox* box, double defaultValue)
 {
-    label->setText("Temperature (C)");
+    label->setText("Temperature (°C)");
     box->setDecimals(2);
     box->setRange(SWEOS::TMIN-SWEOS::Kelvin, SWEOS::TMAX-SWEOS::Kelvin);
     box->setSingleStep(1);
@@ -1610,7 +1684,7 @@ void MainWindow::UpdateUI_X(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
 }
 void MainWindow::UpdateUI_T(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox)
 {
-    label->setText("dT(C):");
+    label->setText("dT(°C):");
     deltaBox->setDecimals(2);
     deltaBox->setRange(0.01, 100);
     deltaBox->setSingleStep(1);
@@ -1626,23 +1700,41 @@ void MainWindow::UpdateUI_T(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
     minBox->setSingleStep(1);
     minBox->setValue(SWEOS::TMIN-SWEOS::Kelvin);
 }
-void MainWindow::UpdateUI_H(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox)
+void MainWindow::UpdateUI_H(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox, double pMinMax[2], double XMinMax[2])
 {
+    //calculate maxH and minH
+    double hMin=1e30, hMax=-1e30;
+    double TMinMax[2]={SWEOS::TMIN, SWEOS::TMAX};
+    SWEOS::cH2ONaCl eos;
+    for (int i=0;i<2;i++) {
+        for(int j=0;j<2;j++)
+        {
+            for(int k=0;k<2;k++)
+            {
+                eos.prop_pTX(pMinMax[i], TMinMax[j], XMinMax[k]);
+                hMin=(eos.m_prop.H < hMin ? eos.m_prop.H : hMin);
+                hMax=(eos.m_prop.H > hMax ? eos.m_prop.H : hMax);
+            }
+        }
+    }
+    hMin=hMin/1000+0.1;
+    hMax=hMax/1000-0.1;
+    //----------------------
     label->setText("dH(kJ/kg):");
     deltaBox->setDecimals(4);
-    deltaBox->setRange(MIN_ENTHALPY, MAX_ENTHALPY);
+    deltaBox->setRange(0.001, hMax);
     deltaBox->setSingleStep(1);
     deltaBox->setValue(1);
 
     maxBox->setDecimals(4);
-    maxBox->setRange(MIN_ENTHALPY, MAX_ENTHALPY);
+    maxBox->setRange(hMin, hMax);
     maxBox->setSingleStep(1);
-    maxBox->setValue(3000);
+    maxBox->setValue(hMax);
 
     minBox->setDecimals(4);
-    minBox->setRange(MIN_ENTHALPY, MAX_ENTHALPY);
+    minBox->setRange(hMin, hMax);
     minBox->setSingleStep(1);
-    minBox->setValue(50);
+    minBox->setValue(hMin);
 }
 void MainWindow::UpdateUI_P(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox)
 {
@@ -1743,7 +1835,7 @@ void MainWindow::update3dUI(QString arg)
         ui->doubleSpinBox_fixed_secondVar->setSingleStep(0.001);
         ui->doubleSpinBox_fixed_secondVar->setValue(0.032);
 
-        ui->label_delta_firstVar->setText("dT(C):");
+        ui->label_delta_firstVar->setText("dT(°C):");
         ui->doubleSpinBox_delta_firstVar->setDecimals(2);
         ui->doubleSpinBox_delta_firstVar->setRange(SWEOS::TMIN-SWEOS::Kelvin, SWEOS::TMAX-SWEOS::Kelvin);
         ui->doubleSpinBox_delta_firstVar->setSingleStep(1);
@@ -1761,7 +1853,7 @@ void MainWindow::update3dUI(QString arg)
 
     }else if(arg=="Pressure")
     {
-        ui->label_fixed_firsVar->setText("Temperature (C)");
+        ui->label_fixed_firsVar->setText("Temperature (°C)");
         ui->doubleSpinBox_fixed_firstVar->setDecimals(2);
         ui->doubleSpinBox_fixed_firstVar->setRange(SWEOS::TMIN-SWEOS::Kelvin, SWEOS::TMAX-SWEOS::Kelvin);
         ui->doubleSpinBox_fixed_firstVar->setSingleStep(1);
@@ -1795,7 +1887,7 @@ void MainWindow::update3dUI(QString arg)
         ui->doubleSpinBox_fixed_firstVar->setRange(SWEOS::PMIN/1e5, SWEOS::PMAX/1e5);
         ui->doubleSpinBox_fixed_firstVar->setSingleStep(1);
         ui->doubleSpinBox_fixed_firstVar->setValue(316);
-        ui->label_fixed_secondVar->setText("Temperature (C)");
+        ui->label_fixed_secondVar->setText("Temperature (°C)");
         ui->doubleSpinBox_fixed_secondVar->setDecimals(2);
         ui->doubleSpinBox_fixed_secondVar->setRange(SWEOS::TMIN-SWEOS::Kelvin, SWEOS::TMAX-SWEOS::Kelvin);
         ui->doubleSpinBox_fixed_secondVar->setSingleStep(1);
@@ -1913,6 +2005,7 @@ void MainWindow::on_comboBox_selectProps_activated(const QString &)
     switch (m_dimension) {
     case 1:
         update1dUI_chartOptions(ui->comboBox_selectProps->currentIndex());
+        m_resetChartRange=true;
         ShowProps_1D();
         break;
     case 2:
@@ -1924,31 +2017,37 @@ void MainWindow::on_comboBox_selectProps_activated(const QString &)
 void MainWindow::on_checkBox_stateChanged(int )
 {
     m_showScatter_1Dchart=ui->checkBox->isChecked();
+    m_resetChartRange=false;
     ShowProps_1D();
 }
 
 void MainWindow::on_checkBox_2_stateChanged(int )
 {
+    m_resetChartRange=false;
     ShowProps_1D();
 }
 
 void MainWindow::on_checkBox_3_stateChanged(int )
 {
+    m_resetChartRange=false;
     ShowProps_1D();
 }
 
 void MainWindow::on_checkBox_4_stateChanged(int )
 {
+    m_resetChartRange=false;
     ShowProps_1D();
 }
 
 void MainWindow::on_checkBox_5_stateChanged(int )
 {
+    m_resetChartRange=false;
     ShowProps_1D();
 }
 void MainWindow::on_checkBox_6_stateChanged(int )
 {
     m_showPhaseRegion_1Dchart=ui->checkBox_6->isChecked();
+    m_resetChartRange=false;
     ShowProps_1D();
 }
 
