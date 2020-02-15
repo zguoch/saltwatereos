@@ -28,7 +28,7 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "meter.h"
+#include "Meter.h"
 
 // Qt include.
 #include <QMultiMap>
