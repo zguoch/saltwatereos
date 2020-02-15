@@ -724,9 +724,9 @@ int MainWindow::testjob()
 }
 void MainWindow::on_vtkCameraControl_reset_triggered()
 {
-    ui->roundProgressBar->setVisible(true);
-    auto future = QtConcurrent::run(this, &MainWindow::testjob);
-    watcher_->setFuture(future);
+//    ui->roundProgressBar->setVisible(true);
+//    auto future = QtConcurrent::run(this, &MainWindow::testjob);
+//    watcher_->setFuture(future);
 }
 
 void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector<int> index_props, std::vector<bool> components, vtkSmartPointer<vtkColorSeries> colorseries)
@@ -1342,7 +1342,13 @@ void MainWindow::busy_job()
         }
         break;
     case 3:
-        ui->textEdit->append("3D is comming soon");
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Information");
+        msgBox.setText("3D is comming soon");
+        msgBox.setStandardButtons(QMessageBox::Yes);
+        msgBox.setDefaultButton(QMessageBox::Yes);
+        msgBox.exec();
+        //ui->textEdit->append("3D is comming soon");
         break;
     }
 }
