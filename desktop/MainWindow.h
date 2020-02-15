@@ -26,6 +26,9 @@
 #include <QThread>
 #include <QtConcurrent>
 #include <QFuture>
+#include <QFutureWatcher>
+#include <QDebug>
+#include <QElapsedTimer>
 
 #include <vector>
 #include <fstream>
@@ -156,7 +159,7 @@ public slots:
 
   virtual void slotOpenFile();
   virtual void slotExit();
-
+    void busy_job();
 protected:
   int m_calculationMode;
   double m_IndependentVar1_old, m_IndependentVar2_old, m_IndependentVar3_old;
@@ -180,6 +183,10 @@ protected:
   bool m_showPhaseRegion_1Dchart;
   bool m_vtkCameraInitialized;
   bool m_resetChartRange;
+  QFutureWatcher<int>* watcher_;
+  void busy_job_finished();
+
+  int do_busy_job();
 
 protected slots:
 
@@ -187,8 +194,8 @@ private slots:
   void updateCalculationModelSelection(bool isSinglePoint);
   int SetCamera(vtkSmartPointer<vtkRenderer> renderer, vtkBoundingBox boundingbox, int type=ID_CAMERA_UP);
   int InitCubeAxes(vtkCubeAxesActor* axes, vtkBoundingBox boundingbox, vtkBoundingBox rangebox, std::string xlabel, std::string ylabel, std::string zlabel,int fontsize=30);
-  void Calculate_Diagram1D();
-  void Calculate_Diagram2D();
+  int Calculate_Diagram1D();
+  int Calculate_Diagram2D();
   void on_pushButton_2_clicked();
 
   void on_radioButton_pressed();

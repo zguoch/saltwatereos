@@ -29,8 +29,8 @@ int main( int argc, char** argv )
   qInitResources_icons();
 
   MainWindow myMainWindow;
-  myMainWindow.showMaximized();
-//  myMainWindow.show();
+//  myMainWindow.showMaximized();
+  myMainWindow.show();
 
   return app.exec();
 }

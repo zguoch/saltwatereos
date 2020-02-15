@@ -63,7 +63,12 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    watcher_ = new QFutureWatcher<int>;
+    connect(watcher_, &QFutureWatcher<int>::finished,this, &MainWindow::busy_job_finished);
+
+
     //round progress bar
+    ui->roundProgressBar->setVisible(false);
 //    ui->roundProgressBar->setFormat("%v");
     ui->roundProgressBar->setDecimals(0);
     QPalette pal = palette();
@@ -78,7 +83,7 @@ MainWindow::MainWindow(QWidget *parent)
     // and set it
     ui->roundProgressBar->setDataColors(gradientPoints);
     ui->roundProgressBar->setRange(0,100);
-    ui->roundProgressBar->setValue(60);
+    ui->roundProgressBar->setValue(0);
     ui->roundProgressBar->setNullPosition(QRoundProgressBar::PositionBottom);
     
     ui->toolBar->setFixedHeight(36);
@@ -157,6 +162,7 @@ MainWindow::~MainWindow()
   // The smart pointers should clean up for up
   if(m_progressBar) delete m_progressBar;
 }
+
 void MainWindow::initRenderWindow()
 {
     // Geometry
@@ -401,7 +407,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 
 }
 
-void MainWindow::Calculate_Diagram1D()
+int MainWindow::Calculate_Diagram1D()
 {
     QString varName;
     int index_uising_ptx_phx;
@@ -479,16 +485,17 @@ void MainWindow::Calculate_Diagram1D()
 
     //calculate
     CalculateProps_PTX_PHX(index_uising_ptx_phx,arrT_H, arrP,arrX, m_vtkTable);
-    //display
-    ShowProps_1D();
 
+    return 1;
 }
 
 void MainWindow::CalculateProps_PTX_PHX(int PTX_PHX, std::vector<double> arrT_H,std::vector<double> arrP, std::vector<double> arrX, vtkSmartPointer<vtkTable> table)
 {
-    // add columns to table
-    //ui->textEdit->append(QString::number(m_vtkTable->GetNumberOfColumns()));
-//    vtkSmartPointer<vtkTable> table=vtkSmartPointer<vtkTable>::New();
+    if(table->GetNumberOfColumns()>0)
+    {
+        //for(int i=0;i<table->GetNumberOfColumns();i++)table->RemoveColumn(i);
+        table->SetNumberOfRows(0);
+    }
 
     vtkSmartPointer<vtkFloatArray> varT = vtkSmartPointer<vtkFloatArray>::New();
     varT->SetName("Temperature(°C)");
@@ -565,6 +572,7 @@ void MainWindow::CalculateProps_PTX_PHX(int PTX_PHX, std::vector<double> arrT_H,
     switch (PTX_PHX) {
         case USING_PTX: //PTX
         {
+            ui->roundProgressBar->setRange(0,arrT_H.size());
             for (size_t i=0;i<arrT_H.size();++i) {
                 SWEOS::cH2ONaCl eos;
                 eos.prop_pTX(arrP[i],arrT_H[i]+SWEOS::Kelvin,arrX[i]);
@@ -592,11 +600,13 @@ void MainWindow::CalculateProps_PTX_PHX(int PTX_PHX, std::vector<double> arrT_H,
 
                 table->SetValue(i, 17, eos.m_prop.X_l);
                 table->SetValue(i, 18, eos.m_prop.X_v);
+                ui->roundProgressBar->setValue((int)i);
             }
         }
         break;
         case USING_PHX:
         {
+        ui->roundProgressBar->setRange(0,arrT_H.size());
             for (size_t i=0;i<arrT_H.size();++i) {
                 SWEOS::cH2ONaCl eos;
                 eos.prop_pHX(arrP[i],arrT_H[i],arrX[i]); //enthalpy unit in UI is kJ/kg
@@ -624,6 +634,7 @@ void MainWindow::CalculateProps_PTX_PHX(int PTX_PHX, std::vector<double> arrT_H,
 
                 table->SetValue(i, 17, eos.m_prop.X_l);
                 table->SetValue(i, 18, eos.m_prop.X_v);
+                ui->roundProgressBar->setValue((int)i);
             }
         }
         break;
@@ -852,7 +863,7 @@ void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector
     }
 }
 
-void MainWindow::Calculate_Diagram2D()
+int MainWindow::Calculate_Diagram2D()
 {
 //    vector<double>arrP,arrT,arrX;
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
@@ -939,6 +950,7 @@ void MainWindow::Calculate_Diagram2D()
               vectorP.push_back(P);
             }
             //calculate
+            ui->roundProgressBar->setRange(0,vectorP.size());
             for(size_t j = 0; j < vectorP.size(); j++)
             {
                 for(size_t i = 0; i < vectorT.size(); i++)
@@ -964,8 +976,7 @@ void MainWindow::Calculate_Diagram2D()
                     arrX_v->InsertNextValue(eos.m_prop.X_v);
 //                    QApplication::processEvents();
                 }
-                m_progressBar->setValue(j/(vectorP.size()-1)*100);
-                m_progressBar->setFormat("Calculating");
+                ui->roundProgressBar->setValue((int)j);
             }
             // Specify the dimensions of the grid
             m_structuredGrid->SetDimensions(vectorT.size(),vectorP.size(),1);
@@ -1102,9 +1113,7 @@ void MainWindow::Calculate_Diagram2D()
     m_structuredGrid->GetPointData()->AddArray(arrMu_v);
     m_structuredGrid->GetPointData()->AddArray(arrX_l);
     m_structuredGrid->GetPointData()->AddArray(arrX_v);
-
-    ShowProps_2D(ui->comboBox_selectProps->currentIndex(), m_xlabel, m_ylabel, m_zlabel,m_actorScale);
-
+    return 1;
 }
 
 void MainWindow::ShowProps_2D(int index_prop, std::string xlabel,std::string ylabel, std::string zlabel , double scale_actor[3])
@@ -1226,18 +1235,40 @@ void MainWindow::ShowProps_2D(int index_prop, std::string xlabel,std::string yla
     this->ui->qvtkWidget2->GetRenderWindow()->Render();
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::busy_job()
 {
-    ui->roundProgressBar->setVisible(true);
     switch (m_dimension) {
         case 1:
         {
-            Calculate_Diagram1D();
+            ui->roundProgressBar->setVisible(true);
+            auto future = QtConcurrent::run(this, &MainWindow::Calculate_Diagram1D);
+            watcher_->setFuture(future);
         }
         break;
         case 2:
         {
-            Calculate_Diagram2D();
+            ui->roundProgressBar->setVisible(true);
+            auto future = QtConcurrent::run(this, &MainWindow::Calculate_Diagram2D);
+            watcher_->setFuture(future);
+        }
+        break;
+    case 3:
+        ui->textEdit->append("3D is comming soon");
+        break;
+    }
+}
+void MainWindow::busy_job_finished()
+{
+    switch (m_dimension) {
+        case 1:
+        {
+            //display
+            ShowProps_1D();
+        }
+        break;
+        case 2:
+        {
+            ShowProps_2D(ui->comboBox_selectProps->currentIndex(), m_xlabel, m_ylabel, m_zlabel,m_actorScale);
             m_vtkCameraInitialized=true;
         }
         break;
@@ -1246,7 +1277,11 @@ void MainWindow::on_pushButton_clicked()
         break;
 
     }
-   ui->roundProgressBar->setVisible(false);
+    ui->roundProgressBar->setVisible(false); //calculation finished, hide progressbar
+}
+void MainWindow::on_pushButton_clicked()
+{
+    busy_job();//using another thread to calculate, update chart/renderer after busy_job finishing
 }
 
 int MainWindow::InitCubeAxes(vtkCubeAxesActor* axes, vtkBoundingBox boundingbox, vtkBoundingBox rangebox, std::string xlabel, std::string ylabel, std::string zlabel,int fontsize)
