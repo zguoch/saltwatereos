@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1529</width>
+    <width>1728</width>
     <height>666</height>
    </rect>
   </property>
@@ -478,10 +478,25 @@
            <property name="geometry">
             <rect>
              <x>1370</x>
-             <y>20</y>
-             <width>111</width>
-             <height>91</height>
+             <y>10</y>
+             <width>102</width>
+             <height>102</height>
             </rect>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">border-radius: 50px 50px;
+background-color: qlineargradient(spread:pad, x1:1, y1:1, x2:0, y2:0, stop:0 rgba(0, 196, 0, 255), stop:1 rgba(255, 255, 255, 255)); 
+QPushButton#pushButton {
+     background-color: yellow;
+ }
+ QPushButton#pushButton:hover {
+     background-color: green;
+ }
+QPushButton:hover{
+                   &quot;background-color:rgba(100,255,100,100);&quot;
+                   &quot;border-color:rgba(255,255,255,200);&quot;
+                   &quot;color:rgba(0,0,0,200);&quot;
+                   };</string>
            </property>
            <property name="text">
             <string>Calculate</string>
@@ -592,6 +607,9 @@
               <width>91</width>
               <height>22</height>
              </rect>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
             </property>
             <property name="minimum">
              <double>273.149999999999977</double>
@@ -1033,6 +1051,19 @@
             </property>
            </widget>
           </widget>
+          <widget class="QRoundProgressBar" name="roundProgressBar" native="true">
+           <property name="geometry">
+            <rect>
+             <x>1500</x>
+             <y>10</y>
+             <width>102</width>
+             <height>102</height>
+            </rect>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+          </widget>
          </widget>
         </widget>
        </item>
@@ -1124,7 +1155,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1529</width>
+     <width>1728</width>
      <height>22</height>
     </rect>
    </property>
@@ -1337,6 +1368,11 @@
    <class>QVTKOpenGLNativeWidget</class>
    <extends>QWidget</extends>
    <header>QVTKOpenGLNativeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QRoundProgressBar</class>
+   <extends>QWidget</extends>
+   <header>qroundprogressbar.h</header>
   </customwidget>
  </customwidgets>
  <resources>

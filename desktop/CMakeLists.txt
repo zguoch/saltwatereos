@@ -53,15 +53,16 @@ include_directories(
 )
 
 # Set your files and resources here
-set( Srcs main.cxx MainWindow.cxx )
+set( Srcs main.cxx MainWindow.cxx qroundprogressbar.cpp)
 
-set( Hdrs MainWindow.h )
+set( Hdrs MainWindow.h  qroundprogressbar.h)
 
 set( MOC_Hdrs ui_MainWindow.h )
 
 set( UIs MainWindow.ui )
 
 set( QRCs Icons/icons.qrc )
+
 
 
 # Instruct CMake to run moc automatically when needed.
@@ -100,4 +101,4 @@ target_link_libraries(${PROGRAM_NAME} Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Concu
 target_link_libraries(${PROGRAM_NAME} ${VTK_LIBRARIES})
 
 # solve font blurry on UI
-set_target_properties(${PROGRAM_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "/Users/zguo/MyData/Research/3-CodeProject/EOS_H2ONaCl/desktop/Info.plist")
+set_target_properties(${PROGRAM_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist)

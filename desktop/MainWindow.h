@@ -180,6 +180,7 @@ protected:
   bool m_showPhaseRegion_1Dchart;
   bool m_vtkCameraInitialized;
   bool m_resetChartRange;
+
 protected slots:
 
 private slots:

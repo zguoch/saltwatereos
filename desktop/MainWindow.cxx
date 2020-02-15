@@ -63,6 +63,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+// line
+    ui->roundProgressBar->setFormat("%m");
+//    ui->roundProgressBar->setBarStyle(QRoundProgressBar::StyleLine);
+    ui->roundProgressBar->setVisible(false);
+    
     ui->toolBar->setFixedHeight(36);
     ui->toolBar->setIconSize(QSize(36, 36));
     m_vtkColorSeries_PhaseRegion=vtkSmartPointer<vtkColorSeries>::New();
@@ -1210,6 +1215,7 @@ void MainWindow::ShowProps_2D(int index_prop, std::string xlabel,std::string yla
 
 void MainWindow::on_pushButton_clicked()
 {
+    ui->roundProgressBar->setVisible(true);
     switch (m_dimension) {
         case 1:
         {
@@ -1227,6 +1233,7 @@ void MainWindow::on_pushButton_clicked()
         break;
 
     }
+   ui->roundProgressBar->setVisible(false);
 }
 
 int MainWindow::InitCubeAxes(vtkCubeAxesActor* axes, vtkBoundingBox boundingbox, vtkBoundingBox rangebox, std::string xlabel, std::string ylabel, std::string zlabel,int fontsize)
@@ -1429,12 +1436,14 @@ void MainWindow::updateUILayout(bool show_secondVariable, bool show_thirdVariabl
             // button of calculation
             QRect geometry3=ui->pushButton->geometry();
             ui->pushButton->setGeometry(ui->groupBox_chartOptions->geometry().x()+ui->groupBox_chartOptions->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
+            ui->roundProgressBar->setGeometry(ui->groupBox_chartOptions->geometry().x()+ui->groupBox_chartOptions->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
         }else
         {
             // chart options
             ui->groupBox_chartOptions->setVisible(false);
             QRect geometry3=ui->pushButton->geometry();
             ui->pushButton->setGeometry(ui->groupBox_fixed_Var->geometry().x()+ui->groupBox_fixed_Var->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
+            ui->roundProgressBar->setGeometry(ui->groupBox_fixed_Var->geometry().x()+ui->groupBox_fixed_Var->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
         }
     }else
     {
@@ -1447,6 +1456,7 @@ void MainWindow::updateUILayout(bool show_secondVariable, bool show_thirdVariabl
             // button of calculation
             QRect geometry3=ui->pushButton->geometry();
             ui->pushButton->setGeometry(ui->groupBox_chartOptions->geometry().x()+ui->groupBox_chartOptions->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
+            ui->roundProgressBar->setGeometry(ui->groupBox_chartOptions->geometry().x()+ui->groupBox_chartOptions->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
         }else
         {
             // chart options
@@ -1454,6 +1464,7 @@ void MainWindow::updateUILayout(bool show_secondVariable, bool show_thirdVariabl
             // button of calculation
             QRect geometry3=ui->pushButton->geometry();
             ui->pushButton->setGeometry(ui->groupBox_Variables->geometry().x()+ui->groupBox_Variables->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
+            ui->roundProgressBar->setGeometry(ui->groupBox_Variables->geometry().x()+ui->groupBox_Variables->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
         }
     }
 
