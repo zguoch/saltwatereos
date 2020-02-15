@@ -94,13 +94,6 @@ MainWindow::MainWindow(QWidget *parent)
     m_vtkColorSeries_Lines_1Dchart=vtkSmartPointer<vtkColorSeries>::New();
     m_vtkColorSeries_Lines_1Dchart->SetColorScheme(0); //SPECTRUM: 7 colors
 
-    //progressbar
-    m_progressBar = new QProgressBar();
-    m_progressBar->setRange(0, 100);
-    m_progressBar->setValue(0);
-    m_progressBar->setTextVisible(true);
-    m_progressBar->setFormat("");
-    ui->statusbar->addPermanentWidget(m_progressBar, 2);
     //  // Qt Table View
     ui->tabWidget->setCurrentIndex(0);
     ui->vtkWindowTab->setCurrentIndex(0);
@@ -160,7 +153,7 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
   // The smart pointers should clean up for up
-  if(m_progressBar) delete m_progressBar;
+
 }
 
 void MainWindow::initRenderWindow()

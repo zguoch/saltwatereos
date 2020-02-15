@@ -174,7 +174,6 @@ protected:
   double m_actorScale_T, m_actorScale_P, m_actorScale_X;
   std::string m_xlabel, m_ylabel, m_zlabel;
   double m_actorScale[3];
-  QProgressBar* m_progressBar;
   bool m_showScatter_1Dchart;
   vtkColor3d m_VTKbackgroundColor;
   vtkSmartPointer<vtkColorSeries> m_vtkColorSeries_Lines_1Dchart, m_vtkColorSeries_PhaseRegion;
