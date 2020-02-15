@@ -63,10 +63,23 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-// line
-    ui->roundProgressBar->setFormat("%m");
-//    ui->roundProgressBar->setBarStyle(QRoundProgressBar::StyleLine);
-    ui->roundProgressBar->setVisible(false);
+    //round progress bar
+//    ui->roundProgressBar->setFormat("%v");
+    ui->roundProgressBar->setDecimals(0);
+    QPalette pal = palette();
+    // set background
+    pal.setColor(QPalette::Background, Qt::white);
+    pal.setColor(QPalette::Text, Qt::blue);
+    pal.setBrush(QPalette::AlternateBase, Qt::white);
+    ui->roundProgressBar->setAutoFillBackground(true);
+    ui->roundProgressBar->setPalette(pal);
+    QGradientStops gradientPoints;
+    gradientPoints << QGradientStop(0, Qt::green) << QGradientStop(0.5, Qt::yellow) << QGradientStop(1, Qt::red);
+    // and set it
+    ui->roundProgressBar->setDataColors(gradientPoints);
+    ui->roundProgressBar->setRange(0,100);
+    ui->roundProgressBar->setValue(60);
+    ui->roundProgressBar->setNullPosition(QRoundProgressBar::PositionBottom);
     
     ui->toolBar->setFixedHeight(36);
     ui->toolBar->setIconSize(QSize(36, 36));
