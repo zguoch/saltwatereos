@@ -59,13 +59,13 @@ MainWindow::MainWindow(QWidget *parent)
     ,m_showPhaseRegion_1Dchart(true)
     ,m_vtkCameraInitialized(false)
     ,m_resetChartRange(true)
+    ,m_threadNumOMP(omp_get_max_threads())
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
     watcher_ = new QFutureWatcher<int>;
     connect(watcher_, &QFutureWatcher<int>::finished,this, &MainWindow::busy_job_finished);
-
 
     //round progress bar
     ui->roundProgressBar->setVisible(false);
@@ -703,15 +703,30 @@ void MainWindow::GetMaxMin_vtkTableColumn(const vtkSmartPointer<vtkTable> table,
         max=(value_tab>max ? value_tab: max);
     }
 }
+int MainWindow::testjob()
+{
+    omp_set_num_threads(8);
+    double ind=0;
+    #pragma omp parallel for
+    for(int i=0;i<100;i++)
+    {
+        QElapsedTimer t;
+        t.start();
 
+
+        #pragma omp critical
+        cout<<i<<endl;
+        while(t.elapsed()<1000);
+        ind++;
+        ui->roundProgressBar->setValue(ind);
+    }
+    return 1;
+}
 void MainWindow::on_vtkCameraControl_reset_triggered()
 {
-//    ui->textEdit->append(QString::number(m_vtkChartView->GetScene()->GetNumberOfItems()));
-    vtkChartXY* chart=(vtkChartXY*)m_vtkChartView->GetScene()->GetItem(0);
-    ui->textEdit->append(QString::number(chart->GetAxis(1)->GetMaximum()));
-    chart->GetAxis(1)->SetMaximum(600);
-    m_vtkChartView->GetRenderWindow()->Render();
-
+    ui->roundProgressBar->setVisible(true);
+    auto future = QtConcurrent::run(this, &MainWindow::testjob);
+    watcher_->setFuture(future);
 }
 
 void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector<int> index_props, std::vector<bool> components, vtkSmartPointer<vtkColorSeries> colorseries)
@@ -942,34 +957,59 @@ int MainWindow::Calculate_Diagram2D()
             {
               vectorP.push_back(P);
             }
+            int num_P=vectorP.size();
+            int num_T=vectorT.size();
+            int num_Points=num_P*num_T;
+            points->SetNumberOfPoints(num_Points);
+            arrPhaseRegion->SetNumberOfValues(num_Points);
+            arrDensity->SetNumberOfValues(num_Points);
+            arrDensity_l->SetNumberOfValues(num_Points);
+            arrDensity_v->SetNumberOfValues(num_Points);
+            arrDensity_h->SetNumberOfValues(num_Points);
+            arrH->SetNumberOfValues(num_Points);
+            arrH_l->SetNumberOfValues(num_Points);
+            arrH_v->SetNumberOfValues(num_Points);
+            arrH_h->SetNumberOfValues(num_Points);
+            arrS_l->SetNumberOfValues(num_Points);
+            arrS_v->SetNumberOfValues(num_Points);
+            arrS_h->SetNumberOfValues(num_Points);
+            arrMu_l->SetNumberOfValues(num_Points);
+            arrMu_v->SetNumberOfValues(num_Points);
+            arrX_l->SetNumberOfValues(num_Points);
+            arrX_v->SetNumberOfValues(num_Points);
             //calculate
             ui->roundProgressBar->setRange(0,vectorP.size());
+            int progress=0;
+            omp_set_num_threads(m_threadNumOMP);
+            #pragma omp parallel for shared(vectorP, vectorT, X0)
             for(size_t j = 0; j < vectorP.size(); j++)
             {
                 for(size_t i = 0; i < vectorT.size(); i++)
                 {
+                    int ind_value=i+j*vectorT.size();
                     SWEOS::cH2ONaCl eos;
                     eos.prop_pTX(vectorP[j]*1e5,vectorT[i]+SWEOS::Kelvin,X0);
-                    points->InsertNextPoint(vectorT[i],vectorP[j],X0);
-                    arrPhaseRegion->InsertNextValue(eos.m_prop.Region);
-                    arrDensity->InsertNextValue(eos.m_prop.Rho);
-                    arrDensity_l->InsertNextValue(eos.m_prop.Rho_l);
-                    arrDensity_v->InsertNextValue(eos.m_prop.Rho_v);
-                    arrDensity_h->InsertNextValue(eos.m_prop.Rho_h);
-                    arrH->InsertNextValue(eos.m_prop.H);
-                    arrH_l->InsertNextValue(eos.m_prop.H_l);
-                    arrH_v->InsertNextValue(eos.m_prop.H_v);
-                    arrH_h->InsertNextValue(eos.m_prop.H_h);
-                    arrS_l->InsertNextValue(eos.m_prop.S_l);
-                    arrS_v->InsertNextValue(eos.m_prop.S_v < 1e-30 ? 0 : eos.m_prop.S_v);
-                    arrS_h->InsertNextValue(eos.m_prop.S_h < 1e-30 ? 0: eos.m_prop.S_h);
-                    arrMu_l->InsertNextValue(eos.m_prop.Mu_l);
-                    arrMu_v->InsertNextValue(eos.m_prop.Mu_v);
-                    arrX_l->InsertNextValue(eos.m_prop.X_l);
-                    arrX_v->InsertNextValue(eos.m_prop.X_v);
-//                    QApplication::processEvents();
+                    points->SetPoint(ind_value, vectorT[i],vectorP[j],X0);
+                    arrPhaseRegion->SetValue(ind_value,eos.m_prop.Region);
+                    arrDensity->SetValue(ind_value,eos.m_prop.Rho);
+                    arrDensity_l->SetValue(ind_value,eos.m_prop.Rho_l);
+                    arrDensity_v->SetValue(ind_value,eos.m_prop.Rho_v);
+                    arrDensity_h->SetValue(ind_value,eos.m_prop.Rho_h);
+                    arrH->SetValue(ind_value,eos.m_prop.H);
+                    arrH_l->SetValue(ind_value,eos.m_prop.H_l);
+                    arrH_v->SetValue(ind_value,eos.m_prop.H_v);
+                    arrH_h->SetValue(ind_value,eos.m_prop.H_h);
+                    arrS_l->SetValue(ind_value,eos.m_prop.S_l);
+                    arrS_v->SetValue(ind_value,eos.m_prop.S_v);
+                    arrS_h->SetValue(ind_value,eos.m_prop.S_h);
+                    arrMu_l->SetValue(ind_value,eos.m_prop.Mu_l);
+                    arrMu_v->SetValue(ind_value,eos.m_prop.Mu_v);
+                    arrX_l->SetValue(ind_value,eos.m_prop.X_l);
+                    arrX_v->SetValue(ind_value,eos.m_prop.X_v);
                 }
-                ui->roundProgressBar->setValue((int)j);
+                progress++;
+                #pragma omp critical
+                ui->roundProgressBar->setValue(progress);
             }
             // Specify the dimensions of the grid
             m_structuredGrid->SetDimensions(vectorT.size(),vectorP.size(),1);
@@ -1001,31 +1041,59 @@ int MainWindow::Calculate_Diagram2D()
             {
               vectorP.push_back(P);
             }
+            int num_P=vectorP.size();
+            int num_X=vectorX.size();
+            int num_Points=num_P*num_X;
+            points->SetNumberOfPoints(num_Points);
+            arrPhaseRegion->SetNumberOfValues(num_Points);
+            arrDensity->SetNumberOfValues(num_Points);
+            arrDensity_l->SetNumberOfValues(num_Points);
+            arrDensity_v->SetNumberOfValues(num_Points);
+            arrDensity_h->SetNumberOfValues(num_Points);
+            arrH->SetNumberOfValues(num_Points);
+            arrH_l->SetNumberOfValues(num_Points);
+            arrH_v->SetNumberOfValues(num_Points);
+            arrH_h->SetNumberOfValues(num_Points);
+            arrS_l->SetNumberOfValues(num_Points);
+            arrS_v->SetNumberOfValues(num_Points);
+            arrS_h->SetNumberOfValues(num_Points);
+            arrMu_l->SetNumberOfValues(num_Points);
+            arrMu_v->SetNumberOfValues(num_Points);
+            arrX_l->SetNumberOfValues(num_Points);
+            arrX_v->SetNumberOfValues(num_Points);
             //calculate
+            ui->roundProgressBar->setRange(0,vectorP.size());
+            int progress=0;
+            omp_set_num_threads(m_threadNumOMP);
+            #pragma omp parallel for shared(vectorP, vectorX, T0)
             for(size_t j = 0; j < vectorP.size(); j++)
             {
                 for(size_t i = 0; i < vectorX.size(); i++)
                 {
+                    int ind_value=i+j*vectorX.size();
                     SWEOS::cH2ONaCl eos;
                     eos.prop_pTX(vectorP[j]*1e5,T0+SWEOS::Kelvin,vectorX[i]);
-                    points->InsertNextPoint(vectorX[i],vectorP[j],T0);
-                    arrPhaseRegion->InsertNextValue(eos.m_prop.Region);
-                    arrDensity->InsertNextValue(eos.m_prop.Rho);
-                    arrDensity_l->InsertNextValue(eos.m_prop.Rho_l);
-                    arrDensity_v->InsertNextValue(eos.m_prop.Rho_v);
-                    arrDensity_h->InsertNextValue(eos.m_prop.Rho_h);
-                    arrH->InsertNextValue(eos.m_prop.H);
-                    arrH_l->InsertNextValue(eos.m_prop.H_l);
-                    arrH_v->InsertNextValue(eos.m_prop.H_v);
-                    arrH_h->InsertNextValue(eos.m_prop.H_h);
-                    arrS_l->InsertNextValue(eos.m_prop.S_l);
-                    arrS_v->InsertNextValue(eos.m_prop.S_v < 1e-30 ? 0 : eos.m_prop.S_v);
-                    arrS_h->InsertNextValue(eos.m_prop.S_h < 1e-30 ? 0: eos.m_prop.S_h);
-                    arrMu_l->InsertNextValue(eos.m_prop.Mu_l);
-                    arrMu_v->InsertNextValue(eos.m_prop.Mu_v);
-                    arrX_l->InsertNextValue(eos.m_prop.X_l);
-                    arrX_v->InsertNextValue(eos.m_prop.X_v);
+                    points->SetPoint(ind_value, vectorX[i],vectorP[j],T0);
+                    arrPhaseRegion->SetValue(ind_value,eos.m_prop.Region);
+                    arrDensity->SetValue(ind_value,eos.m_prop.Rho);
+                    arrDensity_l->SetValue(ind_value,eos.m_prop.Rho_l);
+                    arrDensity_v->SetValue(ind_value,eos.m_prop.Rho_v);
+                    arrDensity_h->SetValue(ind_value,eos.m_prop.Rho_h);
+                    arrH->SetValue(ind_value,eos.m_prop.H);
+                    arrH_l->SetValue(ind_value,eos.m_prop.H_l);
+                    arrH_v->SetValue(ind_value,eos.m_prop.H_v);
+                    arrH_h->SetValue(ind_value,eos.m_prop.H_h);
+                    arrS_l->SetValue(ind_value,eos.m_prop.S_l);
+                    arrS_v->SetValue(ind_value,eos.m_prop.S_v);
+                    arrS_h->SetValue(ind_value,eos.m_prop.S_h);
+                    arrMu_l->SetValue(ind_value,eos.m_prop.Mu_l);
+                    arrMu_v->SetValue(ind_value,eos.m_prop.Mu_v);
+                    arrX_l->SetValue(ind_value,eos.m_prop.X_l);
+                    arrX_v->SetValue(ind_value,eos.m_prop.X_v);
                 }
+                progress++;
+                #pragma omp critical
+                ui->roundProgressBar->setValue(progress);
             }
             // Specify the dimensions of the grid
             m_structuredGrid->SetDimensions(vectorX.size(),vectorP.size(),1);
@@ -1057,31 +1125,59 @@ int MainWindow::Calculate_Diagram2D()
             {
               vectorT.push_back(T);
             }
+            int num_T=vectorT.size();
+            int num_X=vectorX.size();
+            int num_Points=num_T*num_X;
+            points->SetNumberOfPoints(num_Points);
+            arrPhaseRegion->SetNumberOfValues(num_Points);
+            arrDensity->SetNumberOfValues(num_Points);
+            arrDensity_l->SetNumberOfValues(num_Points);
+            arrDensity_v->SetNumberOfValues(num_Points);
+            arrDensity_h->SetNumberOfValues(num_Points);
+            arrH->SetNumberOfValues(num_Points);
+            arrH_l->SetNumberOfValues(num_Points);
+            arrH_v->SetNumberOfValues(num_Points);
+            arrH_h->SetNumberOfValues(num_Points);
+            arrS_l->SetNumberOfValues(num_Points);
+            arrS_v->SetNumberOfValues(num_Points);
+            arrS_h->SetNumberOfValues(num_Points);
+            arrMu_l->SetNumberOfValues(num_Points);
+            arrMu_v->SetNumberOfValues(num_Points);
+            arrX_l->SetNumberOfValues(num_Points);
+            arrX_v->SetNumberOfValues(num_Points);
             //calculate
+            ui->roundProgressBar->setRange(0,vectorX.size());
+            int progress=0;
+            omp_set_num_threads(m_threadNumOMP);
+            #pragma omp parallel for shared(vectorT, vectorX, P0)
             for(size_t j = 0; j < vectorX.size(); j++)
             {
                 for(size_t i = 0; i < vectorT.size(); i++)
                 {
+                    int ind_value=i+j*vectorT.size();
                     SWEOS::cH2ONaCl eos;
                     eos.prop_pTX(P0*1e5,vectorT[i]+SWEOS::Kelvin,vectorX[j]);
-                    points->InsertNextPoint(vectorT[i],vectorX[j],P0);
-                    arrPhaseRegion->InsertNextValue(eos.m_prop.Region);
-                    arrDensity->InsertNextValue(eos.m_prop.Rho);
-                    arrDensity_l->InsertNextValue(eos.m_prop.Rho_l);
-                    arrDensity_v->InsertNextValue(eos.m_prop.Rho_v);
-                    arrDensity_h->InsertNextValue(eos.m_prop.Rho_h);
-                    arrH->InsertNextValue(eos.m_prop.H);
-                    arrH_l->InsertNextValue(eos.m_prop.H_l);
-                    arrH_v->InsertNextValue(eos.m_prop.H_v);
-                    arrH_h->InsertNextValue(eos.m_prop.H_h);
-                    arrS_l->InsertNextValue(eos.m_prop.S_l);
-                    arrS_v->InsertNextValue(eos.m_prop.S_v < 1e-30 ? 0 : eos.m_prop.S_v);
-                    arrS_h->InsertNextValue(eos.m_prop.S_h < 1e-30 ? 0: eos.m_prop.S_h);
-                    arrMu_l->InsertNextValue(eos.m_prop.Mu_l);
-                    arrMu_v->InsertNextValue(eos.m_prop.Mu_v);
-                    arrX_l->InsertNextValue(eos.m_prop.X_l);
-                    arrX_v->InsertNextValue(eos.m_prop.X_v);
+                    points->SetPoint(ind_value, vectorT[i],vectorX[j],P0);
+                    arrPhaseRegion->SetValue(ind_value,eos.m_prop.Region);
+                    arrDensity->SetValue(ind_value,eos.m_prop.Rho);
+                    arrDensity_l->SetValue(ind_value,eos.m_prop.Rho_l);
+                    arrDensity_v->SetValue(ind_value,eos.m_prop.Rho_v);
+                    arrDensity_h->SetValue(ind_value,eos.m_prop.Rho_h);
+                    arrH->SetValue(ind_value,eos.m_prop.H);
+                    arrH_l->SetValue(ind_value,eos.m_prop.H_l);
+                    arrH_v->SetValue(ind_value,eos.m_prop.H_v);
+                    arrH_h->SetValue(ind_value,eos.m_prop.H_h);
+                    arrS_l->SetValue(ind_value,eos.m_prop.S_l);
+                    arrS_v->SetValue(ind_value,eos.m_prop.S_v);
+                    arrS_h->SetValue(ind_value,eos.m_prop.S_h);
+                    arrMu_l->SetValue(ind_value,eos.m_prop.Mu_l);
+                    arrMu_v->SetValue(ind_value,eos.m_prop.Mu_v);
+                    arrX_l->SetValue(ind_value,eos.m_prop.X_l);
+                    arrX_v->SetValue(ind_value,eos.m_prop.X_v);
                 }
+                progress++;
+                #pragma omp critical
+                ui->roundProgressBar->setValue(progress);
             }
             // Specify the dimensions of the grid
             m_structuredGrid->SetDimensions(vectorT.size(),vectorX.size(),1);

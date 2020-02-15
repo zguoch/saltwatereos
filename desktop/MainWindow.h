@@ -30,6 +30,9 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
+#include <thread>
+#include <omp.h>
+
 #include <vector>
 #include <fstream>
 using namespace std;
@@ -184,8 +187,9 @@ protected:
   bool m_resetChartRange;
   QFutureWatcher<int>* watcher_;
   void busy_job_finished();
-
+  int testjob();
   int do_busy_job();
+  int m_threadNumOMP;
 
 protected slots:
 
