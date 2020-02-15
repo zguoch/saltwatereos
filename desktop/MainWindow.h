@@ -260,6 +260,18 @@ private slots:
     void updateEnthalpyRange_UI_1D();
 
     void on_vtkCameraControl_reset_triggered();
+    void init_Meter(Meter* meter,double min, double max, double value,int valuePrecision,
+            double majorTick, double minorTick,int labelPrecision,
+            QString label, QString unit,double radius=60);
+    void updateMeter(Meter* meter,double value);
+    void init_Meters();
+    void updateMeters();
+
+    void on_doubleSpinBox_2_valueChanged(double arg1);
+
+    void on_doubleSpinBox_valueChanged(double arg1);
+
+    void on_doubleSpinBox_3_valueChanged(double arg1);
 
 private:
     QRect m_geometry_Groupbox_variables;
@@ -275,6 +287,3 @@ private:
 };
 
 #endif // MainWindow_H
-
-
-

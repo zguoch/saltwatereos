@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1497</width>
+    <width>1734</width>
     <height>666</height>
    </rect>
   </property>
@@ -95,7 +95,7 @@
           </font>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="tab">
           <attribute name="icon">
@@ -321,6 +321,49 @@ border-radius: 30px;</string>
            <property name="text">
             <string>Salinity (0, 1)</string>
            </property>
+          </widget>
+          <widget class="QGroupBox" name="group_Meters">
+           <property name="geometry">
+            <rect>
+             <x>1110</x>
+             <y>-30</y>
+             <width>401</width>
+             <height>161</height>
+            </rect>
+           </property>
+           <property name="title">
+            <string>GroupBox</string>
+           </property>
+           <widget class="Meter" name="meter_thirdVar" native="true">
+            <property name="geometry">
+             <rect>
+              <x>270</x>
+              <y>30</y>
+              <width>120</width>
+              <height>80</height>
+             </rect>
+            </property>
+           </widget>
+           <widget class="Meter" name="meter_firstVar" native="true">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>30</y>
+              <width>120</width>
+              <height>80</height>
+             </rect>
+            </property>
+           </widget>
+           <widget class="Meter" name="meter_secondVar" native="true">
+            <property name="geometry">
+             <rect>
+              <x>140</x>
+              <y>30</y>
+              <width>120</width>
+              <height>80</height>
+             </rect>
+            </property>
+           </widget>
           </widget>
          </widget>
          <widget class="QWidget" name="tab_2">
@@ -1162,7 +1205,7 @@ QPushButton:hover{
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1497</width>
+     <width>1734</width>
      <height>22</height>
     </rect>
    </property>
@@ -1379,6 +1422,11 @@ QPushButton:hover{
    <class>QRoundProgressBar</class>
    <extends>QWidget</extends>
    <header>qroundprogressbar.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Meter</class>
+   <extends>QWidget</extends>
+   <header>Meter.h</header>
   </customwidget>
  </customwidgets>
  <resources>

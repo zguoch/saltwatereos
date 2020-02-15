@@ -64,6 +64,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    //three meters
+    init_Meters();
+    updateMeters();
+
+    // thread for busy calculation
     watcher_ = new QFutureWatcher<int>;
     connect(watcher_, &QFutureWatcher<int>::finished,this, &MainWindow::busy_job_finished);
 
@@ -156,6 +161,85 @@ MainWindow::~MainWindow()
 
 }
 
+void MainWindow::init_Meters()
+{
+    init_Meter(ui->meter_firstVar,5, 1000, 316,0,100,20,0, "Pressure", "bar");
+    init_Meter(ui->meter_thirdVar,0, 100, 3.2,1,10,2,0, "Salinity", "wt. %");
+    if(ui->comboBox->currentIndex()==0)
+    {
+        init_Meter(ui->meter_secondVar,0, 1000, 100,0,100,20,0, "Temperature", "°C");
+    }else if(ui->comboBox->currentIndex()==1)
+    {
+        init_Meter(ui->meter_secondVar,0, 4.2, 2,2,0.5,0.1,1, "Enthalpy", "MJ/kg");
+    }
+}
+void MainWindow::init_Meter(Meter* meter,double min, double max, double value,int valuePrecision,
+                            double majorTick, double minorTick,int labelPrecision, QString label, QString unit,double radius)
+{
+    meter->setMinValue( min);
+    meter->setMaxValue( max);
+    meter->setValue( value );
+    meter->setBackgroundColor( Qt::darkGray );
+    meter->setNeedleColor( Qt::blue );
+    meter->setTextColor( Qt::lightGray );
+    meter->setGridColor( Qt::white );
+    meter->setLabelTextColor(Qt::yellow);
+    meter->setLabel( label );
+    meter->setUnitsLabel( unit );
+    meter->setRadius( radius );
+    meter->setStartScaleAngle( 35 );
+    meter->setStopScaleAngle( 325 );
+    meter->setScaleStep( minorTick );
+    meter->setScaleGridStep( majorTick );
+    meter->setDrawValue( true );
+    meter->setDrawGridValues( true );
+    meter->setDrawValuePrecision( valuePrecision );
+    meter->setScaleLabelPrecision( labelPrecision );
+//    meter->setThresholdRange( min, threshold[0], 0 );
+//    meter->setThresholdRange( threshold[0], threshold[1], 1, Qt::green );
+//    meter->setThresholdRange( threshold[1], max, 2, Qt::red );
+}
+void MainWindow::updateMeters()
+{
+    QRect geo_win=this->geometry();
+    QRect geo_meters=ui->group_Meters->geometry();
+    QRect geo_btn=ui->pushButton_2->geometry();
+    if((geo_win.width()-geo_btn.x()-geo_btn.width())<geo_meters.width())
+    {
+        ui->group_Meters->setVisible(false);
+        return;
+    }else
+    {
+        ui->group_Meters->setVisible(true);
+        ui->group_Meters->setGeometry(geo_btn.x()+120,geo_meters.y(),geo_meters.width(),geo_meters.height());
+    }
+
+   updateMeter(ui->meter_firstVar,ui->doubleSpinBox->value());
+   updateMeter(ui->meter_thirdVar,ui->doubleSpinBox_3->value()*100);
+   if(ui->comboBox->currentIndex()==0)
+   {
+       updateMeter(ui->meter_secondVar,ui->doubleSpinBox_2->value());
+   }else if(ui->comboBox->currentIndex()==1)
+   {
+       updateMeter(ui->meter_secondVar,ui->doubleSpinBox_2->value()/1000.0);
+   }
+}
+void MainWindow::updateMeter(Meter* meter,double value)
+{
+    meter->setValue(value);
+}
+void MainWindow::on_doubleSpinBox_2_valueChanged(double )
+{
+    updateMeters();
+}
+void MainWindow::on_doubleSpinBox_valueChanged(double )
+{
+    updateMeters();
+}
+void MainWindow::on_doubleSpinBox_3_valueChanged(double )
+{
+    updateMeters();
+}
 void MainWindow::initRenderWindow()
 {
     // Geometry
@@ -2208,6 +2292,7 @@ void MainWindow::on_checkBox_6_stateChanged(int )
 void MainWindow::on_comboBox_activated(const QString &)
 {
     updateScatterCalculationUI(ui->comboBox->currentIndex());
+    init_Meters();
 }
 
 void MainWindow::updateScatterCalculationUI(int index_varsSelection)
