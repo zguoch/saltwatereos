@@ -25,4 +25,4 @@ sips -z 512 512   swEOS.png --out icons.iconset/icon_512x512.png
 
 sips -z 1024 1024   swEOS.png --out icons.iconset/icon_512x512@2x.png
 
-iconutil -c icns icons.iconset -o Icon.icns
+iconutil -c icns icons.iconset -o logo2.icns

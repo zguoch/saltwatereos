@@ -27,7 +27,6 @@ if(APPLE)
         set(OpenMP_CXX_LIB_NAMES "omp")
         set(OpenMP_omp_LIBRARY omp)
     endif()
-
 endif()
 
 find_package(OpenMP REQUIRED)
@@ -85,9 +84,9 @@ include_directories(
 
 # Set your files and resources here
 
-set( Srcs main.cxx MainWindow.cxx qroundprogressbar.cpp meter.cpp)
+set( Srcs main.cxx MainWindow.cxx qroundprogressbar.cpp Meter.cpp)
 
-set( Hdrs MainWindow.h  qroundprogressbar.h meter.h)
+set( Hdrs MainWindow.h  qroundprogressbar.h Meter.h)
 
 set( MOC_Hdrs ui_MainWindow.h )
 
