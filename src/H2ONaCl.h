@@ -15,6 +15,27 @@ using namespace std;
 #include<map>  
 namespace SWEOS
 {
+    #ifdef _WIN32
+        // define color, this seems only work on MacOS and linux, doesn't work on windows
+        #define ERROR_COUT ""
+        #define WARN_COUT ""
+        #define COLOR_PURPLE ""
+        #define COLOR_RED ""
+        #define COLOR_GREEN ""
+        #define COLOR_YELLOW ""
+        #define COLOR_BLUE ""
+        #define COLOR_DEFAULT ""
+    #else
+        // define color, this seems only work on MacOS and linux, doesn't work on windows
+        #define ERROR_COUT "["<<"\033[31mError: "<<"\033[0m] "
+        #define WARN_COUT "["<<"\033[33mWarning: "<<"\033[0m] "
+        #define COLOR_PURPLE "\033[35m"
+        #define COLOR_RED "\033[31m"
+        #define COLOR_GREEN "\033[32m"
+        #define COLOR_YELLOW "\033[33m"
+        #define COLOR_BLUE "\033[34m"
+        #define COLOR_DEFAULT "\033[0m"
+    #endif
     // const value define
     double const TMIN=273.15;
     double const TMAX=1273.15;
@@ -93,7 +114,7 @@ namespace SWEOS
     private:
         void init_PhaseRegionName();
         void init_prop();
-        // double m_P, m_T, m_Xwt, m_Xmol; //P: Pa; T: C; X, wt%: (0, 1]. 
+        double m_P, m_T, m_Xwt, m_Xmol; //P: Pa; T: C; X, wt%: (0, 1]. 
         // Note that !!! m_T unite is C, but to keep consistent with OpenFoam, the T variable in public member function with unit of K
         const double *m_Parray;
         const double *m_Tarray;
@@ -103,6 +124,7 @@ namespace SWEOS
         Cr_STRUCT init_Cr();
         f_STRUCT m_f;
         f_STRUCT init_f();
+        bool m_colorPrint;
     private:
         PhaseRegion findRegion(const double T, const double P, const double X, double& Xl_all, double& Xv_all);
         void calcRho(int reg, double T_in, double P_in, double X_l, double X_v, double& Rho_l, double& Rho_v, double& Rho_h, 
@@ -115,6 +137,7 @@ namespace SWEOS
         void guess_T_PhX(double P, double h, double X, double& T1, double& T2);
         void calc_sat_lvh(PROP_H2ONaCl& prop, double h, double X, bool isDeriv=false);
         void calc_halit_liqidus(double Pres, double Temp, double& X_hal_liq, double& T_hm);
+
     public:
         // cH2ONaCl(double P, double T_K, double X);//P: Pa. T: K  X, wt%: (0, 1]
         cH2ONaCl();
@@ -129,7 +152,8 @@ namespace SWEOS
         double mu_pTX(double p, double T_K, double X_wt); //get bulk dynamic viscosity. p: Pa; T: K; X: wt%
         PROP_H2ONaCl m_prop;
         void writeProps2VTK(std::vector<double> T, std::vector<double> P, std::vector<double> X, std::vector<PROP_H2ONaCl> props, std::string fname, bool normalize=true);
-        
+        friend ostream & operator<<(ostream & out,  cH2ONaCl & A);
+        void setColorPrint(bool colorPrint){m_colorPrint=colorPrint;}
     private:
         inline double Xwt2Xmol(double X){return (X/M_NaCl)/(X/M_NaCl+(1-X)/M_H2O);};
         void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);

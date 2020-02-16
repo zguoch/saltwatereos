@@ -84,6 +84,7 @@ include_directories(
 )
 
 # Set your files and resources here
+
 set( Srcs main.cxx MainWindow.cxx qroundprogressbar.cpp meter.cpp)
 
 set( Hdrs MainWindow.h  qroundprogressbar.h meter.h)
@@ -94,6 +95,9 @@ set( UIs MainWindow.ui )
 
 set( QRCs Icons/icons.qrc )
 
+set( Srcs_bash SWEOSbash.cpp)
+
+set( Hdrs_bash SWEOSbash.h)
 
 
 # Instruct CMake to run moc automatically when needed.
@@ -123,6 +127,8 @@ add_executable(
   MACOSX_BUNDLE
   ${Srcs} 
   ${Hdrs} 
+  ${Srcs_bash} 
+  ${Hdrs_bash} 
   ${UI_Srcs} 
   ${MOC_Hdrs} 
   ${QRC_Srcs}

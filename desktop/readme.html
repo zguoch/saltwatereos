@@ -1,0 +1,55 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.10.0/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js">
+<link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body>
+<h1 id="gui-version" data-line="2" class="code-line">GUI version</h1>
+<h1 id="command-line-version" data-line="4" class="code-line">Command line version</h1>
+<h2 id="arguments" data-line="6" class="code-line">Arguments</h2>
+<pre><code data-line="8" class="code-line language-bash"><div>swEOS -D1 -VT -R0/2/1000 -P316 -X0.032
+</div></code></pre>
+<h3 id="required-arguments" data-line="12" class="code-line">Required arguments</h3>
+<ul>
+<li data-line="14" class="code-line">
+<p data-line="14" class="code-line">-D[0|1|2|3]: calculation model (<strong>D</strong>imension) selection, 0~3 represent scatter point, 1D, 2D, 3D calculation, respectively</p>
+</li>
+<li data-line="16" class="code-line">
+<p data-line="16" class="code-line">-V[PTX|PHX|T|P|X|H|PT|PX|TX|PH|HX]: <strong>V</strong>ariables selection. <strong>Note</strong> that different <code>-D</code> parameter correspond to different options for <code>-V</code>.</p>
+<ol>
+<li data-line="18" class="code-line">-D0: [PTX|PHX]</li>
+<li data-line="19" class="code-line">-D1: [T|P|X|H]</li>
+<li data-line="20" class="code-line">-D2: [PT|PX|TX|PH|HX]</li>
+<li data-line="21" class="code-line">-D3: [PTX|PHX]</li>
+</ol>
+</li>
+<li data-line="23" class="code-line">
+<p data-line="23" class="code-line">-P: fixed pressure value</p>
+</li>
+<li data-line="25" class="code-line">
+<p data-line="25" class="code-line">-T: fixed temperature value</p>
+</li>
+<li data-line="27" class="code-line">
+<p data-line="27" class="code-line">-X: fixed salinity value</p>
+</li>
+<li data-line="29" class="code-line">
+<p data-line="29" class="code-line">-H: fixed enthalpy value</p>
+</li>
+<li data-line="31" class="code-line">
+<p data-line="31" class="code-line">-R: only for 1~3 dimension. Corresponding to <code>-V</code> parameter, e.g. <code>-VPT</code> and <code>-R10/1/600/0/1/1000</code> means pressure in range of [10, 600] bar and interval is 1 bar, temperature in range of [0, 1000] deg. C and interval is 1 deg. C.</p>
+</li>
+<li data-line="33" class="code-line">
+<p data-line="33" class="code-line">-G: input file for multiple points calculation</p>
+</li>
+<li data-line="35" class="code-line">
+<p data-line="35" class="code-line">-O: output file for 1D, 2D, and 3D calculation</p>
+</li>
+</ul>
+<h3 id="optional-arguments" data-line="37" class="code-line">Optional arguments</h3>
+<ul>
+<li data-line="39" class="code-line">-t: number of threads</li>
+</ul>
+
+</body></html>

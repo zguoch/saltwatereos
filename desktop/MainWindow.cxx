@@ -367,7 +367,7 @@ void MainWindow::SinglePointCalculation(int index_varsSelection)
     {
         eos.prop_pTX(p, T_H+SWEOS::Kelvin, X);
         name_T_H="Temperature";
-        name_unit_T_H="deg. C";
+        name_unit_T_H="°C";
         name_T_H_display="Bulk enthalpy";
         value_T_H_display=eos.m_prop.H;
     }
@@ -2060,95 +2060,24 @@ void MainWindow::update3dUI(QString arg)
     ui->comboBox_selectProps->addItem("Vapour viscosity");
     ui->comboBox_selectProps->addItem("Liquid salinity");
     ui->comboBox_selectProps->addItem("Vapour salinity");
-    if(arg=="Temperature")
+    if(arg=="PTX")
     {
-        ui->label_fixed_firsVar->setText("Pressure (bar)");
-        ui->doubleSpinBox_fixed_firstVar->setDecimals(2);
-        ui->doubleSpinBox_fixed_firstVar->setRange(SWEOS::PMIN/1e5, SWEOS::PMAX/1e5);
-        ui->doubleSpinBox_fixed_firstVar->setSingleStep(1);
-        ui->doubleSpinBox_fixed_firstVar->setValue(316);
-        ui->label_fixed_secondVar->setText("Salinity");
-        ui->doubleSpinBox_fixed_secondVar->setDecimals(4);
-        ui->doubleSpinBox_fixed_secondVar->setRange(SWEOS::XMIN, SWEOS::XMAX);
-        ui->doubleSpinBox_fixed_secondVar->setSingleStep(0.001);
-        ui->doubleSpinBox_fixed_secondVar->setValue(0.032);
+        //independent variable
+        UpdateUI_P(ui->label_delta_firstVar, ui->doubleSpinBox_delta_firstVar, ui->doubleSpinBox_max_firstVar, ui->doubleSpinBox_min_firstVar);
+        UpdateUI_T(ui->label_delta_secondVar, ui->doubleSpinBox_delta_secondVar, ui->doubleSpinBox_max_secondVar, ui->doubleSpinBox_min_secondVar);
+        UpdateUI_X(ui->label_delta_thirdVar, ui->doubleSpinBox_delta_thirdVar, ui->doubleSpinBox_max_thirdVar, ui->doubleSpinBox_min_thirdVar);
 
-        ui->label_delta_firstVar->setText("dT(°C):");
-        ui->doubleSpinBox_delta_firstVar->setDecimals(2);
-        ui->doubleSpinBox_delta_firstVar->setRange(SWEOS::TMIN-SWEOS::Kelvin, SWEOS::TMAX-SWEOS::Kelvin);
-        ui->doubleSpinBox_delta_firstVar->setSingleStep(1);
-        ui->doubleSpinBox_delta_firstVar->setValue(SWEOS::TMIN-SWEOS::Kelvin);
-
-        ui->doubleSpinBox_max_firstVar->setDecimals(2);
-        ui->doubleSpinBox_max_firstVar->setRange(SWEOS::TMIN-SWEOS::Kelvin, SWEOS::TMAX-SWEOS::Kelvin);
-        ui->doubleSpinBox_max_firstVar->setSingleStep(1);
-        ui->doubleSpinBox_max_firstVar->setValue(SWEOS::TMAX-SWEOS::Kelvin);
-
-        ui->doubleSpinBox_min_firstVar->setDecimals(2);
-        ui->doubleSpinBox_min_firstVar->setRange(0.1,100);
-        ui->doubleSpinBox_min_firstVar->setSingleStep(1);
-        ui->doubleSpinBox_min_firstVar->setValue(SWEOS::TMIN-SWEOS::Kelvin);
-
-    }else if(arg=="Pressure")
+    }else if(arg=="PHX")
     {
-        ui->label_fixed_firsVar->setText("Temperature (°C)");
-        ui->doubleSpinBox_fixed_firstVar->setDecimals(2);
-        ui->doubleSpinBox_fixed_firstVar->setRange(SWEOS::TMIN-SWEOS::Kelvin, SWEOS::TMAX-SWEOS::Kelvin);
-        ui->doubleSpinBox_fixed_firstVar->setSingleStep(1);
-        ui->doubleSpinBox_fixed_firstVar->setValue(100);
-        ui->label_fixed_secondVar->setText("Salinity");
-        ui->doubleSpinBox_fixed_secondVar->setDecimals(4);
-        ui->doubleSpinBox_fixed_secondVar->setRange(SWEOS::XMIN, SWEOS::XMAX);
-        ui->doubleSpinBox_fixed_secondVar->setSingleStep(0.001);
-        ui->doubleSpinBox_fixed_secondVar->setValue(0.032);
-
-        ui->label_delta_firstVar->setText("dP (bar):");
-        ui->doubleSpinBox_delta_firstVar->setDecimals(2);
-        ui->doubleSpinBox_delta_firstVar->setRange(SWEOS::PMIN/1E5, SWEOS::PMAX/1E5);
-        ui->doubleSpinBox_delta_firstVar->setSingleStep(1);
-        ui->doubleSpinBox_delta_firstVar->setValue(SWEOS::PMIN/1E5);
-
-        ui->doubleSpinBox_max_firstVar->setDecimals(2);
-        ui->doubleSpinBox_max_firstVar->setRange(SWEOS::PMIN/1E5, SWEOS::PMAX/1E5);
-        ui->doubleSpinBox_max_firstVar->setSingleStep(1);
-        ui->doubleSpinBox_max_firstVar->setValue(SWEOS::PMAX/1E5);
-
-        ui->doubleSpinBox_min_firstVar->setDecimals(2);
-        ui->doubleSpinBox_min_firstVar->setRange(0.1,100);
-        ui->doubleSpinBox_min_firstVar->setSingleStep(1);
-        ui->doubleSpinBox_min_firstVar->setValue(1);
-
-    }else if(arg=="Salinity")
-    {
-        ui->label_fixed_firsVar->setText("Pressure (bar)");
-        ui->doubleSpinBox_fixed_firstVar->setDecimals(2);
-        ui->doubleSpinBox_fixed_firstVar->setRange(SWEOS::PMIN/1e5, SWEOS::PMAX/1e5);
-        ui->doubleSpinBox_fixed_firstVar->setSingleStep(1);
-        ui->doubleSpinBox_fixed_firstVar->setValue(316);
-        ui->label_fixed_secondVar->setText("Temperature (°C)");
-        ui->doubleSpinBox_fixed_secondVar->setDecimals(2);
-        ui->doubleSpinBox_fixed_secondVar->setRange(SWEOS::TMIN-SWEOS::Kelvin, SWEOS::TMAX-SWEOS::Kelvin);
-        ui->doubleSpinBox_fixed_secondVar->setSingleStep(1);
-        ui->doubleSpinBox_fixed_secondVar->setValue(100);
-
-        ui->label_delta_firstVar->setText("dX:");
-        ui->doubleSpinBox_delta_firstVar->setDecimals(4);
-        ui->doubleSpinBox_delta_firstVar->setRange(SWEOS::XMIN, SWEOS::XMAX);
-        ui->doubleSpinBox_delta_firstVar->setSingleStep(0.001);
-        ui->doubleSpinBox_delta_firstVar->setValue(0.0001);
-
-        ui->doubleSpinBox_max_firstVar->setDecimals(4);
-        ui->doubleSpinBox_max_firstVar->setRange(SWEOS::XMIN, SWEOS::XMAX);
-        ui->doubleSpinBox_max_firstVar->setSingleStep(0.001);
-        ui->doubleSpinBox_max_firstVar->setValue(SWEOS::XMAX);
-
-        ui->doubleSpinBox_min_firstVar->setDecimals(4);
-        ui->doubleSpinBox_min_firstVar->setRange(0.0001,0.9);
-        ui->doubleSpinBox_min_firstVar->setSingleStep(0.001);
-        ui->doubleSpinBox_min_firstVar->setValue(0.01);
+        //independent variable
+        UpdateUI_P(ui->label_delta_firstVar, ui->doubleSpinBox_delta_firstVar, ui->doubleSpinBox_max_firstVar, ui->doubleSpinBox_min_firstVar);
+        double pMinMax[2]={ui->doubleSpinBox_min_firstVar->value()*1e5, ui->doubleSpinBox_max_firstVar->value()*1e5};
+        double XMinMax[2]={ui->doubleSpinBox_min_thirdVar->value(), ui->doubleSpinBox_max_thirdVar->value()};
+        UpdateUI_H(ui->label_delta_secondVar, ui->doubleSpinBox_delta_secondVar, ui->doubleSpinBox_max_secondVar, ui->doubleSpinBox_min_secondVar,pMinMax,XMinMax);
+        UpdateUI_X(ui->label_delta_thirdVar, ui->doubleSpinBox_delta_thirdVar, ui->doubleSpinBox_max_thirdVar, ui->doubleSpinBox_min_thirdVar);
     }else
     {
-        std::cout<<"error: update1dUI, no such item: "<<arg.toStdString()<<std::endl;
+        std::cout<<"error: update3dUI, no such item: "<<arg.toStdString()<<std::endl;
     }
 }
 void MainWindow::on_comboBox_selectVariable_activated(const QString &arg1)
