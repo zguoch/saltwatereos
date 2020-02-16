@@ -30,7 +30,7 @@ namespace SWEOSbash
     #endif
     //-----------------------------------------------------------------------------
 
-    void bash_run(int argc, char** argv);
+    bool bash_run(int argc, char** argv);
     // calculation mode: 0d, 1d, 2d, 3d
     #define CALCULATION_MODE_SINGLEPOINT 0
     #define CALCULATION_MODE_ONEDIMENSION 1

@@ -2,7 +2,7 @@
 // using namespace SWEOSbash;
 namespace SWEOSbash
 {
-  void bash_run(int argc, char** argv)
+  bool bash_run(int argc, char** argv)
   {
     struct winsize w;
     ioctl(0, TIOCGWINSZ, &w);
@@ -17,7 +17,8 @@ namespace SWEOSbash
 
     //parse arguments and check 
     cSWEOSarg arg;
-    if(!arg.ParseAndCheck(argc, argv)) return;
+    if(!arg.ParseAndCheck(argc, argv)) return false;
+    return true;
   }
 
 
