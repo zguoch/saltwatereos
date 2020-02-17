@@ -1420,11 +1420,19 @@ QPushButton:hover{
    </property>
   </action>
   <action name="actionEnglish">
+   <property name="icon">
+    <iconset resource="Icons/icons.qrc">
+     <normaloff>:/Icons/language/US.png</normaloff>:/Icons/language/US.png</iconset>
+   </property>
    <property name="text">
     <string>English</string>
    </property>
   </action>
   <action name="actionChinese">
+   <property name="icon">
+    <iconset resource="Icons/icons.qrc">
+     <normaloff>:/Icons/language/CH.png</normaloff>:/Icons/language/CH.png</iconset>
+   </property>
    <property name="text">
     <string>简体中文</string>
    </property>

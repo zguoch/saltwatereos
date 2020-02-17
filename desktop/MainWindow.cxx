@@ -2290,10 +2290,14 @@ void MainWindow::on_actionChinese_triggered()
     }
     qApp -> installTranslator(m_zhTranslator);
     ui->retranslateUi(this);
+    init_Meters();
+    updateMeters();
 }
 
 void MainWindow::on_actionEnglish_triggered()
 {
     qApp -> removeTranslator(m_zhTranslator);
     ui->retranslateUi(this);
+    init_Meters();
+    updateMeters();
 }

@@ -243,6 +243,8 @@
         <file>Icons_PV/warning.png</file>
         <file>Icons_PV/pvIcon.svg</file>
         <file>Icons_PV/pvIcon512.png</file>
+        <file>language/CH.png</file>
+        <file>language/US.png</file>
     <!-- Help -->
     <file>help.png</file>
   </qresource>
