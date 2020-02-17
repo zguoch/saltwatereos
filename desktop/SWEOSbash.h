@@ -12,6 +12,7 @@
 using namespace std;
 
 #include "H2ONaCl.H"
+#include "MultiProgressBar.h"
 
 #define VERSION_MAJOR 1
 #define VERSION_MINOR 0
@@ -83,7 +84,8 @@ namespace SWEOSbash
     SWEOS::PROP_H2ONaCl calculateSinglePoint_PTX(double P, double T, double X, bool isCout=true);
     SWEOS::PROP_H2ONaCl calculateSinglePoint_PHX(double P, double H, double X, bool isCout=true);
     // bool calculateMultiPoints_PHX(string valueV, string filePHX, string outFile);
-    bool calculateMultiPoints_PTX_PHX(string valueV, string filePTX, string outFile, string isT_H);
+    vector<SWEOS::PROP_H2ONaCl> calculateMultiPoints_PTX_PHX(string valueV, string filePTX, string outFile, string isT_H);
+    bool WriteCSV(string outFile,vector<double> P, vector<double> X, vector<SWEOS::PROP_H2ONaCl> props);
     static void StartText()
     {
         //30: black  31:red  32:green  33:yellow  34:blue  35:purple  36:darkgreen

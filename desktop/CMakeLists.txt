@@ -94,9 +94,9 @@ set( UIs MainWindow.ui )
 
 set( QRCs Icons/icons.qrc)
 
-set( Srcs_bash SWEOSbash.cpp)
+set( Srcs_bash SWEOSbash.cpp MultiProgressBar.cpp)
 
-set( Hdrs_bash SWEOSbash.h)
+set( Hdrs_bash SWEOSbash.h MultiProgressBar.h)
 
 
 # Instruct CMake to run moc automatically when needed.

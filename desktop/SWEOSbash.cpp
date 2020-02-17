@@ -198,15 +198,15 @@ namespace SWEOSbash
         {
           if(!m_haveH)
           {
-            cout<<ERROR_COUT<<"selected calculation mode is single point PHX, you must specify enthalpy by -H"<<endl;
+            cout<<WARN_COUT<<"selected calculation mode is single point PHX, you must specify enthalpy by -H"<<endl;
           }
           if(!m_haveP)
           {
-            cout<<ERROR_COUT<<"selected calculation mode is single point PHX, you must specify pressure by -P"<<endl;
+            cout<<WARN_COUT<<"selected calculation mode is single point PHX, you must specify pressure by -P"<<endl;
           }
           if(!m_haveX)
           {
-            cout<<ERROR_COUT<<"selected calculation mode is single point PHX, you must specify salinity by -X"<<endl;
+            cout<<WARN_COUT<<"selected calculation mode is single point PHX, you must specify salinity by -X"<<endl;
           }
           
           // determin single point calculation, multi-points calculation or exit
@@ -227,7 +227,7 @@ namespace SWEOSbash
           }else if(m_haveG)//not T, P, X value, but have intput file name
           {
             cout<<WARN_COUT<<"You specify a input file for multi-points calculation\n"
-            <<"Please make sure your input file with 3 columns in order of "<<m_valueV<<endl;
+            <<COLOR_PURPLE<<"\tPlease make sure your input file with 3 columns in order of "<<COLOR_RED<<m_valueV<<COLOR_DEFAULT<<endl;
             calculateMultiPoints_PTX_PHX(m_valueV,m_valueG, m_valueO,"H");
           }else
           {
@@ -283,7 +283,7 @@ namespace SWEOSbash
     }
     return eos.m_prop;
   }
-  bool calculateMultiPoints_PTX_PHX(string valueV, string filePTX, string outFile, string isT_H)
+  vector<SWEOS::PROP_H2ONaCl> calculateMultiPoints_PTX_PHX(string valueV, string filePTX, string outFile, string isT_H)
   {
     ifstream fin(filePTX);
     if(!fin)
@@ -355,7 +355,35 @@ namespace SWEOSbash
       exit(0);
     }
     fin.close();
-    //cout or fout
+
+    //calculate
+    SWEOS::cH2ONaCl eos;
+    vector<SWEOS::PROP_H2ONaCl> props;
+    MultiProgressBar multibar(P.size(),COLOR_BAR_BLUE);
+    if(isT_H=="T")
+    {
+      for(int i=0;i<P.size();i++)
+      {
+        eos.prop_pTX(P[i]*1e5, T_H[i]+SWEOS::Kelvin, X[i]);
+        props.push_back(eos.m_prop);
+        multibar.Update();
+      }
+    }else if(isT_H=="H")
+    {
+      for(int i=0;i<P.size();i++)
+      {
+        eos.prop_pHX(P[i]*1e5, T_H[i]*1000, X[i]);
+        props.push_back(eos.m_prop);
+        multibar.Update();
+      }
+    }
+    //write to file
+    WriteCSV(outFile,P,X,props);
+
+    return props;
+  }
+  bool WriteCSV(string outFile,vector<double> P, vector<double> X, vector<SWEOS::PROP_H2ONaCl> props)
+  {
     ofstream fout(outFile);
     SWEOS::cH2ONaCl eos;
     if(fout)
@@ -367,52 +395,45 @@ namespace SWEOSbash
           <<"Liquid viscosity, Vapour viscosity, "
           <<"Liquid salinity, Vapour salinity"
           <<endl;
-      for(int i=0;i<T_H.size();i++)
+      for(int i=0;i<P.size();i++)
       {
-        if(isT_H=="T")
-        {
-          eos.prop_pTX(P[i]*1e5, T_H[i]+SWEOS::Kelvin, X[i]);
-        }else if(isT_H=="H")
-        {
-          eos.prop_pHX(P[i]*1e5, T_H[i]*1000, X[i]);
-        }
-        fout<<eos.m_prop.T+SWEOS::Kelvin<<", "<<P[i]<<", "<<X[i]<<", "<<eos.m_prop.Region<<", "<<eos.m_phaseRegion_name[eos.m_prop.Region]<<", "
-            <<eos.m_prop.Rho<<", "<<eos.m_prop.Rho_l<<", "<<eos.m_prop.Rho_v<<", "<<eos.m_prop.Rho_h<<", "
-            <<eos.m_prop.H<<", "<<eos.m_prop.H_l<<", "<<eos.m_prop.H_v<<", "<<eos.m_prop.H_h<<", "
-            <<eos.m_prop.S_l<<", "<<eos.m_prop.S_v<<", "<<eos.m_prop.S_h<<", "
-            <<eos.m_prop.Mu_l<<", "<<eos.m_prop.Mu_v<<", "
-            <<eos.m_prop.X_l<<", "<<eos.m_prop.X_v
+        fout<<props[i].T+SWEOS::Kelvin<<", "<<P[i]<<", "<<X[i]<<", "<<props[i].Region<<", "<<eos.m_phaseRegion_name[props[i].Region]<<", "
+            <<props[i].Rho<<", "<<props[i].Rho_l<<", "<<props[i].Rho_v<<", "<<props[i].Rho_h<<", "
+            <<props[i].H<<", "<<props[i].H_l<<", "<<props[i].H_v<<", "<<props[i].H_h<<", "
+            <<props[i].S_l<<", "<<props[i].S_v<<", "<<props[i].S_h<<", "
+            <<props[i].Mu_l<<", "<<props[i].Mu_v<<", "
+            <<props[i].X_l<<", "<<props[i].X_v
             <<endl;
       }
       fout.close();
     }else
     {
-      if(!fout)cout<<WARN_COUT<<"The output file name is specified by -O argument, but open file failed: "<<outFile
-                   <<"\nPrint in terminal instead"<<endl;
-      cout<<"T(C), P(bar), X, Phase Index, Phase Region, "
-          <<"Bulk density(kg/m3), Liquid density(kg/m3), Vapour density(kg/m3), Halite density(kg/m3), "
-          <<"Bulk enthalpy(kJ/kg), Liquid enthalpy(kJ/kg), Vapour enthalpy(kJ/kg), Halite enthalpy(kJ/kg), "
-          <<"Liquid Saturation, Vapour Saturation, Halite Saturation, "
-          <<"Liquid viscosity, Vapour viscosity, "
-          <<"Liquid salinity, Vapour salinity"
-          <<endl;
-      for(int i=0;i<T_H.size();i++)
+      if(outFile=="")
       {
-        if(isT_H=="T")
-        {
-          eos.prop_pTX(P[i]*1e5, T_H[i]+SWEOS::Kelvin, X[i]);
-        }else if(isT_H=="H")
-        {
-          eos.prop_pHX(P[i]*1e5, T_H[i]*1000, X[i]);
-        }
-        cout<<eos.m_prop.T+SWEOS::Kelvin<<", "<<P[i]<<", "<<X[i]<<", "<<eos.m_prop.Region<<", "<<eos.m_phaseRegion_name[eos.m_prop.Region]<<", "
-            <<eos.m_prop.Rho<<", "<<eos.m_prop.Rho_l<<", "<<eos.m_prop.Rho_v<<", "<<eos.m_prop.Rho_h<<", "
-            <<eos.m_prop.H<<", "<<eos.m_prop.H_l<<", "<<eos.m_prop.H_v<<", "<<eos.m_prop.H_h<<", "
-            <<eos.m_prop.S_l<<", "<<eos.m_prop.S_v<<", "<<eos.m_prop.S_h<<", "
-            <<eos.m_prop.Mu_l<<", "<<eos.m_prop.Mu_v<<", "
-            <<eos.m_prop.X_l<<", "<<eos.m_prop.X_v
-            <<endl;
+        cout<<WARN_COUT<<"The output file has to be specified by -O argument"<<outFile<<endl;
+        exit(0);
       }
+
+      if(!fout)cout<<WARN_COUT<<"The output file name is specified by -O argument, but open file failed: "<<outFile
+                   <<endl;
+      exit(0);
+      // cout<<"T(C), P(bar), X, Phase Index, Phase Region, "
+      //     <<"Bulk density(kg/m3), Liquid density(kg/m3), Vapour density(kg/m3), Halite density(kg/m3), "
+      //     <<"Bulk enthalpy(kJ/kg), Liquid enthalpy(kJ/kg), Vapour enthalpy(kJ/kg), Halite enthalpy(kJ/kg), "
+      //     <<"Liquid Saturation, Vapour Saturation, Halite Saturation, "
+      //     <<"Liquid viscosity, Vapour viscosity, "
+      //     <<"Liquid salinity, Vapour salinity"
+      //     <<endl;
+      // for(int i=0;i<P.size();i++)
+      // {
+      //   cout<<props[i].T+SWEOS::Kelvin<<", "<<P[i]<<", "<<X[i]<<", "<<props[i].Region<<", "<<eos.m_phaseRegion_name[props[i].Region]<<", "
+      //       <<props[i].Rho<<", "<<props[i].Rho_l<<", "<<props[i].Rho_v<<", "<<props[i].Rho_h<<", "
+      //       <<props[i].H<<", "<<props[i].H_l<<", "<<props[i].H_v<<", "<<props[i].H_h<<", "
+      //       <<props[i].S_l<<", "<<props[i].S_v<<", "<<props[i].S_h<<", "
+      //       <<props[i].Mu_l<<", "<<props[i].Mu_v<<", "
+      //       <<props[i].X_l<<", "<<props[i].X_v
+      //       <<endl;
+      // }
     }
     return true;
   }

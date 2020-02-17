@@ -10,7 +10,6 @@
  */
 #include "MultiProgressBar.h"
 #include <iomanip>
-#include "Conti2D.h"
 
 void MultiProgressBar::init_colors()
 {
@@ -99,7 +98,7 @@ void MultiProgressBar::Update(vector<double> current_pos)
     {
         cout << "\r";
         if (k == 0)
-            MOVEUP(m_total.size());
+            MOVEUP((int)m_total.size());
         // m_current_index[k]++;
         m_percent[k] = (fabs((current_pos[k]) - m_left[k]) / m_total[k]) * 100;
         //how many are completed
@@ -112,19 +111,19 @@ void MultiProgressBar::Update(vector<double> current_pos)
         {
             cout << "[" << m_colors[(k + m_defaultcolor) % m_colors.size()]
                  << m_bar_str[k]
-                 << COLOR_DEFALUT << "]"
+                 << COLOR_DEFAULT << "]"
                  << m_colors[(k + m_defaultcolor) % m_colors.size()] << setw(3) << right << int(m_percent[k]) << "%"
-                 << COLOR_DEFALUT << endl;
+                 << COLOR_DEFAULT << endl;
         }
         else
         {
             cout << "[" << m_colors[(k + m_defaultcolor) % m_colors.size()]
                  << m_bar_str[k]
-                 << COLOR_DEFALUT << "]"
+                 << COLOR_DEFAULT << "]"
                  << m_colors[(k + m_defaultcolor) % m_colors.size()] << setw(3) << right << int(m_percent[k])
-                 << "% " << COLOR_DEFALUT
+                 << "% " << COLOR_DEFAULT
                  << "[" << setw(m_maxLength_title) << left << m_title[k]
-                 << "] [" << m_colors[(k + m_defaultcolor) % m_colors.size()] << setw(10) << left << current_pos[k] << COLOR_DEFALUT
+                 << "] [" << m_colors[(k + m_defaultcolor) % m_colors.size()] << setw(10) << left << current_pos[k] << COLOR_DEFAULT
                  << "]"
                  << endl;
         }

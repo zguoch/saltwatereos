@@ -18,11 +18,36 @@
 #include <sys/ioctl.h>
 #include <stdio.h>
 using namespace std;
+#include "SWEOSbash.h"
 #define COLOR_BAR_PURPLE 0
 #define COLOR_BAR_BLUE 1
 #define COLOR_BAR_GREEN 2
 #define COLOR_BAR_YELLOW 3
 #define COLOR_BAR_RED 4
+
+#include <unistd.h>
+#define MOVEUP(x) printf("\033[%dA", (x))
+// clean screen
+#define CLEAR() printf("\033[2J") 
+// move up cursor
+#define MOVEUP(x) printf("\033[%dA", (x)) 
+// move down cursor
+#define MOVEDOWN(x) printf("\033[%dB", (x)) 
+// move left cursor
+#define MOVELEFT(y) printf("\033[%dD", (y)) 
+// move right cursor
+#define MOVERIGHT(y) printf("\033[%dC",(y)) 
+// locate cursor
+#define MOVETO(x,y) printf("\033[%d;%dH", (x), (y)) 
+// reset cursor
+#define RESET_CURSOR() printf("\033[H") 
+// hide cursor
+#define HIDE_CURSOR() printf("\033[?25l") 
+// show cursor
+#define SHOW_CURSOR() printf("\033[?25h") 
+#define HIGHT_LIGHT() printf("\033[7m")
+#define UN_HIGHT_LIGHT() printf("\033[27m")
+
 class MultiProgressBar
 {
     public:
