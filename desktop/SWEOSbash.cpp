@@ -24,7 +24,8 @@ namespace SWEOSbash
 
   cSWEOSarg::cSWEOSarg(/* args */)
   :m_haveD(false), m_haveV(false), m_haveP(false)
-  ,m_haveT(false), m_haveX(false), m_haveH(false), m_haveR(false)
+  ,m_haveT(false), m_haveX(false), m_haveH(false), m_haveR(false),m_haveO(false)
+  ,m_valueD(-1), m_valueO(""),m_valueV("")
   {
     for(int i=0;i<3;i++)
     for(int j=0;j<3;j++)m_valueR[i][j]=0;
@@ -83,10 +84,17 @@ namespace SWEOSbash
         m_haveH=true;
         m_valueH=atof(optarg);
         break;
+      case 'G':
+        m_haveG=true;
+        m_valueG=optarg;
+        break;
       case 'R':
         m_haveR=true;
         m_varueR_str= string_split(optarg,"/");
         break;
+      case 'O':
+        m_haveO=true;
+        m_valueO=optarg;
       default:
         break;
       }
@@ -144,71 +152,94 @@ namespace SWEOSbash
         {
           if(!m_haveT)
           {
-            cout<<ERROR_COUT<<"selected calculation mode is single point PTX, you must specify temperature by -T"<<endl;
-            return false;
+            cout<<WARN_COUT<<"selected calculation mode is single point PTX, you must specify temperature by -T"<<endl;
           }
           if(!m_haveP)
           {
-            cout<<ERROR_COUT<<"selected calculation mode is single point PTX, you must specify pressure by -P"<<endl;
-            return false;
+            cout<<WARN_COUT<<"selected calculation mode is single point PTX, you must specify pressure by -P"<<endl;
           }
           if(!m_haveX)
           {
-            cout<<ERROR_COUT<<"selected calculation mode is single point PTX, you must specify salinity by -X"<<endl;
-            return false;
+            cout<<WARN_COUT<<"selected calculation mode is single point PTX, you must specify salinity by -X"<<endl;
           }
-          //check range
-          if(m_valueP>SWEOS::PMAX/1e5 || m_valueP<SWEOS::PMIN/1e5)
+          // determin single point calculation, multi-points calculation or exit
+          if(m_haveT && m_haveP && m_haveX)//single point calculation
           {
-            cout<<ERROR_COUT<<"-P specify pressure ="<<m_valueP<<"bar = "<<m_valueP*1e5<<" Pa, out of range ["<<SWEOS::PMIN<<", "<<SWEOS::PMAX<<"] Pa"<<endl;
-            return false;
-          }
-          if(m_valueT>SWEOS::TMAX-SWEOS::Kelvin || m_valueT<SWEOS::TMIN-SWEOS::Kelvin)
+            if(m_haveG)cout<<WARN_COUT<<"have -T, -P, -X option values, ignore -G argument"<<endl;
+            //check range
+            if(m_valueP>SWEOS::PMAX/1e5 || m_valueP<SWEOS::PMIN/1e5)
+            {
+              cout<<ERROR_COUT<<"-P specify pressure ="<<m_valueP<<"bar = "<<m_valueP*1e5<<" Pa, out of range ["<<SWEOS::PMIN<<", "<<SWEOS::PMAX<<"] Pa"<<endl;
+              return false;
+            }
+            if(m_valueT>SWEOS::TMAX-SWEOS::Kelvin || m_valueT<SWEOS::TMIN-SWEOS::Kelvin)
+            {
+              cout<<ERROR_COUT<<"-T specify temperature ="<<m_valueT<<"°C = "<<m_valueT+SWEOS::Kelvin<<" K, out of range ["<<SWEOS::TMIN<<", "<<SWEOS::TMAX<<"] K"<<endl;
+              return false;
+            }
+            if(m_valueX>SWEOS::XMAX || m_valueX<SWEOS::XMIN)
+            {
+              cout<<ERROR_COUT<<"-X specify salinity ="<<m_valueX<<" wt. % NaCl, out of range ["<<SWEOS::XMIN<<", "<<SWEOS::XMAX<<"] wt. % NaCl"<<endl;
+              return false;
+            }
+            calculateSinglePoint_PTX(m_valueP*1e5, m_valueT+SWEOS::Kelvin, m_valueX);
+          }else if(m_haveG)//not T, P, X value, but have intput file name
           {
-            cout<<ERROR_COUT<<"-T specify temperature ="<<m_valueT<<"°C = "<<m_valueT+SWEOS::Kelvin<<" K, out of range ["<<SWEOS::TMIN<<", "<<SWEOS::TMAX<<"] K"<<endl;
-            return false;
-          }
-          if(m_valueX>SWEOS::XMAX || m_valueX<SWEOS::XMIN)
+            cout<<WARN_COUT<<"You specify a input file for multi-points calculation\n"
+            <<"Please make sure your input file with 3 columns in order of "<<m_valueV<<endl;
+            calculateMultiPoints_PTX_PHX(m_valueV,m_valueG, m_valueO,"T");
+          }else
           {
-            cout<<ERROR_COUT<<"-X specify salinity ="<<m_valueX<<" wt. % NaCl, out of range ["<<SWEOS::XMIN<<", "<<SWEOS::XMAX<<"] wt. % NaCl"<<endl;
-            return false;
+            cout<<ERROR_COUT<<"There neither full -T, -P, -X options nor -G argument, swEOS will exit"<<endl;
+            exit(0);
           }
-          calculateSinglePoint_PTX(m_valueP*1e5, m_valueT, m_valueX);
         }//single point calculation: PHX
         else if(m_valueV=="PHX" || m_valueV=="PXH" || m_valueV=="HPX" || m_valueV=="HXP" || m_valueV=="XPH" || m_valueV=="XPH")
         {
           if(!m_haveH)
           {
             cout<<ERROR_COUT<<"selected calculation mode is single point PHX, you must specify enthalpy by -H"<<endl;
-            return false;
           }
           if(!m_haveP)
           {
             cout<<ERROR_COUT<<"selected calculation mode is single point PHX, you must specify pressure by -P"<<endl;
-            return false;
           }
           if(!m_haveX)
           {
             cout<<ERROR_COUT<<"selected calculation mode is single point PHX, you must specify salinity by -X"<<endl;
-            return false;
           }
-          //check range
-          if(m_valueP>SWEOS::PMAX/1e5 || m_valueP<SWEOS::PMIN/1e5)
+          
+          // determin single point calculation, multi-points calculation or exit
+          if(m_haveH && m_haveP && m_haveX)//single point calculation
           {
-            cout<<ERROR_COUT<<"-P specify pressure ="<<m_valueP<<"bar = "<<m_valueP*1e5<<" Pa, out of range ["<<SWEOS::PMIN<<", "<<SWEOS::PMAX<<"] Pa"<<endl;
-            return false;
-          }
-          if(m_valueX>SWEOS::XMAX || m_valueX<SWEOS::XMIN)
+            //check range
+            if(m_valueP>SWEOS::PMAX/1e5 || m_valueP<SWEOS::PMIN/1e5)
+            {
+              cout<<ERROR_COUT<<"-P specify pressure ="<<m_valueP<<"bar = "<<m_valueP*1e5<<" Pa, out of range ["<<SWEOS::PMIN<<", "<<SWEOS::PMAX<<"] Pa"<<endl;
+              return false;
+            }
+            if(m_valueX>SWEOS::XMAX || m_valueX<SWEOS::XMIN)
+            {
+              cout<<ERROR_COUT<<"-X specify salinity ="<<m_valueX<<" wt. % NaCl, out of range ["<<SWEOS::XMIN<<", "<<SWEOS::XMAX<<"] wt. % NaCl"<<endl;
+              return false;
+            }
+            calculateSinglePoint_PHX(m_valueP*1e5, m_valueH*1000, m_valueX);
+          }else if(m_haveG)//not T, P, X value, but have intput file name
           {
-            cout<<ERROR_COUT<<"-X specify salinity ="<<m_valueX<<" wt. % NaCl, out of range ["<<SWEOS::XMIN<<", "<<SWEOS::XMAX<<"] wt. % NaCl"<<endl;
-            return false;
+            cout<<WARN_COUT<<"You specify a input file for multi-points calculation\n"
+            <<"Please make sure your input file with 3 columns in order of "<<m_valueV<<endl;
+            calculateMultiPoints_PTX_PHX(m_valueV,m_valueG, m_valueO,"H");
+          }else
+          {
+            cout<<ERROR_COUT<<"There neither full -H, -P, -X options nor -G argument, swEOS will exit"<<endl;
+            exit(0);
           }
-          calculateSinglePoint_PHX(m_valueP*1e5, m_valueH*1000, m_valueX);
         }else
         {
           cout<<ERROR_COUT<<"unknown -D parameter: "<<m_valueV<<endl;
           return false;
         }
+        
       }
       break;
     
@@ -251,5 +282,138 @@ namespace SWEOSbash
       cout<<eos<<endl;
     }
     return eos.m_prop;
+  }
+  bool calculateMultiPoints_PTX_PHX(string valueV, string filePTX, string outFile, string isT_H)
+  {
+    ifstream fin(filePTX);
+    if(!fin)
+    {
+      cout<<ERROR_COUT<<"Open file failed, please check -G argument, the file name specified by -G is "<<COLOR_RED<<filePTX<<COLOR_DEFAULT<<endl;
+      exit(0);
+    }
+    vector<double>P, T_H, X;
+    double p,t,x;
+    if(valueV=="P"+isT_H+"X")
+    {
+      while (!fin.eof())
+      {
+        fin>>p>>t>>x;
+        P.push_back(p);
+        T_H.push_back(t);
+        X.push_back(x);
+      }
+    }else if(valueV=="PX"+isT_H+"")
+    {
+      while (!fin.eof())
+      {
+        fin>>p>>x>>t;
+        P.push_back(p);
+        T_H.push_back(t);
+        X.push_back(x);
+      }
+    }else if(valueV==""+isT_H+"PX")
+    {
+      while (!fin.eof())
+      {
+        fin>>t>>p>>x;
+        P.push_back(p);
+        T_H.push_back(t);
+        X.push_back(x);
+      }
+    }else if(valueV==""+isT_H+"XP")
+    {
+      while (!fin.eof())
+      {
+        fin>>t>>x>>p;
+        P.push_back(p);
+        T_H.push_back(t);
+        X.push_back(x);
+      }
+    }else if(valueV=="XP"+isT_H+"")
+    {
+      while (!fin.eof())
+      {
+        fin>>x>>p>>t;
+        P.push_back(p);
+        T_H.push_back(t);
+        X.push_back(x);
+      }
+    }else if(valueV=="X"+isT_H+"P")
+    {
+      while (!fin.eof())
+      {
+        fin>>x>>t>>p;
+        P.push_back(p);
+        T_H.push_back(t);
+        X.push_back(x);
+      }
+    }else
+    {
+      cout<<ERROR_COUT<<"The -V argument must be one of P"+isT_H+"X, PX"+isT_H+
+                        ", "+isT_H+"PX, "+isT_H+"XP, XP"+isT_H+", X"+isT_H+"P when -D0\n"
+      <<"The -V option you set is "<<COLOR_RED<<valueV<<COLOR_DEFAULT<<" which is not supported"<<endl;
+      exit(0);
+    }
+    fin.close();
+    //cout or fout
+    ofstream fout(outFile);
+    SWEOS::cH2ONaCl eos;
+    if(fout)
+    {
+      fout<<"T(C), P(bar), X, Phase Index, Phase Region, "
+          <<"Bulk density(kg/m3), Liquid density(kg/m3), Vapour density(kg/m3), Halite density(kg/m3), "
+          <<"Bulk enthalpy(kJ/kg), Liquid enthalpy(kJ/kg), Vapour enthalpy(kJ/kg), Halite enthalpy(kJ/kg), "
+          <<"Liquid Saturation, Vapour Saturation, Halite Saturation, "
+          <<"Liquid viscosity, Vapour viscosity, "
+          <<"Liquid salinity, Vapour salinity"
+          <<endl;
+      for(int i=0;i<T_H.size();i++)
+      {
+        if(isT_H=="T")
+        {
+          eos.prop_pTX(P[i]*1e5, T_H[i]+SWEOS::Kelvin, X[i]);
+        }else if(isT_H=="H")
+        {
+          eos.prop_pHX(P[i]*1e5, T_H[i]*1000, X[i]);
+        }
+        fout<<eos.m_prop.T+SWEOS::Kelvin<<", "<<P[i]<<", "<<X[i]<<", "<<eos.m_prop.Region<<", "<<eos.m_phaseRegion_name[eos.m_prop.Region]<<", "
+            <<eos.m_prop.Rho<<", "<<eos.m_prop.Rho_l<<", "<<eos.m_prop.Rho_v<<", "<<eos.m_prop.Rho_h<<", "
+            <<eos.m_prop.H<<", "<<eos.m_prop.H_l<<", "<<eos.m_prop.H_v<<", "<<eos.m_prop.H_h<<", "
+            <<eos.m_prop.S_l<<", "<<eos.m_prop.S_v<<", "<<eos.m_prop.S_h<<", "
+            <<eos.m_prop.Mu_l<<", "<<eos.m_prop.Mu_v<<", "
+            <<eos.m_prop.X_l<<", "<<eos.m_prop.X_v
+            <<endl;
+      }
+      fout.close();
+    }else
+    {
+      if(!fout)cout<<WARN_COUT<<"The output file name is specified by -O argument, but open file failed: "<<outFile
+                   <<"\nPrint in terminal instead"<<endl;
+      cout<<"T(C), P(bar), X, Phase Index, Phase Region, "
+          <<"Bulk density(kg/m3), Liquid density(kg/m3), Vapour density(kg/m3), Halite density(kg/m3), "
+          <<"Bulk enthalpy(kJ/kg), Liquid enthalpy(kJ/kg), Vapour enthalpy(kJ/kg), Halite enthalpy(kJ/kg), "
+          <<"Liquid Saturation, Vapour Saturation, Halite Saturation, "
+          <<"Liquid viscosity, Vapour viscosity, "
+          <<"Liquid salinity, Vapour salinity"
+          <<endl;
+      for(int i=0;i<T_H.size();i++)
+      {
+        if(isT_H=="T")
+        {
+          eos.prop_pTX(P[i]*1e5, T_H[i]+SWEOS::Kelvin, X[i]);
+        }else if(isT_H=="H")
+        {
+          eos.prop_pHX(P[i]*1e5, T_H[i]*1000, X[i]);
+        }
+        cout<<eos.m_prop.T+SWEOS::Kelvin<<", "<<P[i]<<", "<<X[i]<<", "<<eos.m_prop.Region<<", "<<eos.m_phaseRegion_name[eos.m_prop.Region]<<", "
+            <<eos.m_prop.Rho<<", "<<eos.m_prop.Rho_l<<", "<<eos.m_prop.Rho_v<<", "<<eos.m_prop.Rho_h<<", "
+            <<eos.m_prop.H<<", "<<eos.m_prop.H_l<<", "<<eos.m_prop.H_v<<", "<<eos.m_prop.H_h<<", "
+            <<eos.m_prop.S_l<<", "<<eos.m_prop.S_v<<", "<<eos.m_prop.S_h<<", "
+            <<eos.m_prop.Mu_l<<", "<<eos.m_prop.Mu_v<<", "
+            <<eos.m_prop.X_l<<", "<<eos.m_prop.X_v
+            <<endl;
+      }
+    }
+    return true;
   }
 }

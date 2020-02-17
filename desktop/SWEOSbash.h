@@ -5,6 +5,7 @@
 #include <getopt.h>
 #include <sstream>
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 #include <sys/ioctl.h>
 #include <vector>
@@ -57,9 +58,9 @@ namespace SWEOSbash
     class cSWEOSarg
     {
     private:
-        bool m_haveD, m_haveV, m_haveP, m_haveT, m_haveX, m_haveH, m_haveR;
+        bool m_haveD, m_haveV, m_haveP, m_haveT, m_haveX, m_haveH, m_haveR, m_haveG, m_haveO;
         int m_valueD;
-        string m_valueV;
+        string m_valueV, m_valueG, m_valueO;
         double m_valueT, m_valueP, m_valueX, m_valueH;
         // min/delta/max, order coresponding to -V parameter, 
         //e.g. -VPT, m_valueR1 for pressure, m_valueR2 for temperature
@@ -81,6 +82,8 @@ namespace SWEOSbash
 
     SWEOS::PROP_H2ONaCl calculateSinglePoint_PTX(double P, double T, double X, bool isCout=true);
     SWEOS::PROP_H2ONaCl calculateSinglePoint_PHX(double P, double H, double X, bool isCout=true);
+    // bool calculateMultiPoints_PHX(string valueV, string filePHX, string outFile);
+    bool calculateMultiPoints_PTX_PHX(string valueV, string filePTX, string outFile, string isT_H);
     static void StartText()
     {
         //30: black  31:red  32:green  33:yellow  34:blue  35:purple  36:darkgreen
