@@ -42,9 +42,11 @@
 
 
 
+
 // Constructor
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
+    ,m_zhTranslator(NULL)
     , m_calculationMode(CALCULATION_SINGLE_POINT)
     , m_dimension(1)
     ,m_calculationMode_123Dim(oneDim_Temperature)
@@ -153,6 +155,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     // init plot
 //  on_pushButton_clicked();
+
+
 };
 
 MainWindow::~MainWindow()
@@ -160,6 +164,7 @@ MainWindow::~MainWindow()
   // The smart pointers should clean up for up
 
 }
+
 
 void MainWindow::init_Meters()
 {
@@ -2238,4 +2243,32 @@ void MainWindow::updateScatterCalculationUI(int index_varsSelection)
     }
         break;
     }
+}
+
+void MainWindow::on_actionChinese_triggered()
+{
+    //language file loading
+    if(!m_zhTranslator)
+    {
+        m_zhTranslator = new QTranslator(this);
+        QString path = QApplication::applicationDirPath();
+        if(!m_zhTranslator->load("../Resources/languages/zh_CN.qm"))
+        {
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("错误信息");
+            msgBox.setText("加载简体中文语言文件失败，请检查如下文件：\n"+path+"/../Resources/languages/zh_CN.qm");
+            msgBox.setStandardButtons(QMessageBox::Yes);
+            msgBox.setDefaultButton(QMessageBox::Yes);
+            msgBox.exec();
+            return;
+        }
+    }
+    qApp -> installTranslator(m_zhTranslator);
+    ui->retranslateUi(this);
+}
+
+void MainWindow::on_actionEnglish_triggered()
+{
+    qApp -> removeTranslator(m_zhTranslator);
+    ui->retranslateUi(this);
 }

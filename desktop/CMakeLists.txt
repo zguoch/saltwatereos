@@ -92,7 +92,7 @@ set( MOC_Hdrs ui_MainWindow.h )
 
 set( UIs MainWindow.ui )
 
-set( QRCs Icons/icons.qrc )
+set( QRCs Icons/icons.qrc)
 
 set( Srcs_bash SWEOSbash.cpp)
 
@@ -104,9 +104,14 @@ set(CMAKE_AUTOMOC ON)
 
 # The rest should just work (sure...)
 # We have ui files, this will bring in the macro: qt5_wrap_ui
-find_package(Qt5 COMPONENTS Widgets Core Concurrent REQUIRED QUIET)
+find_package(Qt5 COMPONENTS Widgets Core Concurrent LinguistTools REQUIRED QUIET)
 qt5_wrap_ui(UI_Srcs ${UIs})
 qt5_add_resources(QRC_Srcs ${QRCs} )
+
+#languages
+set(TS_FILES languages/zh_CN.ts)
+qt5_add_translation(QON_QM_FILES ${TS_FILES})
+set_source_files_properties(${QON_QM_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/languages")
 
 source_group("Resources" FILES
   ${UIs}
@@ -120,6 +125,7 @@ source_group("Generated" FILES
   ${QRC_Srcs}
 )
 
+
 # if want to generage mac os app, add MACOSX_BUNDLE follow ${PROGRAM_NAME} 
 add_executable(
   ${PROGRAM_NAME}  
@@ -132,9 +138,12 @@ add_executable(
   ${MOC_Hdrs} 
   ${QRC_Srcs}
   ${myApp_ICON}
+  ${QON_QM_FILES}
   )
 target_link_libraries(${PROGRAM_NAME} Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Concurrent eosH2ONaCl freesteam omp)
 target_link_libraries(${PROGRAM_NAME} ${VTK_LIBRARIES})
+
+
 
 # solve font blurry on UI
 set_target_properties(${PROGRAM_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist)

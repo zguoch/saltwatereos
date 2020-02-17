@@ -29,6 +29,7 @@
 #include <QFutureWatcher>
 #include <QDebug>
 #include <QElapsedTimer>
+#include <QTranslator>
 
 #include <thread>
 #include <omp.h>
@@ -163,6 +164,8 @@ public slots:
   virtual void slotOpenFile();
   virtual void slotExit();
     void busy_job();
+private:
+    QTranslator *m_zhTranslator;
 protected:
   int m_calculationMode;
   double m_IndependentVar1_old, m_IndependentVar2_old, m_IndependentVar3_old;
@@ -272,6 +275,10 @@ private slots:
     void on_doubleSpinBox_valueChanged(double arg1);
 
     void on_doubleSpinBox_3_valueChanged(double arg1);
+
+    void on_actionChinese_triggered();
+
+    void on_actionEnglish_triggered();
 
 private:
     QRect m_geometry_Groupbox_variables;
