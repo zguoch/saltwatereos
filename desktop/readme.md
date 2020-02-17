@@ -40,6 +40,20 @@ swEOS -D1 -VT -R0/2/1000 -P316 -X0.032
 * -t: number of threads
 
 
+
+## Example
+### Single point calculation
+```
+swEOS -D0 -VPXT -P316 -T100 -X0.032
+swEOS -D0 -VPXH -H438 -P316 -X0.032
+```
+### Multi-points calculation
+```
+swEOS -D0 -VPHX -G../test/PHX.txt -OPHX_0D.csv
+swEOS -D0 -VPHX -G../test/PHX.txt
+swEOS -D0 -VPTX -G../test/PTX.txt -OPTX_0D.csv
+swEOS -D0 -VPTX -G../test/PTX.txt
+```
 # Development
 
 ## Multi-language support
