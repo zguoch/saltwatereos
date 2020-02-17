@@ -245,6 +245,7 @@
         <file>Icons_PV/pvIcon512.png</file>
         <file>language/CH.png</file>
         <file>language/US.png</file>
+        <file>language/DE.png</file>
     <!-- Help -->
     <file>help.png</file>
   </qresource>

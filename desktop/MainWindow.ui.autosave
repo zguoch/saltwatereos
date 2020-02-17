@@ -1282,15 +1282,6 @@ QPushButton:hover{
     <string>Exit</string>
    </property>
   </action>
-  <action name="actionPrint">
-   <property name="icon">
-    <iconset resource="Icons/icons.qrc">
-     <normaloff>:/Icons/print.png</normaloff>:/Icons/print.png</iconset>
-   </property>
-   <property name="text">
-    <string>Print</string>
-   </property>
-  </action>
   <action name="actionHelp">
    <property name="icon">
     <iconset resource="Icons/icons.qrc">
@@ -1445,6 +1436,15 @@ QPushButton:hover{
    </property>
    <property name="text">
     <string>Deutsch</string>
+   </property>
+  </action>
+  <action name="actionPrint">
+   <property name="icon">
+    <iconset resource="Icons/icons.qrc">
+     <normaloff>:/Icons/print.png</normaloff>:/Icons/print.png</iconset>
+   </property>
+   <property name="text">
+    <string>Print</string>
    </property>
   </action>
  </widget>

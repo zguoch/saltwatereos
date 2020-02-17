@@ -313,7 +313,7 @@ void MainWindow::on_pushButton_2_clicked()
                     //std::cout<<"error: open file failed, "<<fileName.toStdString()<<endl;
                     QMessageBox msgBox;
                     msgBox.setWindowTitle(tr("Information"));
-                    msgBox.setText(tr("Open file failed: \n")+fileName);
+                    msgBox.setText(tr("Open file failed: ")+"\n"+fileName);
                     msgBox.setStandardButtons(QMessageBox::Yes);
                     msgBox.setDefaultButton(QMessageBox::Yes);
                     msgBox.exec();
@@ -2300,4 +2300,14 @@ void MainWindow::on_actionEnglish_triggered()
     ui->retranslateUi(this);
     init_Meters();
     updateMeters();
+}
+
+void MainWindow::on_actionDeutsch_triggered()
+{
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("Information");
+    msgBox.setText("Need to translate, coming soon");
+    msgBox.setStandardButtons(QMessageBox::Yes);
+    msgBox.setDefaultButton(QMessageBox::Yes);
+    msgBox.exec();
 }

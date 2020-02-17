@@ -280,6 +280,8 @@ private slots:
 
     void on_actionEnglish_triggered();
 
+    void on_actionDeutsch_triggered();
+
 private:
     QRect m_geometry_Groupbox_variables;
     void UpdateUI_P(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox);

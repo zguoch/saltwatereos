@@ -144,7 +144,7 @@
     <message>
         <location filename="../MainWindow.ui" line="700"/>
         <source>dP(bar):</source>
-        <translation type="unfinished">间隔(bar)</translation>
+        <translation type="unfinished">间隔(bar):</translation>
     </message>
     <message>
         <location filename="../MainWindow.ui" line="814"/>
@@ -225,10 +225,9 @@
         <translation type="unfinished">提示信息</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cxx" line="316"/>
         <source>Open file failed: 
 </source>
-        <translation type="unfinished">打开文件失败: </translation>
+        <translation type="obsolete">打开文件失败:</translation>
     </message>
     <message>
         <location filename="../MainWindow.cxx" line="382"/>
@@ -317,6 +316,11 @@
         <location filename="../MainWindow.cxx" line="2076"/>
         <source>Liquid enthalpy</source>
         <translation type="unfinished">液相焓</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.cxx" line="316"/>
+        <source>Open file failed: </source>
+        <translation type="unfinished">打开文件失败: </translation>
     </message>
     <message>
         <location filename="../MainWindow.cxx" line="406"/>
@@ -586,76 +590,105 @@
         <translation type="unfinished">语言</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="1276"/>
+        <location filename="../MainWindow.ui" line="1277"/>
         <source>Open File...</source>
-        <translation type="unfinished">打开文件</translation>
+        <translation type="unfinished">打开文件...</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="1281"/>
+        <location filename="../MainWindow.ui" line="1282"/>
         <source>Exit</source>
         <translation type="unfinished">退出</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="1290"/>
+        <location filename="../MainWindow.ui" line="1291"/>
         <source>Print</source>
         <translation type="unfinished">打印</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="1299"/>
+        <location filename="../MainWindow.ui" line="1300"/>
         <source>Help</source>
         <translation type="unfinished">帮助</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="1308"/>
+        <location filename="../MainWindow.ui" line="1309"/>
         <source>Save</source>
         <translation type="unfinished">保存</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="1317"/>
+        <location filename="../MainWindow.ui" line="1318"/>
         <source>Reset camera</source>
         <translation type="unfinished">重置相机</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="1326"/>
-        <location filename="../MainWindow.ui" line="1335"/>
+        <location filename="../MainWindow.ui" line="1327"/>
         <source>Zoom to Data</source>
         <translation type="unfinished">适配数据</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="1344"/>
-        <location filename="../MainWindow.ui" line="1353"/>
-        <location filename="../MainWindow.ui" line="1362"/>
-        <location filename="../MainWindow.ui" line="1371"/>
-        <location filename="../MainWindow.ui" line="1380"/>
-        <location filename="../MainWindow.ui" line="1389"/>
-        <location filename="../MainWindow.ui" line="1419"/>
+        <location filename="../MainWindow.ui" line="1336"/>
+        <source>Zoom to Box</source>
+        <translation type="unfinished">缩放到一个方块</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.ui" line="1345"/>
         <source>Set view direction to +x</source>
         <translation type="unfinished">设置视角为+X方向</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="1398"/>
+        <location filename="../MainWindow.ui" line="1354"/>
+        <source>Set view direction to -x</source>
+        <translation type="unfinished">设置视角为-X方向</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.ui" line="1363"/>
+        <source>Set view direction to +y</source>
+        <translation type="unfinished">设置视角为+Y方向</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.ui" line="1372"/>
+        <source>Set view direction to -y</source>
+        <translation type="unfinished">设置视角为-Y方向</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.ui" line="1381"/>
+        <source>Set view direction to +z</source>
+        <translation type="unfinished">设置视角为+Z方向</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.ui" line="1390"/>
+        <source>Set view direction to -z</source>
+        <translation type="unfinished">设置视角为-Z方向</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.ui" line="1399"/>
         <source>Rotate 90° clockwise</source>
         <translation type="unfinished">顺时针旋转90度</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="1407"/>
+        <location filename="../MainWindow.ui" line="1408"/>
         <source>Rotate 90° counterclockwise</source>
         <translation type="unfinished">逆时针旋转90度</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="1416"/>
+        <location filename="../MainWindow.ui" line="1417"/>
+        <location filename="../MainWindow.ui" line="1420"/>
         <source>Choose colorbar</source>
         <translation type="unfinished">选择颜色表</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="1424"/>
+        <location filename="../MainWindow.ui" line="1429"/>
         <source>English</source>
         <translation type="unfinished">English</translation>
     </message>
     <message>
-        <location filename="../MainWindow.ui" line="1429"/>
+        <location filename="../MainWindow.ui" line="1438"/>
         <source>简体中文</source>
         <translation type="unfinished">简体中文</translation>
+    </message>
+    <message>
+        <location filename="../MainWindow.ui" line="1447"/>
+        <source>Deutsch</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
