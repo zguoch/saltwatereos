@@ -6,12 +6,12 @@
 <link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
 
 </head><body>
-<h1 id="gui-version" data-line="2" class="code-line">GUI version</h1>
-<h1 id="command-line-version" data-line="4" class="code-line">Command line version</h1>
-<h2 id="arguments" data-line="6" class="code-line">Arguments</h2>
+<h1 id="gui-version-2" data-line="2" class="code-line">GUI version</h1>
+<h1 id="command-line-version-2" data-line="4" class="code-line">Command line version</h1>
+<h2 id="arguments-2" data-line="6" class="code-line">Arguments</h2>
 <pre><code data-line="8" class="code-line language-bash"><div>swEOS -D1 -VT -R0/2/1000 -P316 -X0.032
 </div></code></pre>
-<h3 id="required-arguments" data-line="12" class="code-line">Required arguments</h3>
+<h3 id="required-arguments-2" data-line="12" class="code-line">Required arguments</h3>
 <ul>
 <li data-line="14" class="code-line">
 <p data-line="14" class="code-line">-D[0|1|2|3]: calculation model (<strong>D</strong>imension) selection, 0~3 represent scatter point, 1D, 2D, 3D calculation, respectively</p>
@@ -47,9 +47,63 @@
 <p data-line="35" class="code-line">-O: output file for 1D, 2D, and 3D calculation</p>
 </li>
 </ul>
-<h3 id="optional-arguments" data-line="37" class="code-line">Optional arguments</h3>
+<h3 id="optional-arguments-2" data-line="37" class="code-line">Optional arguments</h3>
 <ul>
 <li data-line="39" class="code-line">-t: number of threads</li>
 </ul>
+<h1 id="development-2" data-line="42" class="code-line">Development</h1>
+<h2 id="multi-language-support-2" data-line="44" class="code-line">Multi-language support</h2>
+<h3 id="generage-and-edit-ts-file-2" data-line="46" class="code-line">Generage and edit .ts file</h3>
+<ul>
+<li data-line="47" class="code-line">using tr() for any string needed to translate</li>
+<li data-line="48" class="code-line">using <code>lupdate MainWindow.ui -ts languages/zh.ts</code>, <code>lupdate MainWindow.cxx -ts languages/zh.ts</code> the program of lupdate will detect all <code>tr()</code> marked string to <code>.ts</code> file.</li>
+<li data-line="49" class="code-line">using <code>Linguist</code> program open the .ts file to editor translation text.</li>
+</ul>
+<blockquote data-line="50" class="code-line">
+<p data-line="50" class="code-line">using <code>lrelease languages/zh_CN.ts</code> command to convert <code>.ts</code> file to binary <code>.qm</code> file. This process is not necessary, because this step can be done by cmake if you set <code>qt5_add_translation</code> in CMakeLists.txt</p>
+</blockquote>
+<h3 id="cmakelists-options-2" data-line="52" class="code-line">CMakeLists options</h3>
+<ul>
+<li data-line="54" class="code-line">add <code>LinguistTools</code> in <code>find_package</code>,</li>
+</ul>
+<pre><code data-line="55" class="code-line"><code><div>find_package(Qt5 COMPONENTS Widgets Core Concurrent LinguistTools REQUIRED QUIET)
+</div></code></code></pre>
+<ul>
+<li data-line="59" class="code-line">Set language .ts file and specify .qm file directory
+<code>MACOSX_PACKAGE_LOCATION</code> is the .app package folder for MacOS</li>
+</ul>
+<pre><code data-line="61" class="code-line"><code><div>set(TS_FILES languages/zh_CN.ts)
+qt5_add_translation(QON_QM_FILES ${TS_FILES})
+set_source_files_properties(${QON_QM_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION &quot;Resources/languages&quot;)
+</div></code></code></pre>
+<ul>
+<li data-line="67" class="code-line">Add .qm file to <code>add_executable</code></li>
+</ul>
+<pre><code data-line="69" class="code-line"><code><div>add_executable(
+  ${PROGRAM_NAME}  
+  MACOSX_BUNDLE
+  ${Srcs} 
+  ${Hdrs} 
+  ${Srcs_bash} 
+  ${Hdrs_bash} 
+  ${UI_Srcs} 
+  ${MOC_Hdrs} 
+  ${QRC_Srcs}
+  ${myApp_ICON}
+  ${QON_QM_FILES}
+  )
+</div></code></code></pre>
+<h1 id="issures-2" data-line="86" class="code-line">Issures</h1>
+<h2 id="openmp-2" data-line="88" class="code-line">OpenMP</h2>
+<p data-line="89" class="code-line">When using OpenMP in CMakeLists.txt, this first cmake will generate some errors, but if you cmake again, the error will disappear.</p>
+<pre><code data-line="91" class="code-line"><code><div> Could NOT find OpenMP_CXX (missing: OpenMP_CXX_FLAGS)
+Call Stack (most recent call first):
+  /usr/local/Cellar/cmake/3.16.3/share/cmake/Modules/FindPackageHandleStandardArgs.cmake:393 (_FPHSA_FAILURE_MESSAGE)
+  /usr/local/Cellar/cmake/3.16.3/share/cmake/Modules/FindOpenMP.cmake:511 (find_package_handle_standard_args)
+  CMakeLists.txt:32 (find_package)
+
+
+-- Configuring incomplete, errors occurred!
+</div></code></code></pre>
 
 </body></html>

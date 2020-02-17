@@ -168,14 +168,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::init_Meters()
 {
-    init_Meter(ui->meter_firstVar,5, 1000, 316,0,100,20,0, "Pressure", "bar");
-    init_Meter(ui->meter_thirdVar,0, 100, 3.2,1,10,2,0, "Salinity", "wt. %");
+    init_Meter(ui->meter_firstVar,5, 1000, 316,0,100,20,0, tr("Pressure"), tr("bar"));
+    init_Meter(ui->meter_thirdVar,0, 100, 3.2,1,10,2,0, tr("Salinity"), tr("wt. %"));
     if(ui->comboBox->currentIndex()==0)
     {
-        init_Meter(ui->meter_secondVar,0, 1000, 100,0,100,20,0, "Temperature", "°C");
+        init_Meter(ui->meter_secondVar,0, 1000, 100,0,100,20,0, tr("Temperature"), tr("°C"));
     }else if(ui->comboBox->currentIndex()==1)
     {
-        init_Meter(ui->meter_secondVar,0, 4.2, 2,2,0.5,0.1,1, "Enthalpy", "MJ/kg");
+        init_Meter(ui->meter_secondVar,0, 4.2, 2,2,0.5,0.1,1, tr("Enthalpy"), tr("MJ/kg"));
     }
 }
 void MainWindow::init_Meter(Meter* meter,double min, double max, double value,int valuePrecision,
@@ -310,7 +310,13 @@ void MainWindow::on_pushButton_2_clicked()
                 ifstream fin(fileName.toStdString());
                 if(!fin)
                 {
-                    std::cout<<"error: open file failed, "<<fileName.toStdString()<<endl;
+                    //std::cout<<"error: open file failed, "<<fileName.toStdString()<<endl;
+                    QMessageBox msgBox;
+                    msgBox.setWindowTitle(tr("Information"));
+                    msgBox.setText(tr("Open file failed: \n")+fileName);
+                    msgBox.setStandardButtons(QMessageBox::Yes);
+                    msgBox.setDefaultButton(QMessageBox::Yes);
+                    msgBox.exec();
                     return;
                 }
                 vector<double>arrT_H,arrP,arrX;
@@ -371,50 +377,50 @@ void MainWindow::SinglePointCalculation(int index_varsSelection)
     case 0: //PTX
     {
         eos.prop_pTX(p, T_H+SWEOS::Kelvin, X);
-        name_T_H="Temperature";
-        name_unit_T_H="°C";
-        name_T_H_display="Bulk enthalpy";
+        name_T_H=tr("Temperature");
+        name_unit_T_H=tr("°C");
+        name_T_H_display=tr("Bulk enthalpy");
         value_T_H_display=eos.m_prop.H;
     }
         break;
     case 1: //PHX
     {
         eos.prop_pHX(p, T_H*1000, X); //Enthalpy unit in UI is kJ/kg
-        name_T_H="Enthalpy";
-        name_unit_T_H="kJ/kg";
-        name_T_H_display="Temperature";
+        name_T_H=tr("Enthalpy");
+        name_unit_T_H=tr("kJ/kg");
+        name_T_H_display=tr("Temperature");
         value_T_H_display=eos.m_prop.T;
     }
         break;
     }
    QString result_str;
    // T, P, X
-   result_str="<font color=Purple>Pressure</font> = <font color="+color_value_1+">"+QString::number(p)
+   result_str="<font color=Purple>"+tr("Pressure")+"</font> = <font color="+color_value_1+">"+QString::number(p)
            +"</font> Pa, <font color=Purple>"+name_T_H+"</font> = <font color="+color_value_2+">"+QString::number(T_H)
-           +"</font> "+name_unit_T_H+", <font color=Purple>Salinity</font>  = <font color="+color_value_3+">"+QString::number(X*100)
+           +"</font> "+name_unit_T_H+", <font color=Purple>"+tr("Salinity")+"</font>  = <font color="+color_value_3+">"+QString::number(X*100)
            +"</font> wt. % NaCl<br>";
    result_str+="======================================================================<br>";
    // Region
-   result_str+="<font color=Blue>Phase Region</font>: "+QString::fromStdString(eos.m_phaseRegion_name[eos.m_prop.Region])+"<br>";
+   result_str+="<font color=Blue>"+tr("Phase Region")+": </font>: "+QString::fromStdString(eos.m_phaseRegion_name[eos.m_prop.Region])+"<br>";
    // Xl, Xv
-   result_str+="<font color=Blue>Xl: </font> &nbsp; "+QString::number(eos.m_prop.X_l)+
-             ",&nbsp;&nbsp;&nbsp; <font color=Blue>Xv: </font> &nbsp; "+QString::number(eos.m_prop.X_v)+"<br>";
+   result_str+="<font color=Blue>"+tr("Xl")+": </font> &nbsp; "+QString::number(eos.m_prop.X_l)+
+             ",&nbsp;&nbsp;&nbsp; <font color=Blue>"+tr("Xv")+": </font> &nbsp; "+QString::number(eos.m_prop.X_v)+"<br>";
    // Bulk rho, bulk H, bulk mu
-   result_str+="<font color=Blue>Bulk density: </font> &nbsp; "+QString::number(eos.m_prop.Rho)+
+   result_str+="<font color=Blue>"+tr("Bulk density")+": </font> &nbsp; "+QString::number(eos.m_prop.Rho)+
              ",&nbsp;&nbsp;&nbsp; <font color=Blue>"+name_T_H_display+": </font> &nbsp; "+QString::number(value_T_H_display)+"<br>";
 //             ",&nbsp;&nbsp;&nbsp; <font color=Blue>Bulk viscosity: </font> &nbsp; "+QString::number(eos.m_prop.Mu)
    // rhol, rhov, rhoh
-   result_str+="<font color=Blue>Liquid density: </font> &nbsp; "+QString::number(eos.m_prop.Rho_l)+
-             ",&nbsp;&nbsp;&nbsp; <font color=Blue>Vapour density: </font> &nbsp; "+QString::number(eos.m_prop.Rho_v)+
-             ",&nbsp;&nbsp;&nbsp; <font color=Blue>Halite density: </font> &nbsp; "+QString::number(eos.m_prop.Rho_h)+"<br>";
+   result_str+="<font color=Blue>"+tr("Liquid density")+": </font> &nbsp; "+QString::number(eos.m_prop.Rho_l)+
+             ",&nbsp;&nbsp;&nbsp; <font color=Blue>"+tr("Vapour density")+": </font> &nbsp; "+QString::number(eos.m_prop.Rho_v)+
+             ",&nbsp;&nbsp;&nbsp; <font color=Blue>"+tr("Halite density")+": </font> &nbsp; "+QString::number(eos.m_prop.Rho_h)+"<br>";
 
    // Hl, Hv, Hh
-   result_str+="<font color=Blue>Liquid enthalpy: </font> &nbsp; "+QString::number(eos.m_prop.H_l)+
-             ",&nbsp;&nbsp;&nbsp; <font color=Blue>Vapour enthalpy: </font> &nbsp; "+QString::number(eos.m_prop.H_v)+
-             ",&nbsp;&nbsp;&nbsp; <font color=Blue>Halite enthalpy: </font> &nbsp; "+QString::number(eos.m_prop.H_h)+"<br>";
+   result_str+="<font color=Blue>"+tr("Liquid enthalpy")+": </font> &nbsp; "+QString::number(eos.m_prop.H_l)+
+             ",&nbsp;&nbsp;&nbsp; <font color=Blue>"+tr("Vapour enthalpy")+": </font> &nbsp; "+QString::number(eos.m_prop.H_v)+
+             ",&nbsp;&nbsp;&nbsp; <font color=Blue>"+tr("Halite enthalpy")+": </font> &nbsp; "+QString::number(eos.m_prop.H_h)+"<br>";
    // Mul, Muv
-   result_str+="<font color=Blue>Liquid viscosity: </font> &nbsp; "+QString::number(eos.m_prop.Mu_l)+
-             ",&nbsp;&nbsp;&nbsp; <font color=Blue>Vapour viscosity: </font> &nbsp; "+QString::number(eos.m_prop.Mu_v)+"<br>";
+   result_str+="<font color=Blue>"+tr("Liquid viscosity")+": </font> &nbsp; "+QString::number(eos.m_prop.Mu_l)+
+             ",&nbsp;&nbsp;&nbsp; <font color=Blue>"+tr("Vapour viscosity")+": </font> &nbsp; "+QString::number(eos.m_prop.Mu_v)+"<br>";
    // Time stamp
    QDateTime current_date_time =QDateTime::currentDateTime();
    QString current_date =current_date_time.toString("yyyy.MM.dd hh:mm:ss ddd");
@@ -449,8 +455,8 @@ void MainWindow::on_radioButton_clicked()
     if(ui->radioButton->isChecked())
     {
         m_calculationMode=CALCULATION_SINGLE_POINT;
-        ui->pushButton_2->setText("Calculatet");
-        ui->pushButton_2->setToolTip("Single point calculation");
+        ui->pushButton_2->setText(tr("Calculate"));
+        ui->pushButton_2->setToolTip(tr("Single point calculation"));
         updateCalculationModelSelection(true);
     }
 }
@@ -460,13 +466,13 @@ void MainWindow::on_radioButton_2_clicked()
     if(ui->radioButton_2->isChecked())
     {
         m_calculationMode=CALCULATION_MULTI_POINTS;
-        ui->pushButton_2->setText("Open File");
+        ui->pushButton_2->setText(tr("Open File"));
         if(ui->comboBox->currentIndex()==0)
         {
-            ui->pushButton_2->setToolTip("Read file: p(bar) T(°C) X");
+            ui->pushButton_2->setToolTip(tr("Read file: p(bar) T(°C) X"));
         }else if(ui->comboBox->currentIndex()==1)
         {
-            ui->pushButton_2->setToolTip("Read file: p(bar) H(J/kg) X");
+            ui->pushButton_2->setToolTip(tr("Read file: p(bar) H(J/kg) X"));
         }
 
         updateCalculationModelSelection(false);
@@ -497,7 +503,7 @@ int MainWindow::Calculate_Diagram1D()
     switch (ui->comboBox_selectVariable->currentIndex()) {
     case 0:   //temperature
     {
-        varName="Temperature (°C)";
+        varName=tr("Temperature (°C)");
         m_index_var=0;
         double dT=ui->doubleSpinBox_delta_firstVar->value();
         double Tmin=ui->doubleSpinBox_min_firstVar->value();
@@ -514,7 +520,7 @@ int MainWindow::Calculate_Diagram1D()
         break;
     case 1:   //pressure
     {
-        varName="Pressure (bar)";
+        varName=tr("Pressure (bar)");
         m_index_var=1;
         double dP=ui->doubleSpinBox_delta_firstVar->value()*1e5;
         double Pmin=ui->doubleSpinBox_min_firstVar->value()*1e5;
@@ -531,7 +537,7 @@ int MainWindow::Calculate_Diagram1D()
         break;
     case 2:  //salinity
     {
-        varName="Salinity";
+        varName=tr("Salinity");
         m_index_var=2;
         double dX=ui->doubleSpinBox_delta_firstVar->value();
         double Xmin=ui->doubleSpinBox_min_firstVar->value();
@@ -548,7 +554,7 @@ int MainWindow::Calculate_Diagram1D()
         break;
     case 3:   //enthalpy
     {
-        varName="Enthalpy (kJ/kg)";
+        varName=tr("Enthalpy (kJ/kg)");
         m_index_var=INDEX_H_VTKTABLE;
         double dH=ui->doubleSpinBox_delta_firstVar->value();
         double Hmin=ui->doubleSpinBox_min_firstVar->value();
@@ -962,7 +968,7 @@ void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector
 
 int MainWindow::Calculate_Diagram2D()
 {
-//    vector<double>arrP,arrT,arrX;
+    //    vector<double>arrP,arrT,arrX;
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
     //phase region
     vtkSmartPointer<vtkDoubleArray> arrPhaseRegion = vtkSmartPointer<vtkDoubleArray>::New();
@@ -1355,7 +1361,7 @@ void MainWindow::ShowProps_2D(int index_prop, std::string xlabel,std::string yla
         legendBox->SetXLength(40);
         legendBox->SetYLength(10);
         legendBox->Update();
-//        colors->GetColor("tomato", color);
+    //        colors->GetColor("tomato", color);
         SWEOS::cH2ONaCl eos;
         for (size_t i=0;i<phaseRegionVector.size();i++) {
             gridMapper->GetLookupTable()->GetColor(phaseRegionVector[i],color);
@@ -1432,8 +1438,8 @@ void MainWindow::busy_job()
         break;
     case 3:
         QMessageBox msgBox;
-        msgBox.setWindowTitle("Information");
-        msgBox.setText("3D is comming soon");
+        msgBox.setWindowTitle(tr("Information"));
+        msgBox.setText(tr("3D is comming soon"));
         msgBox.setStandardButtons(QMessageBox::Yes);
         msgBox.setDefaultButton(QMessageBox::Yes);
         msgBox.exec();
@@ -1457,7 +1463,7 @@ void MainWindow::busy_job_finished()
         }
         break;
     case 3:
-        ui->textEdit->append("3D is comming soon");
+        ui->textEdit->append(tr("3D is comming soon"));
         break;
 
     }
@@ -1609,21 +1615,21 @@ void MainWindow::updateUILayout(bool show_secondVariable, bool show_thirdVariabl
     if(show_thirdVariable)
     {
         ui->comboBox_selectVariable->clear();
-        ui->comboBox_selectVariable->addItem("PTX");
-        ui->comboBox_selectVariable->addItem("PHX");
+        ui->comboBox_selectVariable->addItem(tr("PTX"));
+        ui->comboBox_selectVariable->addItem(tr("PHX"));
     }else if(show_secondVariable)
     {
         ui->comboBox_selectVariable->clear();
-        ui->comboBox_selectVariable->addItem("PT");
-        ui->comboBox_selectVariable->addItem("PX");
-        ui->comboBox_selectVariable->addItem("TX");
+        ui->comboBox_selectVariable->addItem(tr("PT"));
+        ui->comboBox_selectVariable->addItem(tr("PX"));
+        ui->comboBox_selectVariable->addItem(tr("TX"));
     }else
     {
         ui->comboBox_selectVariable->clear();
-        ui->comboBox_selectVariable->addItem("Temperature");
-        ui->comboBox_selectVariable->addItem("Pressure");
-        ui->comboBox_selectVariable->addItem("Salinity");
-        ui->comboBox_selectVariable->addItem("Enthalpy");
+        ui->comboBox_selectVariable->addItem(tr("Temperature"));
+        ui->comboBox_selectVariable->addItem(tr("Pressure"));
+        ui->comboBox_selectVariable->addItem(tr("Salinity"));
+        ui->comboBox_selectVariable->addItem(tr("Enthalpy"));
     }
     //second variable
     ui->label_max_secondVar->setVisible(show_secondVariable);
@@ -1705,7 +1711,7 @@ void MainWindow::update1dUI_chartOptions(int index_propSelection)
 {
     //update UI of chart options for 1D chart
     ui->checkBox->setVisible(true);
-    ui->checkBox->setText("Point marker");
+    ui->checkBox->setText(tr("Point marker"));
     ui->checkBox_2->setVisible(false);
     ui->checkBox_3->setVisible(false);
     ui->checkBox_4->setVisible(false);
@@ -1713,77 +1719,77 @@ void MainWindow::update1dUI_chartOptions(int index_propSelection)
     switch (index_propSelection) {
         case 0: //phase region
         {
-            ui->checkBox->setText("Point marker");
+            ui->checkBox->setText(tr("Point marker"));
         }
         break;
         case 1: //density
         {
             ui->checkBox_2->setVisible(true);
             ui->checkBox_2->setChecked(true);
-            ui->checkBox_2->setText("Bulk density");
+            ui->checkBox_2->setText(tr("Bulk density"));
             ui->checkBox_3->setVisible(true);
             ui->checkBox_3->setChecked(true);
-            ui->checkBox_3->setText("Liquid density");
+            ui->checkBox_3->setText(tr("Liquid density"));
             ui->checkBox_4->setVisible(true);
             ui->checkBox_4->setChecked(true);
-            ui->checkBox_4->setText("Vapour density");
+            ui->checkBox_4->setText(tr("Vapour density"));
             ui->checkBox_5->setVisible(true);
             ui->checkBox_5->setChecked(true);
-            ui->checkBox_5->setText("Halite density");
+            ui->checkBox_5->setText(tr("Halite density"));
         }
         break;
         case 2: //enthalpy
         {
             ui->checkBox_2->setVisible(true);
             ui->checkBox_2->setChecked(true);
-            ui->checkBox_2->setText("Bulk enthalpy");
+            ui->checkBox_2->setText(tr("Bulk enthalpy"));
             ui->checkBox_3->setVisible(true);
             ui->checkBox_3->setChecked(true);
-            ui->checkBox_3->setText("Liquid enthalpy");
+            ui->checkBox_3->setText(tr("Liquid enthalpy"));
             ui->checkBox_4->setVisible(true);
             ui->checkBox_4->setChecked(true);
-            ui->checkBox_4->setText("Vapour enthalpy");
+            ui->checkBox_4->setText(tr("Vapour enthalpy"));
             ui->checkBox_5->setVisible(true);
             ui->checkBox_5->setChecked(true);
-            ui->checkBox_5->setText("Halite enthalpy");
+            ui->checkBox_5->setText(tr("Halite enthalpy"));
         }
         break;
         case 3: //saturation
         {
             ui->checkBox_2->setVisible(true);
             ui->checkBox_2->setChecked(true);
-            ui->checkBox_2->setText("Liquid saturation");
+            ui->checkBox_2->setText(tr("Liquid saturation"));
             ui->checkBox_3->setVisible(true);
             ui->checkBox_3->setChecked(true);
-            ui->checkBox_3->setText("Vapour saturation");
+            ui->checkBox_3->setText(tr("Vapour saturation"));
             ui->checkBox_4->setVisible(true);
             ui->checkBox_4->setChecked(true);
-            ui->checkBox_4->setText("Halite saturation");
+            ui->checkBox_4->setText(tr("Halite saturation"));
         }
         break;
         case 4: //viscosity
         {
             ui->checkBox_2->setVisible(true);
             ui->checkBox_2->setChecked(true);
-            ui->checkBox_2->setText("Liquid viscosity");
+            ui->checkBox_2->setText(tr("Liquid viscosity"));
             ui->checkBox_3->setVisible(true);
             ui->checkBox_3->setChecked(true);
-            ui->checkBox_3->setText("Vapour viscosity");
+            ui->checkBox_3->setText(tr("Vapour viscosity"));
         }
         break;
         case 5: //viscosity
         {
             ui->checkBox_2->setVisible(true);
             ui->checkBox_2->setChecked(true);
-            ui->checkBox_2->setText("Liquid salinity");
+            ui->checkBox_2->setText(tr("Liquid salinity"));
             ui->checkBox_3->setVisible(true);
             ui->checkBox_3->setChecked(true);
-            ui->checkBox_3->setText("Vapour salinity");
+            ui->checkBox_3->setText(tr("Vapour salinity"));
         }
         break;
         case 6: //temperature
         {
-            ui->checkBox->setText("Point marker");
+            ui->checkBox->setText(tr("Point marker"));
         }
         break;
     }
@@ -1792,14 +1798,14 @@ void MainWindow::update1dUI(QString arg, int index_propSelection)
 {
     //update properties selection
     ui->comboBox_selectProps->clear();
-    ui->comboBox_selectProps->addItem("Phase Region");
-    ui->comboBox_selectProps->addItem("Density");
-    ui->comboBox_selectProps->addItem("Enthalpy");
-    ui->comboBox_selectProps->addItem("Saturation");
-    ui->comboBox_selectProps->addItem("Viscosity");
-    ui->comboBox_selectProps->addItem("Salinity");
-    ui->comboBox_selectProps->addItem("Temperature");
-    if(arg=="Temperature")
+    ui->comboBox_selectProps->addItem(tr("Phase Region"));
+    ui->comboBox_selectProps->addItem(tr("Density"));
+    ui->comboBox_selectProps->addItem(tr("Enthalpy"));
+    ui->comboBox_selectProps->addItem(tr("Saturation"));
+    ui->comboBox_selectProps->addItem(tr("Viscosity"));
+    ui->comboBox_selectProps->addItem(tr("Salinity"));
+    ui->comboBox_selectProps->addItem(tr("Temperature"));
+    if(arg==tr("Temperature"))
     {
         //fixed vars
         UpdateUI_fixedP(ui->label_fixed_firsVar,ui->doubleSpinBox_fixed_firstVar);
@@ -1807,7 +1813,7 @@ void MainWindow::update1dUI(QString arg, int index_propSelection)
         //independent variable
         UpdateUI_T(ui->label_delta_firstVar, ui->doubleSpinBox_delta_firstVar, ui->doubleSpinBox_max_firstVar, ui->doubleSpinBox_min_firstVar);
 
-    }else if(arg=="Pressure")
+    }else if(arg==tr("Pressure"))
     {
         //fixed vars
         UpdateUI_fixedT(ui->label_fixed_firsVar,ui->doubleSpinBox_fixed_firstVar);
@@ -1815,14 +1821,14 @@ void MainWindow::update1dUI(QString arg, int index_propSelection)
         //independent variable
         UpdateUI_P(ui->label_delta_firstVar, ui->doubleSpinBox_delta_firstVar, ui->doubleSpinBox_max_firstVar, ui->doubleSpinBox_min_firstVar);
 
-    }else if(arg=="Salinity")
+    }else if(arg==tr("Salinity"))
     {
         //fixed vars
         UpdateUI_fixedP(ui->label_fixed_firsVar,ui->doubleSpinBox_fixed_firstVar);
         UpdateUI_fixedT(ui->label_fixed_secondVar,ui->doubleSpinBox_fixed_secondVar);
         //independent variable
         UpdateUI_X(ui->label_delta_firstVar, ui->doubleSpinBox_delta_firstVar, ui->doubleSpinBox_max_firstVar, ui->doubleSpinBox_min_firstVar);
-    }else if(arg=="Enthalpy")
+    }else if(arg==tr("Enthalpy"))
     {
         //fixed vars
         UpdateUI_fixedP(ui->label_fixed_firsVar,ui->doubleSpinBox_fixed_firstVar);
@@ -1834,7 +1840,13 @@ void MainWindow::update1dUI(QString arg, int index_propSelection)
     }
     else
     {
-        std::cout<<"error: update1dUI, no such item: "<<arg.toStdString()<<std::endl;
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(tr("Error"));
+        msgBox.setText(tr("error: update1dUI, no such item: ")+arg);
+        msgBox.setStandardButtons(QMessageBox::Yes);
+        msgBox.setDefaultButton(QMessageBox::Yes);
+        msgBox.exec();
+        // std::cout<<"error: update1dUI, no such item: "<<arg.toStdString()<<std::endl;
     }
 
     // chart options
@@ -1843,7 +1855,7 @@ void MainWindow::update1dUI(QString arg, int index_propSelection)
 
 void MainWindow::updateEnthalpyRange_UI_1D()
 {
-    if(ui->comboBox_selectVariable->currentText()=="Enthalpy")//Enthalpy
+    if(ui->comboBox_selectVariable->currentText()==tr("Enthalpy"))//Enthalpy
     {
         //independent variable
         double pMinMax[2]={ui->doubleSpinBox_fixed_firstVar->value()*1e5, ui->doubleSpinBox_fixed_firstVar->value()*1e5};
@@ -1877,7 +1889,7 @@ void MainWindow::on_doubleSpinBox_fixed_secondVar_valueChanged(double )
 
 void MainWindow::UpdateUI_fixedP(QLabel* label, QDoubleSpinBox* box, double defaultValue)
 {
-    label->setText("Pressure (bar)");
+    label->setText(tr("Pressure (bar)"));
     box->setDecimals(2);
     box->setRange(SWEOS::PMIN/1e5, SWEOS::PMAX/1e5);
     box->setSingleStep(1);
@@ -1885,7 +1897,7 @@ void MainWindow::UpdateUI_fixedP(QLabel* label, QDoubleSpinBox* box, double defa
 }
 void MainWindow::UpdateUI_fixedX(QLabel* label, QDoubleSpinBox* box, double defaultValue)
 {
-    label->setText("Salinity");
+    label->setText(tr("Salinity"));
     box->setDecimals(4);
     box->setRange(SWEOS::XMIN, SWEOS::XMAX);
     box->setSingleStep(0.001);
@@ -1893,7 +1905,7 @@ void MainWindow::UpdateUI_fixedX(QLabel* label, QDoubleSpinBox* box, double defa
 }
 void MainWindow::UpdateUI_fixedT(QLabel* label, QDoubleSpinBox* box, double defaultValue)
 {
-    label->setText("Temperature (°C)");
+    label->setText(tr("Temperature (°C)"));
     box->setDecimals(2);
     box->setRange(SWEOS::TMIN-SWEOS::Kelvin, SWEOS::TMAX-SWEOS::Kelvin);
     box->setSingleStep(1);
@@ -1901,7 +1913,7 @@ void MainWindow::UpdateUI_fixedT(QLabel* label, QDoubleSpinBox* box, double defa
 }
 void MainWindow::UpdateUI_fixedH(QLabel* label, QDoubleSpinBox* box, double defaultValue)
 {
-    label->setText("Enthalpy (kJ/kg)");
+    label->setText(tr("Enthalpy (kJ/kg)"));
     box->setDecimals(4);
     box->setRange(MIN_ENTHALPY, MAX_ENTHALPY);
     box->setSingleStep(1);
@@ -1909,7 +1921,7 @@ void MainWindow::UpdateUI_fixedH(QLabel* label, QDoubleSpinBox* box, double defa
 }
 void MainWindow::UpdateUI_X(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox)
 {
-    label->setText("dX:");
+    label->setText(tr("dX:"));
     deltaBox->setDecimals(4);
     deltaBox->setRange(0.0001, 1);
     deltaBox->setSingleStep(0.001);
@@ -1927,7 +1939,7 @@ void MainWindow::UpdateUI_X(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
 }
 void MainWindow::UpdateUI_T(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox)
 {
-    label->setText("dT(°C):");
+    label->setText(tr("dT(°C):"));
     deltaBox->setDecimals(2);
     deltaBox->setRange(0.01, 100);
     deltaBox->setSingleStep(1);
@@ -1963,7 +1975,7 @@ void MainWindow::UpdateUI_H(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
     hMin=hMin/1000+0.1;
     hMax=hMax/1000-0.1;
     //----------------------
-    label->setText("dH(kJ/kg):");
+    label->setText(tr("dH(kJ/kg):"));
     deltaBox->setDecimals(4);
     deltaBox->setRange(0.001, hMax);
     deltaBox->setSingleStep(1);
@@ -1981,7 +1993,7 @@ void MainWindow::UpdateUI_H(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
 }
 void MainWindow::UpdateUI_P(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox)
 {
-    label->setText("dP (bar):");
+    label->setText(tr("dP (bar):"));
     deltaBox->setDecimals(2);
     deltaBox->setRange(0.1, 100);
     deltaBox->setSingleStep(1);
@@ -2001,23 +2013,23 @@ void MainWindow::update2dUI(QString arg)
 {
     //update properties selection
     ui->comboBox_selectProps->clear();
-    ui->comboBox_selectProps->addItem("Phase Region");
-    ui->comboBox_selectProps->addItem("Bulk density");
-    ui->comboBox_selectProps->addItem("Liquid density");
-    ui->comboBox_selectProps->addItem("Vapour density");
-    ui->comboBox_selectProps->addItem("Halite density");
-    ui->comboBox_selectProps->addItem("Bulk enthalpy");
-    ui->comboBox_selectProps->addItem("Liquid enthalpy");
-    ui->comboBox_selectProps->addItem("Vapour enthalpy");
-    ui->comboBox_selectProps->addItem("Halite enthalpy");
-    ui->comboBox_selectProps->addItem("Liquid saturation");
-    ui->comboBox_selectProps->addItem("Vapour saturation");
-    ui->comboBox_selectProps->addItem("Halite saturation");
-    ui->comboBox_selectProps->addItem("Liquid viscosity");
-    ui->comboBox_selectProps->addItem("Vapour viscosity");
-    ui->comboBox_selectProps->addItem("Liquid salinity");
-    ui->comboBox_selectProps->addItem("Vapour salinity");
-    if(arg=="PT")
+    ui->comboBox_selectProps->addItem(tr("Phase Region"));
+    ui->comboBox_selectProps->addItem(tr("Bulk density"));
+    ui->comboBox_selectProps->addItem(tr("Liquid density"));
+    ui->comboBox_selectProps->addItem(tr("Vapour density"));
+    ui->comboBox_selectProps->addItem(tr("Halite density"));
+    ui->comboBox_selectProps->addItem(tr("Bulk enthalpy"));
+    ui->comboBox_selectProps->addItem(tr("Liquid enthalpy"));
+    ui->comboBox_selectProps->addItem(tr("Vapour enthalpy"));
+    ui->comboBox_selectProps->addItem(tr("Halite enthalpy"));
+    ui->comboBox_selectProps->addItem(tr("Liquid saturation"));
+    ui->comboBox_selectProps->addItem(tr("Vapour saturation"));
+    ui->comboBox_selectProps->addItem(tr("Halite saturation"));
+    ui->comboBox_selectProps->addItem(tr("Liquid viscosity"));
+    ui->comboBox_selectProps->addItem(tr("Vapour viscosity"));
+    ui->comboBox_selectProps->addItem(tr("Liquid salinity"));
+    ui->comboBox_selectProps->addItem(tr("Vapour salinity"));
+    if(arg==tr("PT"))
     {
         //fixed vars
         UpdateUI_fixedX(ui->label_fixed_firsVar,ui->doubleSpinBox_fixed_firstVar);
@@ -2025,7 +2037,7 @@ void MainWindow::update2dUI(QString arg)
         UpdateUI_P(ui->label_delta_firstVar, ui->doubleSpinBox_delta_firstVar, ui->doubleSpinBox_max_firstVar, ui->doubleSpinBox_min_firstVar);
         UpdateUI_T(ui->label_delta_secondVar, ui->doubleSpinBox_delta_secondVar, ui->doubleSpinBox_max_secondVar, ui->doubleSpinBox_min_secondVar);
 
-    }else if(arg=="PX")
+    }else if(arg==tr("PX"))
     {
         //fixed vars
         UpdateUI_fixedT(ui->label_fixed_firsVar,ui->doubleSpinBox_fixed_firstVar);
@@ -2033,7 +2045,7 @@ void MainWindow::update2dUI(QString arg)
         UpdateUI_P(ui->label_delta_firstVar, ui->doubleSpinBox_delta_firstVar, ui->doubleSpinBox_max_firstVar, ui->doubleSpinBox_min_firstVar);
         UpdateUI_X(ui->label_delta_secondVar, ui->doubleSpinBox_delta_secondVar, ui->doubleSpinBox_max_secondVar, ui->doubleSpinBox_min_secondVar);
 
-    }else if(arg=="TX")
+    }else if(arg==tr("TX"))
     {
         //fixed vars
         UpdateUI_fixedP(ui->label_fixed_firsVar,ui->doubleSpinBox_fixed_firstVar);
@@ -2042,37 +2054,43 @@ void MainWindow::update2dUI(QString arg)
         UpdateUI_X(ui->label_delta_secondVar, ui->doubleSpinBox_delta_secondVar, ui->doubleSpinBox_max_secondVar, ui->doubleSpinBox_min_secondVar);
     }else
     {
-        std::cout<<"error: update2dUI, no such item: "<<arg.toStdString()<<std::endl;
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(tr("Error"));
+        msgBox.setText(tr("error: update2dUI, no such item: ")+arg);
+        msgBox.setStandardButtons(QMessageBox::Yes);
+        msgBox.setDefaultButton(QMessageBox::Yes);
+        msgBox.exec();
+        // std::cout<<"error: update2dUI, no such item: "<<arg.toStdString()<<std::endl;
     }
 }
 void MainWindow::update3dUI(QString arg)
 {
     //update properties selection
     ui->comboBox_selectProps->clear();
-    ui->comboBox_selectProps->addItem("Phase Region");
-    ui->comboBox_selectProps->addItem("Bulk density");
-    ui->comboBox_selectProps->addItem("Liquid density");
-    ui->comboBox_selectProps->addItem("Vapour density");
-    ui->comboBox_selectProps->addItem("Halite density");
-    ui->comboBox_selectProps->addItem("Bulk enthalpy");
-    ui->comboBox_selectProps->addItem("Liquid enthalpy");
-    ui->comboBox_selectProps->addItem("Vapour enthalpy");
-    ui->comboBox_selectProps->addItem("Halite enthalpy");
-    ui->comboBox_selectProps->addItem("Liquid saturation");
-    ui->comboBox_selectProps->addItem("Vapour saturation");
-    ui->comboBox_selectProps->addItem("Halite saturation");
-    ui->comboBox_selectProps->addItem("Liquid viscosity");
-    ui->comboBox_selectProps->addItem("Vapour viscosity");
-    ui->comboBox_selectProps->addItem("Liquid salinity");
-    ui->comboBox_selectProps->addItem("Vapour salinity");
-    if(arg=="PTX")
+    ui->comboBox_selectProps->addItem(tr("Phase Region"));
+    ui->comboBox_selectProps->addItem(tr("Bulk density"));
+    ui->comboBox_selectProps->addItem(tr("Liquid density"));
+    ui->comboBox_selectProps->addItem(tr("Vapour density"));
+    ui->comboBox_selectProps->addItem(tr("Halite density"));
+    ui->comboBox_selectProps->addItem(tr("Bulk enthalpy"));
+    ui->comboBox_selectProps->addItem(tr("Liquid enthalpy"));
+    ui->comboBox_selectProps->addItem(tr("Vapour enthalpy"));
+    ui->comboBox_selectProps->addItem(tr("Halite enthalpy"));
+    ui->comboBox_selectProps->addItem(tr("Liquid saturation"));
+    ui->comboBox_selectProps->addItem(tr("Vapour saturation"));
+    ui->comboBox_selectProps->addItem(tr("Halite saturation"));
+    ui->comboBox_selectProps->addItem(tr("Liquid viscosity"));
+    ui->comboBox_selectProps->addItem(tr("Vapour viscosity"));
+    ui->comboBox_selectProps->addItem(tr("Liquid salinity"));
+    ui->comboBox_selectProps->addItem(tr("Vapour salinity"));
+    if(arg==tr("PTX"))
     {
         //independent variable
         UpdateUI_P(ui->label_delta_firstVar, ui->doubleSpinBox_delta_firstVar, ui->doubleSpinBox_max_firstVar, ui->doubleSpinBox_min_firstVar);
         UpdateUI_T(ui->label_delta_secondVar, ui->doubleSpinBox_delta_secondVar, ui->doubleSpinBox_max_secondVar, ui->doubleSpinBox_min_secondVar);
         UpdateUI_X(ui->label_delta_thirdVar, ui->doubleSpinBox_delta_thirdVar, ui->doubleSpinBox_max_thirdVar, ui->doubleSpinBox_min_thirdVar);
 
-    }else if(arg=="PHX")
+    }else if(arg==tr("PHX"))
     {
         //independent variable
         UpdateUI_P(ui->label_delta_firstVar, ui->doubleSpinBox_delta_firstVar, ui->doubleSpinBox_max_firstVar, ui->doubleSpinBox_min_firstVar);
@@ -2082,7 +2100,13 @@ void MainWindow::update3dUI(QString arg)
         UpdateUI_X(ui->label_delta_thirdVar, ui->doubleSpinBox_delta_thirdVar, ui->doubleSpinBox_max_thirdVar, ui->doubleSpinBox_min_thirdVar);
     }else
     {
-        std::cout<<"error: update3dUI, no such item: "<<arg.toStdString()<<std::endl;
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(tr("Error"));
+        msgBox.setText(tr("error: update3dUI, no such item: ")+arg);
+        msgBox.setStandardButtons(QMessageBox::Yes);
+        msgBox.setDefaultButton(QMessageBox::Yes);
+        msgBox.exec();
+        // std::cout<<"error: update3dUI, no such item: "<<arg.toStdString()<<std::endl;
     }
 }
 void MainWindow::on_comboBox_selectVariable_activated(const QString &arg1)
@@ -2110,8 +2134,8 @@ void MainWindow::on_actionSave_triggered()
             {
                 std::string filter_ext, title_dlg;
                 QString fileName;
-                filter_ext="CSV File (*.csv);;Delimited Text File (*.txt)";
-                title_dlg="Save Multiple Points Calculation Results to File: Scatter";
+                filter_ext=tr("CSV File (*.csv);;Delimited Text File (*.txt)").toStdString().c_str();
+                title_dlg=tr("Save Multiple Points Calculation Results to File: Scatter").toStdString().c_str();
                 fileName = QFileDialog::getSaveFileName(this, tr(title_dlg.c_str()), "", tr(filter_ext.c_str()));
                 if (!fileName.isNull())
                 {
@@ -2131,8 +2155,8 @@ void MainWindow::on_actionSave_triggered()
             switch (m_dimension) {
                 case 1:
                 {
-                    filter_ext="CSV File (*.csv);;Delimited Text File (*.txt)";
-                    title_dlg="Save Diagram Calculation Results to File: 1D";
+                    filter_ext=tr("CSV File (*.csv);;Delimited Text File (*.txt)").toStdString().c_str();
+                    title_dlg=tr("Save Diagram Calculation Results to File: 1D").toStdString().c_str();
                     fileName = QFileDialog::getSaveFileName(this, tr(title_dlg.c_str()), "", tr(filter_ext.c_str()));
                     if (!fileName.isNull())
                     {
@@ -2149,8 +2173,8 @@ void MainWindow::on_actionSave_triggered()
                 break;
             case 2:
             {
-                filter_ext="VTK File (*.vtk)";
-                title_dlg="Save Diagram Calculation Results to File: 2D";
+                filter_ext=tr("VTK File (*.vtk)").toStdString().c_str();
+                title_dlg=tr("Save Diagram Calculation Results to File: 2D").toStdString().c_str();
                 fileName = QFileDialog::getSaveFileName(this, tr(title_dlg.c_str()), "", tr(filter_ext.c_str()));
                 if (!fileName.isNull())
                 {
@@ -2252,11 +2276,12 @@ void MainWindow::on_actionChinese_triggered()
     {
         m_zhTranslator = new QTranslator(this);
         QString path = QApplication::applicationDirPath();
-        if(!m_zhTranslator->load("../Resources/languages/zh_CN.qm"))
+        QString file_zhTranslator=path+"/../Resources/languages/zh_CN.qm";
+        if(!m_zhTranslator->load(file_zhTranslator))
         {
             QMessageBox msgBox;
             msgBox.setWindowTitle("错误信息");
-            msgBox.setText("加载简体中文语言文件失败，请检查如下文件：\n"+path+"/../Resources/languages/zh_CN.qm");
+            msgBox.setText("加载简体中文语言文件失败，请检查如下文件：\n"+file_zhTranslator);
             msgBox.setStandardButtons(QMessageBox::Yes);
             msgBox.setDefaultButton(QMessageBox::Yes);
             msgBox.exec();

@@ -95,7 +95,7 @@
           </font>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="tab">
           <attribute name="icon">
@@ -379,7 +379,7 @@ border-radius: 30px;</string>
             <rect>
              <x>10</x>
              <y>0</y>
-             <width>81</width>
+             <width>101</width>
              <height>111</height>
             </rect>
            </property>
@@ -391,7 +391,7 @@ border-radius: 30px;</string>
              <rect>
               <x>10</x>
               <y>20</y>
-              <width>61</width>
+              <width>81</width>
               <height>20</height>
              </rect>
             </property>
@@ -411,7 +411,7 @@ border-radius: 30px;</string>
              <rect>
               <x>10</x>
               <y>50</y>
-              <width>61</width>
+              <width>81</width>
               <height>20</height>
              </rect>
             </property>
@@ -428,7 +428,7 @@ border-radius: 30px;</string>
              <rect>
               <x>10</x>
               <y>80</y>
-              <width>61</width>
+              <width>81</width>
               <height>20</height>
              </rect>
             </property>
@@ -613,7 +613,7 @@ QPushButton:hover{
              <rect>
               <x>9</x>
               <y>83</y>
-              <width>31</width>
+              <width>71</width>
               <height>20</height>
              </rect>
             </property>
@@ -679,7 +679,7 @@ QPushButton:hover{
              <rect>
               <x>9</x>
               <y>23</y>
-              <width>31</width>
+              <width>71</width>
               <height>20</height>
              </rect>
             </property>
@@ -705,7 +705,7 @@ QPushButton:hover{
              <rect>
               <x>190</x>
               <y>83</y>
-              <width>31</width>
+              <width>71</width>
               <height>20</height>
              </rect>
             </property>
@@ -743,7 +743,7 @@ QPushButton:hover{
              <rect>
               <x>190</x>
               <y>23</y>
-              <width>31</width>
+              <width>71</width>
               <height>20</height>
              </rect>
             </property>
@@ -819,7 +819,7 @@ QPushButton:hover{
              <rect>
               <x>370</x>
               <y>83</y>
-              <width>31</width>
+              <width>71</width>
               <height>20</height>
              </rect>
             </property>
@@ -882,7 +882,7 @@ QPushButton:hover{
              <rect>
               <x>370</x>
               <y>23</y>
-              <width>31</width>
+              <width>71</width>
               <height>20</height>
              </rect>
             </property>
@@ -919,7 +919,7 @@ QPushButton:hover{
           <widget class="QLabel" name="label_8">
            <property name="geometry">
             <rect>
-             <x>110</x>
+             <x>120</x>
              <y>10</y>
              <width>91</width>
              <height>20</height>
@@ -932,7 +932,7 @@ QPushButton:hover{
           <widget class="QComboBox" name="comboBox_selectVariable">
            <property name="geometry">
             <rect>
-             <x>96</x>
+             <x>106</x>
              <y>30</y>
              <width>121</width>
              <height>32</height>
@@ -957,7 +957,7 @@ QPushButton:hover{
           <widget class="QComboBox" name="comboBox_selectProps">
            <property name="geometry">
             <rect>
-             <x>96</x>
+             <x>106</x>
              <y>80</y>
              <width>121</width>
              <height>32</height>
@@ -997,7 +997,7 @@ QPushButton:hover{
           <widget class="QLabel" name="label_18">
            <property name="geometry">
             <rect>
-             <x>110</x>
+             <x>120</x>
              <y>60</y>
              <width>101</width>
              <height>20</height>

@@ -38,3 +38,64 @@ swEOS -D1 -VT -R0/2/1000 -P316 -X0.032
 ### Optional arguments
 
 * -t: number of threads
+
+
+# Development
+
+## Multi-language support
+
+### Generage and edit .ts file
+* using tr() for any string needed to translate
+* using `lupdate MainWindow.ui -ts languages/zh.ts`, `lupdate MainWindow.cxx -ts languages/zh.ts` the program of lupdate will detect all `tr()` marked string to `.ts` file.
+* using `Linguist` program open the .ts file to editor translation text.
+> using `lrelease languages/zh_CN.ts` command to convert `.ts` file to binary `.qm` file. This process is not necessary, because this step can be done by cmake if you set `qt5_add_translation` in CMakeLists.txt
+
+### CMakeLists options
+
+* add `LinguistTools` in `find_package`, 
+```
+find_package(Qt5 COMPONENTS Widgets Core Concurrent LinguistTools REQUIRED QUIET)
+```
+
+* Set language .ts file and specify .qm file directory
+`MACOSX_PACKAGE_LOCATION` is the .app package folder for MacOS
+```
+set(TS_FILES languages/zh_CN.ts)
+qt5_add_translation(QON_QM_FILES ${TS_FILES})
+set_source_files_properties(${QON_QM_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/languages")
+```
+
+* Add .qm file to `add_executable`
+
+```
+add_executable(
+  ${PROGRAM_NAME}  
+  MACOSX_BUNDLE
+  ${Srcs} 
+  ${Hdrs} 
+  ${Srcs_bash} 
+  ${Hdrs_bash} 
+  ${UI_Srcs} 
+  ${MOC_Hdrs} 
+  ${QRC_Srcs}
+  ${myApp_ICON}
+  ${QON_QM_FILES}
+  )
+```
+
+
+# Issures
+
+## OpenMP
+When using OpenMP in CMakeLists.txt, this first cmake will generate some errors, but if you cmake again, the error will disappear.
+
+```
+ Could NOT find OpenMP_CXX (missing: OpenMP_CXX_FLAGS)
+Call Stack (most recent call first):
+  /usr/local/Cellar/cmake/3.16.3/share/cmake/Modules/FindPackageHandleStandardArgs.cmake:393 (_FPHSA_FAILURE_MESSAGE)
+  /usr/local/Cellar/cmake/3.16.3/share/cmake/Modules/FindOpenMP.cmake:511 (find_package_handle_standard_args)
+  CMakeLists.txt:32 (find_package)
+
+
+-- Configuring incomplete, errors occurred!
+```
