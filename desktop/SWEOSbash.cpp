@@ -13,11 +13,11 @@ namespace SWEOSbash
     {
         StartText();
     }
-    helpINFO();
-
+    // helpINFO();
     //parse arguments and check 
     cSWEOSarg arg;
-    if(!arg.ParseAndCheck(argc, argv)) return false;
+    if(!arg.Parse(argc, argv)) return false;
+    if(!arg.Validate()) return false;
     return true;
   }
 
@@ -34,39 +34,38 @@ namespace SWEOSbash
   {
   }
 
-  bool cSWEOSarg::ParseAndCheck(int argc, char** argv)
+  bool cSWEOSarg::Parse(int argc, char** argv)
   {
+    if(argc<2)return false; //there is no arguments
     int opt; 
-    const char *optstring = "D:V:P:T:X:H:R:O:G:t:"; // set argument templete
-    while ((opt = getopt(argc, argv, optstring)) != -1) 
+    const char *optstring = "D:V:P:T:X:H:R:O:G:t:vh"; // set argument templete
+    int option_index = 0;
+    static struct option long_options[] = {
+        {"version", no_argument, NULL, 'v'},
+        {"help", no_argument, NULL, 'h'},
+        {0, 0, 0, 0}  // to avoid empty input
+    };
+    int valid_args=0;
+    while ((opt = getopt_long(argc, argv, optstring,long_options, &option_index)) != -1) 
     {
+      if(opt!='?')valid_args++;
       switch (opt)
       {
+      case 'h':
+        helpINFO();
+        exit(0);
+        break;
+      case 'v':
+        cout<<"Version: "<<VERSION_MAJOR<<"."<<VERSION_MINOR<<endl;
+        exit(0);
+        break;
       case 'D':
         m_haveD=true;
         m_valueD=atoi(optarg);
-        if (m_valueD<0 || m_valueD>3)
-        {
-          cout<<ERROR_COUT<<"option for -D argument must be one of 0, 1, 2, 3. please check -D parameter"<<endl;
-          return false;
-        }
         break;
       case 'V':
         m_haveV=true;
         m_valueV=optarg;
-        for (int i = 0; i < m_valueV.size(); i++)
-        {
-          if(!(m_valueV[i]=='P' || m_valueV[i]=='T' || m_valueV[i]=='X' || m_valueV[i]=='H'))
-          {
-            cout<<ERROR_COUT<<"The "<<i+1<<"th variable tag ["<<argv[optind - 1]<<"] cannot be recognized, the supported variables are T, P, X, H"<<endl;
-            return false;
-          }
-        }
-        if (m_valueV.size()<1 || m_valueV.size()>3)
-        {
-          cout<<ERROR_COUT<<"the number of variables cannot exceed three or less than one, it should be one of TPX, THX, T, P, X, H, PT, PX, TX, PH, HX"<<endl;
-          return false;
-        }
         break;
       case 'P':
         m_haveP=true;
@@ -87,17 +86,40 @@ namespace SWEOSbash
       case 'R':
         m_haveR=true;
         m_varueR_str= string_split(optarg,"/");
-        if(m_varueR_str.size()%3 != 0)
-        {
-          cout<<ERROR_COUT<<"range of variables must be a multiple of 3 [min/delta/max], what you set is "<<optarg<<endl;
-          return false;
-        }
         break;
       default:
         break;
       }
     }
+    if(!(m_haveD && m_haveV))return false;//must have -D and -V arguments
+    return true;
+  }
+  bool cSWEOSarg::Validate()
+  {
     //check
+    if (m_valueD<0 || m_valueD>3)
+    {
+      cout<<ERROR_COUT<<"option for -D argument must be one of 0, 1, 2, 3. please check -D parameter"<<endl;
+      return false;
+    }
+    for (int i = 0; i < m_valueV.size(); i++)
+    {
+      if(!(m_valueV[i]=='P' || m_valueV[i]=='T' || m_valueV[i]=='X' || m_valueV[i]=='H'))
+      {
+        cout<<ERROR_COUT<<"The option value of -V argument cannot be recognized, the supported variables are T, P, X, H"<<endl;
+        return false;
+      }
+    }
+    if (m_valueV.size()<1 || m_valueV.size()>3)
+    {
+      cout<<ERROR_COUT<<"the number of variables cannot exceed three or less than one, it should be one of TPX, THX, T, P, X, H, PT, PX, TX, PH, HX"<<endl;
+      return false;
+    }
+    if(m_varueR_str.size()%3 != 0)
+    {
+      cout<<ERROR_COUT<<"range of variables must be a multiple of 3 [min/delta/max]"<<endl;
+      return false;
+    }
     if(!m_haveD)
     {
       cout<<ERROR_COUT<<"You have to specify the -D argument, the parameter should be one of 0, 1, 2, 3"<<endl;
@@ -195,7 +217,6 @@ namespace SWEOSbash
     }
     return true;
   }
-
   vector<string> cSWEOSarg::string_split (string s, string delimiter) {
       size_t pos_start = 0, pos_end, delim_len = delimiter.length();
       string token;

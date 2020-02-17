@@ -20,23 +20,31 @@ int main( int argc, char** argv )
 {
  if(argc==2 || argc==1)
  {
-    // needed to ensure appropriate OpenGL context is created for VTK rendering.
-    QSurfaceFormat::setDefaultFormat(QVTKOpenGLWidget::defaultFormat());   // must be here
-      // QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    // QT Stuff
-    QApplication app( argc, argv );
+   SWEOSbash::cSWEOSarg arg;
+    if(arg.Parse(argc, argv))
+    {
+      SWEOSbash::bash_run(argc, argv);
+    }else
+    {
+      // needed to ensure appropriate OpenGL context is created for VTK rendering.
+      QSurfaceFormat::setDefaultFormat(QVTKOpenGLWidget::defaultFormat());   // must be here
+        // QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+      // QT Stuff
+      QApplication app( argc, argv );
 
-    QApplication::setStyle("fusion");
+      QApplication::setStyle("fusion");
 
-    qInitResources_icons();
+      qInitResources_icons();
 
-    MainWindow myMainWindow;
-  //  myMainWindow.showMaximized();
-    myMainWindow.show();
+      MainWindow myMainWindow;
+      //  myMainWindow.showMaximized();
+      myMainWindow.show();
 
-    return app.exec();
+      return app.exec();
+    }
  }else
  {
    SWEOSbash::bash_run(argc, argv);
  }
+ return 0;
 }
