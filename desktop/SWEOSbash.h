@@ -67,7 +67,7 @@ namespace SWEOSbash
         //e.g. -VPT, m_valueR1 for pressure, m_valueR2 for temperature
         // double m_valueR1[3], m_valueR2[3], m_valueR3[3];
         double m_valueR[3][3];
-        vector<string> m_varueR_str;
+        vector<string> m_valueR_str;
     public:
         cSWEOSarg(/* args */);
         ~cSWEOSarg();
@@ -76,16 +76,34 @@ namespace SWEOSbash
         int m_VariableSelection;
     public:
         bool Parse(int argc, char** argv); //Parse arguments
+        bool CheckRange_T(double T0, double TMIN=SWEOS::TMIN, double TMAX=SWEOS::TMAX);
+        bool CheckRanges_T(double Trange[2], double TMIN=SWEOS::TMIN, double TMAX=SWEOS::TMAX);
+        bool CheckRange_P(double P0, double PMIN=SWEOS::PMIN, double PMAX=SWEOS::PMAX);
+        bool CheckRanges_P(double Prange[2], double PMIN=SWEOS::PMIN, double PMAX=SWEOS::PMAX);
+        bool CheckRange_X(double X0, double XMIN=SWEOS::XMIN, double XMAX=SWEOS::XMAX);
+        bool CheckRanges_X(double Xrange[2], double XMIN=SWEOS::XMIN, double XMAX=SWEOS::XMAX);
+        bool CheckRange_H(double H0, double P0, double X0);//PHX 0D calculation
+        bool CheckRanges_H(double Hrange[2], double P0, double X0);//PHX 0D calculation
+        bool CheckRanges_H_PX(double HMIN0, double HMAX0, double PXrange[4]);//PHX 3D calculation
+        bool CheckRanges_H_P(double HMIN0, double HMAX0, double Prange[2], double X);//PH and fixed X: 2D calculation
+        bool CheckRanges_H_X(double HMIN0, double HMAX0, double Xrange[2], double P);//HX and fixed P: 2D calculation
+        
         bool Validate(); // validate arguments and print corresponding error information
+        bool Validate_0D();
+        bool Validate_1D();
     private:
-        vector<string> string_split(string s, string delimiter);
+        bool GetOptionValue(int opt, char* optarg, double& value);
+        template<typename T>
+        vector<T> linspace(T xmin, T xmax, T dx);
     };
-
+    bool isNum(string str);
+    vector<string> string_split(string s, string delimiter);
     SWEOS::PROP_H2ONaCl calculateSinglePoint_PTX(double P, double T, double X, bool isCout=true);
     SWEOS::PROP_H2ONaCl calculateSinglePoint_PHX(double P, double H, double X, bool isCout=true);
     // bool calculateMultiPoints_PHX(string valueV, string filePHX, string outFile);
     vector<SWEOS::PROP_H2ONaCl> calculateMultiPoints_PTX_PHX(string valueV, string filePTX, string outFile, string isT_H);
     bool WriteCSV(string outFile,vector<double> P, vector<double> X, vector<SWEOS::PROP_H2ONaCl> props);
+    bool Write1Dresult(string outFile,vector<double> P, vector<double> X, vector<SWEOS::PROP_H2ONaCl> props);
     static void StartText()
     {
         //30: black  31:red  32:green  33:yellow  34:blue  35:purple  36:darkgreen
