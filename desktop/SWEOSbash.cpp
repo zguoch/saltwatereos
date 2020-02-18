@@ -902,9 +902,9 @@ namespace SWEOSbash
           <<endl;
       for(int i=0;i<P.size();i++)
       {
-        fout<<props[i].T+SWEOS::Kelvin<<", "<<P[i]<<", "<<X[i]<<", "<<props[i].Region<<", "<<eos.m_phaseRegion_name[props[i].Region]<<", "
+        fout<<props[i].T<<", "<<P[i]<<", "<<X[i]<<", "<<props[i].Region<<", "<<eos.m_phaseRegion_name[props[i].Region]<<", "
             <<props[i].Rho<<", "<<props[i].Rho_l<<", "<<props[i].Rho_v<<", "<<props[i].Rho_h<<", "
-            <<props[i].H<<", "<<props[i].H_l<<", "<<props[i].H_v<<", "<<props[i].H_h<<", "
+            <<props[i].H/1000.0<<", "<<props[i].H_l/1000.0<<", "<<props[i].H_v/1000.0<<", "<<props[i].H_h/1000.0<<", "
             <<props[i].S_l<<", "<<props[i].S_v<<", "<<props[i].S_h<<", "
             <<props[i].Mu_l<<", "<<props[i].Mu_v<<", "
             <<props[i].X_l<<", "<<props[i].X_v

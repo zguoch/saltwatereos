@@ -39,9 +39,9 @@ namespace SWEOS
     // const value define
     double const TMIN=273.15;
     double const TMAX=1273.15;
-    double const PMIN=5e5;
+    double const PMIN=1e5;
     double const PMAX = 1000e5;
-    double const XMIN = 1e-5;
+    double const XMIN = 0;
     double const XMAX = 1;
     // --------------
     double const Kelvin= 273.15;

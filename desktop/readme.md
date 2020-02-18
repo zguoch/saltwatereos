@@ -54,6 +54,15 @@ swEOS -D0 -VPHX -G../test/PHX.txt
 swEOS -D0 -VPTX -G../test/PTX.txt -OPTX_0D.csv
 swEOS -D0 -VPTX -G../test/PTX.txt
 ```
+
+### One-dimension calculation
+
+```
+swEOS -D1 -VH -X0.032 -P399 -R43/1/100 -OH_1D.csv
+swEOS -D1 -VT -X0.032 -P399 -R0/1/100 -OT_1D.csv
+swEOS -D1 -VP -X0.032 -T100 -R5/1/100 -OP_1D.csv
+swEOS -D1 -VX -T100 -P399 -R0/0.001/1 -OX_1D.csv
+```
 # Development
 
 ## Multi-language support
