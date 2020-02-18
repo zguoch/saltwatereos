@@ -57,7 +57,7 @@ swEOS -D0 -VPTX -G../test/PTX.txt -OPTX_0D.csv
 swEOS -D0 -VPTX -G../test/PTX.txt
 ```
 
-### One-dimension calculation
+### One-dimensional calculation
 
 ```
 swEOS -D1 -VH -X0.032 -P399 -R43/1/100 -OH_1D.csv
@@ -66,12 +66,22 @@ swEOS -D1 -VP -X0.032 -T100 -R5/1/100 -OP_1D.csv
 swEOS -D1 -VX -T100 -P399 -R0/0.001/1 -OX_1D.csv
 ```
 
-### Two-dimension calculation
+### Two-dimensional calculation
 
 ```
 swEOS -D2 -VPT -R1/0.1/100/0/1/500 -X0.032 -Orest/PT_2D.vt 
+swEOS -D2 -VPX -R100/0.1/800/0/0.01/1 -T100  -OPX_2D.vtk -n
+swEOS -D2 -VTX -R0/1/800/0/0.01/1 -P100  -OTX_2D.vtk -n
+swEOS -D2 -VPH -R100/1/800/100/1/700 -X0.032  -OPH_2D.vtk -n
+swEOS -D2 -VXH -R0/0.001/1/100/1/700 -P200  -OXH_2D.vtk -n
 ```
 
+### Three-dimensional calculation
+
+```
+swEOS -D3 -VPTX -R1/10/500/0/10/600/0/0.01/1 -t8 -n
+swEOS -D3 -VPHX -R1/10/500/100/10/600/0/0.01/1 -t8 -n
+```
 
 # Development
 

@@ -1886,12 +1886,33 @@ namespace SWEOS
         {
             fpout<<props[i].Region<<" ";
         }fpout<<endl;
+        // 2. bulk Rho 
+        fpout<<"SCALARS Temperature double"<<endl;
+        fpout<<"LOOKUP_TABLE default"<<endl;
+        for(int i=0;i<props.size();i++)
+        {
+            fpout<<props[i].T<<" ";
+        }fpout<<endl;
+        // 2. bulk Rho 
+        fpout<<"SCALARS Rho double"<<endl;
+        fpout<<"LOOKUP_TABLE default"<<endl;
+        for(int i=0;i<props.size();i++)
+        {
+            fpout<<props[i].Rho<<" ";
+        }fpout<<endl;
+        // 2. bulk H 
+        fpout<<"SCALARS H double"<<endl;
+        fpout<<"LOOKUP_TABLE default"<<endl;
+        for(int i=0;i<props.size();i++)
+        {
+            fpout<<props[i].H<<" ";
+        }fpout<<endl;
         // 2. Xl 
         fpout<<"SCALARS Xl double"<<endl;
         fpout<<"LOOKUP_TABLE default"<<endl;
         for(int i=0;i<props.size();i++)
         {
-            fpout<<props[i].X_l<<" ";
+            fpout<<props[i].X_l<<" "; 
         }fpout<<endl;
         // 2. Xv
         fpout<<"SCALARS Xv double"<<endl;

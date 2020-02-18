@@ -24,8 +24,9 @@ namespace SWEOSbash
 
   cSWEOSarg::cSWEOSarg(/* args */)
   :m_haveD(false), m_haveV(false), m_haveP(false)
-  ,m_haveT(false), m_haveX(false), m_haveH(false), m_haveR(false),m_haveO(false)
-  ,m_valueD(-1), m_valueO(""),m_valueV("")
+  ,m_haveT(false), m_havet(false), m_haveX(false), m_haveH(false), m_haveR(false),m_haveO(false)
+  ,m_normalized(false)
+  ,m_valueD(-1),m_threadNumOMP(omp_get_max_threads()), m_valueO(""),m_valueV("")
   {
     for(int i=0;i<3;i++)
     for(int j=0;j<3;j++)m_valueR[i][j]=0;
@@ -63,7 +64,7 @@ namespace SWEOSbash
   {
     if(argc<2)return false; //there is no arguments
     int opt; 
-    const char *optstring = "D:V:P:T:X:H:R:O:G:t:vh"; // set argument templete
+    const char *optstring = "D:V:P:T:X:H:R:O:G:t:vhn"; // set argument templete
     int option_index = 0;
     static struct option long_options[] = {
         {"version", no_argument, NULL, 'v'},
@@ -89,6 +90,13 @@ namespace SWEOSbash
         m_haveD=true;
         if(!GetOptionValue(opt, optarg, doubleOptValue))return false;
         m_valueD=(int)doubleOptValue;
+        break;
+      case 't':
+        m_havet=true;
+        if(!GetOptionValue(opt, optarg, doubleOptValue))return false;
+        m_threadNumOMP=(int)doubleOptValue;
+        if(m_threadNumOMP>omp_get_max_threads())m_threadNumOMP=omp_get_max_threads();
+        if(m_threadNumOMP<1)m_threadNumOMP=1;
         break;
       case 'V':
         m_haveV=true;
@@ -121,6 +129,10 @@ namespace SWEOSbash
       case 'O':
         m_haveO=true;
         m_valueO=optarg;
+        break;
+      case 'n':
+        m_normalized=true;//normalize axis in vtk file for 2D and 3D calculation
+        break;
       default:
         break;
       }
@@ -261,45 +273,412 @@ namespace SWEOSbash
       vector<double> arrX; arrX.push_back(m_valueX);
       vector<SWEOS::PROP_H2ONaCl> props;
       props.resize(arrT.size()*arrP.size());
-      SWEOS::cH2ONaCl eos;
+      
       MultiProgressBar multibar(arrP.size(),COLOR_BAR_BLUE);
-      int index=0;
-      // #pragma omp parallel for shared(arrT, arrP, arrX)
+      omp_set_num_threads(m_threadNumOMP);
+      cout<<"2D calculation using "<<m_threadNumOMP<<" threads, T ∈ ["
+          <<rangeT[0]<<", "<<rangeT[1]<<"] °C, P ∈ ["
+          <<rangeP[0]<<", "<<rangeP[1]<<"] bar, fixed salinity X="
+          <<m_valueX<<" "
+          <<"\n"<<endl;
+      int lenT=arrT.size();
+      #pragma omp parallel for shared(arrT, arrP, arrX, props, lenT)
       for (size_t j = 0; j < arrP.size(); j++)
       {
         for (size_t k = 0; k < arrT.size(); k++)
         {
+          SWEOS::cH2ONaCl eos;
           eos.prop_pTX(arrP[j]*1e5, arrT[k]+SWEOS::Kelvin, arrX[0]);
-          props[index]=eos.m_prop;
-          index++;
+          props[k+j*lenT]=eos.m_prop;
         }
+        #pragma omp critical
         multibar.Update();
       } 
-      eos.writeProps2VTK(arrT, arrP, arrX, props, m_valueO);
+      Write2D3DResult(arrT, arrP, arrX, props, m_valueO, m_normalized);
         
     }else if(m_valueV=="PX" || m_valueV=="XP")
     {
-      cout<<"2D PX"<<endl;
+      if(!(m_haveT && CheckRange_T(m_valueT)))
+      {
+        cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", but you don't set a proper fixed temperature value by -T argument"<<endl;
+        return false;
+      }
+      if(!m_haveO)
+      {
+        cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", you have to specify an output file by -O argument"<<endl;
+        return false;
+      }
+      int ind_X=0, ind_P=1;
+      if(m_valueV=="PX")
+      {
+        ind_P=0; ind_X=1;
+      }
+      double rangeX[2]={m_valueR[ind_X][0], m_valueR[ind_X][2]};
+      double rangeP[2]={m_valueR[ind_P][0], m_valueR[ind_P][2]};
+      if(!CheckRanges_X(rangeX)) return false;
+      if(!CheckRanges_P(rangeP)) return false;
+      //calculate
+      vector<double> arrX= linspace(m_valueR[ind_X][0], m_valueR[ind_X][2], m_valueR[ind_X][1]);
+      vector<double> arrP= linspace(m_valueR[ind_P][0], m_valueR[ind_P][2], m_valueR[ind_P][1]);
+      vector<double> arrT; arrT.push_back(m_valueT);
+      vector<SWEOS::PROP_H2ONaCl> props;
+      props.resize(arrP.size()*arrX.size());
+      MultiProgressBar multibar(arrP.size(),COLOR_BAR_BLUE);
+      omp_set_num_threads(m_threadNumOMP);
+      cout<<"2D calculation using "<<m_threadNumOMP<<" threads, X ∈ ["
+          <<rangeX[0]<<", "<<rangeX[1]<<"] , P ∈ ["
+          <<rangeP[0]<<", "<<rangeP[1]<<"] bar, fixed temperature T="
+          <<m_valueT<<" °C "
+          <<"\n"<<endl;
+      int lenX=arrX.size();
+      #pragma omp parallel for shared(arrT, arrP, arrX, props, lenX)
+      for (size_t j = 0; j < arrP.size(); j++)
+      {
+        for (size_t k = 0; k < arrX.size(); k++)
+        {
+          SWEOS::cH2ONaCl eos;
+          eos.prop_pTX(arrP[j]*1e5, arrT[0]+SWEOS::Kelvin, arrX[k]);
+          props[k+j*lenX]=eos.m_prop;
+        }
+        #pragma omp critical
+        multibar.Update();
+      } 
+      Write2D3DResult(arrX, arrP, arrT, props, m_valueO,m_normalized);
     }else if(m_valueV=="TX" || m_valueV=="XT")
     {
-      cout<<"2D TX"<<endl;
-
+      if(!(m_haveP && CheckRange_P(m_valueP)))
+      {
+        cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", but you don't set a proper fixed pressure value by -P argument"<<endl;
+        return false;
+      }
+      if(!m_haveO)
+      {
+        cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", you have to specify an output file by -O argument"<<endl;
+        return false;
+      }
+      int ind_X=0, ind_T=1;
+      if(m_valueV=="TX")
+      {
+        ind_T=0; ind_X=1;
+      }
+      double rangeX[2]={m_valueR[ind_X][0], m_valueR[ind_X][2]};
+      double rangeT[2]={m_valueR[ind_T][0], m_valueR[ind_T][2]};
+      if(!CheckRanges_X(rangeX)) return false;
+      if(!CheckRanges_T(rangeT)) return false;
+      //calculate
+      vector<double> arrX= linspace(m_valueR[ind_X][0], m_valueR[ind_X][2], m_valueR[ind_X][1]);
+      vector<double> arrT= linspace(m_valueR[ind_T][0], m_valueR[ind_T][2], m_valueR[ind_T][1]);
+      vector<double> arrP; arrP.push_back(m_valueP);
+      vector<SWEOS::PROP_H2ONaCl> props;
+      props.resize(arrT.size()*arrX.size());
+      MultiProgressBar multibar(arrX.size(),COLOR_BAR_BLUE);
+      omp_set_num_threads(m_threadNumOMP);
+      cout<<"2D calculation using "<<m_threadNumOMP<<" threads, X ∈ ["
+          <<rangeX[0]<<", "<<rangeX[1]<<"] , T ∈ ["
+          <<rangeT[0]<<", "<<rangeT[1]<<"] °C, fixed pressure P="
+          <<m_valueP<<" bar "
+          <<"\n"<<endl;
+      int lenT=arrT.size();
+      #pragma omp parallel for shared(arrT, arrP, arrX, props, lenT)
+      for (size_t j = 0; j < arrX.size(); j++)
+      {
+        for (size_t k = 0; k < arrT.size(); k++)
+        {
+          SWEOS::cH2ONaCl eos;
+          eos.prop_pTX(arrP[0]*1e5, arrT[k]+SWEOS::Kelvin, arrX[j]);
+          props[k+j*lenT]=eos.m_prop;
+        }
+        #pragma omp critical
+        multibar.Update();
+      } 
+      Write2D3DResult(arrT, arrX, arrP, props, m_valueO,m_normalized);
     }else if(m_valueV=="PH" || m_valueV=="HP")
     {
-      cout<<"2D PH"<<endl;
+      if(!(m_haveX && CheckRange_X(m_valueX)))
+      {
+        cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", but you don't set a proper fixed salinity value by -X argument"<<endl;
+        return false;
+      }
+      if(!m_haveO)
+      {
+        cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", you have to specify an output file by -O argument"<<endl;
+        return false;
+      }
+      int ind_H=0, ind_P=1;
+      if(m_valueV=="PH")
+      {
+        ind_P=0; ind_H=1;
+      }
+      double rangeH[2]={m_valueR[ind_H][0], m_valueR[ind_H][2]};
+      double rangeP[2]={m_valueR[ind_P][0], m_valueR[ind_P][2]};
+      if(!CheckRanges_H_P(rangeH[0], rangeH[1], rangeP, m_valueX)) return false;
+      if(!CheckRanges_P(rangeP)) return false;
+      //calculate
+      vector<double> arrH= linspace(m_valueR[ind_H][0], m_valueR[ind_H][2], m_valueR[ind_H][1]);
+      vector<double> arrP= linspace(m_valueR[ind_P][0], m_valueR[ind_P][2], m_valueR[ind_P][1]);
+      vector<double> arrX; arrX.push_back(m_valueX);
+      vector<SWEOS::PROP_H2ONaCl> props;
+      props.resize(arrH.size()*arrP.size());
+      
+      MultiProgressBar multibar(arrP.size(),COLOR_BAR_BLUE);
+      omp_set_num_threads(m_threadNumOMP);
+      cout<<"2D calculation using "<<m_threadNumOMP<<" threads, H ∈ ["
+          <<rangeH[0]<<", "<<rangeH[1]<<"] kJ/kg, P ∈ ["
+          <<rangeP[0]<<", "<<rangeP[1]<<"] bar, fixed salinity X="
+          <<m_valueX<<" "
+          <<"\n"<<endl;
+      int lenH=arrH.size();
+      #pragma omp parallel for shared(arrH, arrP, arrX, props, lenH)
+      for (size_t j = 0; j < arrP.size(); j++)
+      {
+        for (size_t k = 0; k < arrH.size(); k++)
+        {
+          SWEOS::cH2ONaCl eos;
+          eos.prop_pHX(arrP[j]*1e5, arrH[k]*1000.0, arrX[0]);
+          props[k+j*lenH]=eos.m_prop;
+        }
+        #pragma omp critical
+        multibar.Update();
+      } 
+      Write2D3DResult(arrH, arrP, arrX, props, m_valueO, m_normalized);
     }else if(m_valueV=="HX" || m_valueV=="XH")
     {
-      cout<<"2D Hx"<<endl;
+      if(!(m_haveP && CheckRange_P(m_valueP)))
+      {
+        cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", but you don't set a proper fixed pressure value by -P argument"<<endl;
+        return false;
+      }
+      if(!m_haveO)
+      {
+        cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", you have to specify an output file by -O argument"<<endl;
+        return false;
+      }
+      int ind_H=0, ind_X=1;
+      if(m_valueV=="XH")
+      {
+        ind_X=0; ind_H=1;
+      }
+      double rangeH[2]={m_valueR[ind_H][0], m_valueR[ind_H][2]};
+      double rangeX[2]={m_valueR[ind_X][0], m_valueR[ind_X][2]};
+      if(!CheckRanges_H_X(rangeH[0], rangeH[1], rangeX, m_valueP)) return false;
+      if(!CheckRanges_X(rangeX)) return false;
+      //calculate
+      vector<double> arrH= linspace(m_valueR[ind_H][0], m_valueR[ind_H][2], m_valueR[ind_H][1]);
+      vector<double> arrX= linspace(m_valueR[ind_X][0], m_valueR[ind_X][2], m_valueR[ind_X][1]);
+      vector<double> arrP; arrP.push_back(m_valueP);
+      vector<SWEOS::PROP_H2ONaCl> props;
+      props.resize(arrH.size()*arrX.size());
+      
+      MultiProgressBar multibar(arrX.size(),COLOR_BAR_BLUE);
+      omp_set_num_threads(m_threadNumOMP);
+      cout<<"2D calculation using "<<m_threadNumOMP<<" threads, H ∈ ["
+          <<rangeH[0]<<", "<<rangeH[1]<<"] kJ/kg, X ∈ ["
+          <<rangeX[0]<<", "<<rangeX[1]<<"], fixed pressure P="
+          <<m_valueP<<" bar"
+          <<"\n"<<endl;
+      int lenH=arrH.size();
+      #pragma omp parallel for shared(arrH, arrP, arrX, props, lenH)
+      for (size_t j = 0; j < arrX.size(); j++)
+      {
+        for (size_t k = 0; k < arrH.size(); k++)
+        {
+          SWEOS::cH2ONaCl eos;
+          eos.prop_pHX(arrP[0]*1e5, arrH[k]*1000.0, arrX[j]);
+          props[k+j*lenH]=eos.m_prop;
+        }
+        #pragma omp critical
+        multibar.Update();
+      } 
+      Write2D3DResult(arrH, arrX, arrP, props, m_valueO, m_normalized);
     }else
     {
       cout<<ERROR_COUT<<"Unrecognized -V parameter for two-dimension calculation: -V"<<m_valueV<<endl;
+      cout<<"\tAvailable options are: -VPT, -VPX, -VTX, -VPH, -VHX"<<endl;
       return false;
     }
     return true;
   }
+  bool Write2D3DResult(vector<double> x, vector<double> y, vector<double> z, vector<SWEOS::PROP_H2ONaCl> props, string outFile, bool isNormalize)
+  {
+    string extname;
+    vector<string> tmp=string_split(outFile,".");
+    if(tmp.size()>=1)
+    {
+      extname=tmp[tmp.size()-1];
+    }
+    if(extname=="vtk")
+    {
+      SWEOS::cH2ONaCl eos;
+      eos.writeProps2VTK(x,y,z,props, outFile, isNormalize);
+    }else
+    {
+      cout<<WARN_COUT<<"Unrecognized format: "<<outFile<<endl;
+      cout<<COLOR_GREEN<<"Write results into vtk file format"<<COLOR_DEFAULT<<endl;
+      string newfilename="";
+      for (size_t i = 0; i < tmp.size()-1; i++)
+      {
+        newfilename+=tmp[i];
+      }
+      outFile=newfilename+".vtk";
+      SWEOS::cH2ONaCl eos;
+      eos.writeProps2VTK(x,y,z,props, outFile, isNormalize);
+    }
+    cout<<COLOR_BLUE<<"Results have been saved to file: "<<outFile<<endl;
+    return true;
+  }
   bool cSWEOSarg::Validate_3D()
   {
-    cout<<"3D is comming soon"<<endl;
+    if(m_valueV.size()!=3)
+    {
+      cout<<ERROR_COUT<<"if -D set as -D3, the -V option must be one of -VPTX, -VPHX"<<endl;
+      return false;
+    }
+    if (!m_haveR)
+    {
+      cout<<ERROR_COUT<<"You set -D3 and -V"<<m_valueV<<", then you must set -R for range of "
+          <<COLOR_GREEN<<m_valueV[0]<<COLOR_DEFAULT<<", "<<COLOR_GREEN<<m_valueV[1]<<COLOR_DEFAULT<<" and "<<COLOR_GREEN<<m_valueV[2]<<COLOR_DEFAULT<<" in format of -R"
+          <<COLOR_GREEN<<m_valueV[0]<<"min"<<COLOR_DEFAULT<<"/"<<COLOR_GREEN<<"d"<<m_valueV[0]<<COLOR_DEFAULT<<"/"<<COLOR_GREEN<<m_valueV[0]<<"max/"
+          <<COLOR_GREEN<<m_valueV[1]<<"min"<<COLOR_DEFAULT<<"/"<<COLOR_GREEN<<"d"<<m_valueV[1]<<COLOR_DEFAULT<<"/"<<COLOR_GREEN<<m_valueV[1]<<"max"<<COLOR_DEFAULT
+          <<COLOR_GREEN<<m_valueV[2]<<"min"<<COLOR_DEFAULT<<"/"<<COLOR_GREEN<<"d"<<m_valueV[2]<<COLOR_DEFAULT<<"/"<<COLOR_GREEN<<m_valueV[1]<<"max"<<COLOR_DEFAULT
+          <<endl;
+      return false;
+    }
+    if(m_valueR_str.size()!=9)
+    {
+      cout<<ERROR_COUT<<"You set -D3 and -V"<<m_valueV<<", then you must set -R for range of "
+          <<COLOR_GREEN<<m_valueV[0]<<COLOR_DEFAULT<<", "<<COLOR_GREEN<<m_valueV[1]<<COLOR_DEFAULT<<" and "<<COLOR_GREEN<<m_valueV[2]<<COLOR_DEFAULT<<" in format of -R"
+          <<COLOR_GREEN<<m_valueV[0]<<"min"<<COLOR_DEFAULT<<"/"<<COLOR_GREEN<<"d"<<m_valueV[0]<<COLOR_DEFAULT<<"/"<<COLOR_GREEN<<m_valueV[0]<<"max/"
+          <<COLOR_GREEN<<m_valueV[1]<<"min"<<COLOR_DEFAULT<<"/"<<COLOR_GREEN<<"d"<<m_valueV[1]<<COLOR_DEFAULT<<"/"<<COLOR_GREEN<<m_valueV[1]<<"max"<<COLOR_DEFAULT
+          <<COLOR_GREEN<<m_valueV[2]<<"min"<<COLOR_DEFAULT<<"/"<<COLOR_GREEN<<"d"<<m_valueV[2]<<COLOR_DEFAULT<<"/"<<COLOR_GREEN<<m_valueV[1]<<"max"<<COLOR_DEFAULT
+          <<endl;
+      cout<<ERROR_COUT<<"Option of -R must be 9 values, but what you set is "<<COLOR_RED;
+      for(int i=0;i<m_valueR_str.size();i++)cout<<m_valueR_str[i]<<" ";
+      cout<<COLOR_DEFAULT<<endl;
+
+      return false;
+    }
+    if(!m_haveO || m_valueO=="")
+    {
+      cout<<WARN_COUT<<"You forget to set output file name through -O argument, but doesn't matter, it is reseted as "
+          <<m_valueV<<".vtk"<<endl;
+      m_valueO=m_valueV+".vtk";
+    }
+    if(m_valueV=="PTX" || m_valueV=="PXT" || m_valueV=="TPX" || m_valueV=="TXP" || m_valueV=="XPT" || m_valueV=="XTP")
+    {
+      int indP=0, indT=1, indX=2;
+      if(m_valueV=="PXT")
+      {
+        indP=0; indX=1; indT=2;
+      }else if(m_valueV=="TPX")
+      {
+        indT=0; indP=1; indX=2;
+      }else if(m_valueV=="TXP")
+      {
+        indT=0; indX=1; indP=2;
+      }else if(m_valueV=="XPT")
+      {
+        indX=0; indP=1; indT=2;
+      }else if(m_valueV=="XTP")
+      {
+        indX=0; indT=1; indP=2;
+      }
+      double rangeT[2]={m_valueR[indT][0], m_valueR[indT][2]};
+      double rangeP[2]={m_valueR[indP][0], m_valueR[indP][2]};
+      double rangeX[2]={m_valueR[indX][0], m_valueR[indX][2]};
+      if(!CheckRanges_T(rangeT)) return false;
+      if(!CheckRanges_P(rangeP)) return false;
+      if(!CheckRanges_X(rangeX)) return false;
+      //calculate
+      vector<double> arrT= linspace(m_valueR[indT][0], m_valueR[indT][2], m_valueR[indT][1]);
+      vector<double> arrP= linspace(m_valueR[indP][0], m_valueR[indP][2], m_valueR[indP][1]);
+      vector<double> arrX= linspace(m_valueR[indX][0], m_valueR[indX][2], m_valueR[indX][1]);
+      vector<SWEOS::PROP_H2ONaCl> props;
+      props.resize(arrT.size()*arrP.size()*arrX.size());
+      //progressbar
+      MultiProgressBar multiBar(arrP.size(),COLOR_BAR_BLUE);
+      omp_set_num_threads(m_threadNumOMP);
+      cout<<"3D calculation using "<<m_threadNumOMP<<" threads, T ∈ ["
+          <<rangeT[0]<<", "<<rangeT[1]<<"] °C, P ∈ ["
+          <<rangeP[0]<<", "<<rangeP[1]<<"] bar, X ∈ ["
+          <<rangeX[0]<<", "<<rangeX[1]<<"]"
+          <<"\n"<<endl;
+      int lenT=arrT.size();
+      int lenTX=arrT.size()*arrX.size();
+      #pragma omp parallel for shared(arrT, arrP, arrX, props, lenT, lenTX)
+      for (size_t i = 0; i < arrP.size(); i++)
+      {
+        for (size_t j = 0; j < arrX.size(); j++)
+        {
+          for (size_t k = 0; k < arrT.size(); k++)
+          {
+            SWEOS::cH2ONaCl eos;
+            eos.prop_pTX(arrP[i]*1e5, arrT[k]+SWEOS::Kelvin, arrX[j]);
+            props[k+j*lenT+i*lenTX]=eos.m_prop;
+          }
+        }
+        #pragma omp critical
+        multiBar.Update();
+      }
+      Write2D3DResult(arrT, arrX, arrP, props, m_valueO, m_normalized);
+    }else if(m_valueV=="PHX" || m_valueV=="PXH" || m_valueV=="HPX" || m_valueV=="HXP" || m_valueV=="XPH" || m_valueV=="XHP")
+    {
+      int indP=0, indH=1, indX=2;
+      if(m_valueV=="PXH")
+      {
+        indP=0; indX=1; indH=2;
+      }else if(m_valueV=="TPX")
+      {
+        indH=0; indP=1; indX=2;
+      }else if(m_valueV=="HXP")
+      {
+        indH=0; indX=1; indP=2;
+      }else if(m_valueV=="XPH")
+      {
+        indX=0; indP=1; indH=2;
+      }else if(m_valueV=="XHP")
+      {
+        indX=0; indH=1; indP=2;
+      }
+      double rangeH[2]={m_valueR[indH][0], m_valueR[indH][2]};
+      double rangeP[2]={m_valueR[indP][0], m_valueR[indP][2]};
+      double rangeX[2]={m_valueR[indX][0], m_valueR[indX][2]};
+      double rangePX[4]={m_valueR[indP][0], m_valueR[indP][2], m_valueR[indX][0], m_valueR[indX][2]};
+      if(!CheckRanges_H_PX(rangeH[0], rangeH[1], rangePX)) return false;
+      if(!CheckRanges_P(rangeP)) return false;
+      if(!CheckRanges_X(rangeX)) return false;
+      //calculate
+      vector<double> arrH= linspace(m_valueR[indH][0], m_valueR[indH][2], m_valueR[indH][1]);
+      vector<double> arrP= linspace(m_valueR[indP][0], m_valueR[indP][2], m_valueR[indP][1]);
+      vector<double> arrX= linspace(m_valueR[indX][0], m_valueR[indX][2], m_valueR[indX][1]);
+      vector<SWEOS::PROP_H2ONaCl> props;
+      props.resize(arrH.size()*arrP.size()*arrX.size());
+      //progressbar
+      MultiProgressBar multiBar(arrP.size(),COLOR_BAR_BLUE);
+      omp_set_num_threads(m_threadNumOMP);
+      cout<<"3D calculation using "<<m_threadNumOMP<<" threads, H ∈ ["
+          <<rangeH[0]<<", "<<rangeH[1]<<"] kJ/kg, P ∈ ["
+          <<rangeP[0]<<", "<<rangeP[1]<<"] bar, X ∈ ["
+          <<rangeX[0]<<", "<<rangeX[1]<<"]"
+          <<"\n"<<endl;
+      int lenH=arrH.size();
+      int lenHX=arrH.size()*arrX.size();
+      #pragma omp parallel for shared(arrH, arrP, arrX, props, lenH, lenHX)
+      for (size_t i = 0; i < arrP.size(); i++)
+      {
+        for (size_t j = 0; j < arrX.size(); j++)
+        {
+          for (size_t k = 0; k < arrH.size(); k++)
+          {
+            SWEOS::cH2ONaCl eos;
+            eos.prop_pHX(arrP[i]*1e5, arrH[k]*1000.0, arrX[j]);
+            props[k+j*lenH+i*lenHX]=eos.m_prop;
+          }
+        }
+        #pragma omp critical
+        multiBar.Update();
+      }
+      Write2D3DResult(arrH, arrX, arrP, props, m_valueO, m_normalized);
+    }
     return true;
   }
   bool cSWEOSarg::Validate_1D()
@@ -672,7 +1051,7 @@ namespace SWEOSbash
           <<"may be out of range and could cause swEOS crash.\n"
           <<"Because the minimum enthalpy corresponding to P="<<P0<<" bar, X="<<X0<<" is "<<HMIN/1000<<" kJ/kg"
           <<COLOR_DEFAULT<<endl;
-      // return false;
+      return false;
     }
     if(H0>HMAX/1000)
     {
@@ -680,7 +1059,7 @@ namespace SWEOSbash
           <<"may be out of range and could cause swEOS crash.\n"
           <<"Because the maximum enthalpy corresponding to P="<<P0<<" bar, X="<<X0<<" is "<<HMAX/1000<<" kJ/kg"
           <<COLOR_DEFAULT<<endl;
-      // return false;
+      return false;
     }
     return true;
   }
@@ -712,7 +1091,7 @@ namespace SWEOSbash
           <<"may be out of range and could cause swEOS crash.\n"
           <<"Because the range of enthalpy corresponding to P="<<P0<<" bar, X="<<X0<<" is ["<<HMIN/1000<<", "<<HMAX/1000<<"] kJ/kg"
           <<COLOR_DEFAULT<<endl;
-      // return false;
+      return false;
     }
     if(Hrange[1]<HMIN/1000 || Hrange[1]>HMAX/1000)
     {
@@ -720,7 +1099,7 @@ namespace SWEOSbash
           <<"may be out of range and could cause swEOS crash.\n"
           <<"Because the range of enthalpy corresponding to P="<<P0<<" bar, X="<<X0<<" is ["<<HMIN/1000<<", "<<HMAX/1000<<"] kJ/kg"
           <<COLOR_DEFAULT<<endl;
-      // return false;
+      return false;
     }
     return true;
   }
@@ -751,15 +1130,15 @@ namespace SWEOSbash
           <<"may be out of range and could cause swEOS crash.\n"
           <<"Because the minimum enthalpy corresponding to P["<<PXrange[0]<<", "<<PXrange[1]<<"] bar, X["<<PXrange[2]<<", "<<PXrange[3]<<"] is "<<HMIN/1000<<" kJ/kg"
           <<COLOR_DEFAULT<<endl;
-      // return false;
+      return false;
     }
-    if(HMAX0>HMAX/1000)
+    if(HMAX0>HMAX/1000) 
     {
       cout<<WARN_COUT<<COLOR_RED<<"The maximum value of enthalpy is specified by -R argument is MAX="<<HMAX0<<" kJ/kg"
           <<"may be out of range and could cause swEOS crash.\n"
           <<"Because the maximum enthalpy corresponding to P["<<PXrange[0]<<", "<<PXrange[1]<<"] bar, X["<<PXrange[2]<<", "<<PXrange[3]<<"] is "<<HMAX/1000<<" kJ/kg"
           <<COLOR_DEFAULT<<endl;
-      // return false;
+      return false;
     }
     return true;
   }
@@ -786,19 +1165,19 @@ namespace SWEOSbash
     }
     if(HMIN0<HMIN/1000)
     {
-      cout<<WARN_COUT<<COLOR_RED<<"The minimum value of enthalpy is specified by -R argument is MIN="<<HMIN0<<" kJ/kg"
+      cout<<ERROR_COUT<<COLOR_RED<<"The minimum value of enthalpy is specified by -R argument is MIN="<<HMIN0<<" kJ/kg"
           <<"may be out of range and could cause swEOS crash.\n"
           <<"Because the minimum enthalpy corresponding to P["<<Prange[0]<<", "<<Prange[1]<<"] bar, X="<<X0<<" is "<<HMIN/1000<<" kJ/kg"
           <<COLOR_DEFAULT<<endl;
-      // return false;
+      return false;
     }
     if(HMAX0>HMAX/1000)
     {
-      cout<<WARN_COUT<<COLOR_RED<<"The maximum value of enthalpy is specified by -R argument is MAX="<<HMAX0<<" kJ/kg"
+      cout<<ERROR_COUT<<COLOR_RED<<"The maximum value of enthalpy is specified by -R argument is MAX="<<HMAX0<<" kJ/kg"
           <<"may be out of range and could cause swEOS crash.\n"
           <<"Because the maximum enthalpy corresponding to P["<<Prange[0]<<", "<<Prange[1]<<"] bar, X="<<X0<<"] is "<<HMAX/1000<<" kJ/kg"
           <<COLOR_DEFAULT<<endl;
-      // return false;
+      return false;
     }
     return true;
   }
@@ -829,7 +1208,7 @@ namespace SWEOSbash
           <<"may be out of range and could cause swEOS crash.\n"
           <<"Because the minimum enthalpy corresponding to P="<<P0<<" bar, X["<<Xrange[0]<<", "<<Xrange[1]<<"] is "<<HMIN/1000<<" kJ/kg"
           <<COLOR_DEFAULT<<endl;
-      // return false;
+      return false;
     }
     if(HMAX0>HMAX/1000)
     {
@@ -837,7 +1216,7 @@ namespace SWEOSbash
           <<"may be out of range and could cause swEOS crash.\n"
           <<"Because the maximum enthalpy corresponding to P="<<P0<<" bar, X["<<Xrange[0]<<", "<<Xrange[1]<<"] is "<<HMAX/1000<<" kJ/kg"
           <<COLOR_DEFAULT<<endl;
-      // return false;
+      return false;
     }
     return true;
   }
