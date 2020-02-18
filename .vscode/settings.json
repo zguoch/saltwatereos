@@ -76,7 +76,11 @@
         "typeinfo": "cpp",
         "unordered_map": "cpp",
         "utility": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "__undef_macros": "cpp",
+        "memory_resource": "cpp",
+        "*.tcc": "cpp",
+        "*.txx": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

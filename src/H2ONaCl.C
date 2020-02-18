@@ -1836,7 +1836,7 @@ namespace SWEOS
         return PROP;
     }
 
-    void cH2ONaCl:: writeProps2VTK(vector<double> x, vector<double> y, vector<double> z, vector<PROP_H2ONaCl> props, string fname, bool normalize)
+    void cH2ONaCl:: writeProps2VTK(vector<double> x, vector<double> y, vector<double> z, vector<PROP_H2ONaCl> props, string fname, bool isWritePy, string xTitle, string yTitle, string zTitle)
     {
         if((x.size()*y.size()*z.size())!=props.size())
         {
@@ -1849,13 +1849,14 @@ namespace SWEOS
             cout<<"ERROR: Can not open file: "<<fname<<endl;
             exit(0);
         }
+        string fname_py=fname+".py";
         //  write vtk head
         fpout<<"# vtk DataFile Version 2.0"<<endl;
         fpout<<"Properties of seawater"<<endl;
         fpout<<"ASCII"<<endl;
         fpout<<"DATASET RECTILINEAR_GRID"<<endl;
         fpout<<"DIMENSIONS "<<x.size()<<" "<<y.size()<<" "<<z.size()<<endl;
-        if(normalize)
+        if(isWritePy)
         {
             double xMAX=max(x);
             double xMIN=min(x);
@@ -1863,21 +1864,53 @@ namespace SWEOS
             double yMIN=min(y);
             double zMAX=max(z);
             double zMIN=min(z);
-            fpout<<"X_COORDINATES "<<x.size()<<" float"<<endl;
-            for(int i=0;i<x.size();i++)fpout<<(x[i]-xMIN)/(xMAX-xMIN ==0 ? 1 : xMAX-xMIN)<<" ";fpout<<endl;
-            fpout<<"Y_COORDINATES "<<y.size()<<" float"<<endl;
-            for(int i=0;i<y.size();i++)fpout<<(y[i]-yMIN)/(yMAX-yMIN ==0 ? 1 : yMAX-yMIN)<<" ";fpout<<endl;
-            fpout<<"Z_COORDINATES "<<z.size()<<" float"<<endl;
-            for(int i=0;i<z.size();i++)fpout<<(z[i]-zMIN)/(zMAX-zMIN ==0 ? 1 : zMAX-zMIN)<<" ";fpout<<endl;
-        }else
-        {
-            fpout<<"X_COORDINATES "<<x.size()<<" float"<<endl;
-            for(int i=0;i<x.size();i++)fpout<<x[i]<<" ";fpout<<endl;
-            fpout<<"Y_COORDINATES "<<y.size()<<" float"<<endl;
-            for(int i=0;i<y.size();i++)fpout<<y[i]<<" ";fpout<<endl;
-            fpout<<"Z_COORDINATES "<<z.size()<<" float"<<endl;
-            for(int i=0;i<z.size();i++)fpout<<z[i]<<" ";fpout<<endl;
+            double len_x=(xMAX-xMIN);
+            double len_y=(yMAX-yMIN);
+            double len_z=(zMAX-zMIN);
+            double scale_x=1;
+            double scale_y=(len_y==0 ? 1: len_x/len_y);
+            double scale_z=(len_z==0 ? 1 : len_x/len_z);
+            ofstream fout_py(fname_py);
+            if(!fout_py)
+            {
+                cout<<"Warning: cannot generate pvPython script for Paraview. "<<fname_py<<endl;
+            }else
+            {
+                fout_py<<"from paraview.simple import *"<<endl;
+                fout_py<<"xHvtk = LegacyVTKReader(FileNames=[\'"<<fname<<"\'])"<<endl;
+                fout_py<<"renderView1 = GetActiveViewOrCreate(\'RenderView\')"<<endl;
+                fout_py<<"xHvtkDisplay = Show(xHvtk, renderView1)"<<endl;
+                fout_py<<"xHvtkDisplay.Representation = \'Surface\'"<<endl;
+                fout_py<<"renderView1.AxesGrid.Visibility = 1"<<endl;
+                fout_py<<"xHvtkDisplay.Scale = ["<<scale_x<<", "<<scale_y<<", "<<scale_z<<"]"<<endl;
+                fout_py<<"renderView1.AxesGrid.DataScale = ["<<scale_x<<", "<<scale_y<<", "<<scale_z<<"]"<<endl;
+                fout_py<<"renderView1.AxesGrid.XTitle = \'"<<xTitle<<"\'"<<endl;
+                fout_py<<"renderView1.AxesGrid.YTitle = \'"<<yTitle<<"\'"<<endl;
+                fout_py<<"renderView1.AxesGrid.ZTitle = \'"<<zTitle<<"\'"<<endl;
+                if(x.size()>1)fout_py<<"renderView1.AxesGrid.XTitleFontSize = 16"<<endl;
+                if(x.size()>1)fout_py<<"renderView1.AxesGrid.XTitleBold = 1"<<endl;
+                if(y.size()>1)fout_py<<"renderView1.AxesGrid.YTitleFontSize = 16"<<endl;
+                if(y.size()>1)fout_py<<"renderView1.AxesGrid.YTitleBold = 1"<<endl;
+                if(z.size()>1)fout_py<<"renderView1.AxesGrid.ZTitleFontSize = 16"<<endl;
+                if(z.size()>1)fout_py<<"renderView1.AxesGrid.ZYTitleBold = 1"<<endl;
+                fout_py<<"renderView1.ResetCamera()"<<endl;
+                fout_py.close();
+            }
+            
+            // fpout<<"X_COORDINATES "<<x.size()<<" float"<<endl;
+            // for(int i=0;i<x.size();i++)fpout<<(x[i]-xMIN)/(xMAX-xMIN ==0 ? 1 : xMAX-xMIN)<<" ";fpout<<endl;
+            // fpout<<"Y_COORDINATES "<<y.size()<<" float"<<endl;
+            // for(int i=0;i<y.size();i++)fpout<<(y[i]-yMIN)/(yMAX-yMIN ==0 ? 1 : yMAX-yMIN)<<" ";fpout<<endl;
+            // fpout<<"Z_COORDINATES "<<z.size()<<" float"<<endl;
+            // for(int i=0;i<z.size();i++)fpout<<(z[i]-zMIN)/(zMAX-zMIN ==0 ? 1 : zMAX-zMIN)<<" ";fpout<<endl;
+
         }
+        fpout<<"X_COORDINATES "<<x.size()<<" float"<<endl;
+        for(int i=0;i<x.size();i++)fpout<<x[i]<<" ";fpout<<endl;
+        fpout<<"Y_COORDINATES "<<y.size()<<" float"<<endl;
+        for(int i=0;i<y.size();i++)fpout<<y[i]<<" ";fpout<<endl;
+        fpout<<"Z_COORDINATES "<<z.size()<<" float"<<endl;
+        for(int i=0;i<z.size();i++)fpout<<z[i]<<" ";fpout<<endl;
         fpout<<"POINT_DATA "<<props.size()<<endl;
         // 1. phase region
         fpout<<"SCALARS PhaseRegion int"<<endl;

@@ -39,7 +39,6 @@ swEOS -D1 -VT -R0/2/1000 -P316 -X0.032
 
 * -t: number of threads
 
-* -n: is normalize axis in vtk format for 2D and 3D calculation
 
 
 

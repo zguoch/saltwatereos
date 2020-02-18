@@ -25,7 +25,6 @@ namespace SWEOSbash
   cSWEOSarg::cSWEOSarg(/* args */)
   :m_haveD(false), m_haveV(false), m_haveP(false)
   ,m_haveT(false), m_havet(false), m_haveX(false), m_haveH(false), m_haveR(false),m_haveO(false)
-  ,m_normalized(false)
   ,m_valueD(-1),m_threadNumOMP(omp_get_max_threads()), m_valueO(""),m_valueV("")
   {
     for(int i=0;i<3;i++)
@@ -64,7 +63,7 @@ namespace SWEOSbash
   {
     if(argc<2)return false; //there is no arguments
     int opt; 
-    const char *optstring = "D:V:P:T:X:H:R:O:G:t:vhn"; // set argument templete
+    const char *optstring = "D:V:P:T:X:H:R:O:G:t:vh"; // set argument templete
     int option_index = 0;
     static struct option long_options[] = {
         {"version", no_argument, NULL, 'v'},
@@ -129,9 +128,6 @@ namespace SWEOSbash
       case 'O':
         m_haveO=true;
         m_valueO=optarg;
-        break;
-      case 'n':
-        m_normalized=true;//normalize axis in vtk file for 2D and 3D calculation
         break;
       default:
         break;
@@ -246,16 +242,17 @@ namespace SWEOSbash
 
       return false;
     }
+    if(!m_haveO || m_valueO=="")
+    {
+      cout<<WARN_COUT<<"You forget to set output file name through -O argument, but doesn't matter, it is reseted as "
+          <<m_valueV<<".vtk"<<endl;
+      m_valueO=m_valueV+".vtk";
+    }
     if(m_valueV=="TP" || m_valueV=="PT")// fixed X
     {
       if(!(m_haveX && CheckRange_X(m_valueX)))
       {
         cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", but you don't set a proper fixed salinity value by -X argument"<<endl;
-        return false;
-      }
-      if(!m_haveO)
-      {
-        cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", you have to specify an output file by -O argument"<<endl;
         return false;
       }
       int ind_T=0, ind_P=1;
@@ -294,18 +291,13 @@ namespace SWEOSbash
         #pragma omp critical
         multibar.Update();
       } 
-      Write2D3DResult(arrT, arrP, arrX, props, m_valueO, m_normalized);
+      Write2D3DResult(arrT, arrP, arrX, props, m_valueO, "Temperature (°C)", "Pressure (bar)", "Salinity");
         
     }else if(m_valueV=="PX" || m_valueV=="XP")
     {
       if(!(m_haveT && CheckRange_T(m_valueT)))
       {
         cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", but you don't set a proper fixed temperature value by -T argument"<<endl;
-        return false;
-      }
-      if(!m_haveO)
-      {
-        cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", you have to specify an output file by -O argument"<<endl;
         return false;
       }
       int ind_X=0, ind_P=1;
@@ -343,17 +335,12 @@ namespace SWEOSbash
         #pragma omp critical
         multibar.Update();
       } 
-      Write2D3DResult(arrX, arrP, arrT, props, m_valueO,m_normalized);
+      Write2D3DResult(arrX, arrP, arrT, props, m_valueO, "Salinity", "Pressure (bar)", "Temperature (°C)");
     }else if(m_valueV=="TX" || m_valueV=="XT")
     {
       if(!(m_haveP && CheckRange_P(m_valueP)))
       {
         cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", but you don't set a proper fixed pressure value by -P argument"<<endl;
-        return false;
-      }
-      if(!m_haveO)
-      {
-        cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", you have to specify an output file by -O argument"<<endl;
         return false;
       }
       int ind_X=0, ind_T=1;
@@ -391,17 +378,12 @@ namespace SWEOSbash
         #pragma omp critical
         multibar.Update();
       } 
-      Write2D3DResult(arrT, arrX, arrP, props, m_valueO,m_normalized);
+      Write2D3DResult(arrT, arrX, arrP, props, m_valueO, "Temperature (°C)", "Salinity", "Pressure (bar)");
     }else if(m_valueV=="PH" || m_valueV=="HP")
     {
       if(!(m_haveX && CheckRange_X(m_valueX)))
       {
         cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", but you don't set a proper fixed salinity value by -X argument"<<endl;
-        return false;
-      }
-      if(!m_haveO)
-      {
-        cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", you have to specify an output file by -O argument"<<endl;
         return false;
       }
       int ind_H=0, ind_P=1;
@@ -440,17 +422,12 @@ namespace SWEOSbash
         #pragma omp critical
         multibar.Update();
       } 
-      Write2D3DResult(arrH, arrP, arrX, props, m_valueO, m_normalized);
+      Write2D3DResult(arrH, arrP, arrX, props, m_valueO, "Enthalpy (kJ/kg)", "Pressure (bar)", "Salinity");
     }else if(m_valueV=="HX" || m_valueV=="XH")
     {
       if(!(m_haveP && CheckRange_P(m_valueP)))
       {
         cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", but you don't set a proper fixed pressure value by -P argument"<<endl;
-        return false;
-      }
-      if(!m_haveO)
-      {
-        cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", you have to specify an output file by -O argument"<<endl;
         return false;
       }
       int ind_H=0, ind_X=1;
@@ -489,7 +466,7 @@ namespace SWEOSbash
         #pragma omp critical
         multibar.Update();
       } 
-      Write2D3DResult(arrH, arrX, arrP, props, m_valueO, m_normalized);
+      Write2D3DResult(arrH, arrX, arrP, props, m_valueO, "Enthalpy (kJ/kg)", "Salinity", "Pressure (bar)");
     }else
     {
       cout<<ERROR_COUT<<"Unrecognized -V parameter for two-dimension calculation: -V"<<m_valueV<<endl;
@@ -498,9 +475,11 @@ namespace SWEOSbash
     }
     return true;
   }
-  bool Write2D3DResult(vector<double> x, vector<double> y, vector<double> z, vector<SWEOS::PROP_H2ONaCl> props, string outFile, bool isNormalize)
+  bool Write2D3DResult(vector<double> x, vector<double> y, vector<double> z, vector<SWEOS::PROP_H2ONaCl> props, 
+                       string outFile, string xTitle, string yTitle, string zTitle, bool isWritePy)
   {
     string extname;
+    string fname_pyScript;
     vector<string> tmp=string_split(outFile,".");
     if(tmp.size()>=1)
     {
@@ -509,9 +488,9 @@ namespace SWEOSbash
     if(extname=="vtk")
     {
       SWEOS::cH2ONaCl eos;
-      eos.writeProps2VTK(x,y,z,props, outFile, isNormalize);
+      eos.writeProps2VTK(x,y,z,props, outFile, isWritePy, xTitle, yTitle, zTitle);
     }else
-    {
+    { 
       cout<<WARN_COUT<<"Unrecognized format: "<<outFile<<endl;
       cout<<COLOR_GREEN<<"Write results into vtk file format"<<COLOR_DEFAULT<<endl;
       string newfilename="";
@@ -521,9 +500,12 @@ namespace SWEOSbash
       }
       outFile=newfilename+".vtk";
       SWEOS::cH2ONaCl eos;
-      eos.writeProps2VTK(x,y,z,props, outFile, isNormalize);
+      eos.writeProps2VTK(x,y,z,props, outFile, isWritePy, xTitle, yTitle, zTitle);
     }
     cout<<COLOR_BLUE<<"Results have been saved to file: "<<outFile<<endl;
+    cout<<COLOR_BLUE<<"Paraview-python script is generated as : "<<outFile+".py"<<endl;
+    cout<<"You can use command of "<<COLOR_GREEN<<" paraview --script="<<outFile+".py"<<COLOR_DEFAULT<<" to present result in paraview"<<endl;
+    
     return true;
   }
   bool cSWEOSarg::Validate_3D()
@@ -619,7 +601,7 @@ namespace SWEOSbash
         #pragma omp critical
         multiBar.Update();
       }
-      Write2D3DResult(arrT, arrX, arrP, props, m_valueO, m_normalized);
+      Write2D3DResult(arrT, arrX, arrP, props, m_valueO, "Temperature (°C)", "Salinity", "Pressure (bar)");
     }else if(m_valueV=="PHX" || m_valueV=="PXH" || m_valueV=="HPX" || m_valueV=="HXP" || m_valueV=="XPH" || m_valueV=="XHP")
     {
       int indP=0, indH=1, indX=2;
@@ -677,7 +659,7 @@ namespace SWEOSbash
         #pragma omp critical
         multiBar.Update();
       }
-      Write2D3DResult(arrH, arrX, arrP, props, m_valueO, m_normalized);
+      Write2D3DResult(arrH, arrX, arrP, props, m_valueO, "Enthalpy (kJ/kg)", "Salinity", "Pressure (bar)");
     }
     return true;
   }

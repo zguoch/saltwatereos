@@ -60,7 +60,7 @@ namespace SWEOSbash
     class cSWEOSarg
     {
     private:
-        bool m_haveD, m_haveV, m_haveP, m_haveT, m_havet, m_haveX, m_haveH, m_haveR, m_haveG, m_haveO, m_normalized;
+        bool m_haveD, m_haveV, m_haveP, m_haveT, m_havet, m_haveX, m_haveH, m_haveR, m_haveG, m_haveO;
         int m_valueD, m_threadNumOMP;
         string m_valueV, m_valueG, m_valueO;
         double m_valueT, m_valueP, m_valueX, m_valueH;
@@ -107,7 +107,8 @@ namespace SWEOSbash
     vector<SWEOS::PROP_H2ONaCl> calculateMultiPoints_PTX_PHX(string valueV, string filePTX, string outFile, string isT_H);
     bool WriteCSV(string outFile,vector<double> P, vector<double> X, vector<SWEOS::PROP_H2ONaCl> props);
     bool Write1Dresult(string outFile,vector<double> P, vector<double> X, vector<SWEOS::PROP_H2ONaCl> props);
-    bool Write2D3DResult(vector<double> x, vector<double> y, vector<double> z, vector<SWEOS::PROP_H2ONaCl> props, string outFile,bool isNormalize);
+    bool Write2D3DResult(vector<double> x, vector<double> y, vector<double> z, vector<SWEOS::PROP_H2ONaCl> props, 
+                        string outFile, string xTitle, string yTitle, string zTitle, bool isWritePy=true);
     static void StartText()
     {
         //30: black  31:red  32:green  33:yellow  34:blue  35:purple  36:darkgreen
