@@ -24,9 +24,8 @@ namespace SWEOSbash
 
   cSWEOSarg::cSWEOSarg(/* args */)
   :m_haveD(false), m_haveV(false), m_haveP(false)
-  ,m_haveT(false), m_havet(false), m_haveX(false), m_haveH(false), m_haveR(false),m_haveO(false)
-  ,m_normalized(false)
-  ,m_valueD(-1),m_threadNumOMP(omp_get_max_threads()), m_valueO(""),m_valueV("")
+  ,m_haveT(false), m_haveX(false), m_haveH(false), m_haveR(false),m_haveO(false)
+  ,m_valueD(-1), m_valueO(""),m_valueV("")
   {
     for(int i=0;i<3;i++)
     for(int j=0;j<3;j++)m_valueR[i][j]=0;
@@ -64,7 +63,7 @@ namespace SWEOSbash
   {
     if(argc<2)return false; //there is no arguments
     int opt; 
-    const char *optstring = "D:V:P:T:X:H:R:O:G:t:vhn"; // set argument templete
+    const char *optstring = "D:V:P:T:X:H:R:O:G:t:vh"; // set argument templete
     int option_index = 0;
     static struct option long_options[] = {
         {"version", no_argument, NULL, 'v'},
@@ -90,13 +89,6 @@ namespace SWEOSbash
         m_haveD=true;
         if(!GetOptionValue(opt, optarg, doubleOptValue))return false;
         m_valueD=(int)doubleOptValue;
-        break;
-      case 't':
-        m_havet=true;
-        if(!GetOptionValue(opt, optarg, doubleOptValue))return false;
-        m_threadNumOMP=(int)doubleOptValue;
-        if(m_threadNumOMP>omp_get_max_threads())m_threadNumOMP=omp_get_max_threads();
-        if(m_threadNumOMP<1)m_threadNumOMP=1;
         break;
       case 'V':
         m_haveV=true;
@@ -129,9 +121,6 @@ namespace SWEOSbash
       case 'O':
         m_haveO=true;
         m_valueO=optarg;
-      case 'n':
-        m_normalized=true;//normalize axis in vtk file for 2D and 3D calculation
-        break;
       default:
         break;
       }
@@ -275,13 +264,7 @@ namespace SWEOSbash
       SWEOS::cH2ONaCl eos;
       MultiProgressBar multibar(arrP.size(),COLOR_BAR_BLUE);
       int index=0;
-      omp_set_num_threads(m_threadNumOMP);
-      cout<<"2D calculation using "<<m_threadNumOMP<<" threads, T ∈ ["
-          <<rangeT[0]<<", "<<rangeT[1]<<"] °C, P ∈ ["
-          <<rangeP[0]<<", "<<rangeP[1]<<"] bar, fixed salinity X="
-          <<m_valueX<<" "
-          <<"\n"<<endl;
-      #pragma omp parallel for shared(arrT, arrP, arrX)
+      // #pragma omp parallel for shared(arrT, arrP, arrX)
       for (size_t j = 0; j < arrP.size(); j++)
       {
         for (size_t k = 0; k < arrT.size(); k++)
@@ -290,60 +273,13 @@ namespace SWEOSbash
           props[index]=eos.m_prop;
           index++;
         }
-        #pragma omp critical
         multibar.Update();
       } 
-      Write2Dresult(arrT, arrP, arrX, props, m_valueO,m_normalized);
+      eos.writeProps2VTK(arrT, arrP, arrX, props, m_valueO);
         
     }else if(m_valueV=="PX" || m_valueV=="XP")
     {
-      if(!(m_haveT && CheckRange_T(m_valueT)))
-      {
-        cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", but you don't set a proper fixed temperature value by -T argument"<<endl;
-        return false;
-      }
-      if(!m_haveO)
-      {
-        cout<<ERROR_COUT<<"Selected calculation mode is 2D calculation, change "<<m_valueV<<", you have to specify an output file by -O argument"<<endl;
-        return false;
-      }
-      int ind_X=0, ind_P=1;
-      if(m_valueV=="PX")
-      {
-        ind_P=0; ind_X=1;
-      }
-      double rangeX[2]={m_valueR[ind_X][0], m_valueR[ind_X][2]};
-      double rangeP[2]={m_valueR[ind_P][0], m_valueR[ind_P][2]};
-      if(!CheckRanges_X(rangeX)) return false;
-      if(!CheckRanges_P(rangeP)) return false;
-      //calculate
-      vector<double> arrX= linspace(m_valueR[ind_X][0], m_valueR[ind_X][2], m_valueR[ind_X][1]);
-      vector<double> arrP= linspace(m_valueR[ind_P][0], m_valueR[ind_P][2], m_valueR[ind_P][1]);
-      vector<double> arrT; arrT.push_back(m_valueT);
-      vector<SWEOS::PROP_H2ONaCl> props;
-      props.resize(arrP.size()*arrX.size());
-      SWEOS::cH2ONaCl eos;
-      MultiProgressBar multibar(arrP.size(),COLOR_BAR_BLUE);
-      int index=0;
-      omp_set_num_threads(m_threadNumOMP);
-      cout<<"2D calculation using "<<m_threadNumOMP<<" threads, X ∈ ["
-          <<rangeX[0]<<", "<<rangeX[1]<<"] , P ∈ ["
-          <<rangeP[0]<<", "<<rangeP[1]<<"] bar, fixed temperature T="
-          <<m_valueT<<" °C "
-          <<"\n"<<endl;
-      #pragma omp parallel for shared(arrT, arrP, arrX)
-      for (size_t j = 0; j < arrP.size(); j++)
-      {
-        for (size_t k = 0; k < arrX.size(); k++)
-        {
-          eos.prop_pTX(arrP[j]*1e5, arrT[0]+SWEOS::Kelvin, arrX[k]);
-          props[index]=eos.m_prop;
-          index++;
-        }
-        #pragma omp critical
-        multibar.Update();
-      } 
-      Write2Dresult(arrX, arrP, arrT, props, m_valueO,m_normalized);
+      cout<<"2D PX"<<endl;
     }else if(m_valueV=="TX" || m_valueV=="XT")
     {
       cout<<"2D TX"<<endl;
@@ -359,34 +295,6 @@ namespace SWEOSbash
       cout<<ERROR_COUT<<"Unrecognized -V parameter for two-dimension calculation: -V"<<m_valueV<<endl;
       return false;
     }
-    return true;
-  }
-  bool Write2Dresult(vector<double> x, vector<double> y, vector<double> z, vector<SWEOS::PROP_H2ONaCl> props, string outFile, bool isNormalize)
-  {
-    string extname;
-    vector<string> tmp=string_split(outFile,".");
-    if(tmp.size()>=1)
-    {
-      extname=tmp[tmp.size()-1];
-    }
-    if(extname=="vtk")
-    {
-      SWEOS::cH2ONaCl eos;
-      eos.writeProps2VTK(x,y,z,props, outFile, isNormalize);
-    }else
-    {
-      cout<<WARN_COUT<<"Unrecognized format: "<<outFile<<endl;
-      cout<<COLOR_GREEN<<"Write results into vtk file format"<<COLOR_DEFAULT<<endl;
-      string newfilename="";
-      for (size_t i = 0; i < tmp.size()-1; i++)
-      {
-        newfilename+=tmp[i];
-      }
-      outFile=newfilename+".vtk";
-      SWEOS::cH2ONaCl eos;
-      eos.writeProps2VTK(x,y,z,props, outFile, isNormalize);
-    }
-    cout<<COLOR_BLUE<<"Results have been saved to file: "<<outFile<<endl;
     return true;
   }
   bool cSWEOSarg::Validate_3D()
