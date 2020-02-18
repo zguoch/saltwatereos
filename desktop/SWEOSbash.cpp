@@ -504,8 +504,8 @@ namespace SWEOSbash
     }
     cout<<COLOR_BLUE<<"Results have been saved to file: "<<outFile<<endl;
     cout<<COLOR_BLUE<<"Paraview-python script is generated as : "<<outFile+".py"<<endl;
-    cout<<"You can use command of "<<COLOR_GREEN<<" paraview --script="<<outFile+".py"<<COLOR_DEFAULT<<" to present result in paraview"<<endl;
-    
+    string cmd_pv=" paraview --script="+outFile+".py";
+    cout<<"You can use command of "<<COLOR_GREEN<<cmd_pv<<COLOR_DEFAULT<<" to present result in paraview"<<endl;
     return true;
   }
   bool cSWEOSarg::Validate_3D()
