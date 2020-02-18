@@ -151,7 +151,8 @@ namespace SWEOS
         double mu_l_pTX(double p, double T_K, double X_wt); //get dynamic viscosity of liquid. p: Pa; T: K; X: wt%
         double mu_pTX(double p, double T_K, double X_wt); //get bulk dynamic viscosity. p: Pa; T: K; X: wt%
         PROP_H2ONaCl m_prop;
-        void writeProps2VTK(std::vector<double> T, std::vector<double> P, std::vector<double> X, std::vector<PROP_H2ONaCl> props, std::string fname, bool normalize=true);
+        //X:[0,1]; T: deg. C; P: bar
+        void writeProps2VTK(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<PROP_H2ONaCl> props, std::string fname, bool normalize=true);
         friend ostream & operator<<(ostream & out,  cH2ONaCl & A);
         void setColorPrint(bool colorPrint){m_colorPrint=colorPrint;}
     private:

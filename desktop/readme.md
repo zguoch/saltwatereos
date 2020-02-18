@@ -39,6 +39,8 @@ swEOS -D1 -VT -R0/2/1000 -P316 -X0.032
 
 * -t: number of threads
 
+* -n: is normalize axis in vtk format for 2D and 3D calculation
+
 
 
 ## Example
@@ -63,6 +65,14 @@ swEOS -D1 -VT -X0.032 -P399 -R0/1/100 -OT_1D.csv
 swEOS -D1 -VP -X0.032 -T100 -R5/1/100 -OP_1D.csv
 swEOS -D1 -VX -T100 -P399 -R0/0.001/1 -OX_1D.csv
 ```
+
+### Two-dimension calculation
+
+```
+swEOS -D2 -VPT -R1/0.1/100/0/1/500 -X0.032 -Orest/PT_2D.vt 
+```
+
+
 # Development
 
 ## Multi-language support

@@ -1836,9 +1836,9 @@ namespace SWEOS
         return PROP;
     }
 
-    void cH2ONaCl:: writeProps2VTK(vector<double> T, vector<double> P, vector<double> X, vector<PROP_H2ONaCl> props, string fname, bool normalize)
+    void cH2ONaCl:: writeProps2VTK(vector<double> x, vector<double> y, vector<double> z, vector<PROP_H2ONaCl> props, string fname, bool normalize)
     {
-        if((T.size()*P.size()*X.size())!=props.size())
+        if((x.size()*y.size()*z.size())!=props.size())
         {
             cout<<"ERROR: T.size()*P.size()*X.size() != props.size() in writeProps2VTK\nThe VTK file can not be created correctly."<<endl;
             exit(0);
@@ -1854,29 +1854,29 @@ namespace SWEOS
         fpout<<"Properties of seawater"<<endl;
         fpout<<"ASCII"<<endl;
         fpout<<"DATASET RECTILINEAR_GRID"<<endl;
-        fpout<<"DIMENSIONS "<<T.size()<<" "<<P.size()<<" "<<X.size()<<endl;
+        fpout<<"DIMENSIONS "<<x.size()<<" "<<y.size()<<" "<<z.size()<<endl;
         if(normalize)
         {
-            double MAXT=max(T);
-            double MINT=min(T);
-            double MAXP=max(P);
-            double MINP=min(P);
-            double MAXX=max(X);
-            double MINX=min(X);
-            fpout<<"X_COORDINATES "<<T.size()<<" float"<<endl;
-            for(int i=0;i<T.size();i++)fpout<<(T[i]-MINT)/(MAXT-MINT)<<" ";fpout<<endl;
-            fpout<<"Y_COORDINATES "<<P.size()<<" float"<<endl;
-            for(int i=0;i<P.size();i++)fpout<<(P[i]-MINP)/(MAXP-MINP)<<" ";fpout<<endl;
-            fpout<<"Z_COORDINATES "<<X.size()<<" float"<<endl;
-            for(int i=0;i<X.size();i++)fpout<<(X[i]-MINX)/(MAXX-MINX)<<" ";fpout<<endl;
+            double xMAX=max(x);
+            double xMIN=min(x);
+            double yMAX=max(y);
+            double yMIN=min(y);
+            double zMAX=max(z);
+            double zMIN=min(z);
+            fpout<<"X_COORDINATES "<<x.size()<<" float"<<endl;
+            for(int i=0;i<x.size();i++)fpout<<(x[i]-xMIN)/(xMAX-xMIN ==0 ? 1 : xMAX-xMIN)<<" ";fpout<<endl;
+            fpout<<"Y_COORDINATES "<<y.size()<<" float"<<endl;
+            for(int i=0;i<y.size();i++)fpout<<(y[i]-yMIN)/(yMAX-yMIN ==0 ? 1 : yMAX-yMIN)<<" ";fpout<<endl;
+            fpout<<"Z_COORDINATES "<<z.size()<<" float"<<endl;
+            for(int i=0;i<z.size();i++)fpout<<(z[i]-zMIN)/(zMAX-zMIN ==0 ? 1 : zMAX-zMIN)<<" ";fpout<<endl;
         }else
         {
-            fpout<<"X_COORDINATES "<<T.size()<<" float"<<endl;
-            for(int i=0;i<T.size();i++)fpout<<T[i]<<" ";fpout<<endl;
-            fpout<<"Y_COORDINATES "<<P.size()<<" float"<<endl;
-            for(int i=0;i<P.size();i++)fpout<<P[i]<<" ";fpout<<endl;
-            fpout<<"Z_COORDINATES "<<X.size()<<" float"<<endl;
-            for(int i=0;i<X.size();i++)fpout<<X[i]<<" ";fpout<<endl;
+            fpout<<"X_COORDINATES "<<x.size()<<" float"<<endl;
+            for(int i=0;i<x.size();i++)fpout<<x[i]<<" ";fpout<<endl;
+            fpout<<"Y_COORDINATES "<<y.size()<<" float"<<endl;
+            for(int i=0;i<y.size();i++)fpout<<y[i]<<" ";fpout<<endl;
+            fpout<<"Z_COORDINATES "<<z.size()<<" float"<<endl;
+            for(int i=0;i<z.size();i++)fpout<<z[i]<<" ";fpout<<endl;
         }
         fpout<<"POINT_DATA "<<props.size()<<endl;
         // 1. phase region
