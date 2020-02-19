@@ -2088,8 +2088,9 @@ namespace SWEOS
             double T_star_v = n1_v + n2_v*T_in; // + D_v;  %only for low pres
             double P_star_v = P_in;
             // double Rho_star_l=water_tp_IAPS84(P_star_v*1e5, T_star_v, 50,dRhodP, h, Mu, 1e-9, true); 
-            SteamState S = freesteam_set_pT(P_star_v*1e5, T_star_v+Kelvin);
-            double Rho_star_v=freesteam_rho(S);
+            // SteamState S = freesteam_set_pT(P_star_v*1e5, T_star_v+Kelvin);
+            // double Rho_star_v=freesteam_rho(S);
+            double Rho_star_v=water_rho_pT(P_star_v*1e5, T_star_v+Kelvin);
             bool ind1 = (Rho_star_v > 321.89 && P_star_v <= P_crit); 
             bool ind2 = (isnan(Rho_star_v) && P_star_v <= P_crit);
             while (ind1 || ind2)
@@ -2117,8 +2118,9 @@ namespace SWEOS
             double n2_l = n20 + n21*sqrt(X_l+n22) + n23*X_l;
             double T_star_l = n1_l + n2_l*T_in; // + D_l; %only for low pres
             double P_star_l = P_in;
-            SteamState S = freesteam_set_pT(P_star_l*1e5, T_star_l+Kelvin);
-            double Rho_star_l=freesteam_rho(S);
+            // SteamState S = freesteam_set_pT(P_star_l*1e5, T_star_l+Kelvin);
+            // double Rho_star_l=freesteam_rho(S);
+            double Rho_star_l=water_rho_pT(P_star_l*1e5, T_star_l+Kelvin);
             // cout<<"P_star_l: "<<P_star_l<<" T_star_l: "<<T_star_l<<" Rho_star_l: "<<Rho_star_l<<endl;
             double Vol = 1/Rho_star_l;
             double V_l = Vol*mass_h2o;
@@ -2129,8 +2131,9 @@ namespace SWEOS
                 double T_crit, Rho_star_crit_l, h_l, h_v, dpd_l, dpd_v, Rho_v, Mu_l, Mu_v;
                 fluidProp_crit_P(P_star_l*1e5,1e-9,T_crit, Rho_star_crit_l, h_l, h_v, dpd_l, dpd_v, Rho_v, Mu_l, Mu_v);
                 double Vol_l_crit = mass_h2o / Rho_star_crit_l;
-                S = freesteam_set_pT(P_star_l*1e5, T_crit-1+Kelvin);
-                double Rho_star_crit_l_minus=freesteam_rho(S);
+                // S = freesteam_set_pT(P_star_l*1e5, T_crit-1+Kelvin);
+                // double Rho_star_crit_l_minus=freesteam_rho(S);
+                double Rho_star_crit_l_minus=water_rho_pT(P_star_l*1e5, T_crit-1+Kelvin);
                 double Vol_l_crit_minus = mass_h2o / Rho_star_crit_l_minus;
                 double dVol_ldT = (Vol_l_crit - Vol_l_crit_minus)/1;
                 double o1 = dVol_ldT ; //- 3*o2 * T_crit.^2;
@@ -2186,14 +2189,17 @@ namespace SWEOS
                 double n2_l_P1 = n20_P1 + n21_P1*sqrt(X_l_ind_l+n22_P1) + n23_P1*X_l_ind_l;
                 T_in_ind_l = T_in;
                 double T_star_l_P1 = n1_l_P1 + n2_l_P1*T_in_ind_l;
-                S = freesteam_set_pT(P_390*1e5, T_star_l_P+Kelvin);
-                double Rho_l_390=freesteam_rho(S);
+                // S = freesteam_set_pT(P_390*1e5, T_star_l_P+Kelvin);
+                // double Rho_l_390=freesteam_rho(S);
+                double Rho_l_390=water_rho_pT(P_390*1e5, T_star_l_P+Kelvin);
                 double Vol_390 = mass_h2o / Rho_l_390; 
-                S = freesteam_set_pT(P_400*1e5, T_star_l_P4+Kelvin);
-                double Rho_l_400=freesteam_rho(S);
+                // S = freesteam_set_pT(P_400*1e5, T_star_l_P4+Kelvin);
+                // double Rho_l_400=freesteam_rho(S);
+                double Rho_l_400=water_rho_pT(P_400*1e5, T_star_l_P4+Kelvin);
                 double Vol_400 = mass_h2o / Rho_l_400;   
-                S = freesteam_set_pT(P_1000*1e5, T_star_l_P1+Kelvin); 
-                double Rho_l_1000=freesteam_rho(S);
+                // S = freesteam_set_pT(P_1000*1e5, T_star_l_P1+Kelvin); 
+                // double Rho_l_1000=freesteam_rho(S);
+                double Rho_l_1000=water_rho_pT(P_1000*1e5, T_star_l_P1+Kelvin); 
                 double Vol_1000 = mass_h2o / Rho_l_1000; 
                 double dVol_dP = (Vol_400 - Vol_390) / (P_400 - P_390);
 
@@ -2267,8 +2273,9 @@ namespace SWEOS
 
             double T_star_v = q1_v + q2_v*T_in; 
             double P_star_v = P_in;
-            SteamState S = freesteam_set_pT(P_star_v*1e5, T_star_v+Kelvin);
-            h_v=freesteam_h(S);
+            // SteamState S = freesteam_set_pT(P_star_v*1e5, T_star_v+Kelvin);
+            // h_v=freesteam_h(S);
+            h_v=water_h_pT(P_star_v*1e5, T_star_v+Kelvin);
             bool ind1 = (h_v < 2.086e6 && P_star_v < P_crit);// & P_star_v > 40); 
             bool ind2 = (isnan(h_v) && P_star_v < P_crit);// & P_star_v > 40); 
             while (ind1 || ind2)
@@ -2290,8 +2297,9 @@ namespace SWEOS
             double q2_lb = 1 - q21 * sqrt(q22) + q21 * sqrt(X_l+q22) + X_l * (q21 * sqrt(q22) - 1- q21 * sqrt(1+q22) + q2_1);
             double T_star_l = q1_l + q2_l*T_in;
             double P_star_l = P_in;
-            SteamState S = freesteam_set_pT(P_star_l*1e5, T_star_l+Kelvin);
-            h_l=freesteam_h(S);
+            // SteamState S = freesteam_set_pT(P_star_l*1e5, T_star_l+Kelvin);
+            // h_l=freesteam_h(S);
+            h_l=water_h_pT(P_star_l*1e5, T_star_l+Kelvin);
             //nedded for boiling temps from 180 to Tcri, is not in Driesners Paper
             bool ind_low = ( (h_l > 2.086e6 || isnan(h_l))  &&  P_star_l < P_crit  &&  T_in < 375 );
             if(ind_low)
@@ -2300,8 +2308,9 @@ namespace SWEOS
                 double T_crit, Rho_l0, h_l_crit, dpd_l0, dpd_v0, Rho_v0, Mu_l0, Mu_v0;
                 fluidProp_crit_P(P_star_l*1e5, 1e-9,T_crit, Rho_l0, h_l_crit, h_v, dpd_l0, dpd_v0, Rho_v0, Mu_l0, Mu_v0);//P_star_l = P_l
                 // find derivative of spec enthlapy at boiling temperature for given Pressure
-                S = freesteam_set_pT(P_star_l*1e5, T_crit-1+Kelvin);
-                double h_l_minus=freesteam_h(S);
+                // S = freesteam_set_pT(P_star_l*1e5, T_crit-1+Kelvin);
+                // double h_l_minus=freesteam_h(S);
+                double h_l_minus=water_h_pT(P_star_l*1e5, T_crit-1+Kelvin);
                 double dh_ldT = (h_l_crit - h_l_minus)/1;
                 double o1 = dh_ldT ; 
                 double o0 = h_l_crit - o1 * T_crit ;
@@ -2347,14 +2356,17 @@ namespace SWEOS
                 q2_l = q20 + q21*sqrt(X_l+q22) + q23*X_l;
                 double T_star_l_P1 = q1_l + q2_l*T_in;
 
-                S = freesteam_set_pT(P_390*1e5, T_star_l_P390+Kelvin);
-                double h_l_390=freesteam_h(S);
+                // S = freesteam_set_pT(P_390*1e5, T_star_l_P390+Kelvin);
+                // double h_l_390=freesteam_h(S);
+                double h_l_390=water_h_pT(P_390*1e5, T_star_l_P390+Kelvin);
 
-                S = freesteam_set_pT(P4*1e5, T_star_l_P4+Kelvin);
-                double h_l_400=freesteam_h(S);
+                // S = freesteam_set_pT(P4*1e5, T_star_l_P4+Kelvin);
+                // double h_l_400=freesteam_h(S);
+                double h_l_400=water_h_pT(P4*1e5, T_star_l_P4+Kelvin);
 
-                S = freesteam_set_pT(P1*1e5, P1+Kelvin);
-                double h_l_1000=freesteam_h(S);
+                // S = freesteam_set_pT(P1*1e5, P1+Kelvin);
+                // double h_l_1000=freesteam_h(S);
+                double h_l_1000=water_h_pT(P1*1e5, P1+Kelvin);
 
                 double dh_l_dP = (h_l_400 - h_l_390) / (P4 - P_390);
                 double P_610 = P1 - P_390;
@@ -2423,8 +2435,9 @@ namespace SWEOS
             double e2 = 1 - b1 * pow(T,b2) - b3 * pow(Xw_l,a2) * pow(T,b2); 
             double T_star_l = e1 + e2 * T;
             if(isnan(T_star_l))T_star_l = 0;
-            SteamState S = freesteam_set_pT(P, T_star_l+Kelvin);
-            mu_l=freesteam_mu(S);
+            // SteamState S = freesteam_set_pT(P, T_star_l+Kelvin);
+            // mu_l=freesteam_mu(S);
+            mu_l=water_mu_pT(P, T_star_l+Kelvin);
             if(isnan(mu_l))
             {
                 double T_2ph0, Rho_l0, h_l0,h_v0, dpd_l0, dpd_v0, Rho_v0, Mu_v0;
@@ -2441,8 +2454,9 @@ namespace SWEOS
             bool ind_0 = (T_star_v > 0);
             if(ind_0)
             {
-                SteamState S = freesteam_set_pT(P, T_star_v+Kelvin);
-                mu_v=freesteam_mu(S);
+                // SteamState S = freesteam_set_pT(P, T_star_v+Kelvin);
+                // mu_v=freesteam_mu(S);
+                mu_v=water_mu_pT(P, T_star_v+Kelvin);
             }
             if(isnan(mu_v))
             {
@@ -2450,5 +2464,57 @@ namespace SWEOS
                 fluidProp_crit_P(P, 1e-10,T_2ph0, Rho_l0, h_l0, h_v0, dpd_l0, dpd_v0, Rho_v0, mu_l0, mu_v);
             }
         }
+    }
+    double cH2ONaCl::water_rho_pT(double p, double T_K)
+    {
+        #ifdef PLATFORM_IOS
+            double d, s, h, dp, ds, dh;
+            Prop *prop0;
+            dp = 1.0e-8;
+            ds = 1.0e-8;
+            dh = 1.0e-8;
+            prop0 = newProp('t', 'p', 1);
+            d = 0.0;
+            water_tp(T_K,p,d,dp,prop0);
+            return prop0->d;
+        #else 
+            SteamState S = freesteam_set_pT(p, T_K);
+            return freesteam_rho(S);
+        #endif 
+    }
+
+    double cH2ONaCl::water_h_pT(double p, double T_K)
+    {
+        #ifdef PLATFORM_IOS
+            double d, s, h, dp, ds, dh;
+            Prop *prop0;
+            dp = 1.0e-8;
+            ds = 1.0e-8;
+            dh = 1.0e-8;
+            prop0 = newProp('t', 'p', 1);
+            d = 0.0;
+            water_tp(T_K,p,d,dp,prop0);
+            return prop0->h;
+        #else 
+            SteamState S = freesteam_set_pT(p, T_K);
+            return freesteam_h(S);
+        #endif 
+    }
+    double cH2ONaCl::water_mu_pT(double p, double T_K)
+    {
+        #ifdef PLATFORM_IOS
+            double d, s, h, dp, ds, dh;
+            Prop *prop0;
+            dp = 1.0e-8;
+            ds = 1.0e-8;
+            dh = 1.0e-8;
+            prop0 = newProp('t', 'p', 1);
+            d = 0.0;
+            water_tp(T_K,p,d,dp,prop0);
+            return viscos(prop0);
+        #else 
+            SteamState S = freesteam_set_pT(p, T_K);
+            return freesteam_mu(S);
+        #endif 
     }
 }

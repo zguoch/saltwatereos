@@ -8,8 +8,17 @@
 using namespace std;
 
 // #include "omp.h"
+// chose use which library to calculate water properties
+// if H2ONaCl class is called by swift on ios platform, we change to use PROST to calculate water properties
+// if on desktop platform, please comment this line
 
-#include "IAPWS-IF97.H"
+//  #define PLATFORM_IOS 1  
+
+#ifdef PLATFORM_IOS
+    #include "steam4.h"
+#else 
+	#include "IAPWS-97.H"
+#endif 
 #include "stdio.h"
 
 #include<map>  
@@ -137,7 +146,10 @@ namespace SWEOS
         void guess_T_PhX(double P, double h, double X, double& T1, double& T2);
         void calc_sat_lvh(PROP_H2ONaCl& prop, double h, double X, bool isDeriv=false);
         void calc_halit_liqidus(double Pres, double Temp, double& X_hal_liq, double& T_hm);
-
+        // function of water properties: using freesteam or PROST, if both of them are available, default to use freesteam
+        double water_rho_pT(double p, double T_K);
+        double water_h_pT(double p, double T_K);
+        double water_mu_pT(double p, double T_K);
     public:
         // cH2ONaCl(double P, double T_K, double X);//P: Pa. T: K  X, wt%: (0, 1]
         cH2ONaCl();
