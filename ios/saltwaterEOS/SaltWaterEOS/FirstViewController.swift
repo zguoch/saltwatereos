@@ -33,6 +33,8 @@ class FirstViewController: UIViewController, UIPickerViewDataSource,UIPickerView
         // Do any additional setup after loading the view.
         picker_independentVar.delegate=self
         picker_independentVar.dataSource=self
+        
+        
     }
 
     @IBOutlet weak var textField_ThirdVar: UITextField!
@@ -47,7 +49,19 @@ class FirstViewController: UIViewController, UIPickerViewDataSource,UIPickerView
         //        cal_Tp(T, p);
                 rho_h_mu_Tp(T,p*1e5,&rho,&h,&mu);
                 print("T: ", T, "p: ",p, "rho: ",rho, "h: ", h, "mu: ", mu);
-        textView_Results.text=textView_Results.text+String(format:"\nDensity: %.1f kg/m3\nViscosity: %.1f Pa s\n",rho,rho);
+        let quote = "Haters gonna hate"
+        let font = UIFont.systemFont(ofSize: 12)
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: UIColor.red,
+        ]
+        let attributedQuote = NSAttributedString(string: quote, attributes: attributes)
+            
+        var value = 50.0
+        swEOS_wrapper().hellocpp_wrappe(4.4, 5,&value);
+        print("value: ", value)
+        textView_Results.attributedText=attributedQuote
+//        textView_Results.text=textView_Results.text+String(format:"\nDensity: %.1f kg/m3\nViscosity: %.1f Pa s\n",rho,rho);
     }
     
     @IBOutlet weak var textView_Results: UITextView!

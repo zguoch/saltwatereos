@@ -9,11 +9,11 @@
 #include "cpptest.hpp"
 //#include "steam4.h"
 #include "ctest.h"
-#include "H2ONaCl.h"
 
-void hellocpp()
+
+PROP_H2ONaCl hellocpp(double a)
 {
-    cout<<"hello cpp\n";
+    cout<<"hello cpp "<<a<<endl;
     
     cout.precision(8);//control cout precision of float
     cH2ONaCl eos(31600000,100,0.3);
@@ -43,5 +43,5 @@ void hellocpp()
 //    //    dumpProp(stdout, prop0);
 //    printf("rho: %lf, h: %lf mu: %lf\n",prop0->d, prop0->h, viscos(prop0));
 //    prop0 = freeProp(prop0);
-    
+    return eos.m_prop;
 }

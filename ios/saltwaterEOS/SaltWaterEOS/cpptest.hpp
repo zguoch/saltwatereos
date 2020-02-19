@@ -14,7 +14,8 @@
 #include<iostream>
 
 using namespace std;
+#include "H2ONaCl.h"
 
-void hellocpp();
+PROP_H2ONaCl hellocpp(double a);
 
 #endif /* cpptest_hpp */

@@ -8,5 +8,5 @@
 #import "more.h"
 #import "steam4.h"
 #import "steam4s.h"
-#import "cpp_wrapper.h"
+#import "swEOS_wrapper.h"
 
