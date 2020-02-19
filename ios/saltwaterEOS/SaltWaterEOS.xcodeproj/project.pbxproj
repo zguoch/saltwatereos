@@ -19,8 +19,6 @@
 		8E620F4423F34B5C00CC8CDD /* swEOS_wrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8E620F3323F34B5B00CC8CDD /* swEOS_wrapper.mm */; };
 		8E620F4523F34B5C00CC8CDD /* decl.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E620F3523F34B5B00CC8CDD /* decl.c */; };
 		8E620F4623F34B5C00CC8CDD /* steam.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E620F3623F34B5B00CC8CDD /* steam.c */; };
-		8E620F4723F34B5C00CC8CDD /* cpptest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8E620F3923F34B5B00CC8CDD /* cpptest.cpp */; };
-		8E620F4823F34B5C00CC8CDD /* ctest.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E620F3A23F34B5B00CC8CDD /* ctest.c */; };
 		8E620F4923F34B5C00CC8CDD /* more.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E620F3E23F34B5B00CC8CDD /* more.c */; };
 		8E620F4A23F34B5C00CC8CDD /* H2ONaCl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8E620F4023F34B5C00CC8CDD /* H2ONaCl.cpp */; };
 		8E620F4B23F34B5C00CC8CDD /* meta.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E620F4123F34B5C00CC8CDD /* meta.c */; };
@@ -62,13 +60,9 @@
 		8E620F3123F34B5B00CC8CDD /* steam4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = steam4.h; sourceTree = "<group>"; };
 		8E620F3223F34B5B00CC8CDD /* iaps.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iaps.c; sourceTree = "<group>"; };
 		8E620F3323F34B5B00CC8CDD /* swEOS_wrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = swEOS_wrapper.mm; sourceTree = "<group>"; };
-		8E620F3423F34B5B00CC8CDD /* cpptest.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = cpptest.hpp; sourceTree = "<group>"; };
 		8E620F3523F34B5B00CC8CDD /* decl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = decl.c; sourceTree = "<group>"; };
 		8E620F3623F34B5B00CC8CDD /* steam.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = steam.c; sourceTree = "<group>"; };
 		8E620F3723F34B5B00CC8CDD /* swEOS_wrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swEOS_wrapper.h; sourceTree = "<group>"; };
-		8E620F3823F34B5B00CC8CDD /* ctest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ctest.h; sourceTree = "<group>"; };
-		8E620F3923F34B5B00CC8CDD /* cpptest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cpptest.cpp; sourceTree = "<group>"; };
-		8E620F3A23F34B5B00CC8CDD /* ctest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ctest.c; sourceTree = "<group>"; };
 		8E620F3B23F34B5B00CC8CDD /* decl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = decl.h; sourceTree = "<group>"; };
 		8E620F3D23F34B5B00CC8CDD /* H2ONaCl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = H2ONaCl.h; sourceTree = "<group>"; };
 		8E620F3E23F34B5B00CC8CDD /* more.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = more.c; sourceTree = "<group>"; };
@@ -129,10 +123,6 @@
 				8E9B411E23F4B203005BC3E2 /* SaltWaterEOS.entitlements */,
 				8E620F3723F34B5B00CC8CDD /* swEOS_wrapper.h */,
 				8E620F3323F34B5B00CC8CDD /* swEOS_wrapper.mm */,
-				8E620F3923F34B5B00CC8CDD /* cpptest.cpp */,
-				8E620F3423F34B5B00CC8CDD /* cpptest.hpp */,
-				8E620F3A23F34B5B00CC8CDD /* ctest.c */,
-				8E620F3823F34B5B00CC8CDD /* ctest.h */,
 				8E620F4023F34B5C00CC8CDD /* H2ONaCl.cpp */,
 				8E620F3D23F34B5B00CC8CDD /* H2ONaCl.h */,
 				8E620F4C23F34BC200CC8CDD /* PROST */,
@@ -305,12 +295,10 @@
 				8E620F4A23F34B5C00CC8CDD /* H2ONaCl.cpp in Sources */,
 				8E620F4323F34B5C00CC8CDD /* iaps.c in Sources */,
 				8E620F4423F34B5C00CC8CDD /* swEOS_wrapper.mm in Sources */,
-				8E620F4823F34B5C00CC8CDD /* ctest.c in Sources */,
 				8E620F0123F34A5400CC8CDD /* SecondViewController.swift in Sources */,
 				8E620F0723F34A5400CC8CDD /* SaltWaterEOS.xcdatamodeld in Sources */,
 				8E620F4923F34B5C00CC8CDD /* more.c in Sources */,
 				8E620F4B23F34B5C00CC8CDD /* meta.c in Sources */,
-				8E620F4723F34B5C00CC8CDD /* cpptest.cpp in Sources */,
 				8E620EFF23F34A5400CC8CDD /* FirstViewController.swift in Sources */,
 				8E620EFB23F34A5400CC8CDD /* AppDelegate.swift in Sources */,
 				8E620EFD23F34A5400CC8CDD /* SceneDelegate.swift in Sources */,

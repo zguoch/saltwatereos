@@ -43,12 +43,7 @@ class FirstViewController: UIViewController, UIPickerViewDataSource,UIPickerView
     @IBAction func Calculate(_ sender: Any) {
         let T = NSString(string: textField_SecondVar.text!).doubleValue;
         let p = NSString(string: textField_FirstVar.text!).doubleValue;
-                var rho:Double=0;
-                var h:Double=0;
-                var mu:Double=0;
-        //        cal_Tp(T, p);
-                rho_h_mu_Tp(T,p*1e5,&rho,&h,&mu);
-                print("T: ", T, "p: ",p, "rho: ",rho, "h: ", h, "mu: ", mu);
+        
         let quote = "Haters gonna hate"
         let font = UIFont.systemFont(ofSize: 12)
         let attributes: [NSAttributedString.Key: Any] = [
@@ -58,10 +53,21 @@ class FirstViewController: UIViewController, UIPickerViewDataSource,UIPickerView
         let attributedQuote = NSAttributedString(string: quote, attributes: attributes)
             
         var value = 50.0
-        swEOS_wrapper().hellocpp_wrappe(4.4, 5,&value);
-        print("value: ", value)
+        var x = [1.0,2.0,3.0]
+        struct PROPSWEOS{
+           var Region: CInt
+           var Region_str: NSString
+           var Rho: Double
+            var Rho_l: Double
+            var Rho_v: Double
+            var Rho_h: Double
+        }
+        var prop = PROPSWEOS(Region:0, Region_str: "aa", Rho:0.1, Rho_l: 0, Rho_v: 0, Rho_h: 0)
+//        swEOS_wrapper().hellocpp_wrappe(4.4, 5,x);
+        swEOS_wrapper().prop_pTX(p, T, 0.032,&prop.Region,&prop.Rho,&prop.Rho_l ,&prop.Rho_v,&prop.Rho_h)
+        print("value: ", prop.Rho)
         textView_Results.attributedText=attributedQuote
-//        textView_Results.text=textView_Results.text+String(format:"\nDensity: %.1f kg/m3\nViscosity: %.1f Pa s\n",rho,rho);
+        textView_Results.text=textView_Results.text+String(format:"\nDensity: %.1f kg/m3\nViscosity: %.1f Pa s\n",prop.Rho,prop.Rho_v);
     }
     
     @IBOutlet weak var textView_Results: UITextView!

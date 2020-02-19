@@ -8,10 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+
 @interface swEOS_wrapper : NSObject
 
--(double ) hellocpp_wrappe:(double)a:(double)b:(double*)Rho;
-
--(void) prop_pTX:(double)P:(double)T:(double)X:(double*)Rho;
+-(void) prop_pTX:(double)P:(double)T:(double)X:(int*)Region:(double*)Rho:(double*)Rho_l:(double*)Rho_v:(double*)Rho_h;
 
 @end
