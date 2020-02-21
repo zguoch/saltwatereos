@@ -147,7 +147,9 @@ namespace SWEOS
     }
     void cH2ONaCl:: prop_pHX(double p, double H, double X_wt)
     {
-        m_P=p, m_Xwt=X_wt, m_Xmol=Xwt2Xmol(X_wt);
+        static_cast<void>(m_P=p);
+        m_Xwt=X_wt;
+        m_Xmol=Xwt2Xmol(X_wt);
         double T1, T2;
         double tol=1e-4;
         guess_T_PhX(p, H, X_wt, T1, T2);
@@ -200,8 +202,9 @@ namespace SWEOS
         {
             int iteri=0;
             double T_new_mid=0;
-            double h_search=H;
-            bool ind_iter=true, indmu=true;
+//            double h_search=H;
+            bool ind_iter=true;
+//            bool indmu=true;
             while (ind_iter)
             {
                 iteri = iteri +1;
@@ -209,7 +212,7 @@ namespace SWEOS
                 double T_new=0;
                 if(T_new_mid == 0)
                 {
-                    double dT = (H - h1) * (T2 - T1) / (h2-h1);
+//                    double dT = (H - h1) * (T2 - T1) / (h2-h1);
                     T_new = T1 +  (H - h1) * (T2 - T1) / (h2-h1); 
                     T_new_mid = 1;
                 }else
@@ -387,8 +390,8 @@ namespace SWEOS
 
     void cH2ONaCl:: calc_sat_lvh(PROP_H2ONaCl& PROP, double h, double X, bool isDeriv)
     {
-        double dh = 1;
-        double dX = 1e6;
+//        double dh = 1;
+//        double dX = 1e6;
         if(PROP.Region==ThreePhase_V_L_H)
         {
             double a = PROP.Rho_l * PROP.X_l - PROP.Rho_l * X;
@@ -404,15 +407,15 @@ namespace SWEOS
             PROP.S_l = 1 - PROP.S_v - PROP.S_h;
             PROP.Rho =   PROP.S_l * PROP.Rho_l + PROP.S_v * PROP.Rho_v + PROP.S_h * PROP.Rho_h;
             //Deriviation for h
-            if(isDeriv)
-            {
-                double e_plus = PROP.Rho_l * PROP.H_l - PROP.Rho_l * (h +dh);
-                double f_plus = PROP.Rho_v * PROP.H_v - PROP.Rho_v * (h +dh);
-                double g_plus = PROP.Rho_h * PROP.H_h - PROP.Rho_h * (h +dh);
-                double S_h_plus = ( a * (f_plus-e_plus) / (b-a)  - e_plus ) /  ( (g_plus - e_plus - ( f_plus-e_plus)* (c-a) / (b-a) ) );
-                double S_v_plus = ( - (g_plus-e_plus) * S_h_plus - e_plus ) / (f_plus-e_plus); 
-                double S_l_plus = 1 - S_v_plus - S_h_plus;   
-            }
+//            if(isDeriv)
+//            {
+//                double e_plus = PROP.Rho_l * PROP.H_l - PROP.Rho_l * (h +dh);
+//                double f_plus = PROP.Rho_v * PROP.H_v - PROP.Rho_v * (h +dh);
+//                double g_plus = PROP.Rho_h * PROP.H_h - PROP.Rho_h * (h +dh);
+//                double S_h_plus = ( a * (f_plus-e_plus) / (b-a)  - e_plus ) /  ( (g_plus - e_plus - ( f_plus-e_plus)* (c-a) / (b-a) ) );
+//                double S_v_plus = ( - (g_plus-e_plus) * S_h_plus - e_plus ) / (f_plus-e_plus); 
+//                double S_l_plus = 1 - S_v_plus - S_h_plus;
+//            }
         }
     }
 
@@ -551,7 +554,7 @@ namespace SWEOS
 
     void cH2ONaCl:: prop_pTX(double p, double T_K, double X_wt, bool visc_on)
     {
-        m_P=p, m_T=T_K-Kelvin, m_Xwt=X_wt, m_Xmol=Xwt2Xmol(X_wt);
+        static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
         m_prop.T=m_T;
         //---------------------------------------------------------
         double T=T_K-Kelvin,Xl_all,Xv_all;
@@ -622,7 +625,7 @@ namespace SWEOS
 
     double cH2ONaCl:: rho_pTX(double p, double T_K, double X_wt)
     {
-        m_P=p, m_T=T_K-Kelvin, m_Xwt=X_wt, m_Xmol=Xwt2Xmol(X_wt);
+        static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
         m_prop.T=m_T;
         // 1. 
         double T=T_K-Kelvin,Xl_all,Xv_all;
@@ -669,7 +672,7 @@ namespace SWEOS
 
     double cH2ONaCl:: rho_l_pTX(double p, double T_K, double X_wt)
     {
-        m_P=p, m_T=T_K-Kelvin, m_Xwt=X_wt, m_Xmol=Xwt2Xmol(X_wt);
+        static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
         m_prop.T=m_T;
         // 1. 
         double T=T_K-Kelvin,Xl_all,Xv_all;
@@ -685,7 +688,7 @@ namespace SWEOS
 
     double cH2ONaCl:: mu_l_pTX(double p, double T_K, double X_wt)
     {
-        m_P=p, m_T=T_K-Kelvin, m_Xwt=X_wt, m_Xmol=Xwt2Xmol(X_wt);
+        static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
         m_prop.T=m_T;
         // 1. 
         double T=T_K-Kelvin,Xl_all,Xv_all;
@@ -701,7 +704,7 @@ namespace SWEOS
     }
     double cH2ONaCl:: mu_pTX(double p, double T_K, double X_wt)
     {
-        m_P=p, m_T=T_K-Kelvin, m_Xwt=X_wt, m_Xmol=Xwt2Xmol(X_wt);
+        static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
         m_prop.T=m_T;
         // 1. 
         double T=T_K-Kelvin,Xl_all,Xv_all;
@@ -752,7 +755,7 @@ namespace SWEOS
     PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X, double& Xl_all, double& Xv_all)
     {
         double Pres=P/1e5; //Pa -> bar
-        Xl_all=0, Xv_all=0;
+        static_cast<void>(Xl_all=0), Xv_all=0;
         PhaseRegion region_ind=SinglePhase_L;
         // CALCULATE CRITICAL P AND X FOR GIVEN T
         // First we need to find the Critical P and Critical X for the given T
@@ -1139,7 +1142,7 @@ namespace SWEOS
                 double dpd_v_ind2b_1 = 0;
                 double cv_ind2b_1 = 0;
                 double dpT_ind2b_1 = 0;
-                double ind2b_iter=1;
+//                double ind2b_iter=1;
                 double h_l_c, h_v_c ,Rho_l_c, Rho_v_c, dpd_l_c, dpd_v_c, psa;
                 psatc (T_ind2b_1,h_l_c, h_v_c ,Rho_l_c, Rho_v_c, dpd_l_c, dpd_v_c, psa);
                 dP = psa - P_ind2b_1;
@@ -1195,7 +1198,7 @@ namespace SWEOS
                 double dpT_ind2b_2  = 0;
 
                 double T_ind2b_2 = 0;
-                double dP=1;
+//                double dP=1;
                 double T1 = 647.1259;
                 double T2 = 647.126;
                 double psa=0;
@@ -1458,7 +1461,7 @@ namespace SWEOS
 
         if(ind2a)
         {
-            int ind2a_iter=1;
+//            int ind2a_iter=1;
             double con_gas = 0.46152200; // kJ/kg
             double T_ind2a = T_2ph;
             double P_ind2a = 0;
@@ -2057,12 +2060,12 @@ namespace SWEOS
         double n11  = -54.2958 - 45.7623*exp(-9.44785e-4*P_in);
         double n21  = -2.6142 - 0.000239092*P_in; 
         double n22  = 0.0356828 + 4.37235e-6*P_in + 2.0566e-9*pow(P_in,2);
-        double n300 = 7.60664e6/pow((P_in + 472.051),2);
-        double n301 = -50 - 86.1446*exp(-6.21128e-4*P_in);
-        double n302 = 294.318*exp(-5.66735e-3*P_in);
-        double n310 = (-0.0732761*exp(-2.3772e-3*P_in)) - 5.2948e-5*P_in;
-        double n311 = -47.2747 + 24.3653*exp(-1.25533e-3*P_in);
-        double n312 = -0.278529 + 0.00081381*P_in;
+//        double n300 = 7.60664e6/pow((P_in + 472.051),2);
+//        double n301 = -50 - 86.1446*exp(-6.21128e-4*P_in);
+//        double n302 = 294.318*exp(-5.66735e-3*P_in);
+//        double n310 = (-0.0732761*exp(-2.3772e-3*P_in)) - 5.2948e-5*P_in;
+//        double n311 = -47.2747 + 24.3653*exp(-1.25533e-3*P_in);
+//        double n312 = -0.278529 + 0.00081381*P_in;
         double n20  = 1 - n21*sqrt(n22);
         double n1_1 = 330.47 + 0.942876*sqrt(P_in) + 0.0817193*P_in - 2.47556e-8*pow(P_in,2) + 3.45052e-10*pow(P_in,3);
         double n10  = n1_1;
@@ -2263,7 +2266,7 @@ namespace SWEOS
         bool ind_h  = (reg==TwoPhase_L_H || reg==TwoPhase_V_H || reg==ThreePhase_V_L_H);
         if(ind_lv)
         {
-            double T_2ph0, Rho_l0, h_l0, dpd_l0, dpd_v0, Rho_v0, Mu_l0, Mu_v0;
+            double T_2ph0, Rho_l0, dpd_l0, dpd_v0, Rho_v0, Mu_l0, Mu_v0;
             fluidProp_crit_P(P_in*1e5, 1e-12,T_2ph0, Rho_l0, h_l, h_v, dpd_l0, dpd_v0, Rho_v0, Mu_l0, Mu_v0);
         }
         if(ind_v)
@@ -2293,8 +2296,8 @@ namespace SWEOS
             double q1_l = q10 + q11*(1-X_l) + q12*pow((1-X_l),2);
             double q2_l = q20 + q21*sqrt(X_l+q22) + q23*X_l;
             //from Driesner is equal to above formulation
-            double q1_lb = q1_1 + q11 * (1-X_l) - (q1_1 +q11) * pow((1-X_l),2);
-            double q2_lb = 1 - q21 * sqrt(q22) + q21 * sqrt(X_l+q22) + X_l * (q21 * sqrt(q22) - 1- q21 * sqrt(1+q22) + q2_1);
+//            double q1_lb = q1_1 + q11 * (1-X_l) - (q1_1 +q11) * pow((1-X_l),2);
+//            double q2_lb = 1 - q21 * sqrt(q22) + q21 * sqrt(X_l+q22) + X_l * (q21 * sqrt(q22) - 1- q21 * sqrt(1+q22) + q2_1);
             double T_star_l = q1_l + q2_l*T_in;
             double P_star_l = P_in;
             // SteamState S = freesteam_set_pT(P_star_l*1e5, T_star_l+Kelvin);
@@ -2354,7 +2357,7 @@ namespace SWEOS
                 q23  = 0.941423327837196;
                 q1_l = q10 + q11*(1-X_l) + q12*pow((1-X_l),2);
                 q2_l = q20 + q21*sqrt(X_l+q22) + q23*X_l;
-                double T_star_l_P1 = q1_l + q2_l*T_in;
+//                double T_star_l_P1 = q1_l + q2_l*T_in;
 
                 // S = freesteam_set_pT(P_390*1e5, T_star_l_P390+Kelvin);
                 // double h_l_390=freesteam_h(S);
@@ -2389,7 +2392,7 @@ namespace SWEOS
             double l5  = 733.4;
             
             double T_100 = 100;
-            double P_100 = 100;
+//            double P_100 = 100;
             double h_h_pt100 = 9.415867359e4;  // from Driesner Table
             double l = l3 + l4*exp(T_100/l5);
             double Rho0_h = l0 + l1*(T_100) + l2*pow(T_100,2);
@@ -2468,7 +2471,7 @@ namespace SWEOS
     double cH2ONaCl::water_rho_pT(double p, double T_K)
     {
         #ifdef PLATFORM_IOS
-            double d, s, h, dp, ds, dh;
+            double d, dp, ds, dh;
             Prop *prop0;
             dp = 1.0e-8;
             ds = 1.0e-8;
@@ -2486,7 +2489,7 @@ namespace SWEOS
     double cH2ONaCl::water_h_pT(double p, double T_K)
     {
         #ifdef PLATFORM_IOS
-            double d, s, h, dp, ds, dh;
+            double d, dp, ds, dh;
             Prop *prop0;
             dp = 1.0e-8;
             ds = 1.0e-8;
@@ -2503,7 +2506,7 @@ namespace SWEOS
     double cH2ONaCl::water_mu_pT(double p, double T_K)
     {
         #ifdef PLATFORM_IOS
-            double d, s, h, dp, ds, dh;
+            double d, dp, ds, dh;
             Prop *prop0;
             dp = 1.0e-8;
             ds = 1.0e-8;
@@ -2516,5 +2519,188 @@ namespace SWEOS
             SteamState S = freesteam_set_pT(p, T_K);
             return freesteam_mu(S);
         #endif 
+    }
+    string cH2ONaCl::checkTemperatureRange(double temperature_C)
+    {
+        std::string checkResult= "";
+        if (temperature_C < TMIN-Kelvin || temperature_C > TMAX-Kelvin) {
+            char buff[100];
+            snprintf(buff, sizeof(buff), "Temperature value %.2f is out of range\n[%.1f, %.1f] ", temperature_C, SWEOS::TMIN - SWEOS::Kelvin, SWEOS::TMAX - SWEOS::Kelvin);
+            checkResult = buff;
+            return checkResult;
+        }
+        return checkResult;
+    }
+    string cH2ONaCl::checkPressureRange(double pressure_bar)
+    {
+        std::string checkResult= "";
+        if (pressure_bar < PMIN/1E5 || pressure_bar > PMAX/1E5) {
+            char buff[100];
+            snprintf(buff, sizeof(buff), "Pressure value %.2f is out of range\n[%.1f, %.1f] bar", pressure_bar, PMIN/1e5, PMAX/1e5);
+            checkResult = buff;
+            return checkResult;
+        }
+        return checkResult;
+    }
+    string cH2ONaCl::checkSalinityRange(double salinity)
+    {
+        std::string checkResult= "";
+        if (salinity < XMIN || salinity > XMAX) {
+            char buff[100];
+            snprintf(buff, sizeof(buff), "Salinity value %.4f is out of range\n[%.1f, %.1f]", salinity, XMIN, XMAX);
+            checkResult = buff;
+            return checkResult;
+        }
+        return checkResult;
+    }
+    string cH2ONaCl::CheckRange_H(double H0, double P0, double X0)
+    {
+        std::string checkResult= "";
+
+        double HMIN=1e30, HMAX=-1e30;
+        double Trange[2]={SWEOS::TMIN, SWEOS::TMAX};
+        double P,T,X;
+        SWEOS::cH2ONaCl eos;
+        // for (int i = 0; i < 2; i++)
+        {
+        P=P0;
+        for (int j = 0; j < 2; j++)
+        {
+            T=Trange[j];
+            // for (int k = 0; k < 2; k++)
+            {
+            X=X0;
+            prop_pTX(P*1e5, T, X);
+            HMIN=(m_prop.H<HMIN ? m_prop.H : HMIN);
+            HMAX=(m_prop.H>HMAX ? m_prop.H : HMAX);
+            }
+        }
+        }
+        if(H0<HMIN/1000 || H0>HMAX/1000)
+        {
+            char buff[100];
+            snprintf(buff, sizeof(buff), "Enthalpy value %.2f is out of range\n[%.1f, %.1f] kJ/kg corresponding to P = %.2f bar, X = %.4f", H0, HMIN/1000, HMAX/1000, P0, X0);
+            checkResult = buff;
+            return checkResult;
+        }
+        return checkResult;
+    }
+    string cH2ONaCl::CheckRanges_H_PX(double HMIN0, double HMAX0, double PXrange[4])
+    {
+        std::string checkResult= "";
+        double HMIN=1e30, HMAX=-1e30;
+        double Trange[2]={SWEOS::TMIN, SWEOS::TMAX};
+        double P,T,X;
+        SWEOS::cH2ONaCl eos;
+        for (int i = 0; i < 2; i++)
+        {
+        P=PXrange[i];
+        for (int j = 0; j < 2; j++)
+        {
+            T=Trange[j];
+            for (int k = 0; k < 2; k++)
+            {
+            X=PXrange[k+2];
+            prop_pTX(P*1e5, T, X);
+            HMIN=(m_prop.H<HMIN ? m_prop.H : HMIN);
+            HMAX=(m_prop.H>HMAX ? m_prop.H : HMAX);
+            }
+        }
+        }
+        if(HMIN0<HMIN/1000 || HMIN0>HMAX/1000)
+        {
+            char buff[100];
+            snprintf(buff, sizeof(buff), "The minimum enthalpy value %.4f is out of range\n[%.1f, %.1f] kJ/kg corresponding to P ∈ [%.2f, %.2f] bar, X ∈ [%.4f, %.4f] ",
+                    HMIN0, HMIN/1000, HMAX/1000, PXrange[0], PXrange[1],PXrange[2],PXrange[3]);
+            checkResult = buff;
+            return checkResult;
+        }
+        if(HMAX0<HMIN/1000 || HMAX0>HMAX/1000)
+        {
+            char buff[100];
+            snprintf(buff, sizeof(buff), "The maximum enthalpy value %.4f is out of range\n[%.1f, %.1f] kJ/kg corresponding to P ∈ [%.2f, %.2f] bar, X ∈ [%.4f, %.4f] ",
+                    HMAX0, HMIN/1000, HMAX/1000, PXrange[0], PXrange[1],PXrange[2],PXrange[3]);checkResult = buff;
+            return checkResult;
+        }
+        return checkResult;
+    }
+    string cH2ONaCl::CheckRanges_H_P(double HMIN0, double HMAX0, double Prange[2], double X0)
+    {
+        std::string checkResult= "";
+        double HMIN=1e30, HMAX=-1e30;
+        double Trange[2]={SWEOS::TMIN, SWEOS::TMAX};
+        double P,T,X;
+        SWEOS::cH2ONaCl eos;
+        for (int i = 0; i < 2; i++)
+        {
+        P=Prange[i];
+        for (int j = 0; j < 2; j++)
+        {
+            T=Trange[j];
+            // for (int k = 0; k < 2; k++)
+            {
+            X=X0;
+            prop_pTX(P*1e5, T, X);
+            HMIN=(m_prop.H<HMIN ? m_prop.H : HMIN);
+            HMAX=(m_prop.H>HMAX ? m_prop.H : HMAX);
+            }
+        }
+        }
+        if(HMIN0<HMIN/1000 || HMIN0>HMAX/1000)
+        {
+            char buff[100];
+            snprintf(buff, sizeof(buff), "The minimum enthalpy value %.4f is out of range\n[%.1f, %.1f] kJ/kg corresponding to P ∈ [%.2f, %.2f] bar, X = %.4f ",
+                    HMIN0, HMIN/1000, HMAX/1000, Prange[0], Prange[1],X0);
+            checkResult = buff;
+            return checkResult;
+        }
+        if(HMAX0<HMIN/1000 || HMAX0>HMAX/1000)
+        {
+            char buff[100];
+            snprintf(buff, sizeof(buff), "The maximum enthalpy value %.4f is out of range\n[%.1f, %.1f] kJ/kg corresponding to P ∈ [%.2f, %.2f] bar, X ∈ %.4f ",
+                    HMAX0, HMIN/1000, HMAX/1000, Prange[0], Prange[1],X0);checkResult = buff;
+            return checkResult;
+        }
+        return checkResult;
+    }
+    string cH2ONaCl::CheckRanges_H_X(double HMIN0, double HMAX0, double Xrange[2], double P0)
+    {
+        std::string checkResult= "";
+        double HMIN=1e30, HMAX=-1e30;
+        double Trange[2]={SWEOS::TMIN, SWEOS::TMAX};
+        double P,T,X;
+        SWEOS::cH2ONaCl eos;
+        // for (int i = 0; i < 2; i++)
+        {
+            P=P0;
+            for (int j = 0; j < 2; j++)
+            {
+                T=Trange[j];
+                for (int k = 0; k < 2; k++)
+                {
+                X=Xrange[k];
+                prop_pTX(P*1e5, T, X);
+                HMIN=(m_prop.H<HMIN ? m_prop.H : HMIN);
+                HMAX=(m_prop.H>HMAX ? m_prop.H : HMAX);
+                }
+            }
+        }
+        if(HMIN0<HMIN/1000 || HMIN0>HMAX/1000)
+        {
+            char buff[100];
+            snprintf(buff, sizeof(buff), "The minimum enthalpy value %.4f is out of range\n[%.1f, %.1f] kJ/kg corresponding to P = %.2f bar, X ∈ [%.4f, %.4f] ",
+                    HMIN0, HMIN/1000, HMAX/1000, P0,Xrange[0],Xrange[1]);
+            checkResult = buff;
+            return checkResult;
+        }
+        if(HMAX0<HMIN/1000 || HMAX0>HMAX/1000)
+        {
+            char buff[100];
+            snprintf(buff, sizeof(buff), "The maximum enthalpy value %.4f is out of range\n[%.1f, %.1f] kJ/kg corresponding to P = %.2f bar, X ∈ [%.4f, %.4f] ",
+                    HMAX0, HMIN/1000, HMAX/1000, P0,Xrange[0],Xrange[1]);
+            checkResult = buff;
+            return checkResult;
+        }
+        return checkResult;
     }
 }

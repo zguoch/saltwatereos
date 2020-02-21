@@ -167,6 +167,13 @@ namespace SWEOS
         void writeProps2VTK(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<PROP_H2ONaCl> props, std::string fname, bool isWritePy=true, string xTitle="x", string yTitle="y", string zTitle="z");
         friend ostream & operator<<(ostream & out,  cH2ONaCl & A);
         void setColorPrint(bool colorPrint){m_colorPrint=colorPrint;}
+        string checkTemperatureRange(double temperature_C);
+        string checkPressureRange(double pressure_bar);
+        string checkSalinityRange(double salinity);
+        string CheckRange_H(double H0, double P0, double X0);
+        string CheckRanges_H_PX(double HMIN0, double HMAX0, double PXrange[4]);
+        string CheckRanges_H_P(double HMIN0, double HMAX0, double Prange[2], double X0);
+        string CheckRanges_H_X(double HMIN0, double HMAX0, double Xrange[2], double P0);
     private:
         inline double Xwt2Xmol(double X){return (X/M_NaCl)/(X/M_NaCl+(1-X)/M_H2O);};
         void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);
