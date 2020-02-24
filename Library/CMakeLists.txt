@@ -12,14 +12,22 @@ add_subdirectory(src)
 # Head files dir
 include_directories(src include)
 
-# add freesteam library path
-link_directories("/usr/local/lib")
+
 
 # add Executable target
 add_executable(example main.cpp)
 
-# link library
-target_link_libraries(example eosH2ONaCl freesteam)
+option(USE_FreeSteam "MyOption" OFF)
+if (USE_FreeSteam)
+    # add freesteam library path
+    link_directories("/usr/local/lib")
+    # example target link library
+    target_link_libraries(example eosH2ONaCl freesteam)
+else (USE_FreeSteam)
+    # example target link library
+    target_link_libraries(example eosH2ONaCl)
+endif()
+
 
 
 # install path 
