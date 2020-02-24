@@ -17,7 +17,7 @@ include_directories(src include)
 # add Executable target
 add_executable(example main.cpp)
 
-option(USE_FreeSteam "MyOption" OFF)
+option(USE_FreeSteam "whether use freesteam library" OFF)
 if (USE_FreeSteam)
     # add freesteam library path
     link_directories("/usr/local/lib")

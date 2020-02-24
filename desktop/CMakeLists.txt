@@ -140,7 +140,14 @@ add_executable(
   ${myApp_ICON}
   ${QON_QM_FILES}
   )
-target_link_libraries(${PROGRAM_NAME} Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Concurrent eosH2ONaCl freesteam omp)
+option(USE_FreeSteam "whether use freesteam library" OFF)
+set(LIBFreeSteam "")
+if (USE_FreeSteam)
+    # add freesteam library path
+    link_directories("/usr/local/lib")
+    set(LIBFreeSteam "freesteam")
+endif()
+target_link_libraries(${PROGRAM_NAME} Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Concurrent eosH2ONaCl ${LIBFreeSteam} omp)
 target_link_libraries(${PROGRAM_NAME} ${VTK_LIBRARIES})
 
 
