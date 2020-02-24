@@ -3,3 +3,4 @@ plot/*
 !plot/*.py
 lib
 build-*/
+.DS_Store
