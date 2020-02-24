@@ -69,8 +69,8 @@ find_package(VTK COMPONENTS
 include(${VTK_USE_FILE})
 
 # add H2ONaCl source and library 
-include_directories(../include)
-link_directories("../lib" "/usr/local/lib" "/Users/zguo/Qt/5.9.9/clang_64/lib")
+include_directories(../Library/include)
+link_directories("../Library/lib" "/usr/local/lib" "/Users/zguo/Qt/5.9.9/clang_64/lib")
 
 if("${VTK_QT_VERSION}" STREQUAL "")
   message(FATAL_ERROR "VTK was not built with Qt")
