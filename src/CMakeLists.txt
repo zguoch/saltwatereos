@@ -1,7 +1,6 @@
 
-aux_source_directory(. DIR_LIB_SRCS)
-include_directories(./ ../PROST ../freesteam)
+INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/include )
+FILE(GLOB SC_FILES "./PROST/*.c" "./PROST/*.h" "*.H" "*.C")
 
 # generate library
-add_library (eosH2ONaCl ${DIR_LIB_SRCS})
-set_property(TARGET eosH2ONaCl PROPERTY IMPORTED_LOCATION /Users/zguo/MyData/Research/3-CodeProject/PROST-4.1/libsteam4.a)
+add_library (eosH2ONaCl ${SC_FILES})

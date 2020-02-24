@@ -10,7 +10,7 @@ aux_source_directory(. SRC_MAIN)
 # library
 add_subdirectory(src)
 # Head files dir
-include_directories(src)
+include_directories(src include)
 
 # add freesteam library path
 link_directories("/usr/local/lib")

@@ -2470,7 +2470,7 @@ namespace SWEOS
     }
     double cH2ONaCl::water_rho_pT(double p, double T_K)
     {
-        #ifdef PLATFORM_IOS
+        #ifdef USE_PROST
             double d, dp, ds, dh;
             Prop *prop0;
             dp = 1.0e-8;
@@ -2488,7 +2488,7 @@ namespace SWEOS
 
     double cH2ONaCl::water_h_pT(double p, double T_K)
     {
-        #ifdef PLATFORM_IOS
+        #ifdef USE_PROST
             double d, dp, ds, dh;
             Prop *prop0;
             dp = 1.0e-8;
@@ -2505,7 +2505,7 @@ namespace SWEOS
     }
     double cH2ONaCl::water_mu_pT(double p, double T_K)
     {
-        #ifdef PLATFORM_IOS
+        #ifdef USE_PROST
             double d, dp, ds, dh;
             Prop *prop0;
             dp = 1.0e-8;

@@ -69,7 +69,7 @@ find_package(VTK COMPONENTS
 include(${VTK_USE_FILE})
 
 # add H2ONaCl source and library 
-include_directories(../src)
+include_directories(../include)
 link_directories("../lib" "/usr/local/lib" "/Users/zguo/Qt/5.9.9/clang_64/lib")
 
 if("${VTK_QT_VERSION}" STREQUAL "")

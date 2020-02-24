@@ -138,6 +138,7 @@ namespace SWEOSbash
         string version="1.0";
         string author="Zhikui Guo";
         string locus="GEOMAR, Germany";
+        string email="zguo@geomar.de";
         unsigned int wordWidth=20;
         // time_t now=time(0);
         // char* now_str=ctime(&now);
@@ -150,6 +151,7 @@ namespace SWEOSbash
         cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Locus "<<COLOR_GREEN<<locus<<COLOR_DEFAULT<<endl;
         cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Date "<<COLOR_GREEN<<now_str<<COLOR_DEFAULT<<endl;
         cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Version "<<COLOR_GREEN<<version<<COLOR_DEFAULT<<endl;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Email "<<COLOR_GREEN<<email<<COLOR_DEFAULT<<endl;
         cout<<"============================================================"<<endl;
         cout<<COLOR_BLUE<<"Usage: swEOS [options]"<<COLOR_DEFAULT<<endl;
         cout<<"options:"<<endl;
