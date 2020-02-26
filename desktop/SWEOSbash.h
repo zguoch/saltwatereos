@@ -159,41 +159,41 @@ namespace SWEOSbash
         string now_str="Feb 15, 2020";
 
         //30: black  31:red  32:green  33:yellow  34:blue  35:purple  36:darkgreen
-        cout<<"========================== swEOS ==========================="<<endl;
-        cout<<"Analytical continuation of potential field data"<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Author "<<COLOR_GREEN<<author<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Locus "<<COLOR_GREEN<<locus<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Date "<<COLOR_GREEN<<now_str<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Version "<<COLOR_GREEN<<version<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Email "<<COLOR_GREEN<<email<<COLOR_DEFAULT<<endl;
-        cout<<"============================================================"<<endl;
-        cout<<COLOR_BLUE<<"Usage: swEOS [options]"<<COLOR_DEFAULT<<endl;
-        cout<<"options:"<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  --help "<<COLOR_BLUE<<"List descriptions of usage and available arguments"<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  --version "<<COLOR_BLUE<<"Print swEOS version number"<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -D "<<COLOR_BLUE<<"Dimension: 0, 1, 2, 3. e.g.: -D2"<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -V "<<COLOR_BLUE<<"Select independent variables according to -D arguments."<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"     "<<COLOR_DEFAULT<<"Combination of: T, P, X, H. e.g.: -VXT"<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -T "<<COLOR_BLUE<<"Set fixed temperature value if T is not in -V option."<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -P "<<COLOR_BLUE<<"Set fixed pressure value if P is not in -V option. -P316"<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -X "<<COLOR_BLUE<<"Set fixed salinity value if X is not in -V option."<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -H "<<COLOR_BLUE<<"Set fixed enthalpy value if H is not in -V option."<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -R "<<COLOR_BLUE<<"Set range and interval of variables in -V option, must in the save order with -V option."<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"     "<<COLOR_DEFAULT<<"e.g.: -R0/0.001/0.9/0/1/600"<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -G "<<COLOR_BLUE<<"Set input filename of PTX or PHX text file for multi-points calculation"<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"     "<<COLOR_DEFAULT<<"only used when -V0 and no -P, -X, -T or -H arguments."<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"     "<<COLOR_DEFAULT<<"The text file with three columns, PTX or PHX are decided by -V options."<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -O "<<COLOR_BLUE<<"Set out put file name, file format is determined by file extension name."<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"     "<<COLOR_DEFAULT<<"Supported file format is vtk, csv, txt."<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -t "<<COLOR_BLUE<<"Set number of thread for parallel computing."<<COLOR_DEFAULT<<endl;
-        cout<<"Units:"<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Temperature "<<COLOR_BLUE<<"Degree Celsius: 273.15 °C = 1 K (Kelvin)"<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Pressure "<<COLOR_BLUE<<"bar: 1 bar = 1e5 Pa = 0.1 MPa"<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Salinity "<<COLOR_BLUE<<"Weight percent in range of [0,1]: seawater is 0.032 = 3.2 wt. % NaCl"<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Enthalpy "<<COLOR_BLUE<<"Specific enthalpy: kJ/kg = 1000 J/kg"<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Density "<<COLOR_BLUE<<"SI: kg/m3"<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Viscosity "<<COLOR_BLUE<<"SI: Pa s"<<COLOR_DEFAULT<<endl;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Saturation "<<COLOR_BLUE<<"in range of [0, 1]"<<COLOR_DEFAULT<<endl;
+        cout<<"========================== swEOS ==========================="<<std::endl;;
+        cout<<"Analytical continuation of potential field data"<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Author "<<COLOR_GREEN<<author<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Locus "<<COLOR_GREEN<<locus<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Date "<<COLOR_GREEN<<now_str<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Version "<<COLOR_GREEN<<version<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Email "<<COLOR_GREEN<<email<<COLOR_DEFAULT<<std::endl;;
+        cout<<"============================================================"<<std::endl;;
+        cout<<COLOR_BLUE<<"Usage: swEOS [options]"<<COLOR_DEFAULT<<std::endl;;
+        cout<<"options:"<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  --help "<<COLOR_BLUE<<"List descriptions of usage and available arguments"<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  --version "<<COLOR_BLUE<<"Print swEOS version number"<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -D "<<COLOR_BLUE<<"Dimension: 0, 1, 2, 3. e.g.: -D2"<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -V "<<COLOR_BLUE<<"Select independent variables according to -D arguments."<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"     "<<COLOR_DEFAULT<<"Combination of: T, P, X, H. e.g.: -VXT"<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -T "<<COLOR_BLUE<<"Set fixed temperature value if T is not in -V option."<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -P "<<COLOR_BLUE<<"Set fixed pressure value if P is not in -V option. -P316"<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -X "<<COLOR_BLUE<<"Set fixed salinity value if X is not in -V option."<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -H "<<COLOR_BLUE<<"Set fixed enthalpy value if H is not in -V option."<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -R "<<COLOR_BLUE<<"Set range and interval of variables in -V option, must in the save order with -V option."<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"     "<<COLOR_DEFAULT<<"e.g.: -R0/0.001/0.9/0/1/600"<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -G "<<COLOR_BLUE<<"Set input filename of PTX or PHX text file for multi-points calculation"<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"     "<<COLOR_DEFAULT<<"only used when -V0 and no -P, -X, -T or -H arguments."<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"     "<<COLOR_DEFAULT<<"The text file with three columns, PTX or PHX are decided by -V options."<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -O "<<COLOR_BLUE<<"Set out put file name, file format is determined by file extension name."<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"     "<<COLOR_DEFAULT<<"Supported file format is vtk, csv, txt."<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -t "<<COLOR_BLUE<<"Set number of thread for parallel computing."<<COLOR_DEFAULT<<std::endl;;
+        cout<<"Units:"<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Temperature "<<COLOR_BLUE<<"Degree Celsius: 273.15 °C = 1 K (Kelvin)"<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Pressure "<<COLOR_BLUE<<"bar: 1 bar = 1e5 Pa = 0.1 MPa"<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Salinity "<<COLOR_BLUE<<"Weight percent in range of [0,1]: seawater is 0.032 = 3.2 wt. % NaCl"<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Enthalpy "<<COLOR_BLUE<<"Specific enthalpy: kJ/kg = 1000 J/kg"<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Density "<<COLOR_BLUE<<"SI: kg/m3"<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Viscosity "<<COLOR_BLUE<<"SI: Pa s"<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Saturation "<<COLOR_BLUE<<"in range of [0, 1]"<<COLOR_DEFAULT<<std::endl;;
     }
     static void StartText_artASCII()
     {
@@ -203,7 +203,7 @@ namespace SWEOSbash
         // <<"╚════██║██╔══██║██║     ██║   ██║███╗██║██╔══██║   ██║   ██╔══╝  ██╔══██╗    ██╔══╝  ██║   ██║╚════██║\n"
         // <<"███████║██║  ██║███████╗██║   ╚███╔███╔╝██║  ██║   ██║   ███████╗██║  ██║    ███████╗╚██████╔╝███████║\n"
         // <<"╚══════╝╚═╝  ╚═╝╚══════╝╚═╝    ╚══╝╚══╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝    ╚══════╝ ╚═════╝ ╚══════╝\n"
-        // <<COLOR_DEFAULT<<endl;                                                                                                 
+        // <<COLOR_DEFAULT<<std::endl;;                                                                                                 
 
         cout<<COLOR_GREEN<<"                              $$$$$$$$\\  $$$$$$\\   $$$$$$\\  \n"
         <<"                              $$  _____|$$  __$$\\ $$  __$$\\ \n"
@@ -213,7 +213,7 @@ namespace SWEOSbash
         <<" \\____$$\\ $$ | $$ | $$ |      $$ |      $$ |  $$ |$$\\   $$ |\n"
         <<"$$$$$$$  |\\$$$$$\\$$$$  |      $$$$$$$$\\  $$$$$$  |\\$$$$$$  |\n"
         <<"\\_______/  \\_____\\____/       \\________| \\______/  \\______/ \n"
-        <<COLOR_DEFAULT<<endl;                                                                                                          
+        <<COLOR_DEFAULT<<std::endl;;                                                                                                          
     }
 }
 #endif

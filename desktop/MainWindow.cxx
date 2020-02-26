@@ -310,7 +310,7 @@ void MainWindow::on_pushButton_2_clicked()
                 ifstream fin(fileName.toStdString());
                 if(!fin)
                 {
-                    //std::cout<<"error: open file failed, "<<fileName.toStdString()<<endl;
+                    //std::cout<<"error: open file failed, "<<fileName.toStdString()<<std::endl;;
                     QMessageBox msgBox;
                     msgBox.setWindowTitle(tr("Information"));
                     msgBox.setText(tr("Open file failed: ")+"\n"+fileName);
@@ -810,7 +810,7 @@ int MainWindow::testjob()
 
 
         #pragma omp critical
-        // cout<<i<<endl;
+        // cout<<i<<std::endl;;
         while(t.elapsed()<1000);
         ind++;
         ui->roundProgressBar->setValue(ind);
