@@ -1076,12 +1076,14 @@ int MainWindow::Calculate_Diagram2D()
             ui->roundProgressBar->setRange(0,vectorP.size());
             int progress=0;
             omp_set_num_threads(m_threadNumOMP);
+            int lenP = (int)(vectorP.size());
+            int lenT = (int)(vectorT.size());
             #pragma omp parallel for shared(vectorP, vectorT, X0)
-            for(size_t j = 0; j < vectorP.size(); j++)
+            for(int j = 0; j < lenP; j++)
             {
-                for(size_t i = 0; i < vectorT.size(); i++)
+                for(int i = 0; i < lenT; i++)
                 {
-                    int ind_value=i+j*vectorT.size();
+                    int ind_value=i+j*lenT;
                     SWEOS::cH2ONaCl eos;
                     eos.prop_pTX(vectorP[j]*1e5,vectorT[i]+SWEOS::Kelvin,X0);
                     points->SetPoint(ind_value, vectorT[i],vectorP[j],X0);
@@ -1160,12 +1162,14 @@ int MainWindow::Calculate_Diagram2D()
             ui->roundProgressBar->setRange(0,vectorP.size());
             int progress=0;
             omp_set_num_threads(m_threadNumOMP);
+            int lenP = (int)(vectorP.size());
+            int lenX = (int)(vectorX.size());
             #pragma omp parallel for shared(vectorP, vectorX, T0)
-            for(size_t j = 0; j < vectorP.size(); j++)
+            for(size_t j = 0; j < lenP; j++)
             {
-                for(size_t i = 0; i < vectorX.size(); i++)
+                for(size_t i = 0; i < lenX; i++)
                 {
-                    int ind_value=i+j*vectorX.size();
+                    int ind_value=i+j*lenX;
                     SWEOS::cH2ONaCl eos;
                     eos.prop_pTX(vectorP[j]*1e5,T0+SWEOS::Kelvin,vectorX[i]);
                     points->SetPoint(ind_value, vectorX[i],vectorP[j],T0);
@@ -1244,12 +1248,14 @@ int MainWindow::Calculate_Diagram2D()
             ui->roundProgressBar->setRange(0,vectorX.size());
             int progress=0;
             omp_set_num_threads(m_threadNumOMP);
+            int lenX = (int)(vectorX.size());
+            int lenT = (int)(vectorT.size());
             #pragma omp parallel for shared(vectorT, vectorX, P0)
-            for(size_t j = 0; j < vectorX.size(); j++)
+            for(size_t j = 0; j < lenX; j++)
             {
-                for(size_t i = 0; i < vectorT.size(); i++)
+                for(size_t i = 0; i < lenT; i++)
                 {
-                    int ind_value=i+j*vectorT.size();
+                    int ind_value=i+j*lenT;
                     SWEOS::cH2ONaCl eos;
                     eos.prop_pTX(P0*1e5,vectorT[i]+SWEOS::Kelvin,vectorX[j]);
                     points->SetPoint(ind_value, vectorT[i],vectorX[j],P0);
