@@ -59,83 +59,92 @@ namespace SWEOSbash
     }
     return true;
   }
-  bool cSWEOSarg::Parse(int argc, char** argv)
-  {
-    if(argc<2)return false; //there is no arguments
-    int opt; 
-    const char *optstring = "D:V:P:T:X:H:R:O:G:t:vh"; // set argument templete
-    int option_index = 0;
-    static struct option long_options[] = {
-        {"version", no_argument, NULL, 'v'},
-        {"help", no_argument, NULL, 'h'},
-        {0, 0, 0, 0}  // to avoid empty input
-    };
-    int valid_args=0;
-    double doubleOptValue;
-    while ((opt = getopt_long(argc, argv, optstring,long_options, &option_index)) != -1) 
+  
+  #ifdef _WIN32
+    bool cSWEOSarg::Parse(int argc, char** argv)
     {
-      if(opt!='?')valid_args++;
-      switch (opt)
-      {
-      case 'h':
-        helpINFO();
-        exit(0);
-        break;
-      case 'v':
-        cout<<"Version: "<<VERSION_MAJOR<<"."<<VERSION_MINOR<<endl;
-        exit(0);
-        break;
-      case 'D':
-        m_haveD=true;
-        if(!GetOptionValue(opt, optarg, doubleOptValue))return false;
-        m_valueD=(int)doubleOptValue;
-        break;
-      case 't':
-        m_havet=true;
-        if(!GetOptionValue(opt, optarg, doubleOptValue))return false;
-        m_threadNumOMP=(int)doubleOptValue;
-        if(m_threadNumOMP>omp_get_max_threads())m_threadNumOMP=omp_get_max_threads();
-        if(m_threadNumOMP<1)m_threadNumOMP=1;
-        break;
-      case 'V':
-        m_haveV=true;
-        m_valueV=optarg;
-        break;
-      case 'P':
-        m_haveP=true;
-        if(!GetOptionValue(opt, optarg, m_valueP))return false;
-        break;
-      case 'T':
-        m_haveT=true;
-        if(!GetOptionValue(opt, optarg, m_valueT))return false;
-        break;
-      case 'X':
-        m_haveX=true;
-        if(!GetOptionValue(opt, optarg, m_valueX))return false;
-        break;
-      case 'H':
-        m_haveH=true;
-        if(!GetOptionValue(opt, optarg, m_valueH))return false;
-        break;
-      case 'G':
-        m_haveG=true;
-        m_valueG=optarg;
-        break;
-      case 'R':
-        m_haveR=true;
-        m_valueR_str= string_split(optarg,"/");
-        break;
-      case 'O':
-        m_haveO=true;
-        m_valueO=optarg;
-        break;
-      default:
-        break;
-      }
+      return true;
     }
-    if(!(m_haveD && m_haveV))return false;//must have -D and -V arguments
-    return true;
-  }
+  #else
+    bool cSWEOSarg::Parse(int argc, char** argv)
+    {
+      if(argc<2)return false; //there is no arguments
+      int opt; 
+      const char *optstring = "D:V:P:T:X:H:R:O:G:t:vh"; // set argument templete
+      int option_index = 0;
+      static struct option long_options[] = {
+          {"version", no_argument, NULL, 'v'},
+          {"help", no_argument, NULL, 'h'},
+          {0, 0, 0, 0}  // to avoid empty input
+      };
+      int valid_args=0;
+      double doubleOptValue;
+      while ((opt = getopt_long(argc, argv, optstring,long_options, &option_index)) != -1) 
+      {
+        if(opt!='?')valid_args++;
+        switch (opt)
+        {
+        case 'h':
+          helpINFO();
+          exit(0);
+          break;
+        case 'v':
+          cout<<"Version: "<<VERSION_MAJOR<<"."<<VERSION_MINOR<<endl;
+          exit(0);
+          break;
+        case 'D':
+          m_haveD=true;
+          if(!GetOptionValue(opt, optarg, doubleOptValue))return false;
+          m_valueD=(int)doubleOptValue;
+          break;
+        case 't':
+          m_havet=true;
+          if(!GetOptionValue(opt, optarg, doubleOptValue))return false;
+          m_threadNumOMP=(int)doubleOptValue;
+          if(m_threadNumOMP>omp_get_max_threads())m_threadNumOMP=omp_get_max_threads();
+          if(m_threadNumOMP<1)m_threadNumOMP=1;
+          break;
+        case 'V':
+          m_haveV=true;
+          m_valueV=optarg;
+          break;
+        case 'P':
+          m_haveP=true;
+          if(!GetOptionValue(opt, optarg, m_valueP))return false;
+          break;
+        case 'T':
+          m_haveT=true;
+          if(!GetOptionValue(opt, optarg, m_valueT))return false;
+          break;
+        case 'X':
+          m_haveX=true;
+          if(!GetOptionValue(opt, optarg, m_valueX))return false;
+          break;
+        case 'H':
+          m_haveH=true;
+          if(!GetOptionValue(opt, optarg, m_valueH))return false;
+          break;
+        case 'G':
+          m_haveG=true;
+          m_valueG=optarg;
+          break;
+        case 'R':
+          m_haveR=true;
+          m_valueR_str= string_split(optarg,"/");
+          break;
+        case 'O':
+          m_haveO=true;
+          m_valueO=optarg;
+          break;
+        default:
+          break;
+        }
+      }
+      if(!(m_haveD && m_haveV))return false;//must have -D and -V arguments
+      return true;
+    }
+  #endif
+
   bool cSWEOSarg::Validate()
   {
     //check required arguments

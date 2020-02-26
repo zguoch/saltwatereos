@@ -1,8 +1,14 @@
 #ifndef SWEOSBASH_H
 #define SWEOSBASH_H
 
-#include <unistd.h>
-#include <getopt.h>
+#ifdef _WIN32
+        
+#else
+    // getopt_long only works on MacOS and linux, doesn't work on windows
+    #include <unistd.h>
+    #include <getopt.h>
+#endif
+
 #include <sstream>
 #include <iostream>
 #include <fstream>
@@ -24,6 +30,14 @@ namespace SWEOSbash
 {
     #ifdef _WIN32
         #include "windows.h"
+        #define ERROR_COUT ""
+        #define WARN_COUT ""
+        #define COLOR_PURPLE ""
+        #define COLOR_RED ""
+        #define COLOR_GREEN ""
+        #define COLOR_YELLOW ""
+        #define COLOR_BLUE ""
+        #define COLOR_DEFAULT ""
     #else
         // define color, this seems only work on MacOS and linux, doesn't work on windows
         #define ERROR_COUT "["<<"\033[31mError: "<<"\033[0m] "

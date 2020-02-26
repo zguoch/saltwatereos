@@ -2,6 +2,8 @@
 cmake_minimum_required (VERSION 2.8)
 
 project(H2ONaCl)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #2. Source code dir
 aux_source_directory(. SRC_MAIN)
