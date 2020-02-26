@@ -50,9 +50,9 @@ set( Hdrs_bash ./SWEOSbash.h ./MultiProgressBar.h)
 # add Executable target
 add_executable(${PROGRAM_NAME}  ${Srcs_bash}  main.cpp)
 
-set(LIBomp "omp")
-if (WIN32)
-  set(LIBomp "")
+set(LIBomp "")
+if (APPLE)
+  set(LIBomp "omp")
 endif()
 target_link_libraries(${PROGRAM_NAME} eosH2ONaCl ${LIBomp})
 
