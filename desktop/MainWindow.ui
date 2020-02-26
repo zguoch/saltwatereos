@@ -16,12 +16,6 @@
     <height>500</height>
    </size>
   </property>
-  <property name="font">
-   <font>
-    <family>.AppleSystemUIFont</family>
-    <pointsize>13</pointsize>
-   </font>
-  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -44,13 +38,6 @@
         <horstretch>1</horstretch>
         <verstretch>1</verstretch>
        </sizepolicy>
-      </property>
-      <property name="font">
-       <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>13</pointsize>
-        <kerning>true</kerning>
-       </font>
       </property>
       <property name="title">
        <string>Control Panel and Visualization Panel</string>
@@ -84,15 +71,6 @@
            <width>16777215</width>
            <height>150</height>
           </size>
-         </property>
-         <property name="font">
-          <font>
-           <family>.AppleSystemUIFont</family>
-           <pointsize>13</pointsize>
-           <weight>50</weight>
-           <bold>false</bold>
-           <kerning>true</kerning>
-          </font>
          </property>
          <property name="currentIndex">
           <number>1</number>
