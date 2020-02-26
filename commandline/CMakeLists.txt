@@ -35,7 +35,8 @@ if(OPENMP_FOUND)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
-link_directories("../Library/lib" )
+include_directories(../Library/include /usr/local/Cellar/libomp/9.0.1/include)
+link_directories("../Library/lib" "/usr/local/lib" "/Users/zguo/Qt/5.9.9/clang_64/lib")
 
 
 #2. Source code dir
@@ -49,7 +50,10 @@ set( Hdrs_bash ./SWEOSbash.h ./MultiProgressBar.h)
 # add Executable target
 add_executable(${PROGRAM_NAME}  ${Srcs_bash}  main.cpp)
 
-
+set(LIBomp "omp")
+if (WIN32)
+  set(LIBomp "")
+endif()
 target_link_libraries(${PROGRAM_NAME} eosH2ONaCl ${LIBomp})
 
 
