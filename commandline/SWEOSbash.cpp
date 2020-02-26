@@ -498,34 +498,34 @@ namespace SWEOSbash
   bool Write2D3DResult(vector<double> x, vector<double> y, vector<double> z, vector<SWEOS::PROP_H2ONaCl> props, 
                        string outFile, string xTitle, string yTitle, string zTitle, bool isWritePy)
   {
-    // string extname;
-    // string fname_pyScript;
-    // vector<string> tmp=string_split(outFile,".");
-    // if(tmp.size()>=1)
-    // {
-    //   extname=tmp[tmp.size()-1];
-    // }
-    // if(extname=="vtk")
-    // {
-    //   SWEOS::cH2ONaCl eos;
-    //   eos.writeProps2VTK(x,y,z,props, outFile, isWritePy, xTitle, yTitle, zTitle);
-    // }else
-    // { 
-    //   cout<<WARN_COUT<<"Unrecognized format: "<<outFile<<endl;
-    //   cout<<COLOR_GREEN<<"Write results into vtk file format"<<COLOR_DEFAULT<<endl;
-    //   string newfilename="";
-    //   for (size_t i = 0; i < tmp.size()-1; i++)
-    //   {
-    //     newfilename+=tmp[i];
-    //   }
-    //   outFile=newfilename+".vtk";
-    //   SWEOS::cH2ONaCl eos;
-    //   eos.writeProps2VTK(x,y,z,props, outFile, isWritePy, xTitle, yTitle, zTitle);
-    // }
-    // cout<<COLOR_BLUE<<"Results have been saved to file: "<<outFile<<endl;
-    // cout<<COLOR_BLUE<<"Paraview-python script is generated as : "<<outFile+".py"<<endl;
-    // string cmd_pv=" paraview --script="+outFile+".py";
-    // cout<<"You can use command of "<<COLOR_GREEN<<cmd_pv<<COLOR_DEFAULT<<" to present result in paraview"<<endl;
+    string extname;
+    string fname_pyScript;
+    vector<string> tmp=string_split(outFile,".");
+    if(tmp.size()>=1)
+    {
+      extname=tmp[tmp.size()-1];
+    }
+    if(extname=="vtk")
+    {
+      SWEOS::cH2ONaCl eos;
+      eos.writeProps2VTK(x,y,z,props, outFile, isWritePy, xTitle, yTitle, zTitle);
+    }else
+    { 
+      cout<<WARN_COUT<<"Unrecognized format: "<<outFile<<endl;
+      cout<<COLOR_GREEN<<"Write results into vtk file format"<<COLOR_DEFAULT<<endl;
+      string newfilename="";
+      for (size_t i = 0; i < tmp.size()-1; i++)
+      {
+        newfilename+=tmp[i];
+      }
+      outFile=newfilename+".vtk";
+      SWEOS::cH2ONaCl eos;
+      eos.writeProps2VTK(x,y,z,props, outFile, isWritePy, xTitle, yTitle, zTitle);
+    }
+    cout<<COLOR_BLUE<<"Results have been saved to file: "<<outFile<<endl;
+    cout<<COLOR_BLUE<<"Paraview-python script is generated as : "<<outFile+".py"<<endl;
+    string cmd_pv=" paraview --script="+outFile+".py";
+    cout<<"You can use command of "<<COLOR_GREEN<<cmd_pv<<COLOR_DEFAULT<<" to present result in paraview"<<endl;
     return true;
   }
   bool cSWEOSarg::Validate_3D()

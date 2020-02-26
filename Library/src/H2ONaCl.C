@@ -1839,7 +1839,7 @@ namespace SWEOS
         return PROP;
     }
 
-    void cH2ONaCl:: writeProps2VTK(vector<double> x, vector<double> y, vector<double> z, vector<PROP_H2ONaCl> props, string fname, bool isWritePy, string xTitle, string yTitle, string zTitle)
+    void cH2ONaCl:: writeProps2VTK(vector<double> x, vector<double> y, vector<double> z, vector<SWEOS::PROP_H2ONaCl> props, string fname, bool isWritePy, string xTitle, string yTitle, string zTitle)
     {
         if((x.size()*y.size()*z.size())!=props.size())
         {
