@@ -1916,7 +1916,7 @@ void MainWindow::UpdateUI_X(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
 }
 void MainWindow::UpdateUI_T(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox)
 {
-    QString labeltext = "dT";
+    QString labeltext = "dT (";
     labeltext = labeltext + UNIT_T;
     labeltext = labeltext + ")";
     label->setText(labeltext);
