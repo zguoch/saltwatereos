@@ -7,13 +7,13 @@
     // getopt_long only works on MacOS and linux, doesn't work on windows
     #include <unistd.h>
     #include <getopt.h>
+    // #include <sys/ioctl.h>
 #endif
 
 #include <sstream>
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-// #include <sys/ioctl.h>
 #include <vector>
 using namespace std;
 

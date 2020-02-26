@@ -15,7 +15,12 @@
 #include "stdio.h"
 #include <iostream>
 #include <vector>
-#include <sys/ioctl.h>
+#ifdef _WIN32
+        
+#else
+    // getopt_long only works on MacOS and linux, doesn't work on windows
+    #include <sys/ioctl.h>
+#endif
 #include <stdio.h>
 using namespace std;
 #include "SWEOSbash.h"

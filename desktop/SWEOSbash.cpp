@@ -4,16 +4,22 @@ namespace SWEOSbash
 {
   bool bash_run(int argc, char** argv)
   {
-    struct winsize w;
-    ioctl(0, TIOCGWINSZ, &w);
-    if(w.ws_col>119)
-    {
-        StartText_artASCII();
-    }else
-    {
-        StartText();
-    }
-    // helpINFO();
+    #ifdef _WIN32
+        
+    #else
+      StartText();
+      // struct winsize w;
+      // ioctl(0, TIOCGWINSZ, &w);
+      // if(w.ws_col>119)
+      // {
+      //     StartText_artASCII();
+      // }else
+      // {
+      //     StartText();
+      // }
+    #endif
+    
+    helpINFO();
     //parse arguments and check 
     cSWEOSarg arg;
     if(!arg.Parse(argc, argv)) return false;

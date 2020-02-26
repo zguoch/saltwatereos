@@ -26,9 +26,14 @@ MultiProgressBar::MultiProgressBar(double total, int color) : m_bar_char_left('#
                                                               m_bar_char_right('-'),
                                                               m_defaultcolor(color)
 {
-    struct winsize w;
-    ioctl(0, TIOCGWINSZ, &w);
-    m_length_bar = w.ws_col - 35;
+    #ifdef _WIN32
+        m_length_bar = 100;
+    #else
+        struct winsize w;
+        ioctl(0, TIOCGWINSZ, &w);
+        m_length_bar = w.ws_col - 35;
+    #endif
+    
     init_colors();
     m_total.push_back(total);
     cout << endl;
@@ -48,10 +53,13 @@ MultiProgressBar::MultiProgressBar(vector<double> left, vector<double> right, ve
                                                                                                       m_bar_char_right('-'),
                                                                                                       m_title(title)
 {
-    struct winsize w;
-    ioctl(0, TIOCGWINSZ, &w);
-    m_length_bar = w.ws_col - 35;
-
+    #ifdef _WIN32
+        m_length_bar = 100;
+    #else
+        struct winsize w;
+        ioctl(0, TIOCGWINSZ, &w);
+        m_length_bar = w.ws_col - 35;
+    #endif
     init_colors();
     if (right.size() != left.size())
     {
