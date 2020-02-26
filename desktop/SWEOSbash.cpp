@@ -669,11 +669,11 @@ namespace SWEOSbash
       int lenX = (int)(arrX.size());
       int lenP = (int)(arrP.size());
       #pragma omp parallel for shared(arrH, arrP, arrX, props, lenH, lenHX)
-      for (size_t i = 0; i < lenP; i++)
+      for (int i = 0; i < lenP; i++)
       {
-        for (size_t j = 0; j < lenX; j++)
+        for (int j = 0; j < lenX; j++)
         {
-          for (size_t k = 0; k < lenH; k++)
+          for (int k = 0; k < lenH; k++)
           {
             SWEOS::cH2ONaCl eos;
             eos.prop_pHX(arrP[i]*1e5, arrH[k]*1000.0, arrX[j]);
