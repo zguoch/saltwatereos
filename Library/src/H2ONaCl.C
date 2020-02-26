@@ -2095,13 +2095,13 @@ namespace SWEOS
             // double Rho_star_v=freesteam_rho(S);
             double Rho_star_v=water_rho_pT(P_star_v*1e5, T_star_v+Kelvin);
             bool ind1 = (Rho_star_v > 321.89 && P_star_v <= P_crit); 
-            bool ind2 = (isnan(Rho_star_v) && P_star_v <= P_crit);
+            bool ind2 = (std::isnan(Rho_star_v) && P_star_v <= P_crit);
             while (ind1 || ind2)
             {
                 double T_2ph, Rho_l, h_l, h_v, dpd_l, dpd_v, Rho_star_v, Mu_l, Mu_v;
                 fluidProp_crit_P(P_star_v*1e5,1e-12,T_2ph, Rho_l, h_l, h_v, dpd_l, dpd_v, Rho_star_v, Mu_l, Mu_v);
                 ind1 = (Rho_star_v > 321.89 && P_star_v <= P_crit);
-                ind2 = (isnan(Rho_star_v) && P_star_v <= P_crit); 
+                ind2 = (std::isnan(Rho_star_v) && P_star_v <= P_crit); 
             }
             double Vol_v = 1./Rho_star_v;
             double V_v = Vol_v*mass_h2o;
@@ -2127,7 +2127,7 @@ namespace SWEOS
             // cout<<"P_star_l: "<<P_star_l<<" T_star_l: "<<T_star_l<<" Rho_star_l: "<<Rho_star_l<<endl;
             double Vol = 1/Rho_star_l;
             double V_l = Vol*mass_h2o;
-            bool ind_low=( (Rho_star_l < 321.89 || isnan(Rho_star_l)) && P_star_l <= P_crit );
+            bool ind_low=( (Rho_star_l < 321.89 || std::isnan(Rho_star_l)) && P_star_l <= P_crit );
             if(ind_low)
             {
                 // [ T_crit, Rho_star_crit_l, ~, ~, ~, ~ ] = fluidprop_crit_P( P_star_l(ind_low)*1e5 , 1e-9 );  % P_star_l = P_l
@@ -2280,13 +2280,13 @@ namespace SWEOS
             // h_v=freesteam_h(S);
             h_v=water_h_pT(P_star_v*1e5, T_star_v+Kelvin);
             bool ind1 = (h_v < 2.086e6 && P_star_v < P_crit);// & P_star_v > 40); 
-            bool ind2 = (isnan(h_v) && P_star_v < P_crit);// & P_star_v > 40); 
+            bool ind2 = (std::isnan(h_v) && P_star_v < P_crit);// & P_star_v > 40); 
             while (ind1 || ind2)
             {
                 double T_2ph0, Rho_l0, h_l0, dpd_l0, dpd_v0, Rho_v0, Mu_l0, Mu_v0;
                 fluidProp_crit_P(P_star_v*1e5, 1e-12,T_2ph0, Rho_l0, h_l0, h_v, dpd_l0, dpd_v0, Rho_v0, Mu_l0, Mu_v0);
                 ind1 = (h_v < 2.086e6 && P_star_v < P_crit && P_star_v > 40);
-                ind2 = (isnan(h_v) && P_star_v < P_crit && P_star_v > 40); 
+                ind2 = (std::isnan(h_v) && P_star_v < P_crit && P_star_v > 40); 
             }
             T_star_v_out= T_star_v; 
         }
@@ -2304,7 +2304,7 @@ namespace SWEOS
             // h_l=freesteam_h(S);
             h_l=water_h_pT(P_star_l*1e5, T_star_l+Kelvin);
             //nedded for boiling temps from 180 to Tcri, is not in Driesners Paper
-            bool ind_low = ( (h_l > 2.086e6 || isnan(h_l))  &&  P_star_l < P_crit  &&  T_in < 375 );
+            bool ind_low = ( (h_l > 2.086e6 || std::isnan(h_l))  &&  P_star_l < P_crit  &&  T_in < 375 );
             if(ind_low)
             {
                 //  find boiling temperature and spec enthlapy there for given Pressure
@@ -2437,11 +2437,11 @@ namespace SWEOS
             double e1 = a1 * pow(Xw_l,a2);
             double e2 = 1 - b1 * pow(T,b2) - b3 * pow(Xw_l,a2) * pow(T,b2); 
             double T_star_l = e1 + e2 * T;
-            if(isnan(T_star_l))T_star_l = 0;
+            if(std::isnan(T_star_l))T_star_l = 0;
             // SteamState S = freesteam_set_pT(P, T_star_l+Kelvin);
             // mu_l=freesteam_mu(S);
             mu_l=water_mu_pT(P, T_star_l+Kelvin);
-            if(isnan(mu_l))
+            if(std::isnan(mu_l))
             {
                 double T_2ph0, Rho_l0, h_l0,h_v0, dpd_l0, dpd_v0, Rho_v0, Mu_v0;
                 fluidProp_crit_P(P, 1e-10,T_2ph0, Rho_l0, h_l0, h_v0, dpd_l0, dpd_v0, Rho_v0, mu_l, Mu_v0);
@@ -2461,7 +2461,7 @@ namespace SWEOS
                 // mu_v=freesteam_mu(S);
                 mu_v=water_mu_pT(P, T_star_v+Kelvin);
             }
-            if(isnan(mu_v))
+            if(std::isnan(mu_v))
             {
                 double T_2ph0, Rho_l0, h_l0,h_v0, dpd_l0, dpd_v0, Rho_v0, mu_l0;
                 fluidProp_crit_P(P, 1e-10,T_2ph0, Rho_l0, h_l0, h_v0, dpd_l0, dpd_v0, Rho_v0, mu_l0, mu_v);
