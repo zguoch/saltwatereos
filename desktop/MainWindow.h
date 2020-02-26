@@ -219,7 +219,7 @@ protected slots:
 private slots:
   void updateCalculationModelSelection(bool isSinglePoint);
   int SetCamera(vtkSmartPointer<vtkRenderer> renderer, vtkBoundingBox boundingbox, int type=ID_CAMERA_UP);
-  int InitCubeAxes(vtkCubeAxesActor* axes, vtkBoundingBox boundingbox, vtkBoundingBox rangebox, std::string xlabel, std::string ylabel, std::string zlabel,int fontsize=30);
+  int InitCubeAxes(vtkCubeAxesActor* axes, vtkBoundingBox boundingbox, vtkBoundingBox rangebox, std::string xlabel, std::string ylabel, std::string zlabel,int fontsize);
   int Calculate_Diagram1D();
   int Calculate_Diagram2D();
   void on_pushButton_2_clicked();

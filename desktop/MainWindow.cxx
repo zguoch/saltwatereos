@@ -89,7 +89,7 @@ MainWindow::MainWindow(QWidget *parent)
     updateUI(m_dimension);
     //vtk text font size: windows is different from Mac
     #ifdef _WIN32
-        m_vtkFontSize = 10;
+        m_vtkFontSize = 15;
     #else
         m_vtkFontSize = 25;
     #endif
@@ -1376,7 +1376,7 @@ void MainWindow::ShowProps_2D(int index_prop, std::string xlabel,std::string yla
         scalarBar->SetWidth(scalarBar->GetWidth()/2);
         renderer->AddActor2D(scalarBar);
     }
-    InitCubeAxes(axis,vtkBoundingBox(gridActor->GetBounds()),vtkBoundingBox(m_structuredGrid->GetBounds()),xlabel,ylabel,zlabel);
+    InitCubeAxes(axis,vtkBoundingBox(gridActor->GetBounds()),vtkBoundingBox(m_structuredGrid->GetBounds()),xlabel,ylabel,zlabel,m_vtkFontSize);
     renderer->SetBackground(0,0,0); //
     if(!m_vtkCameraInitialized)
     {
