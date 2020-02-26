@@ -87,7 +87,12 @@ MainWindow::MainWindow(QWidget *parent)
     //default set 1D UI
     m_geometry_Groupbox_variables=ui->groupBox_Variables->geometry();
     updateUI(m_dimension);
-
+    //vtk text font size: windows is different from Mac
+    #ifdef _WIN32
+        m_vtkFontSize = 10;
+    #else
+        m_vtkFontSize = 25;
+    #endif
 
     m_vtkTable=vtkSmartPointer<vtkTable>::New();
     m_structuredGrid = vtkSmartPointer<vtkStructuredGrid>::New();
@@ -553,7 +558,7 @@ void MainWindow::CalculateProps_PTX_PHX(int PTX_PHX, std::vector<double> arrT_H,
     }
 
     vtkSmartPointer<vtkFloatArray> varT = vtkSmartPointer<vtkFloatArray>::New();
-    string nameT = "Tempearature";
+    string nameT = "Temperature";
     nameT = nameT + " (";
     nameT = nameT + UNIT_T;
     nameT = nameT + ")";
