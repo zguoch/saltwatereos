@@ -13,7 +13,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include <sys/ioctl.h>
+// #include <sys/ioctl.h>
 #include <vector>
 using namespace std;
 
