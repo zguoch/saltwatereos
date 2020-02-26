@@ -293,11 +293,12 @@ namespace SWEOSbash
           <<rangeP[0]<<", "<<rangeP[1]<<"] bar, fixed salinity X="
           <<m_valueX<<" "
           <<"\n"<<endl;
-      int lenT=arrT.size();
+      int lenT = (int)(arrT.size());
+      int lenP = (int)(arrP.size());
       #pragma omp parallel for shared(arrT, arrP, arrX, props, lenT)
-      for (size_t j = 0; j < arrP.size(); j++)
+      for (int j = 0; j < lenP; j++)
       {
-        for (size_t k = 0; k < arrT.size(); k++)
+        for (int k = 0; k < lenT; k++)
         {
           SWEOS::cH2ONaCl eos;
           eos.prop_pTX(arrP[j]*1e5, arrT[k]+SWEOS::Kelvin, arrX[0]);
@@ -338,10 +339,11 @@ namespace SWEOSbash
           <<m_valueT<<" °C "
           <<"\n"<<endl;
       int lenX=arrX.size();
+      int lenP = (int)(arrP.size());
       #pragma omp parallel for shared(arrT, arrP, arrX, props, lenX)
-      for (size_t j = 0; j < arrP.size(); j++)
+      for (int j = 0; j < lenP; j++)
       {
-        for (size_t k = 0; k < arrX.size(); k++)
+        for (int k = 0; k < lenX; k++)
         {
           SWEOS::cH2ONaCl eos;
           eos.prop_pTX(arrP[j]*1e5, arrT[0]+SWEOS::Kelvin, arrX[k]);
@@ -381,10 +383,11 @@ namespace SWEOSbash
           <<m_valueP<<" bar "
           <<"\n"<<endl;
       int lenT=arrT.size();
+      int lenX = (int)(arrX.size());
       #pragma omp parallel for shared(arrT, arrP, arrX, props, lenT)
-      for (size_t j = 0; j < arrX.size(); j++)
+      for (int j = 0; j < lenX; j++)
       {
-        for (size_t k = 0; k < arrT.size(); k++)
+        for (int k = 0; k < lenT; k++)
         {
           SWEOS::cH2ONaCl eos;
           eos.prop_pTX(arrP[0]*1e5, arrT[k]+SWEOS::Kelvin, arrX[j]);
@@ -425,10 +428,11 @@ namespace SWEOSbash
           <<m_valueX<<" "
           <<"\n"<<endl;
       int lenH=arrH.size();
+      int lenP = (int)(arrP.size());
       #pragma omp parallel for shared(arrH, arrP, arrX, props, lenH)
-      for (size_t j = 0; j < arrP.size(); j++)
+      for (int j = 0; j < lenP; j++)
       {
-        for (size_t k = 0; k < arrH.size(); k++)
+        for (int k = 0; k < lenH; k++)
         {
           SWEOS::cH2ONaCl eos;
           eos.prop_pHX(arrP[j]*1e5, arrH[k]*1000.0, arrX[0]);
@@ -469,10 +473,11 @@ namespace SWEOSbash
           <<m_valueP<<" bar"
           <<"\n"<<endl;
       int lenH=arrH.size();
+      int lenX = (int)(arrX.size());
       #pragma omp parallel for shared(arrH, arrP, arrX, props, lenH)
-      for (size_t j = 0; j < arrX.size(); j++)
+      for (int j = 0; j < lenX; j++)
       {
-        for (size_t k = 0; k < arrH.size(); k++)
+        for (int k = 0; k < lenH; k++)
         {
           SWEOS::cH2ONaCl eos;
           eos.prop_pHX(arrP[0]*1e5, arrH[k]*1000.0, arrX[j]);
@@ -601,12 +606,14 @@ namespace SWEOSbash
           <<"\n"<<endl;
       int lenT=arrT.size();
       int lenTX=arrT.size()*arrX.size();
+      int lenX = (int)(arrX.size());
+      int lenP = (int)(arrP.size());
       #pragma omp parallel for shared(arrT, arrP, arrX, props, lenT, lenTX)
-      for (size_t i = 0; i < arrP.size(); i++)
+      for (int i = 0; i < lenP; i++)
       {
-        for (size_t j = 0; j < arrX.size(); j++)
+        for (int j = 0; j < lenX; j++)
         {
-          for (size_t k = 0; k < arrT.size(); k++)
+          for (int k = 0; k < lenT; k++)
           {
             SWEOS::cH2ONaCl eos;
             eos.prop_pTX(arrP[i]*1e5, arrT[k]+SWEOS::Kelvin, arrX[j]);
@@ -659,12 +666,14 @@ namespace SWEOSbash
           <<"\n"<<endl;
       int lenH=arrH.size();
       int lenHX=arrH.size()*arrX.size();
+      int lenX = (int)(arrX.size());
+      int lenP = (int)(arrP.size());
       #pragma omp parallel for shared(arrH, arrP, arrX, props, lenH, lenHX)
-      for (size_t i = 0; i < arrP.size(); i++)
+      for (size_t i = 0; i < lenP; i++)
       {
-        for (size_t j = 0; j < arrX.size(); j++)
+        for (size_t j = 0; j < lenX; j++)
         {
-          for (size_t k = 0; k < arrH.size(); k++)
+          for (size_t k = 0; k < lenH; k++)
           {
             SWEOS::cH2ONaCl eos;
             eos.prop_pHX(arrP[i]*1e5, arrH[k]*1000.0, arrX[j]);
