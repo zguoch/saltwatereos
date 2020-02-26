@@ -810,7 +810,7 @@ int MainWindow::testjob()
 
 
         #pragma omp critical
-        cout<<i<<endl;
+        // cout<<i<<endl;
         while(t.elapsed()<1000);
         ind++;
         ui->roundProgressBar->setValue(ind);
