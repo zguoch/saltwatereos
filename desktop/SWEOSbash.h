@@ -5,7 +5,7 @@
         
 #else
     // getopt_long only works on MacOS and linux, doesn't work on windows
-    #include <unistd.h>
+    // #include <unistd.h>
     #include <getopt.h>
     // #include <sys/ioctl.h>
 #endif

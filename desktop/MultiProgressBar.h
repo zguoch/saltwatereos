@@ -15,12 +15,7 @@
 #include "stdio.h"
 #include <iostream>
 #include <vector>
-#ifdef _WIN32
-        
-#else
-    // getopt_long only works on MacOS and linux, doesn't work on windows
-    #include <sys/ioctl.h>
-#endif
+
 #include <stdio.h>
 using namespace std;
 #include "SWEOSbash.h"
@@ -29,8 +24,14 @@ using namespace std;
 #define COLOR_BAR_GREEN 2
 #define COLOR_BAR_YELLOW 3
 #define COLOR_BAR_RED 4
-
-#include <unistd.h>
+#ifdef _WIN32
+        
+#else
+    // getopt_long only works on MacOS and linux, doesn't work on windows
+    // for getting console window size
+    #include <sys/ioctl.h>
+    // #include <unistd.h>
+#endif
 #define MOVEUP(x) printf("\033[%dA", (x))
 // clean screen
 #define CLEAR() printf("\033[2J") 
