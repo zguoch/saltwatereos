@@ -1,0 +1,1 @@
+This command line version doesn't contain GUI support, which is designed for server, e.g. run on colima.

@@ -71,7 +71,7 @@ find_package(VTK COMPONENTS
 include(${VTK_USE_FILE})
 
 # add H2ONaCl source and library 
-include_directories(../Library/include)
+include_directories(../Library/include ../commandline)
 link_directories("../Library/lib" "/usr/local/lib" "/Users/zguo/Qt/5.9.9/clang_64/lib")
 
 if("${VTK_QT_VERSION}" STREQUAL "")
@@ -96,9 +96,9 @@ set( UIs MainWindow.ui )
 
 set( QRCs Icons/icons.qrc)
 
-set( Srcs_bash SWEOSbash.cpp MultiProgressBar.cpp)
+set( Srcs_bash ../commandline/SWEOSbash.cpp ../commandline/MultiProgressBar.cpp)
 
-set( Hdrs_bash SWEOSbash.h MultiProgressBar.h)
+set( Hdrs_bash ../commandline/SWEOSbash.h ../commandline/MultiProgressBar.h)
 
 
 # Instruct CMake to run moc automatically when needed.
