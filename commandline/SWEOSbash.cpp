@@ -494,8 +494,8 @@ namespace SWEOSbash
     }
     return true;
   }
-  bool Write2D3DResult(vector<double> x, vector<double> y, vector<double> z, vector<SWEOS::PROP_H2ONaCl> props, 
-                       string outFile, string xTitle, string yTitle, string zTitle, bool isWritePy)
+  bool Write2D3DResult(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<SWEOS::PROP_H2ONaCl> props, 
+                       std::string outFile, std::string xTitle, std::string yTitle, std::string zTitle, bool isWritePy)
   {
     string extname;
     string fname_pyScript;
