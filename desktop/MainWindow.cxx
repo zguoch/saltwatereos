@@ -1165,9 +1165,9 @@ int MainWindow::Calculate_Diagram2D()
             int lenP = (int)(vectorP.size());
             int lenX = (int)(vectorX.size());
             #pragma omp parallel for shared(vectorP, vectorX, T0)
-            for(size_t j = 0; j < lenP; j++)
+            for(int j = 0; j < lenP; j++)
             {
-                for(size_t i = 0; i < lenX; i++)
+                for(int i = 0; i < lenX; i++)
                 {
                     int ind_value=i+j*lenX;
                     SWEOS::cH2ONaCl eos;
@@ -1251,9 +1251,9 @@ int MainWindow::Calculate_Diagram2D()
             int lenX = (int)(vectorX.size());
             int lenT = (int)(vectorT.size());
             #pragma omp parallel for shared(vectorT, vectorX, P0)
-            for(size_t j = 0; j < lenX; j++)
+            for(int j = 0; j < lenX; j++)
             {
-                for(size_t i = 0; i < lenT; i++)
+                for(int i = 0; i < lenT; i++)
                 {
                     int ind_value=i+j*lenT;
                     SWEOS::cH2ONaCl eos;
