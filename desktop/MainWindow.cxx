@@ -10,39 +10,6 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 
-#include <vtkDataObjectToTable.h>
-#include <vtkElevationFilter.h>
-
-#include <vtkNew.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkQtTableView.h>
-#include <vtkRenderer.h>
-#include <vtkRenderWindow.h>
-#include "vtkSmartPointer.h"
-#include <vtkVectorText.h>
-
-#include <vtkActor.h>
-#include <vtkCamera.h>
-#include <vtkLookupTable.h>
-#include <vtkNamedColors.h>
-#include <vtkPolyData.h>
-#include <vtkPolyhedron.h>
-#include <vtkProperty.h>
-#include <vtkRenderWindowInteractor.h>
-
-#include "vtkConeSource.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkRenderWindow.h"
-#include "vtkCamera.h"
-#include "vtkActor.h"
-#include "vtkRenderer.h"
-#include <vtkRenderWindowInteractor.h>
-
-#include <vtkRendererCollection.h>
-
-
-
-
 // Constructor
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -172,7 +139,7 @@ void MainWindow::init_Meters()
     init_Meter(ui->meter_thirdVar,0, 100, 3.2,1,10,2,0, tr("Salinity"), tr("wt. %"));
     if(ui->comboBox->currentIndex()==0)
     {
-        init_Meter(ui->meter_secondVar,0, 1000, 100,0,100,20,0, tr("Temperature"), tr("°C"));
+        init_Meter(ui->meter_secondVar,0, 1000, 100,0,100,20,0, tr("Temperature"), UNIT_T);
     }else if(ui->comboBox->currentIndex()==1)
     {
         init_Meter(ui->meter_secondVar,0, 4.2, 2,2,0.5,0.1,1, tr("Enthalpy"), tr("MJ/kg"));
@@ -298,7 +265,7 @@ void MainWindow::on_pushButton_2_clicked()
             QString fileName;
             switch (ui->comboBox->currentIndex()) {
             case 0: //PTX
-                fileName = QFileDialog::getOpenFileName(this, tr("Open P(bar) T(°C) X File: three columns separated by spaces"), "", tr("Text File (*.txt);;Text File (*.dat)"));
+                fileName = QFileDialog::getOpenFileName(this, tr("Open P(bar) T(C) X File: three columns separated by spaces"), "", tr("Text File (*.txt);;Text File (*.dat)"));
                 break;
             case 1:
                 fileName = QFileDialog::getOpenFileName(this, tr("Open P(bar) H(kJ/kg) X File: three columns separated by spaces"), "", tr("Text File (*.txt);;Text File (*.dat)"));
@@ -378,7 +345,7 @@ void MainWindow::SinglePointCalculation(int index_varsSelection)
     {
         eos.prop_pTX(p, T_H+SWEOS::Kelvin, X);
         name_T_H=tr("Temperature");
-        name_unit_T_H=tr("°C");
+        name_unit_T_H=UNIT_T;
         name_T_H_display=tr("Bulk enthalpy");
         value_T_H_display=eos.m_prop.H;
     }
@@ -469,7 +436,7 @@ void MainWindow::on_radioButton_2_clicked()
         ui->pushButton_2->setText(tr("Open File"));
         if(ui->comboBox->currentIndex()==0)
         {
-            ui->pushButton_2->setToolTip(tr("Read file: p(bar) T(°C) X"));
+            ui->pushButton_2->setToolTip(tr("Read file")+": p(bar) T("+UNIT_T+") X");
         }else if(ui->comboBox->currentIndex()==1)
         {
             ui->pushButton_2->setToolTip(tr("Read file: p(bar) H(J/kg) X"));
@@ -503,7 +470,7 @@ int MainWindow::Calculate_Diagram1D()
     switch (ui->comboBox_selectVariable->currentIndex()) {
     case 0:   //temperature
     {
-        varName=tr("Temperature (°C)");
+        varName=tr("Temperature") + " ("+UNIT_T+")";
         m_index_var=0;
         double dT=ui->doubleSpinBox_delta_firstVar->value();
         double Tmin=ui->doubleSpinBox_min_firstVar->value();
@@ -586,7 +553,11 @@ void MainWindow::CalculateProps_PTX_PHX(int PTX_PHX, std::vector<double> arrT_H,
     }
 
     vtkSmartPointer<vtkFloatArray> varT = vtkSmartPointer<vtkFloatArray>::New();
-    varT->SetName("Temperature(°C)");
+    string nameT = "Tempearature";
+    nameT = nameT + " (";
+    nameT = nameT + UNIT_T;
+    nameT = nameT + ")";
+    varT->SetName(nameT.c_str());
     table->AddColumn(varT);
 
     vtkSmartPointer<vtkFloatArray> varP = vtkSmartPointer<vtkFloatArray>::New();
@@ -1028,7 +999,7 @@ int MainWindow::Calculate_Diagram2D()
     switch (ui->comboBox_selectVariable->currentIndex()) {
         case 0:   //PT
         {
-            m_xlabel="Temperature (°C)";
+            m_xlabel=string("Temperature") + " (" + UNIT_T + ")";
             m_ylabel="Pressure (bar)";
             m_actorScale[0]=m_actorScale_T;
             m_actorScale[1]=m_actorScale_P;
@@ -1200,7 +1171,7 @@ int MainWindow::Calculate_Diagram2D()
         break;
         case 2:  //TX
         {
-            m_xlabel="Temperature (°C)";
+            m_xlabel=string("Temperature") + " ("+UNIT_T+")";
             m_ylabel="Salinity";
             m_actorScale[0]=m_actorScale_T;
             m_actorScale[1]=m_actorScale_X;
@@ -1911,7 +1882,7 @@ void MainWindow::UpdateUI_fixedX(QLabel* label, QDoubleSpinBox* box, double defa
 }
 void MainWindow::UpdateUI_fixedT(QLabel* label, QDoubleSpinBox* box, double defaultValue)
 {
-    label->setText(tr("Temperature (°C)"));
+    label->setText(tr("Temperature") + " (" + UNIT_T + ")");
     box->setDecimals(2);
     box->setRange(SWEOS::TMIN-SWEOS::Kelvin, SWEOS::TMAX-SWEOS::Kelvin);
     box->setSingleStep(1);
@@ -1945,7 +1916,10 @@ void MainWindow::UpdateUI_X(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
 }
 void MainWindow::UpdateUI_T(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox)
 {
-    label->setText(tr("dT(°C):"));
+    QString labeltext = "dT";
+    labeltext = labeltext + UNIT_T;
+    labeltext = labeltext + ")";
+    label->setText(labeltext);
     deltaBox->setDecimals(2);
     deltaBox->setRange(0.01, 100);
     deltaBox->setSingleStep(1);

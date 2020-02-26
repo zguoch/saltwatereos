@@ -144,7 +144,7 @@ add_executable(
   )
 option(USE_FreeSteam "whether use freesteam library" OFF)
 set(LIBFreeSteam "")
-
+ 
 if (USE_FreeSteam)
     # add freesteam library path
     link_directories("/usr/local/lib")

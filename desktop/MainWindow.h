@@ -15,7 +15,6 @@
 #ifndef MainWindow_H
 #define MainWindow_H
 
-#include "vtkSmartPointer.h"    // Required for smart pointer internal ivars.
 #include <QMainWindow>
 #include "H2ONaCl.H"
 #include <QDateTime>
@@ -91,6 +90,21 @@ using namespace std;
 #include <vtkColorSeries.h>
 #include <vtkLegendBoxActor.h>
 #include <vtkCubeSource.h>
+#include <vtkCamera.h>
+#include <vtkLookupTable.h>
+#include <vtkDataObjectToTable.h>
+#include <vtkElevationFilter.h>
+#include <vtkNew.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkQtTableView.h>
+#include <vtkRenderer.h>
+#include <vtkVectorText.h>
+#include <vtkActor.h>
+#include <vtkPolyData.h>
+#include <vtkPolyhedron.h>
+#include <vtkProperty.h>
+#include <vtkConeSource.h>
+#include <vtkRendererCollection.h>
 
 #define CALCULATION_SINGLE_POINT 1
 #define CALCULATION_MULTI_POINTS 2
@@ -137,6 +151,12 @@ using namespace std;
 #define ID_CAMERA_RIGHT	5
 #define ID_CAMERA_UP	6
 #define ID_CAMERA_DOWN	7
+
+#ifdef _WIN32
+  #define UNIT_T "C"
+#else
+  #define UNIT_T "°C"
+#endif
 
 // Forward Qt class declarations
 class Ui_MainWindow;
