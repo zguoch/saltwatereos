@@ -152,9 +152,9 @@ if (USE_FreeSteam)
 endif()
 
 #windows vs2017 doesn't need opm library link 
-set(LIBomp "omp")
-if (WIN32)
-  set(LIBomp "")
+set(LIBomp "")
+if (APPLE)
+  set(LIBomp "omp")
 endif()
 target_link_libraries(${PROGRAM_NAME} Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Concurrent eosH2ONaCl ${LIBFreeSteam} ${LIBomp})
 target_link_libraries(${PROGRAM_NAME} ${VTK_LIBRARIES})
