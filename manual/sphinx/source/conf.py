@@ -114,7 +114,7 @@ latex_elements = {
     'inputenc': '',
     'babel': r'''\usepackage[english]{babel}''',
     'preamble': r'''\usepackage{ctex}
-\definecolor{FOAM_green}{rgb}{0.27,0.49,0.36}
+\definecolor{EOS_green}{rgb}{0.27,0.49,0.36}
     ''',
 }
 # latex_logo='_static/latex_logo.pdf'
@@ -132,7 +132,7 @@ imgmath_dvipng_args = ['-gamma', '1.5', '-bg', 'Transparent']
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'HydrothermalFoam.tex', 'Hydrothermal\\textcolor{FOAM_green}{$\\nabla$}Foam Manual',
+    (master_doc, 'SaltWaterEOS.tex', '\\textcolor{EOS_green}{S}alt \\textcolor{EOS_green}{W}ater \\textcolor{EOS_green}{E}quation \\textcolor{EOS_green}{o}f \\textcolor{EOS_green}{S}tate Manual',
      'Zhikui Guo, Lars Rüpke', 'manual'),
 ]
 
@@ -142,7 +142,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'hydrothermalfoam', 'HydrothermalFoam Manual',
+    (master_doc, 'SaltWaterEOS', 'SaltWaterEOS Manual',
      [author], 1)
 ]
 
@@ -153,8 +153,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'HydrothermalFoam', 'HydrothermalFoam Documentation',
-     author, 'HydrothermalFoam', 'One line description of project.',
+    (master_doc, 'Salt Water EOS', 'Salt Water EOS Documentation',
+     author, 'Salt Water EOS', 'One line description of project.',
      'Miscellaneous'),
 ]
 
