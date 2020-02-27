@@ -4,3 +4,4 @@ plot/*
 lib
 build-*/
 .DS_Store
+doxygen/html
