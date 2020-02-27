@@ -1,0 +1,11 @@
+*.log
+*.aux
+*.bbl
+*.blg
+*.gz
+*.pdf
+[.tex
+_minted-manual
+*.idx
+*.toc
+*.out

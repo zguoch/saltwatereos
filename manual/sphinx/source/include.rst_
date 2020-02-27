@@ -1,0 +1,11 @@
+.. define short name variables
+
+.. _OpenFOAM: https://openfoam.org
+
+.. _Gmsh: http://gmsh.info
+
+.. |foam| replace:: HydrothermalFoam
+
+.. |darcyfoam| replace:: HydrothermalSinglePhaseDarcyFoam
+
+.. |anhydritefoam| replace:: HydrothermalSinglePhaseDarcyAnhydriteFoam

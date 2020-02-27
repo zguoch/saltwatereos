@@ -1,0 +1,148 @@
+\usepackage[]{graphicx,color}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{subfigure}
+\usepackage{textpos}
+\usepackage{gensymb}
+\usepackage[framemethod=TikZ]{mdframed}
+
+%code syntax highlight
+\usepackage{minted}
+%using round bracket
+\usepackage[round]{natbib}
+%using tikz plot model geomegry
+\usepackage{tikz}
+%using threepart table
+\usepackage{booktabs}
+\usepackage{threeparttable}
+\usepackage[labelfont=bf]{caption} % optional
+%set spacing
+\usepackage{setspace}
+% file/folder tree
+\usepackage[edges]{forest}
+\newlength\Size
+%landscape table or figures
+\usepackage{pdflscape} % rotate the whole page, no page number and no continuation
+\usepackage{rotating} %rotate table to a landscape view
+%multi row in table
+\usepackage{array,multirow}
+
+
+% This adds space between the Appendix number (e.g., A.101) and the title.
+
+\renewcommand{\numberline}[1]{#1~}
+
+% If your page numbers stick out into the righthand margin but using lengths 
+% appropriate to your document. See the Introduction to the "The tocloft 
+% package" for additional information.
+
+\makeatletter
+ \renewcommand{\@pnumwidth}{1.75em} 
+ \renewcommand{\@tocrmarg}{3.25em}
+\makeatother
+
+
+% use a larger page size; otherwise, it is difficult to have complete
+% code listings and output on a single page
+\usepackage{fullpage}
+
+% have an index. we use the imakeidx' replacement of the 'multind' package so
+% that we can have an index of all run-time parameters separate from other
+% items (if we ever wanted one)
+\usepackage{imakeidx}
+\makeindex[name=prmindex, title=Index of run-time parameter entries]
+\makeindex[name=prmindexfull, title=Index of run-time parameters with section names]
+
+% be able to use \note environments with a box around the text
+%\usepackage{fancybox}
+\newcommand{\note}[1]{
+{\parindent0pt
+  \begin{center}
+    \shadowbox{
+      \begin{minipage}[c]{0.9\linewidth}
+        \textbf{Note:} #1
+      \end{minipage}
+    }
+  \end{center}
+}}
+
+
+% use the listings package for code snippets. define keywords for prm files
+% and for gnuplot
+\usepackage{listings}
+\lstset{
+  language=C++,
+  showstringspaces=false,
+  basicstyle=\small\ttfamily,
+  columns=fullflexible,
+  keepspaces=true,
+  frame=single,
+  breaklines=true,
+  postbreak=\raisebox{0ex}[0ex][0ex]{\hspace{5em}\ensuremath{\color{red}\hookrightarrow\space}}
+}
+\lstdefinelanguage{prmfile}{morekeywords={set,subsection,end},
+                            morecomment=[l]{\#},escapeinside={\%\%}{\%},}
+\lstdefinelanguage{gnuplot}{morekeywords={plot,using,title,with,set,replot},
+                            morecomment=[l]{\#},}
+
+
+% use the hyperref package; set the base for relative links to
+% the top-level aspect directory so that we can link to
+% files in the aspect tree without having to specify the
+% location relative to the directory where the pdf actually
+% resides
+\usepackage[colorlinks,linkcolor=blue,urlcolor=blue,citecolor=blue,destlabel=true,breaklinks=true,baseurl=../]{hyperref}
+
+% \newcommand{\HydrothermalFOAM}{{\textcolor{blue}{$\nabla$}\ HydrothermalFOAM}}
+\newcommand{\HydrothermalFOAMfancy}{Hydrothermal\textcolor{blue}{$\nabla$}FOAM }
+\newcommand{\foam}{HydrothermalFoam }
+\newcommand{\darcyfoam}{HydrothermalSinglePhaseDarcyFoam}
+\newcommand{\anhydritefoam}{HydrothermalSinglePhaseDarcyAnhydriteFoam}
+% This should be pasted at the start of manuals and appropriate strings entered at locations indicated with FILL.
+% Be sure the TeX file includes the following packages.
+% \usepackage{graphicx}
+% \usepackage{times}
+% \usepackage{textpos}
+
+\definecolor{dark_grey}{gray}{0.3}
+\definecolor{FOAM_gray}{rgb}{0.94,0.94,0.94}
+\definecolor{FOAM_green}{rgb}{0.27,0.49,0.36}
+\def\bgcolor_Code{green!2}
+\renewcommand{\familydefault}{\sfdefault}
+
+%-------------fancy box--------------------
+\newcounter{theo}[section]\setcounter{theo}{0}
+\renewcommand{\thetheo}{\arabic{section}.\arabic{theo}}
+\newenvironment{theo}[2][]{%
+	\refstepcounter{theo}%
+	\ifstrempty{#1}%
+	{\mdfsetup{%
+			frametitle={%
+				\tikz[baseline=(current bounding box.east),outer sep=0pt]
+				\node[anchor=east,rectangle,fill=green!20]
+				{\strut Note~\thetheo};}}
+	}%
+	{\mdfsetup{%
+			frametitle={%
+				\tikz[baseline=(current bounding box.east),outer sep=0pt]
+				\node[anchor=east,rectangle,fill=green!20]
+				{\strut Note~\thetheo:~#1};}}%
+	}%
+	\mdfsetup{innertopmargin=10pt,linecolor=FOAM_green,%
+		linewidth=2pt,topline=true,%
+		frametitleaboveskip=\dimexpr-\ht\strutbox\relax
+	}
+	\begin{mdframed}[]\relax%
+		\label{#2}}{\end{mdframed}}
+%=================================
+
+%========definition of commonly used symbols========
+\def\ssd{ $^{\circ}\text{C}$ }
+\def\cca{ $C_{\text{Ca}^{2+}}$ }
+\def\cso4{ $C_{\text{SO}_4^{2-}}$ }
+\def\ca{ $\text{Ca}^{2+}$ }
+\def\so4{ $\text{SO}_4^{2-}$ }
+

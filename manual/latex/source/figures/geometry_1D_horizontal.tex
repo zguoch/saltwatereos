@@ -1,0 +1,14 @@
+\begin{tikzpicture}[scale=5,>=stealth]
+\def\xmin{0}
+\def\xmax{2}
+\def\ymin{0}
+\def\ymax{0.2}
+
+\filldraw[gray,fill=green,fill opacity=0.1] (\xmin,\ymin) -- (\xmax,\ymin) -- (\xmax,\ymax) -- (\xmin,\ymax)  --cycle;
+
+\draw[red,very thick] (\xmin, \ymin) -- (\xmin, \ymax) node[pos=0.5, rotate=90, above] {$P_l, T_l$};
+
+\draw[blue,very thick] (\xmax, \ymin) -- (\xmax, \ymax) node[pos=0.5, rotate=90, below] {$P_r, T_r$};
+
+\draw[black,<->] (\xmin,\ymin-0.05) -- (\xmax, \ymin-0.05) node[pos=0.5,fill=white] {L=2 km};
+\end{tikzpicture}
