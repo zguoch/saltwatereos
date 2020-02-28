@@ -47,4 +47,6 @@ Required Arguments
 |-V|\ [ *variables* ]
     Sets variables accroding to |-D| option. This is the second key option, the available arguments are **PTX**, **PHX**, **P**, **T**, **X**, **H**, **PT**, **PX**, **TX**, **PH** and **HX**.
 
-    * **PTX**, if argument of |-D| option is **1**, then the pressure, temperature and salinity is set by |-P|, |-T| and |-X| option, respectively. While if argument of |-D| is **3**, the range of pressure, temperature and salinity must be specified by |-R| option **in the same order** of argument of |-V| option. 
+    * **PTX**, if argument of |-D| option is **1**, then the pressure, temperature and salinity is set by |-P|, |-T| and |-X| option, respectively. While if argument of |-D| is **3**, the range of pressure, temperature and salinity must be specified by |-R| option **in the same order** of argument of |-V| option. Therefore, for the same calculation, |-V| option can be **PTX**, **PXT**, **TPX**, **TXP**, **XPT** and **XTP** unless you set |-R| option in the save order. For example, |-V|\ *XPT* |-R|\ *0/0.1/1/5/1/400/0/1/100* means salinity in range of [0, 1] with interval of 0.1, pressure in range of [5, 400] bar with interval of 1 bar, temperature in range of [0, 100] :math:`^{\circ}\text{C}` with interval 1 :math:`^{\circ}\text{C}` . Alternately, you can also do the same thing using command of |-V|\ *TPX* |-R|\ *0/1/100/5/1/400/0/0.1/1* .
+
+    * **PHX**, similar to **PTX**, it just replaced temperature with enthalpy.
