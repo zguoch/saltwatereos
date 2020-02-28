@@ -26,14 +26,14 @@ function makeicon()
 
     sips -z 1024 1024   swEOS.png --out icons.iconset/icon_512x512@2x.png
 
-    iconutil -c icns icons.iconset -o logo2.icns
+    iconutil -c icns icons.iconset -o logo.icns
 }
 function makeicon_doxygon()
 {
     mkdir icons.doxygon 
-    sips -z 55 55     swEOS_transparent.png --out icons.doxygon/SWEOS55x55.png
-    sips -z 1200 1200     swEOS_transparent.png --out icons.doxygon/favicon.png
+    sips -z 90 90     swEOS.png --out icons.doxygon/SWEOS55x55.png
+    sips -z 1200 1200     swEOS.png --out icons.doxygon/favicon.png
 }
-# makeicon
+makeicon
 
 makeicon_doxygon
