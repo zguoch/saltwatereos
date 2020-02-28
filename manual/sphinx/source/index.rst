@@ -21,6 +21,11 @@ it can do.
 
    Tutorial/index.rst
 
+.. toctree::
+
+   Application/desktop.rst
+   Application/cmd.rst
+   Application/mobile.rst
 
 .. bibliography:: manual.bib
     :cited: 
