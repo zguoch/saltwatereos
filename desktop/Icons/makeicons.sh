@@ -28,4 +28,12 @@ function makeicon()
 
     iconutil -c icns icons.iconset -o logo2.icns
 }
+function makeicon_doxygon()
+{
+    mkdir icons.doxygon 
+    sips -z 55 55     swEOS_transparent.png --out icons.doxygon/SWEOS55x55.png
+    sips -z 1200 1200     swEOS_transparent.png --out icons.doxygon/favicon.png
+}
+# makeicon
 
+makeicon_doxygon
