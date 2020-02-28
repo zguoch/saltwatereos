@@ -22,13 +22,15 @@ Language
 
 .. |c++| image:: /_images/c++.png
    :height: 150 px
-   :target: https://stackoverflow.com/questions/14087784/linked-image-in-restructuredtext
+   :target: https://hydrothermal-openfoam.gitlab.io/saltwatereos
 
 .. |matlab| image:: /_images/matlab.png
    :height: 150 px
+   :target: https://hydrothermal-openfoam.gitlab.io/saltwatereos
 
 .. |python| image:: /_images/python.png
    :height: 150 px
+   :target: https://hydrothermal-openfoam.gitlab.io/saltwatereos
 
 Platform 
 =============
