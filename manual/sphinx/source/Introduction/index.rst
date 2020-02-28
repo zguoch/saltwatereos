@@ -13,7 +13,7 @@ we have to calculate equation of state of binary salt-water fluids over pressure
 Fortunately, pure water can be described by the IAPS-84 equation of state and :cite:`Driesner2007Part1,Driesner2007Part2` have developed a set of correction formulations of phase relations and thermodynamic properties for NaCl-H2O system.
 Further, we have developed a set of multi-language ( `C++ <https://www>`_ , `Swift <https://www>`_ , `Python <https://www>`_ , `Matlab <https://www>`_ ) and multi-platform ( `Windows <https://www>`_ , `MacOS <https://www>`_ , `Linux <https://www>`_ , `IOS <https://www>`_ ) tools, including callable `C++ library <https://www>`_ , `desktop application <../Application/desktop.html>`_ with graphical user interface (GUI), `command line tools <https://www>`_ (just like `gmt <http://gmt.soest.hawaii.edu>`_ style), and Mobile apps for `iphone <https://www>`_ and `ipad <https://www>`_ . In addition, parallel computing is available for desktop application and command line tool.
 
-Language 
+Languages
 =============
 
 +----------------+----------------+----------------+
@@ -35,25 +35,25 @@ Language
    :align: middle
    :target: https://hydrothermal-openfoam.gitlab.io/saltwatereos
 
-Platform 
+Platforms
 =============
 
-+----------------+----------------+----------------+----------------+
-| |mac|          | |linux|        | |windows|      | |ios|          |
-+----------------+----------------+----------------+----------------+
++----------------+----------------+----------------+-----------+
+| |mac|          | |linux|        | |windows|      | |ios|     |
++----------------+----------------+----------------+-----------+
 
 .. |mac| image:: /_images/illustration-mac.png
-   :width: 150 px
+   :width: 250 px
    :align: middle
    :target: https://hydrothermal-openfoam.gitlab.io/saltwatereos
 
 .. |linux| image:: /_images/illustration-linux.png
-   :width: 150 px
+   :width: 250 px
    :align: middle
    :target: https://hydrothermal-openfoam.gitlab.io/saltwatereos
 
 .. |windows| image:: /_images/illustration-windows.png
-   :width: 150 px
+   :width: 250 px
    :align: middle
    :target: https://hydrothermal-openfoam.gitlab.io/saltwatereos
 
@@ -63,7 +63,7 @@ Platform
    :target: https://hydrothermal-openfoam.gitlab.io/saltwatereos
 
 
-Application 
+Applications
 =============
 
 +----------------------------+------------------------------+---------------------+

@@ -1,9 +1,9 @@
-.. HydrothermalFoam documentation front page
+.. SaltWater EOS documentation front page
 
-HydrothermalFoam Documentation
+SaltWater EOS Documentation
 =======================================
 
-Welcome to the HydrothermalFoam Docs! Here you'll find resources for using HydrothermalFoam and examples of what
+Welcome to the SaltWater EOS Docs! Here you'll find resources for using SaltWater EOS and examples of what
 it can do.
 
 .. toctree::
@@ -22,6 +22,7 @@ it can do.
    Tutorial/index.rst
 
 .. toctree::
+   :hidden:
 
    Application/desktop.rst
    Application/cmd.rst
