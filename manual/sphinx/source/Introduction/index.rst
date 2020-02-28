@@ -6,10 +6,35 @@ Introduction
 
 .. include:: ../include.rst_
 
-HydrothermalFoam —combination of Hydrothermal and OpenFOAM — is a series of programs or toolbox tended to solve the equations that describe natural hydrothermal convection and minerial reactions in porous media, fractured-porous media. It is primarily developed by Zhikui Guo and Lars Rüpke based on OpenFOAM_, which is a open source C++ library for CFD (Computational Fluid Dynamics). 
-See :cite:`kawada2010formation` for an introduction to non-standard analysis :cite:`kawada2010formation` .
+Realistic simulations of fluid flow in natural hydrothermal systems require accurate formulation of fluid properties
+especially for seawater convection at mid-ocean ridges. 
+In order to explore circulation patterns and realistic phase seperation phenomenon, 
+we have to calculate equation of state of binary salt-water fluids over pressure-temperature-salinity ranges encountered in the Earth's crust.
+Fortunately, pure water can be described by the IAPS-84 equation of state and :cite:`Driesner2007Part1,Driesner2007Part2` have developed a set of correction formulations of phase relations and thermodynamic properties for NaCl-H2O system.
+Further, we have developed a set of multi-language ( `C++ <https://www>`_ , `Swift <https://www>`_ , `Python <https://www>`_ , `Matlab <https://www>`_ ) and multi-platform ( `Windows <https://www>`_ , `MacOS <https://www>`_ , `Linux <https://www>`_ , `IOS <https://www>`_ ) tools, including callable `C++ library <https://www>`_ , `desktop application <https://www>`_ with graphical user interface (GUI), `command line tools <https://www>`_ (just like `gmt <http://gmt.soest.hawaii.edu>`_ style), and Mobile apps for `iphone <https://www>`_ and `ipad <https://www>`_ . In addition, parallel computing is available for desktop application and command line tool.
 
+Language 
+=============
 
++-----------+----------------+-----------------+
+| |c++|     | |matlab|       | |python|        |
++-----------+----------------+-----------------+
+
+.. |c++| image:: /_images/c++.png
+   :height: 150 px
+   :target: https://stackoverflow.com/questions/14087784/linked-image-in-restructuredtext
+
+.. |matlab| image:: /_images/matlab.png
+   :height: 150 px
+
+.. |python| image:: /_images/python.png
+   :height: 150 px
+
+Platform 
+=============
+
+Application 
+=============
 
 .. figure:: /_figures/filetree_main.*
    :width: 500 px

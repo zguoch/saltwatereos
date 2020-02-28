@@ -10,7 +10,7 @@ Installation
 Check OpenFOAM
 -------------------
 
-dlajdjs :cite:`hasenclever2014hybrid`  
+dlajdjs
 
 Get source code of HydrothermalFoam
 --------------------------------------
