@@ -165,6 +165,7 @@ namespace SWEOS
         PROP_H2ONaCl m_prop;
         //X:[0,1]; T: deg. C; P: bar
         void writeProps2VTK(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<SWEOS::PROP_H2ONaCl> props, std::string fname, bool isWritePy=true, std::string xTitle="x", std::string yTitle="y", std::string zTitle="z");
+        void writeProps2xyz(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<SWEOS::PROP_H2ONaCl> props, std::string fname, std::string xTitle="x", std::string yTitle="y", std::string zTitle="z", string delimiter=" ");
         friend ostream & operator<<(ostream & out,  cH2ONaCl & A);
         void setColorPrint(bool colorPrint){m_colorPrint=colorPrint;}
         string checkTemperatureRange(double temperature_C);

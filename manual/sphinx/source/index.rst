@@ -11,8 +11,6 @@ it can do.
    :caption: Contents
 
    Introduction/index.rst
-   Models_Equations/index.rst
-   Installation/index.rst
 
 
 .. toctree::

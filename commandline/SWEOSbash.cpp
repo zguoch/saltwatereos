@@ -508,7 +508,16 @@ namespace SWEOSbash
     {
       SWEOS::cH2ONaCl eos;
       eos.writeProps2VTK(x,y,z,props, outFile, isWritePy, xTitle, yTitle, zTitle);
-    }else
+    }else if(extname=="txt")
+    {
+      SWEOS::cH2ONaCl eos;
+      eos.writeProps2xyz(x,y,z,props, outFile, xTitle, yTitle, zTitle,"\t");
+    }else if(extname=="csv")
+    {
+      SWEOS::cH2ONaCl eos;
+      eos.writeProps2xyz(x,y,z,props, outFile, xTitle, yTitle, zTitle,",");
+    }
+    else
     { 
       cout<<WARN_COUT<<"Unrecognized format: "<<outFile<<endl;
       cout<<COLOR_GREEN<<"Write results into vtk file format"<<COLOR_DEFAULT<<endl;

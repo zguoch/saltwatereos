@@ -85,7 +85,7 @@ html_context = {
         ),
         (
             '<i class="fa fa-github fa-fw"></i> Source Code',
-            "https://gitlab.com/hydrothermal-openfoam/hydrothermalfoam",
+            "https://gitlab.com/hydrothermal-openfoam/saltwatereos",
         ),
     ]
 }

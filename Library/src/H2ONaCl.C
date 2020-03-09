@@ -1838,9 +1838,66 @@ namespace SWEOS
         // cout<<"PROP.f: "<<PROP.f<<" PROP.p: "<<PROP.p<<" PROP.s: "<<PROP.s<<" PROP.g: "<<PROP.g<<" PROP.h: "<<PROP.h<<" PROP.dpd: "<<PROP.dpd<<endl;
         return PROP;
     }
-
+    void cH2ONaCl:: writeProps2xyz(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<SWEOS::PROP_H2ONaCl> props, std::string fname, std::string xTitle, std::string yTitle, std::string zTitle, string delimiter)
+    {
+        cout<<"Writing results to file ..."<<endl;
+        if((x.size()*y.size()*z.size())!=props.size())
+        {
+            cout<<"ERROR: T.size()*P.size()*X.size() != props.size() in writeProps2VTK\nThe VTK file can not be created correctly."<<endl;
+            exit(0);
+        }
+        ofstream fpout(fname);
+        if(!fpout)
+        {
+            cout<<"ERROR: Can not open file: "<<fname<<endl;
+            exit(0);
+        }
+        fpout<<xTitle<<delimiter
+             <<yTitle<<delimiter
+             <<zTitle<<delimiter
+             <<"Temperature(C)"<<delimiter
+             <<"Bulk density(kg/m3)"<<delimiter
+             <<"Bulk enthalpy(J/kg)"<<delimiter
+             <<"Liquid salinity"<<delimiter
+             <<"Vapour salinity"<<delimiter
+             <<"Liquid density(kg/m3)"<<delimiter
+             <<"Vapour density(kg/m3)"<<delimiter
+             <<"Halite density(kg/m3)"<<delimiter
+             <<"Liquid enthalpy(kJ/kg)"<<delimiter
+             <<"Vapour enthalpy(kJ/kg)"<<delimiter
+             <<"Halite enthalpy(kJ/kg)"<<delimiter
+             <<"Liquid viscosity(Pa s)"<<delimiter
+             <<"Vapour viscosity(Pa s)"<<delimiter
+             <<"Phase Region(index)"<<delimiter
+             <<"Phase Region(name)"<<delimiter
+             <<endl;
+        for (size_t i = 0; i < x.size(); i++)
+        {
+            fpout<<x[i]<<delimiter
+                 <<y[i]<<delimiter
+                 <<z[i]<<delimiter
+                 <<props[i].T<<delimiter
+                 <<props[i].Rho<<delimiter
+                 <<props[i].H/1000.0<<delimiter
+                 <<props[i].X_l<<delimiter
+                 <<props[i].X_v<<delimiter
+                 <<props[i].Rho_l<<delimiter
+                 <<props[i].Rho_v<<delimiter
+                 <<props[i].Rho_h<<delimiter
+                 <<props[i].H_l/1000.0<<delimiter
+                 <<props[i].H_v/1000.0<<delimiter
+                 <<props[i].H_h/1000.0<<delimiter
+                 <<props[i].Mu_l<<delimiter
+                 <<props[i].Mu_v<<delimiter
+                 <<props[i].Region<<delimiter
+                 <<m_phaseRegion_name[props[i].Region]<<delimiter
+                 <<endl;
+        }
+        fpout.close();
+    }
     void cH2ONaCl:: writeProps2VTK(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<SWEOS::PROP_H2ONaCl> props, std::string fname, bool isWritePy, std::string xTitle, std::string yTitle, std::string zTitle)
     {
+        cout<<"Writing results to file ..."<<endl;
         if((x.size()*y.size()*z.size())!=props.size())
         {
             cout<<"ERROR: T.size()*P.size()*X.size() != props.size() in writeProps2VTK\nThe VTK file can not be created correctly."<<endl;
@@ -1895,7 +1952,17 @@ namespace SWEOS
                 if(y.size()>1)fout_py<<"renderView1.AxesGrid.YTitleFontSize = 16"<<endl;
                 if(y.size()>1)fout_py<<"renderView1.AxesGrid.YTitleBold = 1"<<endl;
                 if(z.size()>1)fout_py<<"renderView1.AxesGrid.ZTitleFontSize = 16"<<endl;
-                if(z.size()>1)fout_py<<"renderView1.AxesGrid.ZYTitleBold = 1"<<endl;
+                if(z.size()>1)fout_py<<"renderView1.AxesGrid.ZTitleBold = 1"<<endl;
+                // set default data source as PhaseRegion
+                fout_py<<"#set default data source as PhaseRegion"<<endl;
+                fout_py<<"paraview.simple._DisableFirstRenderCameraReset()"<<endl;
+                fout_py<<"legacyVTKReader1 = GetActiveSource()"<<endl;
+                fout_py<<"renderView1 = GetActiveViewOrCreate('RenderView')"<<endl;
+                fout_py<<"legacyVTKReader1Display = GetDisplayProperties(legacyVTKReader1, view=renderView1)"<<endl;
+                fout_py<<"ColorBy(legacyVTKReader1Display, ('POINTS', 'PhaseRegion'))"<<endl;
+                fout_py<<"legacyVTKReader1Display.RescaleTransferFunctionToDataRange(True, False)"<<endl;
+                fout_py<<"legacyVTKReader1Display.SetScalarBarVisibility(renderView1, True)"<<endl;
+                fout_py<<"phaseRegionLUT = GetColorTransferFunction('PhaseRegion')\n"<<endl;
                 fout_py<<"renderView1.ResetCamera()"<<endl;
                 fout_py.close();
             }
@@ -1922,7 +1989,7 @@ namespace SWEOS
         {
             fpout<<props[i].Region<<" ";
         }fpout<<endl;
-        // 2. bulk Rho 
+        // temperature
         fpout<<"SCALARS Temperature double"<<endl;
         fpout<<"LOOKUP_TABLE default"<<endl;
         for(int i=0;i<props.size();i++)
@@ -1999,7 +2066,20 @@ namespace SWEOS
         {
             fpout<<props[i].H_h<<" ";
         }fpout<<endl;
-
+        // liquid viscosity
+        fpout<<"SCALARS mu_l double"<<endl;
+        fpout<<"LOOKUP_TABLE default"<<endl;
+        for(int i=0;i<props.size();i++)
+        {
+            fpout<<props[i].Mu_l<<" ";
+        }fpout<<endl;
+        // vapour viscosity
+        fpout<<"SCALARS mu_v double"<<endl;
+        fpout<<"LOOKUP_TABLE default"<<endl;
+        for(int i=0;i<props.size();i++)
+        {
+            fpout<<props[i].Mu_v<<" ";
+        }fpout<<endl;
         fpout.close();
     }
     template <typename T>

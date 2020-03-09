@@ -4,6 +4,8 @@
 
 .. _Gmsh: http://gmsh.info
 
+.. |ssd| replace:: :math:`^{\circ}\text{C}`
+
 .. |foam| replace:: HydrothermalFoam
 
 .. |darcyfoam| replace:: HydrothermalSinglePhaseDarcyFoam
