@@ -72,12 +72,12 @@ Required Arguments
 .. _-X:
 
 |-X|\ [ *salinity* ]
-    Sets fixed salinity value, it should be a float or integer number. The unit is :math:`wt. NaCl %`. 
+    Sets fixed salinity value, it should be a float or integer number. The unit is :math:`wt. NaCl`. 
 
 .. _-H:
 
 |-H|\ [ *enthalpy* ]
-    Sets fixed enthalpy value, it should be a float or integer number. The unit is :math:`kJ/kg` . 
+    Sets fixed enthalpy value, it should be a float or integer number. 
 
 .. _-R:
 
