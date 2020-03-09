@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 21.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 169 169" style="enable-background:new 0 0 169 169;" xml:space="preserve">
+<style type="text/css">
+	.st0{opacity:9.000000e-02;fill:#FFFFFF;}
+	.st1{fill:none;}
+	.st2{fill:#6A89C1;}
+	.st3{fill:#5BB43C;}
+	.st4{fill:#FD1915;}
+	.st5{fill:#F9E102;}
+	.st6{clip-path:url(#SVGID_2_);fill:#FD1915;}
+	.st7{fill:#EB1714;}
+	.st8{font-family:'Helvetica';}
+	.st9{font-size:19.6084px;}
+	.st10{clip-path:url(#SVGID_4_);fill:#F9E102;}
+	.st11{fill:#E7D102;}
+	.st12{clip-path:url(#SVGID_6_);fill:#5BB43C;}
+	.st13{fill:#55A838;}
+	.st14{opacity:0.1;fill:#FFFFFF;enable-background:new    ;}
+</style>
+<circle class="st0" cx="84" cy="96" r="92.5"/>
+<path class="st1" d="M134.5,168.5h-100c-18.7,0-34-15.3-34-34v-100c0-18.7,15.3-34,34-34h100.1c18.7,0,34,15.3,34,34v100.1
+	C168.5,153.2,153.2,168.5,134.5,168.5z"/>
+<circle class="st2" cx="84.5" cy="103" r="32.5"/>
+<path class="st3" d="M8.2,146c59.9-17.8,93.9-80.7,76-140.5"/>
+<path class="st4" d="M159.9,146C100,128.2,66,65.3,83.9,5.5"/>
+<path class="st5" d="M7.9,146c41.5-42.1,109.6-42.1,152.2,0"/>
+<g>
+	<g>
+		<defs>
+			<path id="SVGID_1_" d="M7.9,146c41.5-42.1,109.6-42.1,152.2,0"/>
+		</defs>
+		<clipPath id="SVGID_2_">
+			<use xlink:href="#SVGID_1_"  style="overflow:visible;"/>
+		</clipPath>
+		<path class="st6" d="M8.2,146c59.9-17.8,93.9-80.7,76-140.5"/>
+	</g>
+</g>
+<g>
+	<text transform="matrix(1 0 0 1 53.1009 100.8038)" class="st7 st8 st9">E</text>
+</g>
+<g>
+	<g>
+		<defs>
+			<path id="SVGID_3_" d="M159.9,146C100,128.2,66,65.3,83.9,5.5"/>
+		</defs>
+		<clipPath id="SVGID_4_">
+			<use xlink:href="#SVGID_3_"  style="overflow:visible;"/>
+		</clipPath>
+		<path class="st10" d="M8.2,146c59.9-17.8,93.9-80.7,76-140.5"/>
+	</g>
+</g>
+<g>
+	<text transform="matrix(1 0 0 1 99.0968 98.79)" class="st11 st8 st9">O</text>
+</g>
+<g>
+	<g>
+		<defs>
+			<path id="SVGID_5_" d="M7.9,146c41.5-42.1,109.6-42.1,152.2,0"/>
+		</defs>
+		<clipPath id="SVGID_6_">
+			<use xlink:href="#SVGID_5_"  style="overflow:visible;"/>
+		</clipPath>
+		<path class="st12" d="M159.9,146C100,128.2,66,65.3,83.9,5.5"/>
+	</g>
+</g>
+<g>
+	<text transform="matrix(1 0 0 1 79.0215 134.8442)" class="st13 st8 st9">S</text>
+</g>
+<circle class="st14" cx="84" cy="103" r="32.5"/>
+</svg>

@@ -94,12 +94,12 @@ html_context = {
 }
 
 # favicon of the docs
-html_favicon = "_static/favicon.png"
+html_favicon = "_static/logo.png"
 html_static_path = ['_static']
 html_last_updated_fmt = '%b %d, %Y'
 # If true, links to the reST sources are added to the pages.
-# html_logo = "demo/static/logo-wordmark-light.svg"
-html_show_sourcelink = False
+html_logo = "_static/logo.png" 
+html_show_sourcelink = False 
 # List of custom CSS files (needs sphinx>=1.8)
 html_css_files = ["style.css"]
 
