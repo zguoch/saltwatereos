@@ -10,4 +10,7 @@ Tutorial
 .. toctree::
    :maxdepth: 3
 
-   ../Application/cmd.rst
+   cmd.rst
+   gui.rst
+   ios.rst
+   phaseRegion_tab.rst

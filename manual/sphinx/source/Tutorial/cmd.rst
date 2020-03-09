@@ -116,3 +116,59 @@ Required Arguments
 
 |-t|\ [ *thread* ]
     Sets number of threads for parallel computing.
+
+
+Examples
+------------------------
+
+Single point calculation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: bash 
+
+    swEOS -D0 -VPXT -P316 -T100 -X0.032
+    swEOS -D0 -VPXH -H438 -P316 -X0.032
+
+Multi-points calculation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: bash 
+
+    swEOS -D0 -VPHX -G../test/PHX.txt -OPHX_0D.csv
+    swEOS -D0 -VPHX -G../test/PHX.txt
+    swEOS -D0 -VPTX -G../test/PTX.txt -OPTX_0D.csv
+    swEOS -D0 -VPTX -G../test/PTX.txt
+
+One-dimensional calculation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: bash 
+
+    swEOS -D1 -VH -X0.032 -P399 -R43/1/100 -OH_1D.csv
+    swEOS -D1 -VT -X0.032 -P399 -R0/1/100 -OT_1D.csv
+    swEOS -D1 -VP -X0.032 -T100 -R5/1/100 -OP_1D.csv
+    swEOS -D1 -VX -T100 -P399 -R0/0.001/1 -OX_1D.csv
+
+Two-dimensional calculation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: bash 
+
+    swEOS -D2 -VPT -R1/0.1/100/0/1/500 -X0.032 -Orest/PT_2D.vt 
+    swEOS -D2 -VPX -R100/0.1/800/0/0.01/1 -T100  -OPX_2D.vtk
+    swEOS -D2 -VTX -R0/1/800/0/0.01/1 -P100  -OTX_2D.vtk
+    swEOS -D2 -VPH -R100/1/800/100/1/700 -X0.032  -OPH_2D.vtk
+    swEOS -D2 -VXH -R0/0.001/1/100/1/700 -P200  -OXH_2D.vtk
+
+
+Three-dimensional calculation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: bash 
+
+    swEOS -D3 -VPTX -R1/10/500/0/10/600/0/0.01/1 -t8
+    swEOS -D3 -VPHX -R1/10/500/100/10/600/0/0.01/1 -t8
+
+.. warning::
+
+    Please see table :ref:`phaseRegion_Name_tab` for phase index and phae region 

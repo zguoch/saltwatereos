@@ -12,7 +12,12 @@ it can do.
 
    Introduction/index.rst
 
+.. toctree::
+   :maxdepth: 3
+   :caption: Build
 
+   Build/index.rst
+   
 .. toctree::
    :maxdepth: 3
    :caption: Tutorials

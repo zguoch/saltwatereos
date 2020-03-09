@@ -72,7 +72,10 @@ html_theme_path = ["themes"]
 html_theme_options = {
     'sticky_navigation': False,
     'includehidden': False,
+    'logo_only': True,
+    # 'navigation_depth': 5,
 }
+
 html_context = {
     "menu_links": [
         (
@@ -95,6 +98,7 @@ html_favicon = "_static/favicon.png"
 html_static_path = ['_static']
 html_last_updated_fmt = '%b %d, %Y'
 # If true, links to the reST sources are added to the pages.
+# html_logo = "demo/static/logo-wordmark-light.svg"
 html_show_sourcelink = False
 # List of custom CSS files (needs sphinx>=1.8)
 html_css_files = ["style.css"]
