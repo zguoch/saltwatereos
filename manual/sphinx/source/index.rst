@@ -28,7 +28,7 @@ it can do.
    :hidden:
 
    Application/desktop.rst
-   Application/cmd.rst
+   Tutorial/cmd.rst
    Application/mobile.rst
 
 .. bibliography:: manual.bib
