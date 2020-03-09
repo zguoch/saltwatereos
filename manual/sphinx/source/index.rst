@@ -16,7 +16,7 @@ it can do.
    :maxdepth: 3
    :caption: Build
 
-   Build/index.rst
+   compile/index.rst
    
 .. toctree::
    :maxdepth: 3
