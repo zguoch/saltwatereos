@@ -6,6 +6,7 @@
  * or without modification, are permitted provided that this Notice and any
  * statement of authorship are reproduced on all copies.
  */
+
 // QT includes
 #include <QApplication>
 #include <QSurfaceFormat>
@@ -13,6 +14,7 @@
 #include "QVTKOpenGLWidget.h"
 #include "MainWindow.h"
 #include "SWEOSbash.h"
+// #include "touchbar.h"
 
 extern int qInitResources_icons();
 
@@ -55,6 +57,12 @@ int main( int argc, char** argv )
             // QT Stuff
             QApplication app( argc, argv );
 
+            // {
+            //     // Install TouchBarProvider as application delegate
+            //     TouchBarProvider *touchBarProvider = [[TouchBarProvider alloc] init];
+            //     [touchBarProvider installAsDelegateForApplication:[NSApplication sharedApplication]];
+            // }
+
             QApplication::setStyle("fusion");
 
             qInitResources_icons();
@@ -63,6 +71,13 @@ int main( int argc, char** argv )
             //  myMainWindow.showMaximized();
             myMainWindow.show();
 
+
+            // {
+            //     // Install TouchBarProvider as window delegate
+            //     NSView *view = reinterpret_cast<NSView *>(textEdit.winId());
+            //     TouchBarProvider *touchBarProvider = [[TouchBarProvider alloc] init];
+            //     [touchBarProvider installAsDelegateForWindow:view.window];
+            // }
             return app.exec();
           }
       }else

@@ -70,7 +70,7 @@ namespace SWEOS
     struct PROP_H2ONaCl
     {
         PhaseRegion Region;
-        double T, H, Rho, Mu; //temperature, bulk enthalpy, bulk density
+        double T, H, Rho, Mu; //temperature(C), bulk enthalpy, bulk density
         double Rho_l, Rho_v, Rho_h; //density
         double H_l, H_v, H_h; //enthalpy
         double S_l, S_v, S_h; //saturation

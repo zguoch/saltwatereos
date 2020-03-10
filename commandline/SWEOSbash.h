@@ -115,7 +115,7 @@ namespace SWEOSbash
     };
     bool isNum(string str);
     vector<string> string_split(string s, string delimiter);
-    SWEOS::PROP_H2ONaCl calculateSinglePoint_PTX(double P, double T, double X, bool isCout=true);
+    SWEOS::PROP_H2ONaCl calculateSinglePoint_PTX(double P, double T_K, double X, bool isCout=true);
     SWEOS::PROP_H2ONaCl calculateSinglePoint_PHX(double P, double H, double X, bool isCout=true);
     // bool calculateMultiPoints_PHX(string valueV, string filePHX, string outFile);
     vector<SWEOS::PROP_H2ONaCl> calculateMultiPoints_PTX_PHX(string valueV, string filePTX, string outFile, string isT_H);

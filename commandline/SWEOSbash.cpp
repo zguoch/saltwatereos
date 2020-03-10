@@ -1247,10 +1247,10 @@ namespace SWEOSbash
       res.push_back (s.substr (pos_start));
       return res;
   }
-  SWEOS::PROP_H2ONaCl calculateSinglePoint_PTX(double P, double T, double X, bool isCout)
+  SWEOS::PROP_H2ONaCl calculateSinglePoint_PTX(double P, double T_K, double X, bool isCout)
   {
     SWEOS::cH2ONaCl eos;
-    eos.prop_pTX(P, T+SWEOS::Kelvin, X);
+    eos.prop_pTX(P, T_K, X);
     if(isCout) 
     {
       eos.setColorPrint(true);

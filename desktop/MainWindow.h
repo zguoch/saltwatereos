@@ -14,6 +14,8 @@
 =========================================================================*/
 #ifndef MainWindow_H
 #define MainWindow_H
+// #include <QtWidgets>
+// #import <AppKit/AppKit.h>
 
 #include <QMainWindow>
 #include "H2ONaCl.H"

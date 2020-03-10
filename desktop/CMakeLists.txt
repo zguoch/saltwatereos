@@ -86,9 +86,9 @@ include_directories(
 
 # Set your files and resources here
 
-set( Srcs main.cxx MainWindow.cxx qroundprogressbar.cpp Meter.cpp)
+set( Srcs main.cxx  MainWindow.cxx qroundprogressbar.cpp Meter.cpp)
 
-set( Hdrs MainWindow.h  qroundprogressbar.h Meter.h)
+set( Hdrs MainWindow.h qroundprogressbar.h Meter.h)
 
 set( MOC_Hdrs ui_MainWindow.h )
 
@@ -157,7 +157,7 @@ if (APPLE)
   set(LIBomp "omp")
 endif()
 target_link_libraries(${PROGRAM_NAME} Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Concurrent eosH2ONaCl ${LIBFreeSteam} ${LIBomp})
-target_link_libraries(${PROGRAM_NAME} ${VTK_LIBRARIES})
+target_link_libraries(${PROGRAM_NAME} ${VTK_LIBRARIES} )
 
 
 
