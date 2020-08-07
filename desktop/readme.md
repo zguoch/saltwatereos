@@ -86,7 +86,7 @@ swEOS -D3 -VPHX -R1/10/500/100/10/600/0/0.01/1 -t8 -n
 
 ## Multi-language support
 
-### Generage and edit .ts file
+### Generate and edit .ts file
 * using tr() for any string needed to translate
 * using `lupdate MainWindow.ui -ts languages/zh.ts`, `lupdate MainWindow.cxx -ts languages/zh.ts` the program of lupdate will detect all `tr()` marked string to `.ts` file.
 * using `Linguist` program open the .ts file to editor translation text.
@@ -126,7 +126,11 @@ add_executable(
 ```
 
 
-# Issures
+# Issues
+
+## VTK
+
+If there are some cmake configure errors about "ThirdParty-7..Paraview..VTK..", this is because VTK version in ThirdParty-7 is not compatible with what swEOS used (vtk8.2.0). Just change "ThirdParty-7" to any new name and then cmake again. After cmake finishing, change back "ThirdParty-7" folder name again.
 
 ## OpenMP
 When using OpenMP in CMakeLists.txt, this first cmake will generate some errors, but if you cmake again, the error will disappear.
