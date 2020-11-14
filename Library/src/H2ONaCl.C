@@ -2842,20 +2842,21 @@ namespace SWEOS
                 P_crit += c[i]*pow(T - 500, i-11);
             }
         }
-    }
-    // calculate critical salinity
-    X_crit=0;
-    if (T>=T_Critic_H2O && T<=600)                  //eq. 7a
-    {
-        for (size_t i = 0; i < 7; i++)
+         // calculate critical salinity
+        X_crit = 0;
+        if (T>=T_Critic_H2O && T<=600)                  //eq. 7a
         {
-            X_crit += d[i]*pow(T - T_Critic_H2O, i+1);
-        }
-    }else                                           //eq. 7b
-    {
-        for (size_t i = 7; i < 11; i++)
+            for (size_t i = 0; i < 7; i++)
+            {
+                X_crit += d[i]*pow(T - T_Critic_H2O, i+1);
+            }
+        }else                                           //eq. 7b
         {
-            X_crit += d[i]*pow(T - 600, i-7);
+            for (size_t i = 7; i < 11; i++)
+            {
+                X_crit += d[i]*pow(T - 600, i-7);
+            }
         }
     }
+
 }

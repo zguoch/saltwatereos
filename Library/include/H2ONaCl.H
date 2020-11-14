@@ -221,10 +221,10 @@ namespace SWEOS
          * 
          * 
          * @param T Input temperature, [\f$ ^{\circ}C \f$]
-         * @param P Output pressure, [Pa]
-         * @param X Output salinity, [wt. %]
+         * @param P_crit Output critical pressure, [Pa]
+         * @param X_crit Output critical salinity, [wt. %]
          */
-        void P_X_Critical(double T, double& P, double& X);
+        void P_X_Critical(double T, double& P_crit, double& X_crit);
     private:
         inline double Xwt2Xmol(double X){return (X/M_NaCl)/(X/M_NaCl+(1-X)/M_H2O);};
         void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);
