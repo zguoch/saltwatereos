@@ -543,6 +543,24 @@ FILE_VERSION_FILTER    =
 
 LAYOUT_FILE            = @srcdir@/DoxygenLayout.xml
 
+# The CITE_BIB_FILES tag can be used to specify one or more bib files containing
+# the reference definitions. This must be a list of .bib files. The .bib
+# extension is automatically appended if omitted. This requires the bibtex tool
+# to be installed. See also https://en.wikipedia.org/wiki/BibTeX for more info.
+# For LaTeX the style of the bibliography can be controlled using
+# LATEX_BIB_STYLE. To use this feature you need bibtex and perl available in the
+# search path. See also \cite for info how to create references.
+
+CITE_BIB_FILES         = ref.bib
+
+# The LATEX_BIB_STYLE tag can be used to specify the style to use for the
+# bibliography, e.g. plainnat, or ieeetr. See
+# https://en.wikipedia.org/wiki/BibTeX and \cite for more info.
+# The default value is: plain.
+# This tag requires that the tag GENERATE_LATEX is set to YES.
+
+LATEX_BIB_STYLE        = plain
+
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
 #---------------------------------------------------------------------------

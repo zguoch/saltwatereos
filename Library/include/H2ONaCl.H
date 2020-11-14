@@ -58,8 +58,11 @@ namespace SWEOS
     double const M_H2O = 0.018015; // molar mass of water  [kg/mol]
     double const M_NaCl = 0.058443; // molar mass of salt(NaCl)   [kg/mol]
 
-    // double const P_crit =2.2054915e7;
-
+    // Constant definition 
+    double const T_Triple_NaCl = 800.7; /**< Temperature at triple point of NaCl, [\f$^{\circ}C \f$] */ 
+    double const P_Triple_NaCl = 0.0005; /**< Pressure at triple point of NaCl, [Pa] */
+    double const P_Critic_H2O = 220.64; /**< Pressure at critical point of H2O, [bar]. IAPWS-95 */
+    double const T_Critic_H2O = 373.946; /**< Temperature at critical point of H2O, [\f$^{\circ}C \f$]. IAPWS-95 */ 
 
     // define index of region
     enum PhaseRegion {SinglePhase_L, TwoPhase_L_V_X0, SinglePhase_V, 
@@ -174,7 +177,54 @@ namespace SWEOS
         string CheckRange_H(double H0, double P0, double X0);
         string CheckRanges_H_PX(double HMIN0, double HMAX0, double PXrange[4]);
         string CheckRanges_H_P(double HMIN0, double HMAX0, double Prange[2], double X0);
+        /**
+         * @brief Check valid ranges of enthalpy and salinity
+         * 
+         * @param HMIN0 
+         * @param HMAX0 
+         * @param Xrange 
+         * @param P0 
+         * @return string 
+         */
         string CheckRanges_H_X(double HMIN0, double HMAX0, double Xrange[2], double P0);
+        /**
+         * @brief Melting curve of NaCl. 
+         * Equation (1) of reference \cite Driesner2007Part1. 
+         * 
+         * \f$ T_{hm} = T_{triple, NaCl} + a(P - P_{triple, NaCl}), a=2.47260\times 10^{-2} \f$
+         * @param p Pressure, [Pa]
+         * @return double Melting temperature, [\f$ ^{\circ}C\f$]
+         */
+        inline double T_HaliteMelting(double p){ return T_Triple_NaCl + 2.4726e-2*(p - P_Triple_NaCl);}; 
+        /**
+         * @brief Halite vapor pressure as a function of temperature T, called halite sublimation curve as well.
+         * Equation (2) of reference \cite Driesner2007Part1. 
+         * 
+         * \f$ log_{10}(P_{triple, NaCl}) + b_{subl}\left( \frac{1}{T_{triple, NaCl} + 273.15} - \frac{1}{T + 273.15} \right) , b_{subl} = 1.18061\times 10^4 \f$
+         * 
+         * @param T Temperature, [\f$ ^{\circ}C\f$]
+         * @return double Sublimation pressure of NaCl, [Pa]
+         */
+        inline double P_HaliteSublimation(double T){return pow(10, (log10(P_Triple_NaCl) + 11806.1 * (1.0 / (T_Triple_NaCl + 273.15) - 1.0 / (T + 273.15))));};
+        /**
+         * @brief T-P relations of boling curve of NaCl.
+         * Equation (3) of reference \cite Driesner2007Part1. 
+         * 
+         * \f$ log_{10}(P_{triple, liquid}) + b_{boil}\left( \frac{1}{T_{triple, NaCl} + 273.15} - \frac{1}{T + 273.15} \right) , b_{subl} = 0.941812\times 10^4 \f$
+         * 
+         * @param T Temperature, [\f$ ^{\circ}C\f$]
+         * @return double Sublimation pressure of NaCl, [Pa]
+         */
+        inline double P_HaliteBoiling(double T){return pow(10, (log10(P_Triple_NaCl) + 9418.12 * (1.0 / (T_Triple_NaCl + 273.15) - 1.0 / (T + 273.15))));};
+        /**
+         * @brief Critical curve of NaCl-H2O system. It can be evaluated into three segments, see equation (5) - (7) of reference \cite Driesner2007Part1. 
+         * 
+         * 
+         * @param T Input temperature, [\f$ ^{\circ}C \f$]
+         * @param P Output pressure, [Pa]
+         * @param X Output salinity, [wt. %]
+         */
+        void P_X_Critical(double T, double& P, double& X);
     private:
         inline double Xwt2Xmol(double X){return (X/M_NaCl)/(X/M_NaCl+(1-X)/M_H2O);};
         void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);

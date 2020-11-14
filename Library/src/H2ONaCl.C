@@ -2783,4 +2783,79 @@ namespace SWEOS
         }
         return checkResult;
     }
+    /**
+     * - Pressure
+     * 
+     * \f{equation}
+     *      P_{crit} = \left\{ \begin{matrix}
+     *      P_{crit}^{H_2O} + \sum\limits_{n=1}^{7} c_n (T_{crit}^{H_2O} - T)^{c_nA} & , T< T_{crit}^{H_2O} \ (\text{eq. 5a})\\ \\[1ex]
+     *      P_{crit}^{H_2O} + \sum\limits_{n=8}^{11} c_n (T - T_{crit}^{H_2O})^{c_nA} & , T_{crit}^{H_2O} \le T \le 500 ^{\circ}C \ (\text{eq. 5b}) \\ \\[1ex]
+     *      \sum\limits_{n=12}^{14} c_n (T - 500)^{n-12} & , T > 500 ^{\circ}C \ (\text{eq. 5c})\\ \\[1ex]
+     *      \end{matrix}\right.
+     * \f}
+     * 
+     * - Salinity
+     * 
+     * \f{equation}
+     *      X_{crit} = \left\{ \begin{matrix}
+     *      \sum\limits_{i=1}^{7} d_i (T - T_{crit}^{H_2O})^{i} & , T_{crit}^{H_2O} \le T \le 600 ^{\circ}C \ (\text{eq. 7a}) \\ \\[1ex]
+     *      \sum\limits_{i=8}^{11} d_i (T - 600 ^{\circ}C)^{i-8} & , 600 < T \le 1000 ^{\circ}C \ (\text{eq. 7b})\\ \\[1ex]
+     *      \end{matrix}\right.
+     * \f}
+     */
+    void cH2ONaCl::P_X_Critical(double T, double& P_crit, double& X_crit)
+    {
+        double c[14] = {-2.36, 0.128534, -0.023707, 0.00320089, -0.000138917, 
+                        1.02789E-07, -4.8376E-11, 2.36, -0.0131417, 0.00298491,
+                        -0.000130114, 0, 0, -0.000488336};// c[11] and c[12] are calculated below
+        double cA[11] = {1, 1.5, 2, 2.5, 3, 4, 5, 1, 2, 2.5, 3};
+        // c[11] (c12 in Driesner and Heinrich(2007)) is the value of P_crit at 500 deg.C, calculated from eq. 5b.
+        // c[12] (c11) is the first temperature derivative of eq. 5b at 500 deg.C
+        for (size_t i = 7; i < 11; i++)
+        {
+            c[11] += c[i] * pow(500 - T_Critic_H2O, cA[i]); //the second term of eq. 5b in Drisner and Heinrich (2007)
+            c[12] += c[i] * cA[i] * pow(500 - T_Critic_H2O, cA[i] - 1); //the first temperature derivative of eq. 5b
+        }
+        c[11] = P_Critic_H2O + c[11];
+        double d[11] = {8E-05, 1E-05, -1.37125E-07, -3.50549E-12, 6.57369E-15, 
+                        -4.89423E-18, 0.0777761, 0.00027042, -4.244821E-07, 2.580872E-10};
+        // calculate critical pressure
+        P_crit=0;
+        if(T < T_Critic_H2O)                        //eq. 5a
+        {
+            for (size_t i = 0; i < 7; i++)
+            {
+                P_crit += c[i]*pow(T_Critic_H2O - T, cA[i]);
+            }
+            P_crit+=P_Critic_H2O;
+        }else if(T >= T_Critic_H2O && T <= 500)     //eq. 5b
+        {
+            for (size_t i = 7; i < 11; i++)
+            {
+                P_crit += c[i]*pow(T - T_Critic_H2O, cA[i]);
+            }
+            P_crit+=P_Critic_H2O;
+        }else                                       //eq. 5c
+        {
+            for (size_t i = 11; i < 14; i++)
+            {
+                P_crit += c[i]*pow(T - 500, i-11);
+            }
+        }
+    }
+    // calculate critical salinity
+    X_crit=0;
+    if (T>=T_Critic_H2O && T<=600)                  //eq. 7a
+    {
+        for (size_t i = 0; i < 7; i++)
+        {
+            X_crit += d[i]*pow(T - T_Critic_H2O, i+1);
+        }
+    }else                                           //eq. 7b
+    {
+        for (size_t i = 7; i < 11; i++)
+        {
+            X_crit += d[i]*pow(T - 600, i-7);
+        }
+    }
 }
