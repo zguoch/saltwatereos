@@ -202,7 +202,7 @@ namespace SWEOS
          * @brief Halite vapor pressure as a function of temperature T, called halite sublimation curve as well.
          * Equation (2) of reference \cite Driesner2007Part1. 
          * 
-         * \f$ log_{10}(P_{triple, NaCl}) + b_{subl}\left( \frac{1}{T_{triple, NaCl} + 273.15} - \frac{1}{T + 273.15} \right) , b_{subl} = 1.18061\times 10^4 \f$
+         * \f$ log_{10}(P_{NaCl, halite}) = log_{10}(P_{triple, NaCl}) + b_{subl}\left( \frac{1}{T_{triple, NaCl} + 273.15} - \frac{1}{T + 273.15} \right) , b_{subl} = 1.18061\times 10^4 \f$
          * 
          * @param P Temperature, [\f$ ^{\circ}C\f$]
          * @return double Sublimation pressure of NaCl, [bar]
@@ -214,7 +214,7 @@ namespace SWEOS
          * @brief T-P relations of boling curve of NaCl.
          * Equation (3) of reference \cite Driesner2007Part1. 
          * 
-         * \f$ log_{10}(P_{triple, liquid}) + b_{boil}\left( \frac{1}{T_{triple, NaCl} + 273.15} - \frac{1}{T + 273.15} \right) , b_{boil} = 0.941812\times 10^4 \f$
+         * \f$ log_{10}(P_{NaCl, liquid}) = log_{10}(P_{triple, liquid}) + b_{boil}\left( \frac{1}{T_{triple, NaCl} + 273.15} - \frac{1}{T + 273.15} \right) , b_{boil} = 0.941812\times 10^4 \f$
          * 
          * @param T Temperature, [\f$ ^{\circ}C\f$]
          * @return double Sublimation pressure of NaCl, [bar]
@@ -240,6 +240,14 @@ namespace SWEOS
          * @return double Salinity [Mole fraction of NaCl]
          */
         double X_HaliteLiquidus(double T, double P);
+        /**
+         * @brief Composition of halite-saturated vapor. See equation (9) and (14) of reference \cite Driesner2007Part1.
+         * 
+         * @param T Temperature [\f$ ^{\circ}C \f$]
+         * @param P Pressure [bar]
+         * @return double Salinity [Mole fraction of NaCl]
+         */
+        double X_VaporHaliteCoexist(double T, double P);
     private:
         inline double Xwt2Xmol(double X){return (X/M_NaCl)/(X/M_NaCl+(1-X)/M_H2O);};
         void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);

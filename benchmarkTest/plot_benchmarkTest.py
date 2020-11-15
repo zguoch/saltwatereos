@@ -229,6 +229,58 @@ def plot_CriticalPressure_Salinity(fname0='HaliteCritical_P_X',fmt='svg'):
 
     figname=str('%s/%s.%s'%(figpath,'HaliteCriticalCurves',fmt))
     plt.savefig(figname, bbox_inches='tight')
+def plot_HaliteSaturatedVaporComposition(fname0='X_HaliteSaturatedVapor',fmt='svg'):
+    fig,axs=plt.subplots(1,2,figsize=(w_singleFig*2,5))
+    ax=axs[1]
+    # Fig 8b
+    P=[10, 50, 100, 200,300] # bar
+    for p in P:
+        fname=str('%s/%s_P%.0fbar.dat'%(datapath,fname0,p))
+        data=np.loadtxt(fname)
+        T=data[:,0]
+        X=data[:,1]
+        ax.semilogx(X,T,label='%.0f bar'%(p))
+    ax.set_xlim(1E-12, 1)
+    ax.set_ylim(100, 850)
+    ax.xaxis.set_major_locator(mpl.ticker.LogLocator(base=10.0, subs=(1.0,),numticks=20))
+    ax.xaxis.set_minor_locator(mpl.ticker.LogLocator(base=10.0, subs=(0.1, 0.2,0.3, 0.4,0.5, 0.6,0.7, 0.8, 0.9),numticks=20))
+    ax.yaxis.set_major_locator(MultipleLocator(100))
+    ax.yaxis.set_minor_locator(MultipleLocator(20))
+    ax.grid(which='major',color='gray',lw=0.03)
+    ax.grid(which='minor',color='lightgray',lw=0.03)
+    ax.set_xlabel('log$_{\mathregular{10}}$(X$_{\mathregular{NaCl}}$) [Mole fraction of NaCl]')
+    ax.set_ylabel('T [$^{\circ}$C]')
+    ax.legend(loc='lower right')
+    ax.text(0.02,0.98,'(b)',transform=ax.transAxes,va='top',ha='left',fontweight='bold')
+    # Fig 7b
+    ax=axs[0]
+    arryT=[450, 500, 550] # degC
+    linestyles=['solid','dashed','dotted']
+    for T in arryT:
+        fname=str('%s/%s_T%.0fC.dat'%(datapath,fname0,T))
+        data=np.loadtxt(fname)
+        P=data[:,0]
+        X=data[:,1]
+        l,=ax.semilogx(X,P,label='%.0f $^{\circ}$C'%(T))
+        l_Fig8,=ax.semilogx(X/10,P,ls='dotted',color=l.get_color())
+    ax.set_xlim(1E-12, 1E-4)
+    ax.set_ylim(0,400)
+    # ax.xaxis.set_major_locator(MultipleLocator(0.005))
+    ax.yaxis.set_major_locator(MultipleLocator(50))
+    # ax.xaxis.set_minor_locator(MultipleLocator(0.001))
+    ax.yaxis.set_minor_locator(MultipleLocator(10))
+    ax.grid(which='major',color='gray',lw=0.03)
+    ax.grid(which='minor',color='lightgray',lw=0.03)
+    ax.set_xlabel('log$_{\mathregular{10}}$(X$_{\mathregular{NaCl}}$) [Mole fraction of NaCl]')
+    ax.set_ylabel('P [bar]')
+    leg1=ax.legend(loc='lower right')
+    ax.add_artist(leg1)
+    ax.legend(handles=(l,l_Fig8),loc='center left',labels=['Original','Fig. 8 of Driesner & Heinrich(2007)\nX$_{\mathregular{NaCl}}$ is shifted 10 times to the left'])
+    ax.vlines(2E-5,ymin=ax.get_ylim()[0], ymax=ax.get_ylim()[1],ls='dashed',color='gray')
+    ax.text(0.02,0.98,'(a)',transform=ax.transAxes,va='top',ha='left',fontweight='bold')
+    
+    figname=str('%s/%s.%s'%(figpath,'HaliteSaturatedVaporComposition',fmt))
+    plt.savefig(figname, bbox_inches='tight')
 def main(argv):
     # argc=len(argv)
     # usage(argv)
@@ -238,6 +290,7 @@ def main(argv):
     # plot_SublimationBoiling()
     # plot_CriticalPressure_Salinity()
     # plot_HaliteLiquidus()
+    plot_HaliteSaturatedVaporComposition()
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

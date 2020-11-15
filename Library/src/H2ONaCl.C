@@ -2807,6 +2807,7 @@ namespace SWEOS
      */
     void cH2ONaCl::P_X_Critical(double T, double& P_crit, double& X_crit)
     {
+        // Table 4 of Driesner and Heinrich(2007)
         double c[14] = {-2.36, 0.128534, -0.023707, 0.00320089, -0.000138917, 
                         1.02789E-07, -4.8376E-11, 2.36, -0.0131417, 0.00298491,
                         -0.000130114, 0, 0, -0.000488336};// c[11] and c[12] are calculated below
@@ -2878,6 +2879,7 @@ namespace SWEOS
     double cH2ONaCl::X_HaliteLiquidus(double T, double P)
     {
         const double P_squre = P*P;
+        // Table 5 of Driesner and Heinrich(2007)
         double e[6] = {0.0989944 + 3.30796E-06 * P - 4.71759E-10 * P_squre, 
                        0.00947257 - 8.6646E-06 * P + 1.69417E-09 * P_squre, 
                        0.610863 - 1.51716E-05 * P + 1.1929E-08 * P_squre, 
@@ -2897,5 +2899,79 @@ namespace SWEOS
         }
         if(X_Liquids>1)X_Liquids=1; //ensure X_Liquids in range of [0,1]
         return X_Liquids;
+    }
+    /**
+     * The correlations for distribution coefficient \f$ K \f$ used to calculate the halite-saturated vapor composition is defined as (eq. 9 of ref. \cite Driesner2007Part1),
+     * \f{equation}
+     * \frac{X_{NaCl, sat}^{L, metastable}}{X_{NaCl, sat}^V} = K
+     * \f}
+     * A modified distribution coefficient \f$ K^{\prime} \f$ (this is actually used to compute halite-saturated vapor composition) is defined as (eq. 14 of ref. \cite Driesner2007Part1), 
+     * 
+     * \f{equation}
+     * log_{10}K^{\prime} = log_{10}\left( \frac{x_l}{x_v/(\frac{P_{NaCl}}{P})} \right) = log_{10} \left( \frac{x_l}{x_v} \right) + log_{10} \left( \frac{P_{NaCl}}{P} \right)
+     * \f}
+     * where \f$ x_l \f$ is calculated from #X_HaliteLiquidus, \f$ P_{NaCl} \f$ is the boling pressure or sublimation pressure depends on temperature, it can be expressed as,
+     * 
+     * \f{equation}
+     *      P_{NaCl} = \left\{ \begin{matrix}
+     *      log_{10}(P_{NaCl, liquid}),& T > T_{triple, NaCl} \\ \\[1ex]
+     *      log_{10}(P_{NaCl, halite}),& \text{else}\\ \\[1ex]
+     *      \end{matrix}\right.
+     * \f}
+     * \f$ P_{NaCl, liquid} \f$ and \f$ P_{NaCl, halite} \f$ are calculated from #P_HaliteBoiling and #P_HaliteSublimation, respectively. And \f$ log_{10}K^{\prime} \f$ can be computed from following equation (eq. 15 of ref. \cite Driesner2007Part1),
+     * 
+     * \f{equation}
+     * log_{10}\bar K = \frac{log_{10}K^{\prime} - log_{10}\left( X_{NaCl, sat}^L \right)_{P_{NaCl}}}{log_{10}\left( \frac{P_{NaCl}}{P_{crit}} \right) - log_{10}\left( X_{NaCl, sat}^L \right)_{P_{NaCl}}} = 1 + j_0(1-\bar P)^{j_1} + j_2(1-\bar P) + j_3(1-\bar P)^{2} - (1 + j_0 + j_2 + j_3)(1-\bar P)^{3}
+     * \f}
+     * where \f$ P_{crit} \f$ is calculated from #P_X_Critical, \f$ X_{NaCl, sat}^L \f$ is calculated from #X_HaliteLiquidus (T, \f$ P_{NaCl} \f$), \f$ \bar P = (P - P_{NaCl})/(P_{crit} - P_{NaCl})\f$ is the normalized pressure, \f$ j_i (i=0, 1, 2,, 3) \f$ is calculated from Table 8 of reference \cite Driesner2007Part1. 
+     * 
+     * \image html Driesner_Heinrich_Fig8.png "Halite-saturated vapor composition in comparison to experimental data." width=50%. 
+     * Halite-saturated vapor composition in comparison to experimental data. (a) Isotherms, (b) isobars (Figure 8 of reference \cite Driesner2007Part1)
+     * 
+     * \image html HaliteSaturatedVaporComposition.svg "Halite-saturated vapor composition calculated using swEOS." width=50%. 
+     * Halite-saturated vapor composition calculated using #SWEOS -> #cH2ONaCl ->#X_VaporHaliteCoexist. 
+     */
+    double cH2ONaCl::X_VaporHaliteCoexist(double T, double P)
+    {
+        // Table 8 of Driesner and Heinrich(2007)
+        double k[16] = {-0.235694, -0.188838, 0.004, 0.0552466, 0.66918, 396.848, 45, -3.2719E-07, 
+                        141.699, -0.292631, -0.00139991, 1.95965E-06, -7.3653E-10, 0.904411, 0.000769766,-1.18658E-06};
+        double j[4]={0,0,0,0};
+        j[0] = k[0] + k[1] * exp(-k[2] * T);
+        j[1] = k[4] + (k[3] - k[4]) / (1 + exp((T - k[5]) / k[6])) + k[7] * pow(T + k[8], 2.0);
+        for (size_t i = 0; i < 4; i++)
+        {
+            j[2] += k[i+9]*pow(T,i);
+        }
+        for (size_t i = 0; i < 3; i++)
+        {
+            j[3] += k[i+13]*pow(T,i);
+        }
+        // cal
+        double P_NaCl=0;
+        if(T>T_Triple_NaCl)
+        {
+            P_NaCl = P_HaliteBoiling(T);
+        }else
+        {
+            P_NaCl = P_HaliteSublimation(T);
+        }
+        double P_crit = 0, X_crit=0;
+        P_X_Critical(T,P_crit, X_crit); //calculate critic pressure
+        double P_normalized = (P - P_NaCl) / (P_crit - P_NaCl); // eq. 16
+        double one_minus_P_normalized = 1 - P_normalized; //used in eq. 17
+        // eq. 17
+        double log10_K_overline = 1 + j[0]*pow(one_minus_P_normalized, j[1]) 
+                                    + j[2]*one_minus_P_normalized 
+                                    + j[3]*pow(one_minus_P_normalized, 2)
+                                    - (1 + j[0] + j[2] + j[3])*pow(one_minus_P_normalized, 3);
+        double log10_XL_P_NaCl = log10(X_HaliteLiquidus(T, P_NaCl)); //used in eq. 15
+        
+        double log10_K_prim = log10_K_overline * (log10(P_NaCl/P_crit) - log10_XL_P_NaCl) + log10_XL_P_NaCl; //eq. 15
+        double log10_XLbyXV = log10_K_prim - log10(P_NaCl/P); //eq. 14
+        double X_L = X_HaliteLiquidus(T, P);
+        double X_V = X_L/pow(10, log10_XLbyXV); //eq. 14
+
+        return X_V;
     }
 }
