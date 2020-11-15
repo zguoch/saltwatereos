@@ -41,12 +41,13 @@ mH2O = 18.015268
 mNaCl = 58.4428
 T_Triple_NaCl = 800.7
 P_Triple_NaCl = 0.0005
+w_singleFig=6
 def XmolPercent2XwtPercent(molPercent):
     Tmp = molPercent / 100.0
     wtPercent = mNaCl * Tmp / (mNaCl * Tmp + (1 - Tmp) * mH2O) * 100
     return wtPercent
 def plot_HaliteLiquidus(fname0='X_HaliteLiquidus',fmt='svg'):
-    fig,axs=plt.subplots(1,2,figsize=(12,5))
+    fig,axs=plt.subplots(1,2,figsize=(w_singleFig*2,5))
     ax=axs[0]
     # Fig 7a
     P=[500, 2000, 4000] # bar
@@ -118,7 +119,7 @@ def plot_HaliteMelting(fname0='HaliteMeltingCurve.dat',fmt='svg'):
     data=np.loadtxt('%s/%s'%(datapath,fname0))
     T=data[:,0]
     P=data[:,1]
-    fig=plt.figure()
+    fig=plt.figure(figsize=(w_singleFig,w_singleFig))
     ax=plt.gca()
     ax.plot(T,P)
     ax.set_xlim(800,930)
@@ -139,7 +140,7 @@ def plot_SublimationBoiling(fname0='HaliteSublimationBoilingCurve.dat',fmt='svg'
     T=data[:,0]
     P_subl=data[:,1]
     P_boil=data[:,2]
-    fig=plt.figure()
+    fig=plt.figure(figsize=(w_singleFig,w_singleFig))
     ax=plt.gca()
     ax.semilogy(T,P_subl,label='Sublimation curve')
     ax.semilogy(T,P_boil,label='Boiling curve')
@@ -167,7 +168,7 @@ def plot_SublimationBoiling(fname0='HaliteSublimationBoilingCurve.dat',fmt='svg'
     figname=str('%s/%s.%s'%(figpath,'HaliteSublimationBoilingCurves',fmt))
     plt.savefig(figname, bbox_inches='tight')
 def plot_CriticalPressure_Salinity(fname0='HaliteCritical_P_X',fmt='svg'):
-    fig,axs=plt.subplots(2,2,figsize=(12,8),sharex='col',gridspec_kw={'wspace':0.05,'hspace':0.05})
+    fig,axs=plt.subplots(2,2,figsize=(w_singleFig*2,8),sharex='col',gridspec_kw={'wspace':0.05,'hspace':0.05})
     # full range 
     data=np.loadtxt('%s/%s_fullrange.dat'%(datapath,fname0))
     T=data[:,0]
@@ -205,7 +206,7 @@ def plot_CriticalPressure_Salinity(fname0='HaliteCritical_P_X',fmt='svg'):
     ax.set_ylabel('P [bar]')
     ax.yaxis.set_major_locator(MultipleLocator(10))
     ax.yaxis.set_minor_locator(MultipleLocator(2))
-    ax.text(0.02,0.98,'(b)',va='top',ha='left',fontweight='bold',transform=ax.transAxes)
+    ax.text(0.02,0.98,'(d)',va='top',ha='left',fontweight='bold',transform=ax.transAxes)
     # Salinity
     ax=axs[1][1]
     ax.plot(T,X)

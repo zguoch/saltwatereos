@@ -194,6 +194,8 @@ namespace SWEOS
          * \f$ T_{hm} = T_{triple, NaCl} + a(P - P_{triple, NaCl}), a=2.47260\times 10^{-2} \f$
          * @param p Pressure, [Pa]
          * @return double Melting temperature, [\f$ ^{\circ}C\f$]
+         * 
+         * \image html HaliteMeltingCurve.svg "Halite melting curve." width=25%. 
          */
         inline double T_HaliteMelting(double P){ return T_Triple_NaCl + 2.4726e-2*(P - P_Triple_NaCl);}; 
         /**
@@ -204,16 +206,20 @@ namespace SWEOS
          * 
          * @param P Temperature, [\f$ ^{\circ}C\f$]
          * @return double Sublimation pressure of NaCl, [bar]
+         * 
+         * \image html HaliteSublimationBoilingCurves.svg "Vapor pressure curves (sublimation and boiling curves) of NaCl." width=25%. 
          */
         inline double P_HaliteSublimation(double T){return pow(10, (log10(P_Triple_NaCl) + 11806.1 * (1.0 / (T_Triple_NaCl + 273.15) - 1.0 / (T + 273.15))));};
         /**
          * @brief T-P relations of boling curve of NaCl.
          * Equation (3) of reference \cite Driesner2007Part1. 
          * 
-         * \f$ log_{10}(P_{triple, liquid}) + b_{boil}\left( \frac{1}{T_{triple, NaCl} + 273.15} - \frac{1}{T + 273.15} \right) , b_{subl} = 0.941812\times 10^4 \f$
+         * \f$ log_{10}(P_{triple, liquid}) + b_{boil}\left( \frac{1}{T_{triple, NaCl} + 273.15} - \frac{1}{T + 273.15} \right) , b_{boil} = 0.941812\times 10^4 \f$
          * 
          * @param T Temperature, [\f$ ^{\circ}C\f$]
          * @return double Sublimation pressure of NaCl, [bar]
+         * 
+         * \image html HaliteSublimationBoilingCurves.svg "Vapor pressure curves (sublimation and boiling curves) of NaCl." width=25%. 
          */
         inline double P_HaliteBoiling(double T){return pow(10, (log10(P_Triple_NaCl) + 9418.12 * (1.0 / (T_Triple_NaCl + 273.15) - 1.0 / (T + 273.15))));};
         /**
@@ -223,6 +229,7 @@ namespace SWEOS
          * @param T Input temperature, [\f$ ^{\circ}C \f$]
          * @param P_crit Output critical pressure, [bar]
          * @param X_crit Output critical salinity, [Mole fraction of NaCl]
+         * 
          */
         void P_X_Critical(double T, double& P_crit, double& X_crit);
         /**

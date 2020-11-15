@@ -2802,6 +2802,8 @@ namespace SWEOS
      *      \sum\limits_{i=8}^{11} d_i (T - 600 ^{\circ}C)^{i-8} & , 600 < T \le 1000 ^{\circ}C \ (\text{eq. 7b})\\ \\[1ex]
      *      \end{matrix}\right.
      * \f}
+     * 
+     * \image html HaliteCriticalCurves.svg "Critical pressure (a,b) and composition (c,d) as function of temperature. (a,c) Full range, (b,d) the region just above the critical temperature of water." width=50%. 
      */
     void cH2ONaCl::P_X_Critical(double T, double& P_crit, double& X_crit)
     {
