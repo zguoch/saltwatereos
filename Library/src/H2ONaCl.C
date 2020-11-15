@@ -2817,8 +2817,8 @@ namespace SWEOS
             c[12] += c[i] * cA[i] * pow(500 - T_Critic_H2O, cA[i] - 1); //the first temperature derivative of eq. 5b
         }
         c[11] = P_Critic_H2O + c[11];
-        double d[11] = {8E-05, 1E-05, -1.37125E-07, -3.50549E-12, 6.57369E-15, 
-                        -4.89423E-18, 0.0777761, 0.00027042, -4.244821E-07, 2.580872E-10};
+        double d[11] = {8E-05, 1E-05, -1.37125E-07, 9.46822E-10, -3.50549E-12, 6.57369E-15, 
+                        -4.89423E-18, 7.77761E-2, 2.7042E-4, -4.244821E-07, 2.580872E-10};
         // calculate critical pressure
         P_crit=0;
         if(T < T_Critic_H2O)                        //eq. 5a
