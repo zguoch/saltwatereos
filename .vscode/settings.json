@@ -1,5 +1,13 @@
 {
     "files.associations": {
+        "*Dict": "OpenFOAM",
+        "*Properties": "OpenFOAM",
+        "fvSchemes": "OpenFOAM",
+        "fvSolution": "OpenFOAM",
+        "*.mcr": "shellscript",
+        "boundary": "OpenFOAM",
+        "U": "OpenFOAM",
+        "p": "OpenFOAM",
         "iosfwd": "cpp",
         "ostream": "cpp",
         "iostream": "cpp",
@@ -80,7 +88,16 @@
         "__undef_macros": "cpp",
         "memory_resource": "cpp",
         "*.tcc": "cpp",
-        "*.txx": "cpp"
+        "*.txx": "cpp",
+        "codecvt": "cpp",
+        "compare": "cpp",
+        "condition_variable": "cpp",
+        "unordered_set": "cpp",
+        "concepts": "cpp",
+        "ranges": "cpp",
+        "stop_token": "cpp",
+        "cfenv": "cpp",
+        "cinttypes": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

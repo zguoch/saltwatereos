@@ -2858,5 +2858,42 @@ namespace SWEOS
             }
         }
     }
-
+    /**
+     * The liqudius is fitted with the equation 
+     * 
+     * \f{equation}
+     * X_{NaCl, sat}^L = \sum\limits_{i=0}^5 e_i\left(\frac{T}{T_{hm}}\right)^i
+     * \f}
+     * with the pressure-dependent coefficients \f$ e_i \f$ given in Table 5 of reference \cite Driesner2007Part1 and the pressure-dependent melting temperature of halite, \f$ T_{hm}\f$, calculated from #T_HaliteMelting (equation (1) of reference \cite Driesner2007Part1.)
+     * 
+     * \image html Driesner_Heinrich_Fig7.png "Liquid composition for the halite liquidus." width=50%. 
+     * Liquid composition for the halite liquidus. (a) Full range temperature-pressure dependence, sets of symbols are for the same pressures as sets of lines; (b) pressure dependence at 25 \f$ ^{\circ}C \f$ (Figure 7 of reference \cite Driesner2007Part1)
+     * 
+     * \image html HaliteLiquidus.svg "Liquid composition for the halite liquidus calculated using swEOS." width=50%. 
+     * Liquid composition for the halite liquidus calculated using #SWEOS -> #cH2ONaCl ->#X_HaliteLiquidus. (a) Full range temperature-pressure dependence, sets of symbols are for the same pressures as sets of lines; (b) pressure dependence at 25 \f$ ^{\circ}C \f$ (Figure 7 of reference \cite Driesner2007Part1)
+     *  
+     */
+    double cH2ONaCl::X_HaliteLiquidus(double T, double P)
+    {
+        const double P_squre = P*P;
+        double e[6] = {0.0989944 + 3.30796E-06 * P - 4.71759E-10 * P_squre, 
+                       0.00947257 - 8.6646E-06 * P + 1.69417E-09 * P_squre, 
+                       0.610863 - 1.51716E-05 * P + 1.1929E-08 * P_squre, 
+                       -1.64994 + 0.000203441 * P - 6.46015E-08 * P_squre, 
+                       3.36474 - 0.000154023 * P + 8.17048E-08 * P_squre, 
+                       1
+                        };
+        for (size_t i = 0; i < 5; i++)
+        {
+            e[5] -= e[i];
+        }
+        const double TbyT_hm = T/T_HaliteMelting(P);
+        double X_Liquids = 0;
+        for (size_t i = 0; i < 6; i++)
+        {
+            X_Liquids += e[i] * pow(TbyT_hm, i);
+        }
+        if(X_Liquids>1)X_Liquids=1; //ensure X_Liquids in range of [0,1]
+        return X_Liquids;
+    }
 }

@@ -195,15 +195,15 @@ namespace SWEOS
          * @param p Pressure, [Pa]
          * @return double Melting temperature, [\f$ ^{\circ}C\f$]
          */
-        inline double T_HaliteMelting(double p){ return T_Triple_NaCl + 2.4726e-2*(p - P_Triple_NaCl);}; 
+        inline double T_HaliteMelting(double P){ return T_Triple_NaCl + 2.4726e-2*(P - P_Triple_NaCl);}; 
         /**
          * @brief Halite vapor pressure as a function of temperature T, called halite sublimation curve as well.
          * Equation (2) of reference \cite Driesner2007Part1. 
          * 
          * \f$ log_{10}(P_{triple, NaCl}) + b_{subl}\left( \frac{1}{T_{triple, NaCl} + 273.15} - \frac{1}{T + 273.15} \right) , b_{subl} = 1.18061\times 10^4 \f$
          * 
-         * @param T Temperature, [\f$ ^{\circ}C\f$]
-         * @return double Sublimation pressure of NaCl, [Pa]
+         * @param P Temperature, [\f$ ^{\circ}C\f$]
+         * @return double Sublimation pressure of NaCl, [bar]
          */
         inline double P_HaliteSublimation(double T){return pow(10, (log10(P_Triple_NaCl) + 11806.1 * (1.0 / (T_Triple_NaCl + 273.15) - 1.0 / (T + 273.15))));};
         /**
@@ -213,7 +213,7 @@ namespace SWEOS
          * \f$ log_{10}(P_{triple, liquid}) + b_{boil}\left( \frac{1}{T_{triple, NaCl} + 273.15} - \frac{1}{T + 273.15} \right) , b_{subl} = 0.941812\times 10^4 \f$
          * 
          * @param T Temperature, [\f$ ^{\circ}C\f$]
-         * @return double Sublimation pressure of NaCl, [Pa]
+         * @return double Sublimation pressure of NaCl, [bar]
          */
         inline double P_HaliteBoiling(double T){return pow(10, (log10(P_Triple_NaCl) + 9418.12 * (1.0 / (T_Triple_NaCl + 273.15) - 1.0 / (T + 273.15))));};
         /**
@@ -221,10 +221,18 @@ namespace SWEOS
          * 
          * 
          * @param T Input temperature, [\f$ ^{\circ}C \f$]
-         * @param P_crit Output critical pressure, [Pa]
-         * @param X_crit Output critical salinity, [wt. %]
+         * @param P_crit Output critical pressure, [bar]
+         * @param X_crit Output critical salinity, [Mole fraction of NaCl]
          */
         void P_X_Critical(double T, double& P_crit, double& X_crit);
+        /**
+         * @brief The composition of halite-saturated liquid, \f$ X_{NaCl, sat}^L \f$ (the halite liquidus), is rather well known at high temperatures from about 400 \f$^{\circ}C \f$ to the melting curve of NaCl at pressures to about 4000 bar. See equation (8) of reference \cite Driesner2007Part1.
+         * 
+         * @param T Temperature [\f$ ^{\circ}C \f$]
+         * @param P Pressure [bar]
+         * @return double Salinity [Mole fraction of NaCl]
+         */
+        double X_HaliteLiquidus(double T, double P);
     private:
         inline double Xwt2Xmol(double X){return (X/M_NaCl)/(X/M_NaCl+(1-X)/M_H2O);};
         void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);
