@@ -15,16 +15,48 @@ void test_HaliteSaturatedVaporComposition();
 void test_P_VLH();
 // 7. Salinity on liquid branch of vapor + liquid coexist surface. Fig. 12 of Driesner and Heinrich(2007)
 void test_Salinity_VaporLiquidCoexist_LiquidBranch();
+// Water cH2O
+void test_water_P_Boiling();
+// 8. Volume fraction, Fig. 2 of Driesner(2007)
+void test_V_extrapol();
 
 int main( int argc, char** argv )
 {
-  test_CriticalPressure_Composition();
-  test_SublimationBoiling();
-  test_HaliteMelting();
-  test_HaliteLiquidus();
-  test_HaliteSaturatedVaporComposition(); 
-  test_P_VLH();
-  test_Salinity_VaporLiquidCoexist_LiquidBranch();
+  std::cout<<"开始测试计算"<<std::endl;
+  // test_CriticalPressure_Composition();
+  // test_SublimationBoiling();
+  // test_HaliteMelting();
+  // test_HaliteLiquidus();
+  // test_HaliteSaturatedVaporComposition(); 
+  // test_P_VLH();
+  // test_Salinity_VaporLiquidCoexist_LiquidBranch();
+  test_water_P_Boiling();
+  // test_V_extrapol();
+
+  std::cout<<"测试计算完毕"<<std::endl;
+}
+void test_water_P_Boiling()
+{
+  H2ONaCl::cH2ONaCl eos;
+  // full range
+  {
+    string filename="Water_P_boiling.dat";
+    ofstream fout(filename);
+    if(!fout)
+    {
+      cout<<"Open file failed: "<<filename<<endl;
+    }
+    for (double T = 0; T <= 400; T=T+0.1)
+    {
+      double P=eos.m_water.P_Boiling(T);
+      double P2=eos.m_water.BoilingCurve(T);
+      double rho_v_sat = eos.m_water.Rho_Vapor_Saturated(T);
+      double rho_l_sat = eos.m_water.Rho_Liquid_Saturated(T);
+      fout<<T<<" "<<P<<" "<<P2<<" "<<rho_v_sat<<" "<<rho_l_sat<<endl;
+    }
+    fout<<H2O::T_Critic<<" "<<H2O::P_Critic<<" "<<H2O::P_Critic<<" "<<0<<" "<<0<<endl;
+    fout.close();
+  }
 }
 void test_P_VLH()
 {
@@ -286,4 +318,35 @@ void test_Salinity_VaporLiquidCoexist_LiquidBranch()
     fout_vaporBranch.close();
   }
   std::cout<<"Test composition on liquid branch of vapor liquid coexist surface end\n"<<endl;
+}
+
+void test_V_extrapol()
+{
+  std::cout<<"Test V_extrapol start"<<endl;
+  H2ONaCl::cH2ONaCl eos;
+  vector<double> arryP={1000}; //bar
+  vector<double> arryX={0,10}; //wt.% NaCl
+  for (size_t i = 0; i < arryP.size(); i++)
+  {
+    double P = arryP[i];
+    for (size_t j = 0; j < arryX.size(); j++)
+    {
+      double X_mol = eos.Wt2Mol(arryX[j]/100.0);
+      string filename="V_extrapol_P"+to_string((int)P)+"bar_X"+to_string((int)arryX[j])+"wt.dat";
+      ofstream fout(filename);
+      if(!fout)
+      {
+        cout<<"Open file failed: "<<filename<<endl;
+      }
+      for (double T = 200; T <= 700; T=T+0.5) //deg.C
+      {
+        double V_extrapol = eos.V_extrapol(T, P, 0.1);
+        // if(X_liquidus>X_VLH)continue;
+        fout<<T<<" "<<V_extrapol<<endl;
+      }
+      fout.close();
+    }
+  }
+  
+  std::cout<<"Test V_extrapol end\n"<<endl;
 }

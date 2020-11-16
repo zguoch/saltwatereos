@@ -374,18 +374,48 @@ def plot_X_VL(fname0='X_VL',fmt='svg'):
             ax.legend(loc='lower left')
     figname=str('%s/%s.%s'%(figpath,'X_VaporLiquidCoexistSurface',fmt))
     plt.savefig(figname, bbox_inches='tight')
+def plot_water_boilingCurve(fname0='Water_P_boiling.dat',fmt='svg'):
+    data=np.loadtxt('%s/%s'%(datapath,fname0))
+    T=data[:,0]
+    P1=data[:,1]
+    P2=data[:,2]
+    rho_v_sat=data[:,3]
+    rho_l_sat=data[:,4]
+    fig=plt.figure(figsize=(w_singleFig,w_singleFig))
+    ax=plt.gca()
+    ax.plot(T[0:-1],P1[0:-1],label='cH2O::P_Boiling')
+    ax.plot(T[0:-1],P2[0:-1],label='cH2O::BoilingCurve')
+    ax.plot(T[-1],P1[-1],'o',mfc='red',mec='w',label='Critical point')
+    ax2=ax.twinx()
+    ax2.plot(T[0:-1],rho_v_sat[0:-1])
+    ax2.plot(T[0:-1],rho_l_sat[0:-1])
+    ax.legend()
+    # ax.set_xlim(800,930)
+    # ax.set_ylim(0,5000)
+    # ax.xaxis.set_major_locator(MultipleLocator(50))
+    # ax.yaxis.set_major_locator(MultipleLocator(1000))
+    # ax.xaxis.set_minor_locator(MultipleLocator(10))
+    # ax.yaxis.set_minor_locator(MultipleLocator(200))
+    # ax.grid(which='major',color='gray',lw=0.03)
+    # ax.grid(which='minor',color='lightgray',lw=0.03)
+    ax.set_xlabel('T [$^{\circ}$C]')
+    ax.set_ylabel('P [bar]')
+
+    figname=str('%s/%s.%s'%(figpath,'water_boilingCurve',fmt))
+    plt.savefig(figname, bbox_inches='tight')
 def main(argv):
     # argc=len(argv)
     # usage(argv)
     # exit(0)
 
-    plot_HaliteMelting()
-    plot_SublimationBoiling()
-    plot_CriticalPressure_Salinity()
-    plot_HaliteLiquidus()
-    plot_HaliteSaturatedVaporComposition()
-    plot_P_VLH()
-    plot_X_VL()
+    # plot_HaliteMelting()
+    # plot_SublimationBoiling()
+    # plot_CriticalPressure_Salinity()
+    # plot_HaliteLiquidus()
+    # plot_HaliteSaturatedVaporComposition()
+    # plot_P_VLH()
+    # plot_X_VL()
+    plot_water_boilingCurve()
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

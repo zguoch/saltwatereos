@@ -174,7 +174,10 @@ namespace H2ONaCl
          * @return double \f$ V_{extrapol} \f$ [\f$cm^3\ mol^{-1} \f$] 
          */
         double V_extrapol(double T, double P, double X);
-
+        inline double Wt2Mol(double X_wt)
+        {
+            return X_wt/NaCl::MolarMass/(X_wt/NaCl::MolarMass + (1-X_wt)/H2O::MolarMass);
+        };
     private:
         /**
          * @brief Only used in #V_extrapol
