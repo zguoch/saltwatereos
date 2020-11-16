@@ -3,8 +3,10 @@ image: python:3.7-alpine
 before_script:
 - apk update
 - apk add doxygen
+- apk add bibtex # for \cite command of doxygen
 ## Uncomment the following line if you use graphviz dot graphs
 - apk add graphviz
+
 
 pages:
   script:
