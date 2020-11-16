@@ -324,7 +324,7 @@ Dim c_Caps(), D_Caps()
 Dim Theta#, Delta#, Psi#, dPsidDelta#, dDeltaddelta#, dDeltaBIdDelta#
 'temporary double units
 Dim Sum1 As Double, Sum2 As Double, Sum3 As Double, Sum4 As Double
-
+ 
 LoadConstants C(), d(), T(), n(), Alpha(), Epsilon(), Beta(), Gamma(), a(), b(), B_Caps(), A_caps(), c_Caps(), D_Caps()
 
 For i = 1 To 7
@@ -694,7 +694,7 @@ T_K = T_in_C + 273.15
 P_mPa = P_in_Bar / 10
 TH2O_Crit = 647.096
 RhoH2O_Crit = 322
-
+ 
 If T_K <= TH2O_Crit Then
     If Round_Down(P_mPa * 10, 3) <= Round_Down(Water_Boiling_Curve(T_in_C), 3) Then
         '0.001021135 stands for density of vapor at T=1000 C and P=0.006 bar
@@ -727,7 +727,7 @@ While n <= 1000
 Wend
 If Rho1 < 0 Then Rho1 = 0
 If Rho2 < 0 Then Rho2 = 0
-
+ 
 'Newthon method to compare desired P_in with pressure,
 'and to get accuracy defined as either below 0.01 or 1e-10 bar
 If High_Accuracy Then Toler = 1E-05 Else Toler = 0.0001

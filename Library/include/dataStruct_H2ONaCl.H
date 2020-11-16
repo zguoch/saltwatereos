@@ -1,3 +1,13 @@
+/**
+ * @file dataStruct_H2ONaCl.H
+ * @author Zhikui Guo (zguo@geomar.de)
+ * @brief Definition of data structure/type for H2ONaCl::cH2ONaCl
+ * @version 1.0
+ * @date 2020-11-16
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
 #ifndef DATASTRUCT_H2ONACL_H
 #define DATASTRUCT_H2ONACL_H
 

@@ -111,7 +111,7 @@ namespace H2ONaCl
          * @brief Critical curve of NaCl-H2O system. It can be evaluated into three segments, see equation (5) - (7) of reference \cite Driesner2007Part1. 
          * 
          * 
-         * @param T Input temperature, [\f$ ^{\circ}C \f$]
+         * @param T Input temperature, [\f$ ^{\circ}\text{C} \f$]
          * @param P_crit Output critical pressure, [bar]
          * @param X_crit Output critical salinity, [Mole fraction of NaCl]
          * 
@@ -120,7 +120,7 @@ namespace H2ONaCl
         /**
          * @brief The composition of halite-saturated liquid, \f$ X_{NaCl, sat}^L \f$ (the halite liquidus), is rather well known at high temperatures from about 400 \f$^{\circ}C \f$ to the melting curve of NaCl at pressures to about 4000 bar. See equation (8) of reference \cite Driesner2007Part1.
          * 
-         * @param T Temperature [\f$ ^{\circ}C \f$]
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
          * @param P Pressure [bar]
          * @return double Salinity [Mole fraction of NaCl]
          */
@@ -128,7 +128,7 @@ namespace H2ONaCl
         /**
          * @brief Composition of halite-saturated vapor. See equation (9) and (14) of reference \cite Driesner2007Part1.
          * 
-         * @param T Temperature [\f$ ^{\circ}C \f$]
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
          * @param P Pressure [bar]
          * @return double Salinity [Mole fraction of NaCl]
          */
@@ -136,14 +136,14 @@ namespace H2ONaCl
         /**
          * @brief Temperature-pressure relations when vapor-liquid-halite coexist. See equation (10) and Table 6 of reference \cite Driesner2007Part1.
          * 
-         * @param T Temperature [\f$ ^{\circ}C \f$]
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
          * @return double Pressure [bar]
          */
         double P_VaporLiquidHaliteCoexist(double T);
         /**
          * @brief Salinity on liquid branch of Vapor + Liquid coexist surface. See equation (11) and Table 7 of reference \cite Driesner2007Part1.
          * 
-         * @param T Temperature [\f$ ^{\circ}C \f$]
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
          * @param P Pressure [bar]
          * @return double Salinity [Mole fraction of NaCl]
          */
@@ -151,28 +151,40 @@ namespace H2ONaCl
         /**
          * @brief Salinity on vapor branch of Vapor + Liquid coexist surface. See equation (13-17) and Table 8 of reference \cite Driesner2007Part1.
          * 
-         * @param T Temperature [\f$ ^{\circ}C \f$]
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
          * @param P Pressure [bar]
          * @return double Salinity [Mole fraction of NaCl]
          */
         double X_VaporLiquidCoexistSurface_VaporBranch(double T, double P);
         /**
-         * @brief Extrapolated molar volume outside range of correlation. See equation (17) of reference \cite Driesner2007Part1.
+         * @brief \f$ T_V^* \f$ is used to determin the correction between NaCl-H2O and H2O. For a given molar volume, NaCl solution and pure water temperature are \f$ T \f$ and \f$ T_V^* \f$, respectively. The principle is shown in Fig.2 (below) of reference \cite Driesner2007Part2. \f$ T_V^* \f$ is calculated from equation (8, 13) of \cite Driesner2007Part2.
          * 
-         * @param T T Temperature [\f$ ^{\circ}C \f$]
-         * @param P P Pressure [bar]
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
+         * @param P Pressure [bar]
+         * @param X Salinity [Mole fraction of NaCl]
+         * @return double Temperature [\f$ ^{\circ}\text{C} \f$]
+         */
+        double T_star_V(double T, double P, double X);
+        /**
+         * @brief Extrapolated molar volume outside range of correlation. See equation (17) of reference \cite Driesner2007Part2.
+         * 
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
+         * @param P Pressure [bar]
          * @param X Salinity [Mole fraction of NaCl]
          * @return double \f$ V_{extrapol} \f$ [\f$cm^3\ mol^{-1} \f$] 
          */
-        double V_exrrapol(double T, double P, double X);
-        /**
-         * @brief Temperature-pressure relations on boiling curve of water. See equation (2.5) of reference \cite wagner2002iapws.
-         * 
-         * @param T Temperature [\f$ ^{\circ}C \f$]
-         * @return double Pressure [bar]
-         */
-        // double P_WaterBoiling(double T);
+        double V_extrapol(double T, double P, double X);
+
     private:
+        /**
+         * @brief Only used in #V_extrapol
+         * 
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
+         * @param P Pressure [bar]
+         * @param X Salinity [Mole fraction of NaCl]
+         * @return double Density [\f$ kg/m^3 \f$]
+         */
+        double Rho_Br_for_V_extrapol(double T, double P, double X);
         inline double Xwt2Xmol(double X){return (X/NaCl::MolarMass)/(X/NaCl::MolarMass+(1-X)/H2O::MolarMass);};
         void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);
         MP_STRUCT bb(double T);

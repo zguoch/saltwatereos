@@ -3114,31 +3114,97 @@ namespace H2ONaCl
         return X_VL_VaporBranch;
     }
     /**
+     * \image html Driesner2007_Fig2.png "Graphical illustration of the principle used to derive correlations for molar volumes." width=25%. 
+     * 
+     * \f{equation}
+     * T_V^* = n_1 + n_2T + D(T)
+     * \f}
+     * where \f$ n_1, n_2\f$ are calculated from equation (9-12, 14-16) and Table 4 of \cite Driesner2007Part2. 
+     */
+    double cH2ONaCl::T_star_V(double T, double P, double X)
+    {
+        double X_NaCl = X;
+        double X_H2O = 1-X_NaCl;
+        double n11 = -54.2958 - 45.7623 * exp(-0.000944785 * P);
+        double n21 = -2.6142 - 0.000239092 * P;
+        double n22 = 0.0356828 + 4.37235E-06 * P + 2.0566E-09 * P*P;
+        double n300 = 7606640/pow(P + 472.051, 2.0);
+        double n301 = -50 - 86.1446 * exp(-0.000621128 * P);
+        double n302 = 294.318 * exp(-0.00566735 * P);
+        double n310 = -0.0732761 * exp(-0.0023772 * P) - 5.2948E-05 * P;
+        double n311 = -47.2747 + 24.3653 * exp(-0.00125533 * P);
+        double n312 = -0.278529 - 0.00081381 * P;
+        double n30 = n300 * (exp(n301 * X_NaCl) - 1) + n302 * X_NaCl; //eq. 15
+        double n31 = n310 * exp(n311 * X_NaCl) + n312 * X_NaCl; //eq. 16
+        double P_sqrt = sqrt(P), PP = P*P, PPP=P*PP;
+        double n1_XNaCl = 330.47 + 0.942876 * P_sqrt + 0.0817193 * P - 2.47556E-08 * PP + 3.45052E-10 * PPP; //eq. 11
+        double n2_XNaCl = -0.0370751 + 0.00237723 * P_sqrt + 5.42049E-05 * P + 5.84709E-09 * PP - 5.99373E-13 * PPP; //eq. 12
+        double n10 = n1_XNaCl; //eq. 10 when X_NaCl=1
+        double n12 = -n11 - n10; //eq. 10 when X_NaCl=0
+        double n20 = 1 - n21 * sqrt(n22); //eq. 10 when X_NaCl=0
+        double n23 = n2_XNaCl - n20 - n21 * sqrt(1 + n22); //eq. 10 when X_NaCl=1
+        double n1 = n10 + n11 * X_H2O + n12 * X_H2O*X_H2O;
+        double n2 = n20 + n21 * sqrt(X_NaCl + n22) + n23 * X_NaCl;
+        double D = n30 * exp(n31 * T); //eq. 14
+        return n1 + n2*T + D;
+    }
+    
+    double cH2ONaCl::Rho_Br_for_V_extrapol(double T, double P, double X)
+    {
+        double T_star = T_star_V(T, P, X);
+        double V_water = H2O::MolarMass / m_water.Rho(T_star, P);// m3/mol
+        return (H2O::MolarMass * (1 - X) + NaCl::MolarMass * X) / V_water;
+    }
+    /**
      * \f{equation}
      * V_{extrapol} = o_0 + o_1 T + o_2 T^3
      * \f}
      */
-    double cH2ONaCl::V_exrrapol(double T, double P, double X)
+    double cH2ONaCl::V_extrapol(double T, double P, double X)
     {
-        return 0;
+        //DEBUG: V_Extrapol(x_in, T_in, P_in) 
+        double X_L_sat = X_HaliteLiquidus(T, P);
+        double o0 = 0, o1 = 0, o2 = 0, o3=0, o4=0, o5=0, V1 = 0, V2 = 0;
+        double TT=T*T;
+        double TTT=T*TT;
+        const double dT = 0.005;
+        double V_extrapol0 = 0;
+        double RoundDown_X = floor(X*1E5)/1E5, RoundDown2 = 0; //DEBUG
+        double molFactor = (H2O::MolarMass * (1-X) + NaCl::MolarMass*X);
+        if (P<=m_water.BoilingCurve(T) && T<=200 && (X_L_sat - X)<0.01)
+        {
+            T = T_star_V(T, P, X);
+            double V_L_sat = H2O::MolarMass / m_water.Rho_Liquid_Saturated(T) * 1E6; //Molar volume , cm3/mol
+            double V_water = H2O::MolarMass / m_water.Rho(T, P) * 1E6;
+            if (V_L_sat < V_water)
+            {
+                o2 = 2.0125E-07 + 3.29977E-09 * exp(-4.31279 * log10(P)) - 1.17748E-07 * log10(P) + 7.58009E-08 * pow(log10(P), 2.0); //Table 4 last row of Driesner(2007)
+                V1 = H2O::MolarMass / m_water.Rho_Liquid_Saturated(T) * 1E6;//cm3/mol
+                V2 = H2O::MolarMass / m_water.Rho_Liquid_Saturated(T - dT)* 1E6;//cm3/mol
+                o1 = (V1 -V2)/dT - 3*o2*TT; //derivative T of eq. 17 = 0
+                o0 = V1 - o1*T - o2*TTT;
+                V_extrapol0 = o0 + o1*T + o2*TTT;
+            }
+        }
+        else if(P <= 350 && T>=600)
+        {
+            X_L_sat = X_VaporLiquidCoexistSurface_LiquidBranch(T, P);
+            RoundDown2 = floor(X_L_sat*1E5)/1E5; //DEBUG
+            if(RoundDown_X >= RoundDown2)
+            {
+                double V1000 =  molFactor/ Rho_Br_for_V_extrapol(T,1000,X)* 1E6;//cm3/mol  //DEBUG: 可以简化！！！！
+                V1 = molFactor / Rho_Br_for_V_extrapol(T,390.147,X)* 1E6;//cm3/mol
+                V2 = molFactor / Rho_Br_for_V_extrapol(T,390.137,X)* 1E6;//cm3/mol
+                double dVdP390 = (V1-V2)/(0.01);
+                o4 = (V1 - V1000 + dVdP390*1609.853) / (log(1390.147 / 2000) - 2390.147 / 1390.147); //eq. 18, eq. 7 DEBUG: LogExp ????
+                o3 = V1 - o4 * log(1390.147) - 390.147 * dVdP390 + 390.147 / 1390.147 * o4;
+                o5 = dVdP390 - o4 /1390.147;
+                V_extrapol0 = o3 + o4*log(P + 1000) + o5*P; //eq. 18
+            }
+        }else
+        {
+            V_extrapol0 = 0;
+        }
+        return V_extrapol0;
     }
-    /**
-     * \f{equation}
-     * ln\left( \frac{P_{boil}}{P_c} \right) = \frac{T_c + 273.15}{T + 273.15}(a_1\theta + a_2\theta^{1.5} + a_3\theta^{3} + a_4\theta^{3.5} + a_5\theta^{4} + a_6\theta^{7.5}), 
-     * \f} 
-     * where \f$ \theta = 1- T/T_c \f$, \f$ T_c\f$ and \f$ P_c\f$ are the critical temperature and pressure, respectively. They are defined as #H2O::T_Critic and #H2O::P_Critic respectively. Coefficients \f$ a_i (i=1, ..., 6) \f$ can be found in page 399 of reference \cite wagner2002iapws.
-     */
-    // double cH2ONaCl::P_WaterBoiling(double T)
-    // {
-    //     double T_K =T;
-    //     if(T_K==0)T_K=0.01;
-    //     T_K = T_K + Kelvin;
-    //     double T_inv = 1 - T_K / 647.096;
-    //     double a[6] = {-7.85951783, 1.84408259, -11.7866497, 22.6807411, -15.9618719, 1.80122502};
-    //     double P_boil = 0;
-
-    //     P_boil = exp((H2O::T_Critic + Kelvin) / T_K * (a[0] * T_inv + a[1] * pow(T_inv,1.5) + a[2] * pow(T_inv, 3.0) + a[3] * pow(T_inv, 3.5) + a[4] * pow(T_inv,4.0) + a[5] * pow(T_inv ,7.5))) * H2O::P_Critic;
-    //     // m_water.P_Boiling(T);
-    //     return P_boil;
-    // }
 }
