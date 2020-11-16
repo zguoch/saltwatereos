@@ -1,6 +1,6 @@
 #include "H2ONaCl.H"
-// using namespace SWEOS;
-namespace SWEOS
+// using namespace H2ONaCl;
+namespace H2ONaCl
 {
     cH2ONaCl::cH2ONaCl()
     :m_Parray(NULL),
@@ -569,8 +569,8 @@ namespace SWEOS
         calcEnthalpy(m_prop.Region, T, p, Xl_all, Xv_all, 
                             m_prop.H_l, m_prop.H_v, m_prop.H_h);
         // 4. 
-        double Xw_l = Xl_all * M_NaCl / (Xl_all * M_NaCl + (1-Xl_all) * M_H2O);
-        double Xw_v = Xv_all * M_NaCl / (Xv_all * M_NaCl + (1-Xv_all) * M_H2O);
+        double Xw_l = Xl_all * NaCl::MolarMass / (Xl_all * NaCl::MolarMass + (1-Xl_all) * H2O::MolarMass);
+        double Xw_v = Xv_all * NaCl::MolarMass / (Xv_all * NaCl::MolarMass + (1-Xv_all) * H2O::MolarMass);
 
         // 4. calcViscosity
         if(visc_on) calcViscosity(m_prop.Region, p, T, Xw_l, Xw_v, m_prop.Mu_l, m_prop.Mu_v);
@@ -636,8 +636,8 @@ namespace SWEOS
         calcRho(m_prop.Region, T, p, Xl_all, Xv_all, 
                 m_prop.Rho_l, m_prop.Rho_v, m_prop.Rho_h, V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out);
         // 4. 
-        double Xw_l = Xl_all * M_NaCl / (Xl_all * M_NaCl + (1-Xl_all) * M_H2O);
-        double Xw_v = Xv_all * M_NaCl / (Xv_all * M_NaCl + (1-Xv_all) * M_H2O);
+        double Xw_l = Xl_all * NaCl::MolarMass / (Xl_all * NaCl::MolarMass + (1-Xl_all) * H2O::MolarMass);
+        double Xw_v = Xv_all * NaCl::MolarMass / (Xv_all * NaCl::MolarMass + (1-Xv_all) * H2O::MolarMass);
 
         if(m_prop.Region==SinglePhase_L)m_prop.S_l=1;
         double Xw=X_wt;
@@ -694,8 +694,8 @@ namespace SWEOS
         double T=T_K-Kelvin,Xl_all,Xv_all;
         m_prop.Region=findRegion(T, p, Xwt2Xmol(X_wt), Xl_all,Xv_all);
         // 4. 
-        double Xw_l = Xl_all * M_NaCl / (Xl_all * M_NaCl + (1-Xl_all) * M_H2O);
-        double Xw_v = Xv_all * M_NaCl / (Xv_all * M_NaCl + (1-Xv_all) * M_H2O);
+        double Xw_l = Xl_all * NaCl::MolarMass / (Xl_all * NaCl::MolarMass + (1-Xl_all) * H2O::MolarMass);
+        double Xw_v = Xv_all * NaCl::MolarMass / (Xv_all * NaCl::MolarMass + (1-Xv_all) * H2O::MolarMass);
 
         // 4. calcViscosity
         calcViscosity(m_prop.Region, p, T, Xw_l, Xw_v, m_prop.Mu_l, m_prop.Mu_v);
@@ -715,8 +715,8 @@ namespace SWEOS
         calcRho(m_prop.Region, T, p, Xl_all, Xv_all, 
                 m_prop.Rho_l, m_prop.Rho_v, m_prop.Rho_h, V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out);
         // 4. 
-        double Xw_l = Xl_all * M_NaCl / (Xl_all * M_NaCl + (1-Xl_all) * M_H2O);
-        double Xw_v = Xv_all * M_NaCl / (Xv_all * M_NaCl + (1-Xv_all) * M_H2O);
+        double Xw_l = Xl_all * NaCl::MolarMass / (Xl_all * NaCl::MolarMass + (1-Xl_all) * H2O::MolarMass);
+        double Xw_v = Xv_all * NaCl::MolarMass / (Xv_all * NaCl::MolarMass + (1-Xv_all) * H2O::MolarMass);
 
         // 4. calcViscosity
         calcViscosity(m_prop.Region, p, T, Xw_l, Xw_v, m_prop.Mu_l, m_prop.Mu_v);
@@ -1838,7 +1838,7 @@ namespace SWEOS
         // cout<<"PROP.f: "<<PROP.f<<" PROP.p: "<<PROP.p<<" PROP.s: "<<PROP.s<<" PROP.g: "<<PROP.g<<" PROP.h: "<<PROP.h<<" PROP.dpd: "<<PROP.dpd<<endl;
         return PROP;
     }
-    void cH2ONaCl:: writeProps2xyz(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<SWEOS::PROP_H2ONaCl> props, std::string fname, std::string xTitle, std::string yTitle, std::string zTitle, string delimiter)
+    void cH2ONaCl:: writeProps2xyz(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, std::string fname, std::string xTitle, std::string yTitle, std::string zTitle, string delimiter)
     {
         cout<<"Writing results to file ..."<<endl;
         if((x.size()*y.size()*z.size())!=props.size())
@@ -1895,7 +1895,7 @@ namespace SWEOS
         }
         fpout.close();
     }
-    void cH2ONaCl:: writeProps2VTK(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<SWEOS::PROP_H2ONaCl> props, std::string fname, bool isWritePy, std::string xTitle, std::string yTitle, std::string zTitle)
+    void cH2ONaCl:: writeProps2VTK(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, std::string fname, bool isWritePy, std::string xTitle, std::string yTitle, std::string zTitle)
     {
         cout<<"Writing results to file ..."<<endl;
         if((x.size()*y.size()*z.size())!=props.size())
@@ -2605,7 +2605,7 @@ namespace SWEOS
         std::string checkResult= "";
         if (temperature_C < TMIN-Kelvin || temperature_C > TMAX-Kelvin) {
             char buff[100];
-            snprintf(buff, sizeof(buff), "Temperature value %.2f is out of range\n[%.1f, %.1f] ", temperature_C, SWEOS::TMIN - SWEOS::Kelvin, SWEOS::TMAX - SWEOS::Kelvin);
+            snprintf(buff, sizeof(buff), "Temperature value %.2f is out of range\n[%.1f, %.1f] ", temperature_C, TMIN - Kelvin, TMAX - Kelvin);
             checkResult = buff;
             return checkResult;
         }
@@ -2638,9 +2638,9 @@ namespace SWEOS
         std::string checkResult= "";
 
         double HMIN=1e30, HMAX=-1e30;
-        double Trange[2]={SWEOS::TMIN, SWEOS::TMAX};
+        double Trange[2]={TMIN, TMAX};
         double P,T,X;
-        SWEOS::cH2ONaCl eos;
+        H2ONaCl::cH2ONaCl eos;
         // for (int i = 0; i < 2; i++)
         {
         P=P0;
@@ -2669,9 +2669,9 @@ namespace SWEOS
     {
         std::string checkResult= "";
         double HMIN=1e30, HMAX=-1e30;
-        double Trange[2]={SWEOS::TMIN, SWEOS::TMAX};
+        double Trange[2]={TMIN, TMAX};
         double P,T,X;
-        SWEOS::cH2ONaCl eos;
+        H2ONaCl::cH2ONaCl eos;
         for (int i = 0; i < 2; i++)
         {
         P=PXrange[i];
@@ -2708,9 +2708,9 @@ namespace SWEOS
     {
         std::string checkResult= "";
         double HMIN=1e30, HMAX=-1e30;
-        double Trange[2]={SWEOS::TMIN, SWEOS::TMAX};
+        double Trange[2]={TMIN, TMAX};
         double P,T,X;
-        SWEOS::cH2ONaCl eos;
+        H2ONaCl::cH2ONaCl eos;
         for (int i = 0; i < 2; i++)
         {
         P=Prange[i];
@@ -2747,9 +2747,9 @@ namespace SWEOS
     {
         std::string checkResult= "";
         double HMIN=1e30, HMAX=-1e30;
-        double Trange[2]={SWEOS::TMIN, SWEOS::TMAX};
+        double Trange[2]={TMIN, TMAX};
         double P,T,X;
-        SWEOS::cH2ONaCl eos;
+        H2ONaCl::cH2ONaCl eos;
         // for (int i = 0; i < 2; i++)
         {
             P=P0;
@@ -2821,28 +2821,28 @@ namespace SWEOS
         // c[12] (c11) is the first temperature derivative of eq. 5b at 500 deg.C
         for (size_t i = 7; i < 11; i++)
         {
-            c[11] += c[i] * pow(500 - T_Critic_H2O, cA[i]); //the second term of eq. 5b in Drisner and Heinrich (2007)
-            c[12] += c[i] * cA[i] * pow(500 - T_Critic_H2O, cA[i] - 1); //the first temperature derivative of eq. 5b
+            c[11] += c[i] * pow(500 - H2O::T_Critic, cA[i]); //the second term of eq. 5b in Drisner and Heinrich (2007)
+            c[12] += c[i] * cA[i] * pow(500 - H2O::T_Critic, cA[i] - 1); //the first temperature derivative of eq. 5b
         }
-        c[11] = P_Critic_H2O + c[11];
+        c[11] = H2O::P_Critic + c[11];
         double d[11] = {8E-05, 1E-05, -1.37125E-07, 9.46822E-10, -3.50549E-12, 6.57369E-15, 
                         -4.89423E-18, 7.77761E-2, 2.7042E-4, -4.244821E-07, 2.580872E-10};
         // calculate critical pressure
         P_crit=0;
-        if(T < T_Critic_H2O)                        //eq. 5a
+        if(T < H2O::T_Critic)                        //eq. 5a
         {
             for (size_t i = 0; i < 7; i++)
             {
-                P_crit += c[i]*pow(T_Critic_H2O - T, cA[i]);
+                P_crit += c[i]*pow(H2O::T_Critic - T, cA[i]);
             }
-            P_crit+=P_Critic_H2O;
-        }else if(T >= T_Critic_H2O && T <= 500)     //eq. 5b
+            P_crit+=H2O::P_Critic;
+        }else if(T >= H2O::T_Critic && T <= 500)     //eq. 5b
         {
             for (size_t i = 7; i < 11; i++)
             {
-                P_crit += c[i]*pow(T - T_Critic_H2O, cA[i]);
+                P_crit += c[i]*pow(T - H2O::T_Critic, cA[i]);
             }
-            P_crit+=P_Critic_H2O;
+            P_crit+=H2O::P_Critic;
         }else                                       //eq. 5c
         {
             for (size_t i = 11; i < 14; i++)
@@ -2852,11 +2852,11 @@ namespace SWEOS
         }
          // calculate critical salinity
         X_crit = 0;
-        if (T>=T_Critic_H2O && T<=600)                  //eq. 7a
+        if (T>=H2O::T_Critic && T<=600)                  //eq. 7a
         {
             for (size_t i = 0; i < 7; i++)
             {
-                X_crit += d[i]*pow(T - T_Critic_H2O, i+1);
+                X_crit += d[i]*pow(T - H2O::T_Critic, i+1);
             }
         }else                                           //eq. 7b
         {
@@ -2872,13 +2872,13 @@ namespace SWEOS
      * \f{equation}
      * X_{NaCl, sat}^L = \sum\limits_{i=0}^5 e_i\left(\frac{T}{T_{hm}}\right)^i
      * \f}
-     * with the pressure-dependent coefficients \f$ e_i \f$ given in Table 5 of reference \cite Driesner2007Part1 and the pressure-dependent melting temperature of halite, \f$ T_{hm}\f$, calculated from #T_HaliteMelting (equation (1) of reference \cite Driesner2007Part1.)
+     * with the pressure-dependent coefficients \f$ e_i \f$ given in Table 5 of reference \cite Driesner2007Part1 and the pressure-dependent melting temperature of halite, \f$ T_{hm}\f$, calculated from NaCl::cNaCl::T_Melting (equation (1) of reference \cite Driesner2007Part1.)
      * 
      * \image html Driesner_Heinrich_Fig7.png "Liquid composition for the halite liquidus." width=50%. 
      * Liquid composition for the halite liquidus. (a) Full range temperature-pressure dependence, sets of symbols are for the same pressures as sets of lines; (b) pressure dependence at 25 \f$ ^{\circ}C \f$ (Figure 7 of reference \cite Driesner2007Part1)
      * 
-     * \image html HaliteLiquidus.svg "Liquid composition for the halite liquidus calculated using swEOS." width=50%. 
-     * Liquid composition for the halite liquidus calculated using #SWEOS -> #cH2ONaCl ->#X_HaliteLiquidus. (a) Full range temperature-pressure dependence, sets of symbols are for the same pressures as sets of lines; (b) pressure dependence at 25 \f$ ^{\circ}C \f$ (Figure 7 of reference \cite Driesner2007Part1)
+     * \image html HaliteLiquidus.svg "Liquid composition for the halite liquidus calculated using H2ONaCl." width=50%. 
+     * Liquid composition for the halite liquidus calculated using #H2ONaCl -> #cH2ONaCl ->#X_HaliteLiquidus. (a) Full range temperature-pressure dependence, sets of symbols are for the same pressures as sets of lines; (b) pressure dependence at 25 \f$ ^{\circ}C \f$ (Figure 7 of reference \cite Driesner2007Part1)
      *  
      */
     double cH2ONaCl::X_HaliteLiquidus(double T, double P)
@@ -2896,7 +2896,7 @@ namespace SWEOS
         {
             e[5] -= e[i];
         }
-        const double TbyT_hm = T/T_HaliteMelting(P);
+        const double TbyT_hm = T/m_salt.T_Melting(P);
         double X_Liquids = 0;
         for (size_t i = 0; i < 6; i++)
         {
@@ -2923,7 +2923,7 @@ namespace SWEOS
      *      log_{10}(P_{NaCl, halite}),& \text{else}\\ \\[1ex]
      *      \end{matrix}\right.
      * \f}
-     * \f$ P_{NaCl, liquid} \f$ and \f$ P_{NaCl, halite} \f$ are calculated from #P_HaliteBoiling and #P_HaliteSublimation, respectively. And \f$ log_{10}K^{\prime} \f$ can be computed from following equation (eq. 15 of ref. \cite Driesner2007Part1),
+     * \f$ P_{NaCl, liquid} \f$ and \f$ P_{NaCl, halite} \f$ are calculated from NaCl::cNaCl::P_Boiling and NaCl::cNaCl::P_HaliteSublimation, respectively. And \f$ log_{10}K^{\prime} \f$ can be computed from following equation (eq. 15 of ref. \cite Driesner2007Part1),
      * 
      * \f{equation}
      * log_{10}\bar K = \frac{log_{10}K^{\prime} - log_{10}\left( X_{NaCl, sat}^L \right)_{P_{NaCl}}}{log_{10}\left( \frac{P_{NaCl}}{P_{crit}} \right) - log_{10}\left( X_{NaCl, sat}^L \right)_{P_{NaCl}}} = 1 + j_0(1-\bar P)^{j_1} + j_2(1-\bar P) + j_3(1-\bar P)^{2} - (1 + j_0 + j_2 + j_3)(1-\bar P)^{3}
@@ -2933,8 +2933,8 @@ namespace SWEOS
      * \image html Driesner_Heinrich_Fig8.png "Halite-saturated vapor composition in comparison to experimental data." width=50%. 
      * Halite-saturated vapor composition in comparison to experimental data. (a) Isotherms, (b) isobars (Figure 8 of reference \cite Driesner2007Part1)
      * 
-     * \image html HaliteSaturatedVaporComposition.svg "Halite-saturated vapor composition calculated using swEOS." width=50%. 
-     * Halite-saturated vapor composition calculated using #SWEOS -> #cH2ONaCl ->#X_VaporHaliteCoexist. 
+     * \image html HaliteSaturatedVaporComposition.svg "Halite-saturated vapor composition calculated using H2ONaCl." width=50%. 
+     * Halite-saturated vapor composition calculated using #H2ONaCl -> #cH2ONaCl ->#X_VaporHaliteCoexist. 
      */
     double cH2ONaCl::X_VaporHaliteCoexist(double T, double P)
     {
@@ -2954,12 +2954,12 @@ namespace SWEOS
         }
         // cal
         double P_NaCl=0;
-        if(T>T_Triple_NaCl)
+        if(T>NaCl::T_Triple)
         {
-            P_NaCl = P_HaliteBoiling(T);
+            P_NaCl = m_salt.P_Boiling(T);
         }else
         {
-            P_NaCl = P_HaliteSublimation(T);
+            P_NaCl = m_salt.P_Sublimation(T);
         }
         double P_crit = 0, X_crit=0;
         P_X_Critical(T,P_crit, X_crit); //calculate critic pressure
@@ -2989,25 +2989,25 @@ namespace SWEOS
      * \f{equation}
      * P_{VLH} = \sum\limits_{i=0}^{10}f_i\left( \frac{T}{T_{triple, NaCl}} \right)
      * \f}
-     * where \f$ f_i (i=0,...,10) \f$ are computed from Table 6 of ref. \cite Driesner2007Part1, \f$ T_{triple, NaCl} \f$ is the temperature at triple point of NaCl, which is defined as #T_Triple_NaCl.
+     * where \f$ f_i (i=0,...,10) \f$ are computed from Table 6 of ref. \cite Driesner2007Part1, \f$ T_{triple, NaCl} \f$ is the temperature at triple point of NaCl, which is defined as #NaCl::T_Triple.
      * 
      * \image html Driesner_Heinrich_Fig9.png "Pressure at vapor + liquid + halite coexistence." width=50%. 
      * Pressure at vapor + liquid + halite coexistence. (a) Full range, (b) low temperatures, logarithmic pressure scale. (Figure 9 of reference \cite Driesner2007Part1)
      * 
-     * \image html Pressure_VLH.svg "Pressure at vapor + liquid + halite coexistence calculated using swEOS." width=50%. 
-     * Pressure at vapor + liquid + halite coexistence calculated using #SWEOS -> #cH2ONaCl ->#P_VaporLiquidHaliteCoexist. 
+     * \image html Pressure_VLH.svg "Pressure at vapor + liquid + halite coexistence calculated using H2ONaCl." width=50%. 
+     * Pressure at vapor + liquid + halite coexistence calculated using #H2ONaCl -> #cH2ONaCl ->#P_VaporLiquidHaliteCoexist. 
      */
     double cH2ONaCl::P_VaporLiquidHaliteCoexist(double T)
     {
         // Table 6 of Driesner and Heinrich(2007)
-        double f[11] = {0.00464, 5E-07, 16.9078, -269.148, 7632.04, -49563.6, 233119.0, -513556.0, 549708.0, -284628.0, P_Triple_NaCl};
+        double f[11] = {0.00464, 5E-07, 16.9078, -269.148, 7632.04, -49563.6, 233119.0, -513556.0, 549708.0, -284628.0, NaCl::P_Triple};
         double P_VLH = 0;
         for (size_t i = 0; i < 10; i++) //calculate P_VLH (eq. 10) and f[10] simultaneously
         {
             f[10] -= f[i];
-            P_VLH += f[i]*pow(T/T_Triple_NaCl, i);
+            P_VLH += f[i]*pow(T/NaCl::T_Triple, i);
         }
-        P_VLH += f[10]*pow(T/T_Triple_NaCl, 10);
+        P_VLH += f[10]*pow(T/NaCl::T_Triple, 10);
         
         return P_VLH;
     }
@@ -3017,8 +3017,8 @@ namespace SWEOS
      * \f}
      * where \f$ g_1, g_2\f$ can be found in Table 7 of ref. \cite Driesner2007Part1, \f$ P_{crit}\f$ and \f$ X_{crit}\f$ are calculated from #P_X_Critical.
      * 
-     * \image html X_VaporLiquidCoexistSurface.svg "Isothermal sections of the V + L surface calculated using swEOS." width=100%. 
-     * Isothermal sections of the V + L surface calculated using #SWEOS -> #cH2ONaCl ->#X_VaporLiquidCoexistSurface_LiquidBranch for liquid branch and #X_VaporLiquidCoexistSurface_VaporBranch for vapor branch. See also Fig. 12 of ref. \cite Driesner2007Part1.
+     * \image html X_VaporLiquidCoexistSurface.svg "Isothermal sections of the V + L surface calculated using H2ONaCl." width=100%. 
+     * Isothermal sections of the V + L surface calculated using #H2ONaCl -> #cH2ONaCl ->#X_VaporLiquidCoexistSurface_LiquidBranch for liquid branch and #X_VaporLiquidCoexistSurface_VaporBranch for vapor branch. See also Fig. 12 of ref. \cite Driesner2007Part1.
      * 
      */
     double cH2ONaCl::X_VaporLiquidCoexistSurface_LiquidBranch(double T, double P)
@@ -3033,20 +3033,20 @@ namespace SWEOS
         P_X_Critical(T, P_crit, X_crit);
         // TODO: add comment of g0 calculation formula
         double P_tmp=0, P_tmp2, X_tmp=0;
-        if(T<T_Triple_NaCl)
+        if(T<NaCl::T_Triple)
         {
             P_tmp = P_VaporLiquidHaliteCoexist(T);
             X_tmp = X_HaliteLiquidus(T, P_tmp);
         }else
         {
-            P_tmp = P_HaliteBoiling(T);
+            P_tmp = m_salt.P_Boiling(T);
             X_tmp = 1;
         }
         double X_VL_LiquidBranch = 0;
         // eq. 11
-        if(T<T_Critic_H2O)
+        if(T<H2O::T_Critic)
         {
-            P_tmp2 = P_WaterBoiling(T);
+            P_tmp2 = m_water.P_Boiling(T);
             g0 = (X_tmp + g1 * (P_tmp - P_tmp2) + g2 * (pow(P_crit - P_tmp2, 2.0) - pow(P_crit - P_tmp, 2.0))) / (sqrt(P_crit - P_tmp) - sqrt(P_crit - P_tmp2));
             X_VL_LiquidBranch = g0 * sqrt(P_crit - P) - g0 * sqrt(P_crit - P_tmp2) - g1 * (P_crit - P_tmp2) - g2 * pow(P_crit - P_tmp2, 2.0) + g1 * (P_crit - P) + g2 * pow(P_crit - P, 2.0);
         }else
@@ -3078,12 +3078,12 @@ namespace SWEOS
         }
         // cal
         double P_NaCl=0;
-        if(T>T_Triple_NaCl)
+        if(T>NaCl::T_Triple)
         {
-            P_NaCl = P_HaliteBoiling(T);
+            P_NaCl = m_salt.P_Boiling(T);
         }else
         {
-            P_NaCl = P_HaliteSublimation(T);
+            P_NaCl = m_salt.P_Sublimation(T);
         }
         double X_VL_LiquidBranch = X_VaporLiquidCoexistSurface_LiquidBranch(T,P);
         double P_crit = 0, X_crit=0;
@@ -3115,20 +3115,30 @@ namespace SWEOS
     }
     /**
      * \f{equation}
+     * V_{extrapol} = o_0 + o_1 T + o_2 T^3
+     * \f}
+     */
+    double cH2ONaCl::V_exrrapol(double T, double P, double X)
+    {
+        return 0;
+    }
+    /**
+     * \f{equation}
      * ln\left( \frac{P_{boil}}{P_c} \right) = \frac{T_c + 273.15}{T + 273.15}(a_1\theta + a_2\theta^{1.5} + a_3\theta^{3} + a_4\theta^{3.5} + a_5\theta^{4} + a_6\theta^{7.5}), 
      * \f} 
-     * where \f$ \theta = 1- T/T_c \f$, \f$ T_c\f$ and \f$ P_c\f$ are the critical temperature and pressure, respectively. They are defined as #T_Critic_H2O and #P_Critic_H2O respectively. Coefficients \f$ a_i (i=1, ..., 6) \f$ can be found in page 399 of reference \cite wagner2002iapws.
+     * where \f$ \theta = 1- T/T_c \f$, \f$ T_c\f$ and \f$ P_c\f$ are the critical temperature and pressure, respectively. They are defined as #H2O::T_Critic and #H2O::P_Critic respectively. Coefficients \f$ a_i (i=1, ..., 6) \f$ can be found in page 399 of reference \cite wagner2002iapws.
      */
-    double cH2ONaCl::P_WaterBoiling(double T)
-    {
-        double T_K =T;
-        if(T_K==0)T_K=0.01;
-        T_K = T_K + Kelvin;
-        double T_inv = 1 - T_K / 647.096;
-        double a[6] = {-7.85951783, 1.84408259, -11.7866497, 22.6807411, -15.9618719, 1.80122502};
-        double P_boil = 0;
+    // double cH2ONaCl::P_WaterBoiling(double T)
+    // {
+    //     double T_K =T;
+    //     if(T_K==0)T_K=0.01;
+    //     T_K = T_K + Kelvin;
+    //     double T_inv = 1 - T_K / 647.096;
+    //     double a[6] = {-7.85951783, 1.84408259, -11.7866497, 22.6807411, -15.9618719, 1.80122502};
+    //     double P_boil = 0;
 
-        P_boil = exp((T_Critic_H2O + Kelvin) / T_K * (a[0] * T_inv + a[1] * pow(T_inv,1.5) + a[2] * pow(T_inv, 3.0) + a[3] * pow(T_inv, 3.5) + a[4] * pow(T_inv,4.0) + a[5] * pow(T_inv ,7.5))) * P_Critic_H2O;
-        return P_boil;
-    }
+    //     P_boil = exp((H2O::T_Critic + Kelvin) / T_K * (a[0] * T_inv + a[1] * pow(T_inv,1.5) + a[2] * pow(T_inv, 3.0) + a[3] * pow(T_inv, 3.5) + a[4] * pow(T_inv,4.0) + a[5] * pow(T_inv ,7.5))) * H2O::P_Critic;
+    //     // m_water.P_Boiling(T);
+    //     return P_boil;
+    // }
 }

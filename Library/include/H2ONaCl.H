@@ -11,6 +11,11 @@ using namespace std;
 // chose use which library to calculate water properties
 // if H2ONaCl class is called by swift on ios platform, we change to use PROST to calculate water properties
 // if on desktop platform, please comment this line
+#include "stdfunc.H"
+#include "Fluid.H"
+#include "H2O.H"
+#include "NaCl.H"
+#include "dataStruct_H2ONaCl.H"
 
 #define USE_PROST 1  
 
@@ -19,106 +24,16 @@ using namespace std;
 #else 
 	#include "IAPWS-97.H"
 #endif 
-#include "stdio.h"
 
-#include<map>  
-namespace SWEOS
+namespace H2ONaCl
 {
-    #ifdef _WIN32
-        // define color, this seems only work on MacOS and linux, doesn't work on windows
-        #define ERROR_COUT ""
-        #define WARN_COUT ""
-        #define COLOR_PURPLE ""
-        #define COLOR_RED ""
-        #define COLOR_GREEN ""
-        #define COLOR_YELLOW ""
-        #define COLOR_BLUE ""
-        #define COLOR_DEFAULT ""
-    #else
-        // define color, this seems only work on MacOS and linux, doesn't work on windows
-        #define ERROR_COUT "["<<"\033[31mError: "<<"\033[0m] "
-        #define WARN_COUT "["<<"\033[33mWarning: "<<"\033[0m] "
-        #define COLOR_PURPLE "\033[35m"
-        #define COLOR_RED "\033[31m"
-        #define COLOR_GREEN "\033[32m"
-        #define COLOR_YELLOW "\033[33m"
-        #define COLOR_BLUE "\033[34m"
-        #define COLOR_DEFAULT "\033[0m"
-    #endif
-    // const value define
-    double const TMIN=273.15;
-    double const TMAX=1273.15;
-    double const PMIN=1e5;
-    double const PMAX = 1000e5;
+    // ============= Constants of H2O-NaCl =======================================
     double const XMIN = 0;
     double const XMAX = 1;
-    // --------------
-    double const Kelvin= 273.15;
-    // ------------
-    double const M_H2O = 0.018015; // molar mass of water  [kg/mol]
-    double const M_NaCl = 0.058443; // molar mass of salt(NaCl)   [kg/mol]
-
-    // Constant definition 
-    double const T_Triple_NaCl = 800.7; /**< Temperature at triple point of NaCl, [\f$^{\circ}C \f$] */ 
-    double const P_Triple_NaCl = 0.0005; /**< Pressure at triple point of NaCl, [Pa] */
-    double const P_Critic_H2O = 220.64; /**< Pressure at critical point of H2O, [bar]. IAPWS-95 */
-    double const T_Critic_H2O = 373.946; /**< Temperature at critical point of H2O, [\f$^{\circ}C \f$]. IAPWS-95 */ 
-
-    // define index of region
-    enum PhaseRegion {SinglePhase_L, TwoPhase_L_V_X0, SinglePhase_V, 
-                    TwoPhase_L_H, TwoPhase_V_H, ThreePhase_V_L_H, TwoPhase_V_L_L, TwoPhase_V_L_V};
-                    
-    typedef std::map<int,std::string> MAP_PHASE_REGION;
-
-    struct PROP_H2ONaCl
-    {
-        PhaseRegion Region;
-        double T, H, Rho, Mu; //temperature(C), bulk enthalpy, bulk density
-        double Rho_l, Rho_v, Rho_h; //density
-        double H_l, H_v, H_h; //enthalpy
-        double S_l, S_v, S_h; //saturation
-        double X_l, X_v; // volume fraction of NaCl in vaper and liquid, it is a composition fraction. H2O + NaCl
-        double Mu_l, Mu_v;//viscosity
-        // derivertive
-        // double dS_hdh, dS_vdh, dS_ldh, dRhodh;
-    };
-
-    struct MP_STRUCT
-    {
-        double b1, b1t, b1tt;
-        double b2, b2t, b2tt;
-    };
-    struct ID_STRUCT
-    {
-        double f, ft, ftt;
-    };
-    struct TWOPHASEPROP_STRUCT
-    {
-        double f, p, s, g, u, h, dpd, dpt, cv, x;
-    };
-    struct BS_STRUCT
-    {
-        double x, f;
-        double fd, fdd, ft, ftd, ftt;
-    };
-    struct RS_STRUCT
-    {
-        double f, ft, ftd;
-        double fd, fdd, ftt;
-    };
-    struct Cr_STRUCT
-    {
-        double g[9][6], k[4], l[4], gg[4], t[4], d[4], a[4], b[4];
-    };
-    struct f_STRUCT
-    {
-        double f[11];
-        double sum_f10;
-    };
-
+    // ===========================================================================
 
     /**
-     * @brief Class of thermal model of seawater
+     * @brief Class of thermal model of seawater (H2O-NaCl system)
      * 
      */
     class cH2ONaCl
@@ -158,6 +73,8 @@ namespace SWEOS
         cH2ONaCl();
         // cH2ONaCl(const std::vector<double> P, const std::vector<double> T, const std::vector<double> X);//P, T, X has same size of n
         ~cH2ONaCl();
+        H2O::cH2O m_water;
+        NaCl::cNaCl m_salt;
         MAP_PHASE_REGION m_phaseRegion_name;
         void prop_pTX(double p, double T_K, double X_wt, bool visc_on=true);
         void prop_pHX(double p, double H, double X_wt); /** Calculate properties by P, H, X */
@@ -167,8 +84,8 @@ namespace SWEOS
         double mu_pTX(double p, double T_K, double X_wt); //get bulk dynamic viscosity. p: Pa; T: K; X: wt%
         PROP_H2ONaCl m_prop;
         //X:[0,1]; T: deg. C; P: bar
-        void writeProps2VTK(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<SWEOS::PROP_H2ONaCl> props, std::string fname, bool isWritePy=true, std::string xTitle="x", std::string yTitle="y", std::string zTitle="z");
-        void writeProps2xyz(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<SWEOS::PROP_H2ONaCl> props, std::string fname, std::string xTitle="x", std::string yTitle="y", std::string zTitle="z", string delimiter=" ");
+        void writeProps2VTK(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, std::string fname, bool isWritePy=true, std::string xTitle="x", std::string yTitle="y", std::string zTitle="z");
+        void writeProps2xyz(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, std::string fname, std::string xTitle="x", std::string yTitle="y", std::string zTitle="z", string delimiter=" ");
         friend ostream & operator<<(ostream & out,  cH2ONaCl & A);
         void setColorPrint(bool colorPrint){m_colorPrint=colorPrint;}
         string checkTemperatureRange(double temperature_C);
@@ -187,52 +104,7 @@ namespace SWEOS
          * @return string 
          */
         string CheckRanges_H_X(double HMIN0, double HMAX0, double Xrange[2], double P0);
-        /**
-         * @brief Melting curve of NaCl. 
-         * Equation (1) of reference \cite Driesner2007Part1. 
-         * 
-         * \f$ T_{hm} = T_{triple, NaCl} + a(P - P_{triple, NaCl}), a=2.47260\times 10^{-2} \f$
-         * @param p Pressure, [Pa]
-         * @return double Melting temperature, [\f$ ^{\circ}C\f$]
-         * 
-         * \image html Driesner_Heinrich_Fig3.png "Halite melting curve." width=25%.
-         * Halite melting curve, figure 3 of reference \cite Driesner2007Part1. 
-         * 
-         * \image html HaliteMeltingCurve.svg "Halite melting curve calculated by swEOS." width=25%. 
-         */
-        inline double T_HaliteMelting(double P){ return T_Triple_NaCl + 2.4726e-2*(P - P_Triple_NaCl);}; 
-        /**
-         * @brief Halite vapor pressure as a function of temperature T, called halite sublimation curve as well.
-         * Equation (2) of reference \cite Driesner2007Part1. 
-         * 
-         * \f$ log_{10}(P_{NaCl, halite}) = log_{10}(P_{triple, NaCl}) + b_{subl}\left( \frac{1}{T_{triple, NaCl} + 273.15} - \frac{1}{T + 273.15} \right) , b_{subl} = 1.18061\times 10^4 \f$
-         * 
-         * @param P Temperature, [\f$ ^{\circ}C\f$]
-         * @return double Sublimation pressure of NaCl, [bar]
-         * 
-         * \image html Driesner_Heinrich_Fig4.png "Vapor pressure curves (sublimation and boiling curves) of NaCl." width=25%.
-         * Vapor pressure curves (sublimation and boiling curves) of NaCl, figure 4 of reference \cite Driesner2007Part1. 
-         * 
-         * \image html HaliteSublimationBoilingCurves.svg "Vapor pressure curves (sublimation and boiling curves) of NaCl." width=25%. 
-         * see also #P_HaliteBoiling
-         */
-        inline double P_HaliteSublimation(double T){return pow(10, (log10(P_Triple_NaCl) + 11806.1 * (1.0 / (T_Triple_NaCl + 273.15) - 1.0 / (T + 273.15))));};
-        /**
-         * @brief T-P relations of boling curve of NaCl.
-         * Equation (3) of reference \cite Driesner2007Part1. 
-         * 
-         * \f$ log_{10}(P_{NaCl, liquid}) = log_{10}(P_{triple, liquid}) + b_{boil}\left( \frac{1}{T_{triple, NaCl} + 273.15} - \frac{1}{T + 273.15} \right) , b_{boil} = 0.941812\times 10^4 \f$
-         * 
-         * @param T Temperature, [\f$ ^{\circ}C\f$]
-         * @return double Sublimation pressure of NaCl, [bar]
-         * 
-         * \image html Driesner_Heinrich_Fig4.png "Vapor pressure curves (sublimation and boiling curves) of NaCl." width=25%.
-         * Vapor pressure curves (sublimation and boiling curves) of NaCl, figure 4 of reference \cite Driesner2007Part1. 
-         * 
-         * \image html HaliteSublimationBoilingCurves.svg "Vapor pressure curves (sublimation and boiling curves) of NaCl." width=25%.
-         * see also #P_HaliteSublimation 
-         */
-        inline double P_HaliteBoiling(double T){return pow(10, (log10(P_Triple_NaCl) + 9418.12 * (1.0 / (T_Triple_NaCl + 273.15) - 1.0 / (T + 273.15))));};
+
         /**
          * @brief Critical curve of NaCl-H2O system. It can be evaluated into three segments, see equation (5) - (7) of reference \cite Driesner2007Part1. 
          * 
@@ -283,14 +155,23 @@ namespace SWEOS
          */
         double X_VaporLiquidCoexistSurface_VaporBranch(double T, double P);
         /**
+         * @brief Extrapolated molar volume outside range of correlation. See equation (17) of reference \cite Driesner2007Part1.
+         * 
+         * @param T T Temperature [\f$ ^{\circ}C \f$]
+         * @param P P Pressure [bar]
+         * @param X Salinity [Mole fraction of NaCl]
+         * @return double \f$ V_{extrapol} \f$ [\f$cm^3\ mol^{-1} \f$] 
+         */
+        double V_exrrapol(double T, double P, double X);
+        /**
          * @brief Temperature-pressure relations on boiling curve of water. See equation (2.5) of reference \cite wagner2002iapws.
          * 
          * @param T Temperature [\f$ ^{\circ}C \f$]
          * @return double Pressure [bar]
          */
-        double P_WaterBoiling(double T);
+        // double P_WaterBoiling(double T);
     private:
-        inline double Xwt2Xmol(double X){return (X/M_NaCl)/(X/M_NaCl+(1-X)/M_H2O);};
+        inline double Xwt2Xmol(double X){return (X/NaCl::MolarMass)/(X/NaCl::MolarMass+(1-X)/H2O::MolarMass);};
         void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);
         MP_STRUCT bb(double T);
         ID_STRUCT ideal(double T);

@@ -3,7 +3,7 @@
 using namespace std;
 
 #include"H2ONaCl.H"
-using namespace SWEOS;
+using namespace H2ONaCl;
 
 void PhaseRegion_PTX(double P, double T, double X);
 void Prop_PHX(double P, double T_K, double Xwt);

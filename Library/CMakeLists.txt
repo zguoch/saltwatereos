@@ -32,11 +32,16 @@ else (USE_FreeSteam)
 endif()
 
 
+# target_include_directories(water PUBLIC include)
 
 # install path 
 INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/include )
 FILE(GLOB SC_FILES "${PROJECT_SOURCE_DIR}/src/PROST/*.c" "${PROJECT_SOURCE_DIR}/src/PROST/*.h" "${PROJECT_SOURCE_DIR}/src/*.H" "${PROJECT_SOURCE_DIR}/src/*.C")
 add_library (eosH2ONaCl ${SC_FILES})
+add_library(water STATIC src/H2O.C)
+add_library(Fluid STATIC src/Fluid.C)
+add_library(NaCl STATIC src/NaCl.C)
+target_link_libraries(eosH2ONaCl water Fluid NaCl)
 install (TARGETS eosH2ONaCl DESTINATION ${PROJECT_SOURCE_DIR}/lib)
 
 

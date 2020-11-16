@@ -97,7 +97,13 @@
         "ranges": "cpp",
         "stop_token": "cpp",
         "cfenv": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "fluidEOS.C": "cpp",
+        "water.C": "cpp",
+        "Fluid.C": "cpp",
+        "H2O.C": "cpp",
+        "NaClH2O.C": "cpp",
+        "NaCl.C": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

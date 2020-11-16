@@ -18,17 +18,17 @@ void test_Salinity_VaporLiquidCoexist_LiquidBranch();
 
 int main( int argc, char** argv )
 {
-  // test_CriticalPressure_Composition();
-  // test_SublimationBoiling();
-  // test_HaliteMelting();
-  // test_HaliteLiquidus();
-  // test_HaliteSaturatedVaporComposition(); 
-  // test_P_VLH();
-  // test_Salinity_VaporLiquidCoexist_LiquidBranch();
+  test_CriticalPressure_Composition();
+  test_SublimationBoiling();
+  test_HaliteMelting();
+  test_HaliteLiquidus();
+  test_HaliteSaturatedVaporComposition(); 
+  test_P_VLH();
+  test_Salinity_VaporLiquidCoexist_LiquidBranch();
 }
 void test_P_VLH()
 {
-  SWEOS::cH2ONaCl eos;
+  H2ONaCl::cH2ONaCl eos;
   // full range
   {
     string filename="P_VLH_fullrange.dat";
@@ -66,7 +66,7 @@ void test_P_VLH()
 
 void test_HaliteMelting()
 {
-  SWEOS::cH2ONaCl eos;
+  H2ONaCl::cH2ONaCl eos;
   string filename="HaliteMeltingCurve.dat";
   ofstream fout(filename);
   if(!fout)
@@ -75,7 +75,7 @@ void test_HaliteMelting()
   }
   for (double P = 0; P <= 5000; P=P+50)
   {
-    double T_hm = eos.T_HaliteMelting(P);
+    double T_hm = eos.m_salt.T_Melting(P);
     fout<<T_hm<<" "<<P<<endl;
   }
   fout.close();
@@ -83,7 +83,7 @@ void test_HaliteMelting()
 }
 void test_CriticalPressure_Composition()
 {
-  SWEOS::cH2ONaCl eos;
+  H2ONaCl::cH2ONaCl eos;
   // full range
   {
     string filename="HaliteCritical_P_X_fullrange.dat";
@@ -92,7 +92,7 @@ void test_CriticalPressure_Composition()
     {
       cout<<"Open file failed: "<<filename<<endl;
     }
-    for (double T = SWEOS::T_Critic_H2O; T <= 1000; T=T+10)
+    for (double T = H2O::T_Critic; T <= 1000; T=T+10)
     {
       double P,X;
       eos.P_X_Critical(T,P,X);
@@ -109,7 +109,7 @@ void test_CriticalPressure_Composition()
     {
       cout<<"Open file failed: "<<filename<<endl;
     }
-    for (double T = SWEOS::T_Critic_H2O; T <= 460; T=T+10)
+    for (double T = H2O::T_Critic; T <= 460; T=T+10)
     {
       double P,X;
       eos.P_X_Critical(T,P,X);
@@ -121,15 +121,15 @@ void test_CriticalPressure_Composition()
 
 void test_SublimationBoiling()
 {
-  SWEOS::cH2ONaCl eos;
+  H2ONaCl::cH2ONaCl eos;
   string filename="HaliteSublimationBoilingCurve.dat";
   ofstream fout(filename);
   if(!fout)cout<<"Open file failed: "<<filename<<endl;
   
   for (double T = 300; T <= 1100; T=T+10)
   {
-    double P_subl = eos.P_HaliteSublimation(T);
-    double P_boil = eos.P_HaliteBoiling(T);
+    double P_subl = eos.m_salt.P_Sublimation(T);
+    double P_boil = eos.m_salt.P_Boiling(T);
     fout<<T<<" "<<P_subl<<" "<<P_boil<<endl;
   }
   fout.close();
@@ -138,7 +138,7 @@ void test_SublimationBoiling()
 void test_HaliteLiquidus()
 {
   std::cout<<"Test halite liquids start"<<endl;
-  SWEOS::cH2ONaCl eos;
+  H2ONaCl::cH2ONaCl eos;
   vector<double> arryP={500, 2000, 4000}; //bar
   for (size_t i = 0; i < arryP.size(); i++)
   {
@@ -179,7 +179,7 @@ void test_HaliteLiquidus()
 void test_HaliteSaturatedVaporComposition()
 {
   std::cout<<"Test halite satureated vapor composition start"<<endl;
-  SWEOS::cH2ONaCl eos;
+  H2ONaCl::cH2ONaCl eos;
   vector<double> arryP={1, 10, 50, 100, 200,300}; //bar
   for (size_t i = 0; i < arryP.size(); i++)
   {
@@ -247,7 +247,7 @@ void test_HaliteSaturatedVaporComposition()
 void test_Salinity_VaporLiquidCoexist_LiquidBranch()
 {
   std::cout<<"Test composition on liquid branch of vapor liquid coexist surface start"<<endl;
-  SWEOS::cH2ONaCl eos;
+  H2ONaCl::cH2ONaCl eos;
   vector<double> arryT={200, 300, 350, 375.5, 380, 400, 500, 600, 800, 1000}; //deg.C
   vector<double> arryPmin={9, 40, 70, 80, 100, 100, 200, 100, 0, 0};
   vector<double> arryPmax={16, 90, 170, 220, 220.4, 270, 560, 900, 1500, 2100};

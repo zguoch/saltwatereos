@@ -379,13 +379,13 @@ def main(argv):
     # usage(argv)
     # exit(0)
 
-    # plot_HaliteMelting()
-    # plot_SublimationBoiling()
-    # plot_CriticalPressure_Salinity()
-    # plot_HaliteLiquidus()
-    # plot_HaliteSaturatedVaporComposition()
-    # plot_P_VLH()
-    # plot_X_VL()
+    plot_HaliteMelting()
+    plot_SublimationBoiling()
+    plot_CriticalPressure_Salinity()
+    plot_HaliteLiquidus()
+    plot_HaliteSaturatedVaporComposition()
+    plot_P_VLH()
+    plot_X_VL()
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
