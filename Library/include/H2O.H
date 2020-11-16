@@ -15,9 +15,11 @@ namespace H2O
     double const T_Critic = 373.946; /**< Temperature at critical point of H2O, [\f$^{\circ}C \f$]. IAPWS-95 */ 
     double const MolarMass = 0.018015; /**< molar mass of water  [kg/mol] */
     // =======================================================================================================
-    
+
     /**
-     * @brief Water EOS and properties function.
+     * @brief Water EOS and properties implementation. 
+     * 
+     * This implementation is based on public libraries, e.g. <a href="http://freesteam.sourceforge.net">Freesteam 2.0</a>,  <a href="http://fluidos.etsii.upm.es/faculty/Jaime_Carpio/Fumatas_negas/PROST%20Properties%20of%20Water%20and%20Steam.htm">PROST</a>, and published references \cite huber2009new, \cite wagner2002iapws, \cite Klyukin2020. 
      * 
      */
     class cH2O : public Fluid::cFluid

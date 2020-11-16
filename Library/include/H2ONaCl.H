@@ -33,7 +33,9 @@ namespace H2ONaCl
     // ===========================================================================
 
     /**
-     * @brief Class of thermal model of seawater (H2O-NaCl system)
+     * @brief EOS and thermodynamic properties of \f$H_2O-NaCl\f$ system. 
+     * 
+     * This implementation is based published references \cite Driesner2007Part1, \cite Driesner2007Part2 and \cite Klyukin2020. 
      * 
      */
     class cH2ONaCl

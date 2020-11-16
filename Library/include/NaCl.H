@@ -17,7 +17,9 @@ namespace NaCl
     // =======================================================================
 
     /**
-     * @brief Water EOS and properties function.
+     * @brief NaCl EOS and properties implementation. 
+     * 
+     * This implementation is based published references \cite Driesner2007Part1, \cite Driesner2007Part2 and \cite Klyukin2020. 
      * 
      */
     class cNaCl : public Fluid::cFluid

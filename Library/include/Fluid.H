@@ -20,7 +20,9 @@ namespace Fluid
 {
     
     /**
-     * @brief Base c++ class of fluid Equation of State.
+     * @brief Base C++ class of fluid Equation of State. 
+     * 
+     * EOS and properties functions are designed as pure virtual functions and then implemented in the specific specie classes, e.g. H2O::cH2O, NaCl::cNaCl, H2ONaCl::cH2ONaCl. While some commonly used functions are defined and implemented in the base class directly. 
      * 
      */
     class cFluid
