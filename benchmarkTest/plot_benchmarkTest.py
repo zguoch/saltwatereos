@@ -233,13 +233,20 @@ def plot_HaliteSaturatedVaporComposition(fname0='X_HaliteSaturatedVapor',fmt='sv
     fig,axs=plt.subplots(1,2,figsize=(w_singleFig*2,5))
     ax=axs[1]
     # Fig 8b
-    P=[10, 50, 100, 200,300] # bar
+    P=[1, 10, 50, 100, 200,300] # bar
     for p in P:
         fname=str('%s/%s_P%.0fbar.dat'%(datapath,fname0,p))
         data=np.loadtxt(fname)
         T=data[:,0]
         X=data[:,1]
         ax.semilogx(X,T,label='%.0f bar'%(p))
+    # plot X_VLH
+    fname=str('%s/X_VLH.dat'%(datapath))
+    data=np.loadtxt(fname)
+    T=data[:,0]
+    X=data[:,1]
+    ax.semilogx(X,T,label='V+L+H')
+    
     ax.set_xlim(1E-12, 1)
     ax.set_ylim(100, 850)
     ax.xaxis.set_major_locator(mpl.ticker.LogLocator(base=10.0, subs=(1.0,),numticks=20))
@@ -250,9 +257,9 @@ def plot_HaliteSaturatedVaporComposition(fname0='X_HaliteSaturatedVapor',fmt='sv
     ax.grid(which='minor',color='lightgray',lw=0.03)
     ax.set_xlabel('log$_{\mathregular{10}}$(X$_{\mathregular{NaCl}}$) [Mole fraction of NaCl]')
     ax.set_ylabel('T [$^{\circ}$C]')
-    ax.legend(loc='lower right')
+    ax.legend(loc='lower right',ncol=2)
     ax.text(0.02,0.98,'(b)',transform=ax.transAxes,va='top',ha='left',fontweight='bold')
-    # Fig 7b
+    # Fig 8a
     ax=axs[0]
     arryT=[450, 500, 550] # degC
     linestyles=['solid','dashed','dotted']
@@ -281,6 +288,92 @@ def plot_HaliteSaturatedVaporComposition(fname0='X_HaliteSaturatedVapor',fmt='sv
     
     figname=str('%s/%s.%s'%(figpath,'HaliteSaturatedVaporComposition',fmt))
     plt.savefig(figname, bbox_inches='tight')
+def plot_P_VLH(fname0='P_VLH',fmt='svg'):
+    fig,axs=plt.subplots(1,2,figsize=(w_singleFig*2,5),gridspec_kw={'wspace':0.05})
+    # full range 
+    data=np.loadtxt('%s/%s_fullrange.dat'%(datapath,fname0))
+    T=data[:,0]
+    P=data[:,1]
+    # Pressure
+    ax=axs[0]
+    ax.plot(T,P)
+    ax.set_ylim(0,400)
+    ax.set_ylabel('P [bar]')
+    ax.yaxis.set_major_locator(MultipleLocator(100))
+    ax.yaxis.set_minor_locator(MultipleLocator(20))
+    ax.text(0.02,0.98,'(a)',va='top',ha='left',fontweight='bold',transform=ax.transAxes)
+    ax.set_xlim(T.min(),T.max())
+    ax.xaxis.set_major_locator(MultipleLocator(100))
+    ax.xaxis.set_minor_locator(MultipleLocator(20))
+
+    # low temperature
+    data=np.loadtxt('%s/%s_lowT.dat'%(datapath,fname0))
+    T=data[:,0]
+    P=data[:,1]
+    ax=axs[1]
+    ax.semilogy(T,P)
+    ax.set_ylim(1E-2, 1E2)
+    ax.set_ylabel('log$_{\mathregular{10}}$(P [bar])')
+    ax.yaxis.set_major_locator(mpl.ticker.LogLocator(base=10.0, subs=(1.0,),numticks=20))
+    ax.yaxis.set_minor_locator(mpl.ticker.LogLocator(base=10.0, subs=(0.1, 0.2,0.3, 0.4,0.5, 0.6,0.7, 0.8, 0.9),numticks=20))
+    ax.text(0.02,0.98,'(b)',va='top',ha='left',fontweight='bold',transform=ax.transAxes)
+    ax.set_xlim(T.min(),T.max())
+    ax.xaxis.set_major_locator(MultipleLocator(100))
+    ax.xaxis.set_minor_locator(MultipleLocator(20))
+
+    axs[1].yaxis.set_ticks_position('right')
+    axs[1].yaxis.set_label_position('right')
+    for i in range(0,2):
+        axs[i].set_xlabel('T [$^{\circ}$C]')
+        axs[i].grid(which='major',color='gray',lw=0.03)
+        axs[i].grid(which='minor',color='lightgray',lw=0.03)
+
+    figname=str('%s/%s.%s'%(figpath,'Pressure_VLH',fmt))
+    plt.savefig(figname, bbox_inches='tight')
+def plot_X_VL(fname0='X_VL',fmt='svg'):
+    rows,cols=4,3
+    fig,axs=plt.subplots(rows,cols,figsize=(w_singleFig*cols,4*rows),gridspec_kw={'wspace':0.15,'hspace':0.2})
+    # Fig 12
+    arryT=np.array([200, 300, 350, 375, 380, 400, 500, 600, 800, 1000]) # degC, 375 is 375.5
+    label_subfig=['a','b','c','d','e','f','g','h','i','j','k','l']
+    xmin_axes=np.array([-12, -8, -7, -5, -5, -5, -4, -4, -5, -4])
+    major_locator_y=[1, 10, 20, 20, 20, 50, 100, 100, 500, 500]
+    linestyles=['solid','dashed','dotted']
+    for i in range(0,rows):
+        for j in range(0,cols):
+            ax=axs[i][j]
+            index = j+i*cols
+            if(index>(len(arryT)-1)):
+                ax.axis('off')
+                continue
+            T=arryT[index]
+            fname=str('%s/%s_LiquidBranch_T%.0fC.dat'%(datapath,fname0,T))
+            fname_vaporBranch=str('%s/%s_VaporBranch_T%.0fC.dat'%(datapath,fname0,T))
+            data=np.loadtxt(fname)
+            data_vaporBranch=np.loadtxt(fname_vaporBranch)
+            P=data[:,0]
+            X=data[:,1]
+            P_vaporBranch=data_vaporBranch[:,0]
+            X_vaporBranch=data_vaporBranch[:,1]
+            l_l,=ax.semilogx(X,P,label='Liquid branch')
+            l_v,=ax.semilogx(X_vaporBranch,P_vaporBranch,label='Vapor branch')
+            ax.set_xlim(10.0**xmin_axes[index], 1)
+            ax.xaxis.set_major_locator(mpl.ticker.LogLocator(base=10.0, subs=(1.0,),numticks=20))
+            ax.xaxis.set_minor_locator(mpl.ticker.LogLocator(base=10.0, subs=(0.1, 0.2,0.3, 0.4,0.5, 0.6,0.7, 0.8, 0.9),numticks=20))
+            ax.yaxis.set_major_locator(MultipleLocator(major_locator_y[index]))
+            ax.yaxis.set_minor_locator(MultipleLocator(major_locator_y[index]/5.0))
+            ax.grid(which='major',color='gray',lw=0.03)
+            ax.grid(which='minor',color='lightgray',lw=0.03)
+            ax.set_xlabel('log$_{\mathregular{10}}$(X$_{\mathregular{NaCl}}$) [Mole fraction of NaCl]')
+            ax.set_ylabel('P [bar]')
+            ax.text(0.02,0.98,'(%s)'%label_subfig[index],transform=ax.transAxes,va='top',ha='left',fontweight='bold')
+            str_T='%.0f $^{\circ}$C'%arryT[index]
+            if(arryT[index]==375):
+                str_T = '375.5 $^{\circ}$C'
+            ax.text(0.5,0.2,str_T,transform=ax.transAxes,va='bottom',ha='center', fontsize=12,fontweight='bold')
+            ax.legend(loc='lower left')
+    figname=str('%s/%s.%s'%(figpath,'X_VaporLiquidCoexistSurface',fmt))
+    plt.savefig(figname, bbox_inches='tight')
 def main(argv):
     # argc=len(argv)
     # usage(argv)
@@ -290,7 +383,9 @@ def main(argv):
     # plot_SublimationBoiling()
     # plot_CriticalPressure_Salinity()
     # plot_HaliteLiquidus()
-    plot_HaliteSaturatedVaporComposition()
+    # plot_HaliteSaturatedVaporComposition()
+    # plot_P_VLH()
+    # plot_X_VL()
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

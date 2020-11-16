@@ -195,7 +195,10 @@ namespace SWEOS
          * @param p Pressure, [Pa]
          * @return double Melting temperature, [\f$ ^{\circ}C\f$]
          * 
-         * \image html HaliteMeltingCurve.svg "Halite melting curve." width=25%. 
+         * \image html Driesner_Heinrich_Fig3.png "Halite melting curve." width=25%.
+         * Halite melting curve, figure 3 of reference \cite Driesner2007Part1. 
+         * 
+         * \image html HaliteMeltingCurve.svg "Halite melting curve calculated by swEOS." width=25%. 
          */
         inline double T_HaliteMelting(double P){ return T_Triple_NaCl + 2.4726e-2*(P - P_Triple_NaCl);}; 
         /**
@@ -207,7 +210,11 @@ namespace SWEOS
          * @param P Temperature, [\f$ ^{\circ}C\f$]
          * @return double Sublimation pressure of NaCl, [bar]
          * 
+         * \image html Driesner_Heinrich_Fig4.png "Vapor pressure curves (sublimation and boiling curves) of NaCl." width=25%.
+         * Vapor pressure curves (sublimation and boiling curves) of NaCl, figure 4 of reference \cite Driesner2007Part1. 
+         * 
          * \image html HaliteSublimationBoilingCurves.svg "Vapor pressure curves (sublimation and boiling curves) of NaCl." width=25%. 
+         * see also #P_HaliteBoiling
          */
         inline double P_HaliteSublimation(double T){return pow(10, (log10(P_Triple_NaCl) + 11806.1 * (1.0 / (T_Triple_NaCl + 273.15) - 1.0 / (T + 273.15))));};
         /**
@@ -219,7 +226,11 @@ namespace SWEOS
          * @param T Temperature, [\f$ ^{\circ}C\f$]
          * @return double Sublimation pressure of NaCl, [bar]
          * 
-         * \image html HaliteSublimationBoilingCurves.svg "Vapor pressure curves (sublimation and boiling curves) of NaCl." width=25%. 
+         * \image html Driesner_Heinrich_Fig4.png "Vapor pressure curves (sublimation and boiling curves) of NaCl." width=25%.
+         * Vapor pressure curves (sublimation and boiling curves) of NaCl, figure 4 of reference \cite Driesner2007Part1. 
+         * 
+         * \image html HaliteSublimationBoilingCurves.svg "Vapor pressure curves (sublimation and boiling curves) of NaCl." width=25%.
+         * see also #P_HaliteSublimation 
          */
         inline double P_HaliteBoiling(double T){return pow(10, (log10(P_Triple_NaCl) + 9418.12 * (1.0 / (T_Triple_NaCl + 273.15) - 1.0 / (T + 273.15))));};
         /**
@@ -248,6 +259,36 @@ namespace SWEOS
          * @return double Salinity [Mole fraction of NaCl]
          */
         double X_VaporHaliteCoexist(double T, double P);
+        /**
+         * @brief Temperature-pressure relations when vapor-liquid-halite coexist. See equation (10) and Table 6 of reference \cite Driesner2007Part1.
+         * 
+         * @param T Temperature [\f$ ^{\circ}C \f$]
+         * @return double Pressure [bar]
+         */
+        double P_VaporLiquidHaliteCoexist(double T);
+        /**
+         * @brief Salinity on liquid branch of Vapor + Liquid coexist surface. See equation (11) and Table 7 of reference \cite Driesner2007Part1.
+         * 
+         * @param T Temperature [\f$ ^{\circ}C \f$]
+         * @param P Pressure [bar]
+         * @return double Salinity [Mole fraction of NaCl]
+         */
+        double X_VaporLiquidCoexistSurface_LiquidBranch(double T, double P);
+        /**
+         * @brief Salinity on vapor branch of Vapor + Liquid coexist surface. See equation (13-17) and Table 8 of reference \cite Driesner2007Part1.
+         * 
+         * @param T Temperature [\f$ ^{\circ}C \f$]
+         * @param P Pressure [bar]
+         * @return double Salinity [Mole fraction of NaCl]
+         */
+        double X_VaporLiquidCoexistSurface_VaporBranch(double T, double P);
+        /**
+         * @brief Temperature-pressure relations on boiling curve of water. See equation (2.5) of reference \cite wagner2002iapws.
+         * 
+         * @param T Temperature [\f$ ^{\circ}C \f$]
+         * @return double Pressure [bar]
+         */
+        double P_WaterBoiling(double T);
     private:
         inline double Xwt2Xmol(double X){return (X/M_NaCl)/(X/M_NaCl+(1-X)/M_H2O);};
         void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);

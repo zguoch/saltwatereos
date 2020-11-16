@@ -2803,6 +2803,11 @@ namespace SWEOS
      *      \end{matrix}\right.
      * \f}
      * 
+     * \image html Driesner_Heinrich_Fig5.png "Critical pressure." width=50%.
+     * Critical pressure, figure 5 of reference \cite Driesner2007Part1. 
+     * \image html Driesner_Heinrich_Fig6.png "Critical composition." width=50%.
+     * Critical composition, figure 6 of reference \cite Driesner2007Part1. 
+     * 
      * \image html HaliteCriticalCurves.svg "Critical pressure (a,b) and composition (c,d) as function of temperature. (a,c) Full range, (b,d) the region just above the critical temperature of water." width=50%. 
      */
     void cH2ONaCl::P_X_Critical(double T, double& P_crit, double& X_crit)
@@ -2959,6 +2964,12 @@ namespace SWEOS
         double P_crit = 0, X_crit=0;
         P_X_Critical(T,P_crit, X_crit); //calculate critic pressure
         double P_normalized = (P - P_NaCl) / (P_crit - P_NaCl); // eq. 16
+        // DEBUG
+        if(P_normalized>1)
+        {
+            // cout<<WARN_COUT<<"Normalized pressure greater than 1: "<<P_normalized<<", set it to 1"<<endl;
+            P_normalized = 1;
+        }
         double one_minus_P_normalized = 1 - P_normalized; //used in eq. 17
         // eq. 17
         double log10_K_overline = 1 + j[0]*pow(one_minus_P_normalized, j[1]) 
@@ -2973,5 +2984,151 @@ namespace SWEOS
         double X_V = X_L/pow(10, log10_XLbyXV); //eq. 14
 
         return X_V;
+    }
+    /**
+     * \f{equation}
+     * P_{VLH} = \sum\limits_{i=0}^{10}f_i\left( \frac{T}{T_{triple, NaCl}} \right)
+     * \f}
+     * where \f$ f_i (i=0,...,10) \f$ are computed from Table 6 of ref. \cite Driesner2007Part1, \f$ T_{triple, NaCl} \f$ is the temperature at triple point of NaCl, which is defined as #T_Triple_NaCl.
+     * 
+     * \image html Driesner_Heinrich_Fig9.png "Pressure at vapor + liquid + halite coexistence." width=50%. 
+     * Pressure at vapor + liquid + halite coexistence. (a) Full range, (b) low temperatures, logarithmic pressure scale. (Figure 9 of reference \cite Driesner2007Part1)
+     * 
+     * \image html Pressure_VLH.svg "Pressure at vapor + liquid + halite coexistence calculated using swEOS." width=50%. 
+     * Pressure at vapor + liquid + halite coexistence calculated using #SWEOS -> #cH2ONaCl ->#P_VaporLiquidHaliteCoexist. 
+     */
+    double cH2ONaCl::P_VaporLiquidHaliteCoexist(double T)
+    {
+        // Table 6 of Driesner and Heinrich(2007)
+        double f[11] = {0.00464, 5E-07, 16.9078, -269.148, 7632.04, -49563.6, 233119.0, -513556.0, 549708.0, -284628.0, P_Triple_NaCl};
+        double P_VLH = 0;
+        for (size_t i = 0; i < 10; i++) //calculate P_VLH (eq. 10) and f[10] simultaneously
+        {
+            f[10] -= f[i];
+            P_VLH += f[i]*pow(T/T_Triple_NaCl, i);
+        }
+        P_VLH += f[10]*pow(T/T_Triple_NaCl, 10);
+        
+        return P_VLH;
+    }
+    /**
+     * \f{equation}
+     * X_{NaCl}^{VL, liq} = X_{crit} + g_0 \sqrt{P_{crit} - P} + g_1 (P_{crit} - P) +g_2(P_{crit} - P)^2
+     * \f}
+     * where \f$ g_1, g_2\f$ can be found in Table 7 of ref. \cite Driesner2007Part1, \f$ P_{crit}\f$ and \f$ X_{crit}\f$ are calculated from #P_X_Critical.
+     * 
+     * \image html X_VaporLiquidCoexistSurface.svg "Isothermal sections of the V + L surface calculated using swEOS." width=100%. 
+     * Isothermal sections of the V + L surface calculated using #SWEOS -> #cH2ONaCl ->#X_VaporLiquidCoexistSurface_LiquidBranch for liquid branch and #X_VaporLiquidCoexistSurface_VaporBranch for vapor branch. See also Fig. 12 of ref. \cite Driesner2007Part1.
+     * 
+     */
+    double cH2ONaCl::X_VaporLiquidCoexistSurface_LiquidBranch(double T, double P)
+    {
+        // Table 7 of Driesner and Heinrich(2007)
+        double h[11]={0.00168486, 0.000219379, 438.58, 18.4508, -5.6765E-10, 6.73704E-06, 
+                      1.44951E-07, 384.904, 7.07477, 6.06896E-05, 0.00762859};
+        double g0 = 0;
+        double g1 = h[1] + (h[0] - h[1]) / (1 + exp((T - h[2]) / h[3])) + h[4] * T*T;
+        double g2 = h[6] + (h[5] - h[6]) / (1 + exp((T - h[7]) / h[8])) + h[9] * exp(-h[10] * T);
+        double X_crit = 0, P_crit = 0;
+        P_X_Critical(T, P_crit, X_crit);
+        // TODO: add comment of g0 calculation formula
+        double P_tmp=0, P_tmp2, X_tmp=0;
+        if(T<T_Triple_NaCl)
+        {
+            P_tmp = P_VaporLiquidHaliteCoexist(T);
+            X_tmp = X_HaliteLiquidus(T, P_tmp);
+        }else
+        {
+            P_tmp = P_HaliteBoiling(T);
+            X_tmp = 1;
+        }
+        double X_VL_LiquidBranch = 0;
+        // eq. 11
+        if(T<T_Critic_H2O)
+        {
+            P_tmp2 = P_WaterBoiling(T);
+            g0 = (X_tmp + g1 * (P_tmp - P_tmp2) + g2 * (pow(P_crit - P_tmp2, 2.0) - pow(P_crit - P_tmp, 2.0))) / (sqrt(P_crit - P_tmp) - sqrt(P_crit - P_tmp2));
+            X_VL_LiquidBranch = g0 * sqrt(P_crit - P) - g0 * sqrt(P_crit - P_tmp2) - g1 * (P_crit - P_tmp2) - g2 * pow(P_crit - P_tmp2, 2.0) + g1 * (P_crit - P) + g2 * pow(P_crit - P, 2.0);
+        }else
+        {
+            g0 = (X_tmp - X_crit - g1 * (P_crit - P_tmp) - g2 * pow(P_crit - P_tmp, 2.0)) / sqrt(P_crit - P_tmp);
+            X_VL_LiquidBranch = X_crit + g0 * sqrt(P_crit - P) + g1 * (P_crit - P) + g2 * pow(P_crit - P, 2.0);
+        }
+
+        return X_VL_LiquidBranch;
+    }
+    /**
+     * See also #X_VaporLiquidCoexistSurface_LiquidBranch and #X_VaporHaliteCoexist
+     */
+    double cH2ONaCl::X_VaporLiquidCoexistSurface_VaporBranch(double T, double P)
+    {
+        // Table 8 of Driesner and Heinrich(2007)
+        double k[16] = {-0.235694, -0.188838, 0.004, 0.0552466, 0.66918, 396.848, 45, -3.2719E-07, 
+                        141.699, -0.292631, -0.00139991, 1.95965E-06, -7.3653E-10, 0.904411, 0.000769766, -1.18658E-06};
+        double j[4]={0,0,0,0};
+        j[0] = k[0] + k[1] * exp(-k[2] * T);
+        j[1] = k[4] + (k[3] - k[4]) / (1 + exp((T - k[5]) / k[6])) + k[7] * pow(T + k[8], 2.0);
+        for (size_t i = 0; i < 4; i++)
+        {
+            j[2] += k[i+9]*pow(T,i);
+        }
+        for (size_t i = 0; i < 3; i++)
+        {
+            j[3] += k[i+13]*pow(T,i);
+        }
+        // cal
+        double P_NaCl=0;
+        if(T>T_Triple_NaCl)
+        {
+            P_NaCl = P_HaliteBoiling(T);
+        }else
+        {
+            P_NaCl = P_HaliteSublimation(T);
+        }
+        double X_VL_LiquidBranch = X_VaporLiquidCoexistSurface_LiquidBranch(T,P);
+        double P_crit = 0, X_crit=0;
+        P_X_Critical(T,P_crit, X_crit); //calculate critic pressure
+        double P_normalized = (P - P_NaCl) / (P_crit - P_NaCl); // eq. 16
+        // DEBUG
+        if(P_normalized>1)
+        {
+            // cout<<WARN_COUT<<"Normalized pressure greater than 1: "<<P_normalized<<", set it to 1"<<endl;
+            P_normalized = 1;
+        }
+        double one_minus_P_normalized = 1 - P_normalized; //used in eq. 17
+        // eq. 17
+        double log10_K_overline = 1 + j[0]*pow(one_minus_P_normalized, j[1]) 
+                                    + j[2]*one_minus_P_normalized 
+                                    + j[3]*pow(one_minus_P_normalized, 2)
+                                    - (1 + j[0] + j[2] + j[3])*pow(one_minus_P_normalized, 3);
+
+        double log10_XL_P_NaCl = log10(X_HaliteLiquidus(T, P_NaCl)); //used in eq. 15
+        
+        double log10_K_prim = log10_K_overline * (log10(P_NaCl/P_crit) - log10_XL_P_NaCl) + log10_XL_P_NaCl; //eq. 15
+
+        double X_VL_VaporBranch = X_VL_LiquidBranch/pow(10, log10_K_prim) * P_NaCl/P; //eq. 14
+        if(P<=P_VaporLiquidHaliteCoexist(T))
+        {
+            X_VL_VaporBranch = X_HaliteLiquidus(T,P)/X_VL_LiquidBranch * X_VL_VaporBranch;
+        }
+        return X_VL_VaporBranch;
+    }
+    /**
+     * \f{equation}
+     * ln\left( \frac{P_{boil}}{P_c} \right) = \frac{T_c + 273.15}{T + 273.15}(a_1\theta + a_2\theta^{1.5} + a_3\theta^{3} + a_4\theta^{3.5} + a_5\theta^{4} + a_6\theta^{7.5}), 
+     * \f} 
+     * where \f$ \theta = 1- T/T_c \f$, \f$ T_c\f$ and \f$ P_c\f$ are the critical temperature and pressure, respectively. They are defined as #T_Critic_H2O and #P_Critic_H2O respectively. Coefficients \f$ a_i (i=1, ..., 6) \f$ can be found in page 399 of reference \cite wagner2002iapws.
+     */
+    double cH2ONaCl::P_WaterBoiling(double T)
+    {
+        double T_K =T;
+        if(T_K==0)T_K=0.01;
+        T_K = T_K + Kelvin;
+        double T_inv = 1 - T_K / 647.096;
+        double a[6] = {-7.85951783, 1.84408259, -11.7866497, 22.6807411, -15.9618719, 1.80122502};
+        double P_boil = 0;
+
+        P_boil = exp((T_Critic_H2O + Kelvin) / T_K * (a[0] * T_inv + a[1] * pow(T_inv,1.5) + a[2] * pow(T_inv, 3.0) + a[3] * pow(T_inv, 3.5) + a[4] * pow(T_inv,4.0) + a[5] * pow(T_inv ,7.5))) * P_Critic_H2O;
+        return P_boil;
     }
 }
