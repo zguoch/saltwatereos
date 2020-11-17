@@ -23,7 +23,7 @@
         </tr>
         <tr>
             <td class="Gallery">\link H2ONaCl::cH2ONaCl::X_VaporLiquidCoexistSurface_LiquidBranch \image html X_VaporLiquidCoexistSurface.jpg "Isothermal sections of the V + L surface." width=300px. \endlink</td>
-            <td class="Gallery"> </td>
+            <td class="Gallery">\link H2ONaCl::cH2ONaCl::T_star_V \image html V_brine_T_P1000bar.jpg "Molar volume of brine." width=300px. \endlink</td>
             <td class="Gallery"> </td>
             <td class="Gallery"> </td>
         </tr>

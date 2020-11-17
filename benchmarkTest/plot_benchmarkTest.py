@@ -24,6 +24,10 @@ mpl.rcParams['font.family'] = 'Arial'  #default font family
 mpl.rcParams['mathtext.fontset'] = 'cm' #font for math
 from iapws import IAPWS95
 from iapws import _iapws
+
+fmt_figs = ['jpg','svg'] # jpg have to before svg !!!
+units={'rho':'kg/m$^\mathregular{3}$'}
+
 def usage(argv):
     basename = argv[0].split('/')
     basename = basename[len(basename)-1]
@@ -47,18 +51,17 @@ def XmolPercent2XwtPercent(molPercent):
     Tmp = molPercent / 100.0
     wtPercent = mNaCl * Tmp / (mNaCl * Tmp + (1 - Tmp) * mH2O) * 100
     return wtPercent
-def plot_HaliteLiquidus(fname0='X_HaliteLiquidus',fmt='svg'):
+def plot_HaliteLiquidus(fname0='X_HaliteLiquidus'):
     fig,axs=plt.subplots(1,2,figsize=(w_singleFig*2,5))
     ax=axs[0]
     # Fig 7a
-    P=[500, 2000, 4000] # bar
-    linestyles=['dotted','dashed','solid']
-    for p,ls in zip(P,linestyles):
+    P=[5, 500, 2000, 4000] # bar
+    for p in P:
         fname=str('%s/%s_P%.0fbar.dat'%(datapath,fname0,p))
         data=np.loadtxt(fname)
         T=data[:,0]
         X=data[:,1]
-        ax.plot(X,T,ls=ls,label='%.0f bar'%(p))
+        ax.plot(X,T,label='%.0f bar'%(p))
     ax.set_xlim(0,1)
     ax.set_ylim(0,1000)
     ax.xaxis.set_major_locator(MultipleLocator(0.2))
@@ -69,7 +72,7 @@ def plot_HaliteLiquidus(fname0='X_HaliteLiquidus',fmt='svg'):
     ax.grid(which='minor',color='lightgray',lw=0.03)
     ax.set_xlabel('X$_{\mathregular{NaCl}}$ [Mole fraction of NaCl]')
     ax.set_ylabel('T [$^{\circ}$C]')
-    ax.legend(loc='lower right')
+    ax.legend(loc='lower right',ncol=2)
     # wt% NaCl
     ax2=ax.twiny()
     ax2.set_xlim(ax.get_xlim())
@@ -84,13 +87,12 @@ def plot_HaliteLiquidus(fname0='X_HaliteLiquidus',fmt='svg'):
     # Fig 7b
     ax=axs[1]
     arryT=[25] # degC
-    linestyles=['solid','dashed','dotted']
-    for T,ls in zip(arryT,linestyles):
+    for T in arryT:
         fname=str('%s/%s_T%.0fC.dat'%(datapath,fname0,T))
         data=np.loadtxt(fname)
         P=data[:,0]
         X=data[:,1]
-        ax.plot(X,P,ls=ls,label='%.0f $^{\circ}$C'%(T))
+        ax.plot(X,P,label='%.0f $^{\circ}$C'%(T))
     ax.set_xlim(0.1,0.115)
     ax.set_ylim(0,5000)
     ax.xaxis.set_major_locator(MultipleLocator(0.005))
@@ -113,10 +115,10 @@ def plot_HaliteLiquidus(fname0='X_HaliteLiquidus',fmt='svg'):
         ticklabels_wt.append('%.1f'%(XmolPercent2XwtPercent(tick*100)))
     ax2.xaxis.set_ticklabels(ticklabels_wt)
     ax2.set_xlabel('X$_{\mathregular{NaCl}}$ [wt. % NaCl]')
-
-    figname=str('%s/%s.%s'%(figpath,'HaliteLiquidus',fmt))
-    plt.savefig(figname, bbox_inches='tight')
-def plot_HaliteMelting(fname0='HaliteMeltingCurve.dat',fmt='svg'):
+    for fmt in fmt_figs:
+        figname=str('%s/%s.%s'%(figpath,'HaliteLiquidus',fmt))
+        plt.savefig(figname, bbox_inches='tight')
+def plot_HaliteMelting(fname0='HaliteMeltingCurve.dat'):
     data=np.loadtxt('%s/%s'%(datapath,fname0))
     T=data[:,0]
     P=data[:,1]
@@ -133,10 +135,10 @@ def plot_HaliteMelting(fname0='HaliteMeltingCurve.dat',fmt='svg'):
     ax.grid(which='minor',color='lightgray',lw=0.03)
     ax.set_xlabel('T [$^{\circ}$C]')
     ax.set_ylabel('P [bar]')
-
-    figname=str('%s/%s.%s'%(figpath,'HaliteMeltingCurve',fmt))
-    plt.savefig(figname, bbox_inches='tight')
-def plot_SublimationBoiling(fname0='HaliteSublimationBoilingCurve.dat',fmt='svg'):
+    for fmt in fmt_figs:
+        figname=str('%s/%s.%s'%(figpath,'HaliteMeltingCurve',fmt))
+        plt.savefig(figname, bbox_inches='tight')
+def plot_SublimationBoiling(fname0='HaliteSublimationBoilingCurve.dat'):
     data=np.loadtxt('%s/%s'%(datapath,fname0))
     T=data[:,0]
     P_subl=data[:,1]
@@ -165,10 +167,10 @@ def plot_SublimationBoiling(fname0='HaliteSublimationBoilingCurve.dat',fmt='svg'
     ax.set_ylabel('P [bar]')
     ax.legend(loc='lower right')
     
-
-    figname=str('%s/%s.%s'%(figpath,'HaliteSublimationBoilingCurves',fmt))
-    plt.savefig(figname, bbox_inches='tight')
-def plot_CriticalPressure_Salinity(fname0='HaliteCritical_P_X',fmt='svg'):
+    for fmt in fmt_figs:
+        figname=str('%s/%s.%s'%(figpath,'HaliteSublimationBoilingCurves',fmt))
+        plt.savefig(figname, bbox_inches='tight')
+def plot_CriticalPressure_Salinity(fname0='HaliteCritical_P_X'):
     fig,axs=plt.subplots(2,2,figsize=(w_singleFig*2,8),sharex='col',gridspec_kw={'wspace':0.05,'hspace':0.05})
     # full range 
     data=np.loadtxt('%s/%s_fullrange.dat'%(datapath,fname0))
@@ -227,10 +229,10 @@ def plot_CriticalPressure_Salinity(fname0='HaliteCritical_P_X',fmt='svg'):
         for j in range(0,2):
             axs[i][j].grid(which='major',color='gray',lw=0.03)
             axs[i][j].grid(which='minor',color='lightgray',lw=0.03)
-
-    figname=str('%s/%s.%s'%(figpath,'HaliteCriticalCurves',fmt))
-    plt.savefig(figname, bbox_inches='tight')
-def plot_HaliteSaturatedVaporComposition(fname0='X_HaliteSaturatedVapor',fmt='svg'):
+    for fmt in fmt_figs:
+        figname=str('%s/%s.%s'%(figpath,'HaliteCriticalCurves',fmt))
+        plt.savefig(figname, bbox_inches='tight')
+def plot_HaliteSaturatedVaporComposition(fname0='X_HaliteSaturatedVapor'):
     fig,axs=plt.subplots(1,2,figsize=(w_singleFig*2,5))
     ax=axs[1]
     # Fig 8b
@@ -286,10 +288,10 @@ def plot_HaliteSaturatedVaporComposition(fname0='X_HaliteSaturatedVapor',fmt='sv
     ax.legend(handles=(l,l_Fig8),loc='center left',labels=['Original','Fig. 8 of Driesner & Heinrich(2007)\nX$_{\mathregular{NaCl}}$ is shifted 10 times to the left'])
     ax.vlines(2E-5,ymin=ax.get_ylim()[0], ymax=ax.get_ylim()[1],ls='dashed',color='gray')
     ax.text(0.02,0.98,'(a)',transform=ax.transAxes,va='top',ha='left',fontweight='bold')
-    
-    figname=str('%s/%s.%s'%(figpath,'HaliteSaturatedVaporComposition',fmt))
-    plt.savefig(figname, bbox_inches='tight')
-def plot_P_VLH(fname0='P_VLH',fmt='svg'):
+    for fmt in fmt_figs:
+        figname=str('%s/%s.%s'%(figpath,'HaliteSaturatedVaporComposition',fmt))
+        plt.savefig(figname, bbox_inches='tight')
+def plot_P_VLH(fname0='P_VLH'):
     fig,axs=plt.subplots(1,2,figsize=(w_singleFig*2,5),gridspec_kw={'wspace':0.05})
     # full range 
     data=np.loadtxt('%s/%s_fullrange.dat'%(datapath,fname0))
@@ -328,10 +330,10 @@ def plot_P_VLH(fname0='P_VLH',fmt='svg'):
         axs[i].set_xlabel('T [$^{\circ}$C]')
         axs[i].grid(which='major',color='gray',lw=0.03)
         axs[i].grid(which='minor',color='lightgray',lw=0.03)
-
-    figname=str('%s/%s.%s'%(figpath,'Pressure_VLH',fmt))
-    plt.savefig(figname, bbox_inches='tight')
-def plot_X_VL(fname0='X_VL',fmt='svg'):
+    for fmt in fmt_figs:
+        figname=str('%s/%s.%s'%(figpath,'Pressure_VLH',fmt))
+        plt.savefig(figname, bbox_inches='tight')
+def plot_X_VL(fname0='X_VL'):
     rows,cols=4,3
     fig,axs=plt.subplots(rows,cols,figsize=(w_singleFig*cols,4*rows),gridspec_kw={'wspace':0.15,'hspace':0.2})
     # Fig 12
@@ -373,9 +375,10 @@ def plot_X_VL(fname0='X_VL',fmt='svg'):
                 str_T = '375.5 $^{\circ}$C'
             ax.text(0.5,0.2,str_T,transform=ax.transAxes,va='bottom',ha='center', fontsize=12,fontweight='bold')
             ax.legend(loc='lower left')
-    figname=str('%s/%s.%s'%(figpath,'X_VaporLiquidCoexistSurface',fmt))
-    plt.savefig(figname, bbox_inches='tight')
-def plot_water_boilingCurve(fname0='Water_P_boiling.dat',fmt='svg'):
+    for fmt in fmt_figs:
+        figname=str('%s/%s.%s'%(figpath,'X_VaporLiquidCoexistSurface',fmt))
+        plt.savefig(figname, bbox_inches='tight')
+def plot_water_boilingCurve(fname0='Water_P_boiling.dat'):
     data=np.loadtxt('%s/%s'%(datapath,fname0))
     T=data[0:-1,0]
     P1=data[0:-1,1]
@@ -422,9 +425,109 @@ def plot_water_boilingCurve(fname0='Water_P_boiling.dat',fmt='svg'):
     # ax.grid(which='minor',color='lightgray',lw=0.03)
     ax.set_xlabel('T [$^{\circ}$C]')
     ax.set_ylabel('P [bar]')
+    for fmt in fmt_figs:
+        figname=str('%s/%s.%s'%(figpath,'water_boilingCurve',fmt))
+        plt.savefig(figname, bbox_inches='tight')
+def plot_V_brine(fname0='V_brine'):
+    fig=plt.figure(figsize=(w_singleFig,w_singleFig))
+    ax=plt.gca()
+    arrX=[0,10,100]
+    P=1000
+    for X in arrX:
+        data=np.loadtxt('%s/%s_P%.0fbar_X%.0fwt.dat'%(datapath,fname0,P,X))
+        T=data[:,0]
+        V=data[:,1]*1E6
+        ax.plot(T,V,label='%.0f wt.%% NaCl'%(X))
+    ax.set_xlim(T.min(),T.max())
+    # ax.set_ylim(15,50)
+    ax.fill_between([200,700],y1=15, y2=50,color='lightgray',label='Fig. 2 (Driesner, 2007)',alpha=0.5)
+    ax.xaxis.set_major_locator(MultipleLocator(100))
+    ax.yaxis.set_major_locator(MultipleLocator(10))
+    ax.xaxis.set_minor_locator(MultipleLocator(20))
+    ax.yaxis.set_minor_locator(MultipleLocator(2))
+    ax.grid(which='major',color='gray',lw=0.03)
+    ax.grid(which='minor',color='lightgray',lw=0.03)
+    ax.set_xlabel('T [$^{\circ}$C]')
+    ax.set_ylabel('V [cm$^{\mathregular{3}}\ \mathregular{mol}^{\mathregular{-1}}$]')
+    ax.legend(title='%.0f bar'%(P),ncol=2)
+    for fmt in fmt_figs:
+        figname=str('%s/%s.%s'%(figpath,'V_brine_T_P%.0fbar'%(P),fmt))
+        plt.savefig(figname, bbox_inches='tight')
+def plot_V_brine_lowThighT(fname0='V_extrapol'):
+    fig,axs=plt.subplots(1,2,figsize=(w_singleFig*2,5))
+    arrX=[0]
+    # Fig. 5a of Driesner(2007)
+    ax=axs[0]
+    P=5
+    for X in arrX:
+        data=np.loadtxt('%s/%s_P%.0fbar_X%.0fwt.dat'%(datapath,fname0,P,X))
+        T=data[:,0]
+        V=data[:,1]*1E6
+        V_sat = data[:,2]*1E6
+        V_NaCl_liquid = data[:,3]*1E6
+        ax.plot(T,V,marker='.',label='%.0f wt.%% NaCl'%(X))
+        ax.plot(T,V_sat,marker='.',label='V$_{\mathregular{sat}}$')
+    ax.set_xlim(130, 170)
+    ax.set_ylim(19.2,20.1)
+    # ax.fill_between([200,700],y1=15, y2=50,color='lightgray',label='Fig. 2 (Driesner, 2007)',alpha=0.5)
+    ax.xaxis.set_major_locator(MultipleLocator(10))
+    ax.yaxis.set_major_locator(MultipleLocator(0.1))
+    ax.xaxis.set_minor_locator(MultipleLocator(2))
+    ax.yaxis.set_minor_locator(MultipleLocator(0.02))
+    ax.grid(which='major',color='gray',lw=0.03)
+    ax.grid(which='minor',color='lightgray',lw=0.03)
+    ax.set_xlabel('T [$^{\circ}$C]')
+    ax.set_ylabel('V [cm$^{\mathregular{3}}\ \mathregular{mol}^{\mathregular{-1}}$]')
+    ax.legend(title='%.0f bar'%(P),ncol=1,loc='lower right')
+    ax.text(0.02,0.98,'(a)  %.0f bar'%P,transform=ax.transAxes,va='top',ha='left',fontweight='bold')
+    # Fig. 5b of Driesner(2007)
+    ax=axs[1]
+    P=200
+    for X in arrX:
+        data=np.loadtxt('%s/%s_P%.0fbar_X%.0fwt.dat'%(datapath,fname0,P,X))
+        T=data[:,0]
+        V=data[:,1]*1E6
+        V_sat = data[:,2]*1E6
+        V_NaCl_liquid = data[:,3]*1E6
+        ax.plot(T,V,label='%.0f wt.%% NaCl'%(X))
+        # ax.plot(T,V_sat,marker='.',label='V$_{\mathregular{sat}}$')
+        ax.plot(T,V_NaCl_liquid,label='V$_{\mathregular{NaCl, liquid}}$')
+    ax.set_xlim(0, 1000)
+    ax.set_ylim(15, 45)
+    # ax.fill_between([200,700],y1=15, y2=50,color='lightgray',label='Fig. 2 (Driesner, 2007)',alpha=0.5)
+    ax.xaxis.set_major_locator(MultipleLocator(200))
+    ax.yaxis.set_major_locator(MultipleLocator(5))
+    ax.xaxis.set_minor_locator(MultipleLocator(40))
+    ax.yaxis.set_minor_locator(MultipleLocator(1))
+    ax.grid(which='major',color='gray',lw=0.03)
+    ax.grid(which='minor',color='lightgray',lw=0.03)
+    ax.set_xlabel('T [$^{\circ}$C]')
+    ax.set_ylabel('V [cm$^{\mathregular{3}}\ \mathregular{mol}^{\mathregular{-1}}$]')
+    ax.legend(title='%.0f bar'%(P),ncol=1,loc='lower right')
+    ax.text(0.02,0.98,'(b)  %.0f bar'%P,transform=ax.transAxes,va='top',ha='left',fontweight='bold')
 
-    figname=str('%s/%s.%s'%(figpath,'water_boilingCurve',fmt))
-    plt.savefig(figname, bbox_inches='tight')
+    for fmt in fmt_figs:
+        figname=str('%s/%s.%s'%(figpath,'V_brine_NaCl_lowThighT',fmt))
+        plt.savefig(figname, bbox_inches='tight')
+def plot_water_prop(propname='rho'):
+    prop=np.loadtxt('%s/water_%s.dat'%(datapath,propname))
+    T=np.loadtxt('%s/water_%s.dat'%(datapath,'T'))
+    P=np.loadtxt('%s/water_%s.dat'%(datapath,'P'))
+    TT,PP=np.meshgrid(T,P)
+    # for i in range(0,TT.shape[0]):
+    #     for j in range(0,TT.shape[1]):
+    #         # steam=IAPWS95(T=TT[i][j]+273.15,P=PP[i][j]/10)
+    #         prop[i][j]= TT[i][j] #steam.rho
+    #     print(i)
+    fig=plt.figure(figsize=(w_singleFig+2,w_singleFig))
+    ax=plt.gca()
+    CS=ax.contourf(TT,PP,prop,levels=50)
+    plt.colorbar(CS,label='$\%s$ (%s)'%(propname, units[propname]))
+    ax.set_xlabel('T [$^{\circ}$C]')
+    ax.set_ylabel('P [bar]')
+    for fmt in fmt_figs:
+        figname=str('%s/%s.%s'%(figpath,'water_%s'%(propname),fmt))
+        plt.savefig(figname, bbox_inches='tight')
 def main(argv):
     # argc=len(argv)
     # usage(argv)
@@ -437,7 +540,10 @@ def main(argv):
     # plot_HaliteSaturatedVaporComposition()
     # plot_P_VLH()
     # plot_X_VL()
-    plot_water_boilingCurve()
+    # plot_water_boilingCurve()
+    plot_water_prop('rho')
+    # plot_V_brine()
+    plot_V_brine_lowThighT()
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

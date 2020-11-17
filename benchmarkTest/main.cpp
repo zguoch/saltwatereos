@@ -19,7 +19,8 @@ void test_Salinity_VaporLiquidCoexist_LiquidBranch();
 void test_water_Curves();
 void test_water_props(double Tmin, double Tmax, double Pmin, double Pmax, double dP=1E5, double dT=1, bool writeTP = false);
 // 8. Volume fraction, Fig. 2 of Driesner(2007)
-//T:[C], P[bar]
+void testT_V_star();
+// test V_extrapol for low TP region, Eq. 17 of Driesner (2007)
 void test_V_extrapol();
 
 int main( int argc, char** argv )
@@ -32,9 +33,10 @@ int main( int argc, char** argv )
   // test_HaliteSaturatedVaporComposition(); 
   // test_P_VLH();
   // test_Salinity_VaporLiquidCoexist_LiquidBranch();
-  test_water_Curves();
-  test_water_props(H2O::TMIN, H2O::TMAX, H2O::PMIN/1E5, 1000, 4, 4, true);
-  // test_V_extrapol();
+  // test_water_Curves();
+  // test_water_props(130, 200, 2, 10, 0.1, 1, true);
+  // testT_V_star();
+  test_V_extrapol();
 
   std::cout<<"测试计算完毕"<<std::endl;
 }
@@ -154,7 +156,7 @@ void test_HaliteMelting()
   }
   for (double P = 0; P <= 5000; P=P+50)
   {
-    double T_hm = eos.m_salt.T_Melting(P);
+    double T_hm = eos.m_NaCl.T_Melting(P);
     fout<<T_hm<<" "<<P<<endl;
   }
   fout.close();
@@ -207,8 +209,8 @@ void test_SublimationBoiling()
   
   for (double T = 300; T <= 1100; T=T+10)
   {
-    double P_subl = eos.m_salt.P_Sublimation(T);
-    double P_boil = eos.m_salt.P_Boiling(T);
+    double P_subl = eos.m_NaCl.P_Sublimation(T);
+    double P_boil = eos.m_NaCl.P_Boiling(T);
     fout<<T<<" "<<P_subl<<" "<<P_boil<<endl;
   }
   fout.close();
@@ -218,7 +220,7 @@ void test_HaliteLiquidus()
 {
   std::cout<<"Test halite liquids start"<<endl;
   H2ONaCl::cH2ONaCl eos;
-  vector<double> arryP={500, 2000, 4000}; //bar
+  vector<double> arryP={5, 500, 2000, 4000}; //bar
   for (size_t i = 0; i < arryP.size(); i++)
   {
     string filename="X_HaliteLiquidus_P"+to_string((int)arryP[i])+"bar.dat";
@@ -366,13 +368,12 @@ void test_Salinity_VaporLiquidCoexist_LiquidBranch()
   }
   std::cout<<"Test composition on liquid branch of vapor liquid coexist surface end\n"<<endl;
 }
-
 void test_V_extrapol()
 {
   std::cout<<"Test V_extrapol start"<<endl;
   H2ONaCl::cH2ONaCl eos;
-  vector<double> arryP={1000}; //bar
-  vector<double> arryX={0,10}; //wt.% NaCl
+  vector<double> arryP={5, 6, 7, 10, 20,200}; //bar
+  vector<double> arryX={0}; //wt.% NaCl
   for (size_t i = 0; i < arryP.size(); i++)
   {
     double P = arryP[i];
@@ -385,15 +386,59 @@ void test_V_extrapol()
       {
         cout<<"Open file failed: "<<filename<<endl;
       }
-      for (double T = 200; T <= 700; T=T+0.5) //deg.C
+      for (double T = 0; T <= 1000; T=T+1) //deg.C
       {
-        double V_extrapol = eos.V_extrapol(T, P, 0.1);
-        // if(X_liquidus>X_VLH)continue;
-        fout<<T<<" "<<V_extrapol<<endl;
+        double T_star = eos.T_star_V(T, P, X_mol);
+        double V_water = H2O::MolarMass / eos.m_water.Rho(T_star, P);// m3/mol
+
+        double V_extrapol = eos.V_extrapol(T,P,X_mol);
+
+        double T_star_sat = eos.T_star_V(T, P, eos.X_HaliteLiquidus(T,P));
+        // cout<<T<<" "<<T_star_sat<<endl;
+        double V_water_sat = H2O::MolarMass / eos.m_water.Rho(T_star_sat, P);// m3/mol
+
+        double V_NaCl_liquid=NaCl::MolarMass/eos.m_NaCl.Rho_Liquid(T, P);
+        if(T<eos.m_NaCl.T_Melting(P))V_NaCl_liquid=NAN;
+        double V_NaCl_solid=NaCl::MolarMass/eos.m_NaCl.Rho_Solid(T, P);
+        // if(T<eos.m_NaCl.T_Melting(P))V_NaCl_liquid=NAN;
+
+        fout<<T<<" "<<V_water<<" "<<V_water_sat<<" "<<V_NaCl_liquid<<" "<<T_star_sat<<endl;
       }
       fout.close();
     }
   }
   
   std::cout<<"Test V_extrapol end\n"<<endl;
+}
+void testT_V_star()
+{
+  std::cout<<"Test T_V_star start"<<endl;
+  H2ONaCl::cH2ONaCl eos;
+  vector<double> arryP={1000}; //bar
+  vector<double> arryX={0,10,100}; //wt.% NaCl
+  for (size_t i = 0; i < arryP.size(); i++)
+  {
+    double P = arryP[i];
+    for (size_t j = 0; j < arryX.size(); j++)
+    {
+      double X_mol = eos.Wt2Mol(arryX[j]/100.0);
+      string filename="V_brine_P"+to_string((int)P)+"bar_X"+to_string((int)arryX[j])+"wt.dat";
+      ofstream fout(filename);
+      if(!fout)
+      {
+        cout<<"Open file failed: "<<filename<<endl;
+      }
+      for (double T = 0; T <= 1000; T=T+1) //deg.C
+      {
+        double T_star = eos.T_star_V(T, P, X_mol);
+        // cout<<T<<" "<<T_star<<endl;
+        double V_water = H2O::MolarMass / eos.m_water.Rho(T_star, P);// m3/mol
+        // if(X_liquidus>X_VLH)continue;
+        fout<<T<<" "<<V_water<<endl;
+      }
+      fout.close();
+    }
+  }
+  
+  std::cout<<"Test T_V_star end\n"<<endl;
 }

@@ -28,10 +28,14 @@ using namespace std;
 namespace H2ONaCl
 {
     // ============= Constants of H2O-NaCl =======================================
-    double const PMIN = 1E5; /**< Minimum valid pressure of H2O, [Pa]. */ 
-    double const PMAX = 1000E5; /**< Minimum valid pressure of H2O, [Pa]. */ 
-    double const TMIN = 273.15; /**< Minimum valid pressure of H2O, [K].  */ 
-    double const TMAX = 1273.15; /**< Minimum valid pressure of H2O, [K]. */ 
+    double const PMIN = 1; /**< Minimum valid pressure of H2O, [bar]. */ 
+    double const PMAX = 1000; /**< Minimum valid pressure of H2O, [bar]. */ 
+    double const TMIN = 273.15; /**< Minimum valid pressure of H2O, [K].  */ //TODO： 最后统一为C
+    double const TMAX = 1273.15; /**< Minimum valid pressure of H2O, [K]. */ //TODO: 最后统一为C
+    double const TMIN_K = 273.15; /**< Minimum valid pressure of H2O, [K].  */ 
+    double const TMAX_K = 1273.15; /**< Minimum valid pressure of H2O, [K]. */ 
+    double const TMIN_C = 0; /**< Minimum valid pressure of H2O, [C].  */ 
+    double const TMAX_C = 1000; /**< Minimum valid pressure of H2O, [C]. */ 
     double const XMIN = 0;
     double const XMAX = 1;
     // ===========================================================================
@@ -80,7 +84,7 @@ namespace H2ONaCl
         // cH2ONaCl(const std::vector<double> P, const std::vector<double> T, const std::vector<double> X);//P, T, X has same size of n
         ~cH2ONaCl();
         H2O::cH2O m_water;
-        NaCl::cNaCl m_salt;
+        NaCl::cNaCl m_NaCl;
         MAP_PHASE_REGION m_phaseRegion_name;
         void prop_pTX(double p, double T_K, double X_wt, bool visc_on=true);
         void prop_pHX(double p, double H, double X_wt); /** Calculate properties by P, H, X */
@@ -182,7 +186,6 @@ namespace H2ONaCl
         {
             return X_wt/NaCl::MolarMass/(X_wt/NaCl::MolarMass + (1-X_wt)/H2O::MolarMass);
         };
-    private:
         /**
          * @brief Only used in #V_extrapol
          * 
@@ -192,6 +195,8 @@ namespace H2ONaCl
          * @return double Density [\f$ kg/m^3 \f$]
          */
         double Rho_Br_for_V_extrapol(double T, double P, double X);
+    private:
+        
         inline double Xwt2Xmol(double X){return (X/NaCl::MolarMass)/(X/NaCl::MolarMass+(1-X)/H2O::MolarMass);};
         void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);
         MP_STRUCT bb(double T);

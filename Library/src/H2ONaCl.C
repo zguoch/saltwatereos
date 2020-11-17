@@ -2897,7 +2897,7 @@ namespace H2ONaCl
         {
             e[5] -= e[i];
         }
-        const double TbyT_hm = T/m_salt.T_Melting(P);
+        const double TbyT_hm = T/m_NaCl.T_Melting(P);
         double X_Liquids = 0;
         for (size_t i = 0; i < 6; i++)
         {
@@ -2957,10 +2957,10 @@ namespace H2ONaCl
         double P_NaCl=0;
         if(T>NaCl::T_Triple)
         {
-            P_NaCl = m_salt.P_Boiling(T);
+            P_NaCl = m_NaCl.P_Boiling(T);
         }else
         {
-            P_NaCl = m_salt.P_Sublimation(T);
+            P_NaCl = m_NaCl.P_Sublimation(T);
         }
         double P_crit = 0, X_crit=0;
         P_X_Critical(T,P_crit, X_crit); //calculate critic pressure
@@ -3040,7 +3040,7 @@ namespace H2ONaCl
             X_tmp = X_HaliteLiquidus(T, P_tmp);
         }else
         {
-            P_tmp = m_salt.P_Boiling(T);
+            P_tmp = m_NaCl.P_Boiling(T);
             X_tmp = 1;
         }
         double X_VL_LiquidBranch = 0;
@@ -3081,10 +3081,10 @@ namespace H2ONaCl
         double P_NaCl=0;
         if(T>NaCl::T_Triple)
         {
-            P_NaCl = m_salt.P_Boiling(T);
+            P_NaCl = m_NaCl.P_Boiling(T);
         }else
         {
-            P_NaCl = m_salt.P_Sublimation(T);
+            P_NaCl = m_NaCl.P_Sublimation(T);
         }
         double X_VL_LiquidBranch = X_VaporLiquidCoexistSurface_LiquidBranch(T,P);
         double P_crit = 0, X_crit=0;
@@ -3115,12 +3115,24 @@ namespace H2ONaCl
         return X_VL_VaporBranch;
     }
     /**
-     * \image html Driesner2007_Fig2.png "Graphical illustration of the principle used to derive correlations for molar volumes." width=25%. 
+     * \image html Driesner2007_Fig2.png "Molar volume of brine" width=25%.
+     * Fig. 2 of \cite Driesner2007Part2. Graphical illustration of the principle used to derive correlations for molar volumes: the molar volume of an aqueous NaCl solution (here: 10 wt% NaCl at 1000 bar) at temperature T is identical to that of pure water at a different temperature \f$ T_V^* \f$.
      * 
      * \f{equation}
      * T_V^* = n_1 + n_2T + D(T)
      * \f}
      * where \f$ n_1, n_2\f$ are calculated from equation (9-12, 14-16) and Table 4 of \cite Driesner2007Part2. 
+     * 
+     * \image html V_brine_T_P1000bar.svg "Molar volume of brine calculated using swEOS." width=25%. 
+     * 
+     * \image html Driesner2007_Fig5.png "Examples for low temperature (a) and high temperature (b) cases" width=50%.
+     * Fig. 5 of \cite Driesner2007Part2. Examples for low temperature (a) and high temperature (b) cases where the \f$ T - T_V^* \f$ correlation cannot be applied. 
+     * 
+     * \image html V_brine_NaCl_lowThighT.svg "Examples for low temperature (a) and high temperature (b) cases calculated by swEOS." width=50%. 
+     * 
+     * \bug 为什么图Fig. 5a(\cite Driesner2007Part2)不一致？因为在P=5 bar(低压)情况下，根据\f$ T_V^* \f$ 计算得到的水的密度在148 \f$^{\circ}\text{C} \f$附近存在跳跃，这是由于在此温度附近发生了相变！如下图所示。 \b 所以问题是： 为什么文献 \cite Driesner2007Part2 中的Fig. 5a能够得到一个超过150\f$^{\circ}\text{C} \f$ 的\f$ V_{sat}\f$曲线 ？
+     * 
+     * \image html water_rho_lowP.svg "Water density in low pressure region" width=25%.
      */
     double cH2ONaCl::T_star_V(double T, double P, double X)
     {

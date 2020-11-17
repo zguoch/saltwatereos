@@ -20,3 +20,4 @@ srange      =   0:0.01:0.25;
 [t,p,x]=meshgrid(Trange, Prange*1e5, srange);
 
 RHO  = density_brine(s,t,p);
+contour(RHO(1:end,1:end,1));
