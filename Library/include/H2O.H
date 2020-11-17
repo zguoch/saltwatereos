@@ -22,6 +22,10 @@ namespace H2O
     };
     
     // ============= Constants of H2O ========================================================================
+    double const PMIN = 1E5; /**< Minimum valid pressure of H2O, [Pa]. IAPWS-95 */ 
+    double const PMAX = 10000E5; /**< Minimum valid pressure of H2O, [Pa]. IAPWS-95 */ 
+    double const TMIN = 0.1; /**< Minimum valid pressure of H2O, [\f$ ^{\circ}\text{C} \f$]. IAPWS-95 */ 
+    double const TMAX = 1000; /**< Minimum valid pressure of H2O, [\f$ ^{\circ}\text{C} \f$]. IAPWS-95 */ 
     // double const P_Critic_MPa = 22.064; /**< Pressure at critical point of H2O, [MPa]. IAPWS-95 */
     double const T_Critic_K = 647.096; /**< Temperature at critical point of H2O, [K]. IAPWS-95 */ 
     double const P_Critic = 220.64; /**< Pressure at critical point of H2O, [bar]. IAPWS-95 */

@@ -16,8 +16,10 @@ void test_P_VLH();
 // 7. Salinity on liquid branch of vapor + liquid coexist surface. Fig. 12 of Driesner and Heinrich(2007)
 void test_Salinity_VaporLiquidCoexist_LiquidBranch();
 // Water cH2O
-void test_water_P_Boiling();
+void test_water_Curves();
+void test_water_props(double Tmin, double Tmax, double Pmin, double Pmax, double dP=1E5, double dT=1, bool writeTP = false);
 // 8. Volume fraction, Fig. 2 of Driesner(2007)
+//T:[C], P[bar]
 void test_V_extrapol();
 
 int main( int argc, char** argv )
@@ -30,12 +32,55 @@ int main( int argc, char** argv )
   // test_HaliteSaturatedVaporComposition(); 
   // test_P_VLH();
   // test_Salinity_VaporLiquidCoexist_LiquidBranch();
-  test_water_P_Boiling();
-  test_V_extrapol();
+  test_water_Curves();
+  test_water_props(H2O::TMIN, H2O::TMAX, H2O::PMIN/1E5, 1000, 4, 4, true);
+  // test_V_extrapol();
 
   std::cout<<"测试计算完毕"<<std::endl;
 }
-void test_water_P_Boiling()
+void test_water_props(double Tmin, double Tmax, double Pmin, double Pmax, double dP, double dT, bool writeTP)
+{
+  H2ONaCl::cH2ONaCl eos;
+  // full range
+  {
+    string filename="water_rho.dat";
+    ofstream fout(filename);
+    if(!fout)
+    {
+      cout<<"Open file failed: "<<filename<<endl;
+    }
+    for (double P = Pmin; P <= Pmax; P=P+dP)
+    {
+      for (double T = Tmin; T <= Tmax; T=T+dT)
+      {
+        double rho = eos.m_water.Rho(T, P);
+        fout<<rho<<" ";
+      }
+      fout<<"\n";
+    }
+    fout.close();
+    if(writeTP)
+    {
+      string filename_TT="water_T.dat";
+      ofstream fout_TT(filename_TT);
+      if(!fout_TT)cout<<"Open file failed: "<<filename_TT<<endl;
+      string filename_PP="water_P.dat";
+      ofstream fout_PP(filename_PP);
+      if(!fout_PP)cout<<"Open file failed: "<<filename_PP<<endl;
+      for (double T = Tmin; T <= Tmax; T=T+dT)
+      {
+        fout_TT<<T<<"\n";
+      }
+      fout_TT.close();
+      for (double P = Pmin; P <= Pmax; P=P+dP)
+      {
+          fout_PP<<P<<"\n";
+      }
+      fout_PP.close();
+    }
+  }
+}
+void test_water_Curves()
 {
   H2ONaCl::cH2ONaCl eos;
   // full range

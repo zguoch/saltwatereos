@@ -9,12 +9,6 @@ using namespace std;
 
 // ============= Constants ====================
 #define Kelvin 273.15
-//[K]
-#define TMIN 273.15  
-#define TMAX 1273.15 
-/**< [Pa] */
-#define PMIN 1e5    
-#define PMAX 1000E5 
 // ============================================
 namespace Fluid
 {

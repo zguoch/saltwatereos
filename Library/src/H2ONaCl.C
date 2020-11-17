@@ -2808,7 +2808,8 @@ namespace H2ONaCl
      * \image html Driesner_Heinrich_Fig6.png "Critical composition." width=50%.
      * Critical composition, figure 6 of reference \cite Driesner2007Part1. 
      * 
-     * \image html HaliteCriticalCurves.svg "Critical pressure (a,b) and composition (c,d) as function of temperature. (a,c) Full range, (b,d) the region just above the critical temperature of water." width=50%. 
+     * \image html HaliteCriticalCurves.svg "Critical pressure and composition." width=50%. 
+     * Critical pressure (a,b) and composition (c,d) as function of temperature. (a,c) Full range, (b,d) the region just above the critical temperature of water
      */
     void cH2ONaCl::P_X_Critical(double T, double& P_crit, double& X_crit)
     {

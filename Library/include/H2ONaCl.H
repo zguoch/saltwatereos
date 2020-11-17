@@ -28,6 +28,10 @@ using namespace std;
 namespace H2ONaCl
 {
     // ============= Constants of H2O-NaCl =======================================
+    double const PMIN = 1E5; /**< Minimum valid pressure of H2O, [Pa]. */ 
+    double const PMAX = 1000E5; /**< Minimum valid pressure of H2O, [Pa]. */ 
+    double const TMIN = 273.15; /**< Minimum valid pressure of H2O, [K].  */ 
+    double const TMAX = 1273.15; /**< Minimum valid pressure of H2O, [K]. */ 
     double const XMIN = 0;
     double const XMAX = 1;
     // ===========================================================================

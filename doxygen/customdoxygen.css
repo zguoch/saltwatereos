@@ -66,3 +66,11 @@
     content: "C++ Source Code Guide";
     font-size: 180%;
 }
+
+/* highlight table cell when mouse hover */
+td.Gallery:hover{
+    background-color:rgba(144, 238, 144, 0.175);
+    }
+td.Gallery{
+    width:300px;
+    }
