@@ -31,7 +31,7 @@ int main( int argc, char** argv )
   // test_P_VLH();
   // test_Salinity_VaporLiquidCoexist_LiquidBranch();
   test_water_P_Boiling();
-  // test_V_extrapol();
+  test_V_extrapol();
 
   std::cout<<"测试计算完毕"<<std::endl;
 }
@@ -52,7 +52,7 @@ void test_water_P_Boiling()
       double P2=eos.m_water.BoilingCurve(T);
       double rho_v_sat = eos.m_water.Rho_Vapor_Saturated(T);
       double rho_l_sat = eos.m_water.Rho_Liquid_Saturated(T);
-      double rho = eos.m_water.Rho(T,P);
+      double rho = eos.m_water.Rho(T,P2);
       double P_T_rho = eos.m_water.Pressure_T_Rho(T, rho_v_sat);
       fout<<T<<" "<<P<<" "<<P2<<" "<<rho_v_sat<<" "<<rho_l_sat<<" "<<rho<<" "<<P_T_rho<<endl;
     }

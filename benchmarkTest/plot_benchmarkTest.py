@@ -394,23 +394,23 @@ def plot_water_boilingCurve(fname0='Water_P_boiling.dat',fmt='svg'):
     # steam=IAPWS95(P=2.5, T=500)               #steam with known P and T
     # density
     ax2=ax.twinx()
-    ax2.plot(T,rho_v_sat,label='Vapor saturated')
-    ax2.plot(T,rho_l_sat,label='Liquid saturated')
-    # ax2.plot(T, rho,label='cH2O::Rho')
+    ax2.plot(T,rho_v_sat,'k',label='Vapor saturated')
+    ax2.plot(T,rho_l_sat,'k',label='Liquid saturated')
+    ax2.plot(T, rho,'gray',ls='dashed',label='cH2O::Rho')
     # IAPWS95
-    T_iapws=np.linspace(0.5+273.15, _iapws.Tc-1, 100)
-    P_iapws = np.zeros_like(T_iapws)
-    rho_l_iapws=np.zeros_like(T_iapws)
-    rho_v_iapws=np.zeros_like(T_iapws)
-    for i in range(0,len(T_iapws)):
-        sat_steam=IAPWS95(T=T_iapws[i],x=1) 
-        P_iapws[i]=sat_steam.P*10
-        rho_v_iapws[i]=sat_steam.rho
-        sat_liquid=IAPWS95(T=T_iapws[i],x=0) 
-        rho_l_iapws[i]=sat_liquid.rho
-    ax.plot(T_iapws - 273.15,P_iapws, ls='dashed')
-    ax2.plot(T_iapws - 273.15,rho_l_iapws, ls='dashed')
-    ax2.plot(T_iapws - 273.15,rho_v_iapws, ls='dashed')
+    # T_iapws=np.linspace(0.5+273.15, _iapws.Tc-1, 100)
+    # P_iapws = np.zeros_like(T_iapws)
+    # rho_l_iapws=np.zeros_like(T_iapws)
+    # rho_v_iapws=np.zeros_like(T_iapws)
+    # for i in range(0,len(T_iapws)):
+    #     sat_steam=IAPWS95(T=T_iapws[i],x=1) 
+    #     P_iapws[i]=sat_steam.P*10
+    #     rho_v_iapws[i]=sat_steam.rho
+    #     sat_liquid=IAPWS95(T=T_iapws[i],x=0) 
+    #     rho_l_iapws[i]=sat_liquid.rho
+    # ax.plot(T_iapws - 273.15,P_iapws, ls='dashed')
+    # ax2.plot(T_iapws - 273.15,rho_l_iapws, ls='dashed')
+    # ax2.plot(T_iapws - 273.15,rho_v_iapws, ls='dashed')
     ax.legend()
     # ax.set_xlim(800,930)
     # ax.set_ylim(0,5000)

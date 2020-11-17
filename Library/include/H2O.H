@@ -63,7 +63,7 @@ namespace H2O
          */
         virtual double P_Boiling(double T);
         /**
-         * @brief Calculate pressure based saturated vapor density #Rho_Vapor_Saturated(T) and relations between pressure, density and temperautre #Pressure_T_Rho(T, rho).
+         * @brief Calculate pressure based saturated vapor density #Rho_Vapor_Saturated  and relations between pressure, density and temperautre #Pressure_T_Rho.
          * 
          * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
          * @return double Pressure [bar]

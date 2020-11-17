@@ -3190,7 +3190,7 @@ namespace H2ONaCl
         {
             X_L_sat = X_VaporLiquidCoexistSurface_LiquidBranch(T, P);
             RoundDown2 = floor(X_L_sat*1E5)/1E5; //DEBUG
-            if(RoundDown_X >= RoundDown2)
+            if(X >= X_L_sat)
             {
                 double V1000 =  molFactor/ Rho_Br_for_V_extrapol(T,1000,X)* 1E6;//cm3/mol  //DEBUG: 可以简化！！！！
                 V1 = molFactor / Rho_Br_for_V_extrapol(T,390.147,X)* 1E6;//cm3/mol

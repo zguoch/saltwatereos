@@ -20,7 +20,7 @@ namespace H2O
     void cH2O::LoadTable62(Table62& m_Table62)
     {
         // initialize as zero
-        for (size_t i = 0; i < m_Table62.numCoeff; i++)
+        for (size_t i = 0; i < 56; i++)
         {
             m_Table62.c[i] = 0;
             m_Table62.d[i] = 0;
@@ -201,7 +201,7 @@ namespace H2O
     double cH2O::Phi_r_delta(double delta, double tau)
     {
         double sum1 = 0, sum2 = 0, sum3 = 0, sum4 = 0;
-        for (size_t i = 0; i < 0; i++)
+        for (size_t i = 0; i < 7; i++)
         {
             sum1 += m_Table62.n[i] * m_Table62.d[i] * pow(delta, m_Table62.d[i] -1) * pow(tau, m_Table62.t[i]);
         }
@@ -256,7 +256,7 @@ namespace H2O
         double T_K = T + Kelvin;
         double delta = Rho/Rho_Critic;
         double tau = T_Critic_K/T_K;
-        double pressure = (1 + delta*Phi_r_delta(delta, tau)*Rho*R_const*T_K)/100.0; //note that R_const unit is kJ/kg/K, and return pressure with unit of bar.
+        double pressure = Rho*R_const*T_K*(1 + delta*Phi_r_delta(delta, tau))/100.0; //note that R_const unit is kJ/kg/K, and return pressure with unit of bar.
         
         return pressure;
     }
@@ -273,7 +273,7 @@ namespace H2O
         {
             double RoundDown_P = floor(P*1000)/1000.0;//DEBUG
             double RoundDown_BoilingCurve = floor(BoilingCurve(T)*1000)/1000.0;//DEBUG
-            if(RoundDown_P <= RoundDown_BoilingCurve)
+            if(P <= BoilingCurve(T))
             {
                 Rho1 = 1E-6;
                 Rho2 = Rho_Vapor_Saturated(T) + 1;
@@ -282,7 +282,8 @@ namespace H2O
                 Rho1 = Rho_Liquid_Saturated(T) -1;
                 Rho2 = 1701; 
             }
-        }else
+        }
+        else
         {
             Rho1 = 1E-6;
             Rho2 = 1701;
@@ -334,7 +335,7 @@ namespace H2O
             n++;
             if (n>=10000)//double check, to avoid dead loop!
             {
-                Rho1 = 1E15; 
+                Rho1 = NAN; 
                 endLoop = true;
             }
             if (fabs(1 - P/P_Rho1)<=1E-8 || fabs(Rho_approx - Rho1)<Tol)
