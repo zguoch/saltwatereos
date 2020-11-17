@@ -22,7 +22,8 @@ import matplotlib as mpl
 from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,AutoMinorLocator)
 mpl.rcParams['font.family'] = 'Arial'  #default font family
 mpl.rcParams['mathtext.fontset'] = 'cm' #font for math
-
+from iapws import IAPWS95
+from iapws import _iapws
 def usage(argv):
     basename = argv[0].split('/')
     basename = basename[len(basename)-1]
@@ -376,19 +377,40 @@ def plot_X_VL(fname0='X_VL',fmt='svg'):
     plt.savefig(figname, bbox_inches='tight')
 def plot_water_boilingCurve(fname0='Water_P_boiling.dat',fmt='svg'):
     data=np.loadtxt('%s/%s'%(datapath,fname0))
-    T=data[:,0]
-    P1=data[:,1]
-    P2=data[:,2]
-    rho_v_sat=data[:,3]
-    rho_l_sat=data[:,4]
+    T=data[0:-1,0]
+    P1=data[0:-1,1]
+    P2=data[0:-1,2]
+    rho_v_sat=data[0:-1,3]
+    rho_l_sat=data[0:-1,4]
+    rho = data[0:-1,5]
+    P_T_rho = data[0:-1,6]
     fig=plt.figure(figsize=(w_singleFig,w_singleFig))
     ax=plt.gca()
-    ax.plot(T[0:-1],P1[0:-1],label='cH2O::P_Boiling')
-    ax.plot(T[0:-1],P2[0:-1],label='cH2O::BoilingCurve')
-    ax.plot(T[-1],P1[-1],'o',mfc='red',mec='w',label='Critical point')
+    ax.plot(T,P1,label='cH2O::P_Boiling')
+    ax.plot(T,P2,label='cH2O::BoilingCurve')
+    ax.plot(data[-1][0],data[-1][1],'o',mfc='red',mec='w',label='Critical point')
+    ax.plot(T,P_T_rho,label='cH2O::Pressure_T_Rho()',ls='dotted')
+    # sat_liquid=IAPWS95(T=370, x=0)            #saturated liquid with known T
+    # steam=IAPWS95(P=2.5, T=500)               #steam with known P and T
+    # density
     ax2=ax.twinx()
-    ax2.plot(T[0:-1],rho_v_sat[0:-1])
-    ax2.plot(T[0:-1],rho_l_sat[0:-1])
+    ax2.plot(T,rho_v_sat,label='Vapor saturated')
+    ax2.plot(T,rho_l_sat,label='Liquid saturated')
+    # ax2.plot(T, rho,label='cH2O::Rho')
+    # IAPWS95
+    T_iapws=np.linspace(0.5+273.15, _iapws.Tc-1, 100)
+    P_iapws = np.zeros_like(T_iapws)
+    rho_l_iapws=np.zeros_like(T_iapws)
+    rho_v_iapws=np.zeros_like(T_iapws)
+    for i in range(0,len(T_iapws)):
+        sat_steam=IAPWS95(T=T_iapws[i],x=1) 
+        P_iapws[i]=sat_steam.P*10
+        rho_v_iapws[i]=sat_steam.rho
+        sat_liquid=IAPWS95(T=T_iapws[i],x=0) 
+        rho_l_iapws[i]=sat_liquid.rho
+    ax.plot(T_iapws - 273.15,P_iapws, ls='dashed')
+    ax2.plot(T_iapws - 273.15,rho_l_iapws, ls='dashed')
+    ax2.plot(T_iapws - 273.15,rho_v_iapws, ls='dashed')
     ax.legend()
     # ax.set_xlim(800,930)
     # ax.set_ylim(0,5000)

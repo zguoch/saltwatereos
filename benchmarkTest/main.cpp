@@ -46,15 +46,17 @@ void test_water_P_Boiling()
     {
       cout<<"Open file failed: "<<filename<<endl;
     }
-    for (double T = 0; T <= 400; T=T+0.1)
+    for (double T = 0; T <= 400; T=T+1)
     {
       double P=eos.m_water.P_Boiling(T);
       double P2=eos.m_water.BoilingCurve(T);
       double rho_v_sat = eos.m_water.Rho_Vapor_Saturated(T);
       double rho_l_sat = eos.m_water.Rho_Liquid_Saturated(T);
-      fout<<T<<" "<<P<<" "<<P2<<" "<<rho_v_sat<<" "<<rho_l_sat<<endl;
+      double rho = eos.m_water.Rho(T,P);
+      double P_T_rho = eos.m_water.Pressure_T_Rho(T, rho_v_sat);
+      fout<<T<<" "<<P<<" "<<P2<<" "<<rho_v_sat<<" "<<rho_l_sat<<" "<<rho<<" "<<P_T_rho<<endl;
     }
-    fout<<H2O::T_Critic<<" "<<H2O::P_Critic<<" "<<H2O::P_Critic<<" "<<0<<" "<<0<<endl;
+    fout<<H2O::T_Critic<<" "<<H2O::P_Critic<<" "<<H2O::P_Critic<<" "<<0<<" "<<0<<" "<<0<<" "<<0<<endl;
     fout.close();
   }
 }
