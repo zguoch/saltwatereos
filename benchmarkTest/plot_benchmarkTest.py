@@ -453,7 +453,7 @@ def plot_V_brine(fname0='V_brine'):
     for fmt in fmt_figs:
         figname=str('%s/%s.%s'%(figpath,'V_brine_T_P%.0fbar'%(P),fmt))
         plt.savefig(figname, bbox_inches='tight')
-def plot_V_brine_lowThighT(fname0='V_extrapol'):
+def plot_V_brine_lowThighT(fname0='V_brine_NaCl_lowThighT'):
     fig,axs=plt.subplots(1,2,figsize=(w_singleFig*2,5))
     arrX=[0]
     # Fig. 5a of Driesner(2007)
@@ -505,7 +505,7 @@ def plot_V_brine_lowThighT(fname0='V_extrapol'):
     ax.set_ylabel('V [cm$^{\mathregular{3}}\ \mathregular{mol}^{\mathregular{-1}}$]')
     ax.legend(title='%.0f bar'%(P),ncol=1,loc='lower right')
     ax.text(0.02,0.98,'(b)  %.0f bar'%P,transform=ax.transAxes,va='top',ha='left',fontweight='bold')
-
+ 
     for fmt in fmt_figs:
         figname=str('%s/%s.%s'%(figpath,'V_brine_NaCl_lowThighT',fmt))
         plt.savefig(figname, bbox_inches='tight')
@@ -528,6 +528,27 @@ def plot_water_prop(propname='rho'):
     for fmt in fmt_figs:
         figname=str('%s/%s.%s'%(figpath,'water_%s'%(propname),fmt))
         plt.savefig(figname, bbox_inches='tight')
+def plot_H2ONaCl_prop(propname='rho'):
+    arrX=[10,20]
+    for X in arrX:
+        prop=np.loadtxt('%s/H2ONaCl_%s_X%.0f.dat'%(datapath,propname,X))
+        T=np.loadtxt('%s/H2ONaCl_%s.dat'%(datapath,'T'))
+        P=np.loadtxt('%s/H2ONaCl_%s.dat'%(datapath,'P'))
+        TT,PP=np.meshgrid(T,P)
+        # for i in range(0,TT.shape[0]):
+        #     for j in range(0,TT.shape[1]):
+        #         # steam=IAPWS95(T=TT[i][j]+273.15,P=PP[i][j]/10)
+        #         prop[i][j]= TT[i][j] #steam.rho
+        #     print(i)
+        fig=plt.figure(figsize=(w_singleFig+2,w_singleFig))
+        ax=plt.gca()
+        CS=ax.contourf(TT,PP,prop,levels=50)
+        plt.colorbar(CS,label='$\%s$ (%s)'%(propname, units[propname]))
+        ax.set_xlabel('T [$^{\circ}$C]')
+        ax.set_ylabel('P [bar]')
+        for fmt in fmt_figs:
+            figname=str('%s/%s.%s'%(figpath,'H2ONaCl_%s_X%.0f'%(propname,X),fmt))
+            plt.savefig(figname, bbox_inches='tight')
 def main(argv):
     # argc=len(argv)
     # usage(argv)
@@ -541,9 +562,10 @@ def main(argv):
     # plot_P_VLH()
     # plot_X_VL()
     # plot_water_boilingCurve()
-    plot_water_prop('rho')
+    # plot_water_prop('rho')
     # plot_V_brine()
-    plot_V_brine_lowThighT()
+    # plot_V_brine_lowThighT()
+    plot_H2ONaCl_prop('rho')
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

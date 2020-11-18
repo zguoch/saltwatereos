@@ -3172,6 +3172,7 @@ namespace H2ONaCl
      * \f{equation}
      * V_{extrapol} = o_0 + o_1 T + o_2 T^3
      * \f}
+     * \todo 验证此函数的正确性，并加入brine密度计算函数
      */
     double cH2ONaCl::V_extrapol(double T, double P, double X)
     {
@@ -3184,7 +3185,7 @@ namespace H2ONaCl
         double V_extrapol0 = 0;
         double RoundDown_X = floor(X*1E5)/1E5, RoundDown2 = 0; //DEBUG
         double molFactor = (H2O::MolarMass * (1-X) + NaCl::MolarMass*X);
-        if (P<=m_water.BoilingCurve(T) && T<=200 && (X_L_sat - X)<0.01)
+        if (T<=200 && P<=m_water.BoilingCurve(T) && (X_L_sat - X)<0.01)
         {
             T = T_star_V(T, P, X);
             double V_L_sat = H2O::MolarMass / m_water.Rho_Liquid_Saturated(T) * 1E6; //Molar volume , cm3/mol
@@ -3219,5 +3220,15 @@ namespace H2ONaCl
             V_extrapol0 = 0;
         }
         return V_extrapol0;
+    }
+    double cH2ONaCl::Rho(double T, double P, double X)
+    {
+        double T_star = T_star_V(T, P, X);
+        double V_water = V_extrapol(T, P, X);
+        if (V_water == 0)
+        {
+            V_water = H2O::MolarMass / m_water.Rho(T, P);
+        }
+        return (H2O::MolarMass * (1 - X) + NaCl::MolarMass * X) / V_water;
     }
 }

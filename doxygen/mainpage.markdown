@@ -1,5 +1,7 @@
-# Quick Start                         {#mainpage}
+# Home                         {#mainpage}
 
+- [To Do List](todo.html)
+- [Bug List](bug.html)
 
 ## Method and Algorithm
 

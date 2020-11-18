@@ -21,24 +21,54 @@ void test_water_props(double Tmin, double Tmax, double Pmin, double Pmax, double
 // 8. Volume fraction, Fig. 2 of Driesner(2007)
 void testT_V_star();
 // test V_extrapol for low TP region, Eq. 17 of Driesner (2007)
+void test_V_brine_NaCl_lowThighT();
 void test_V_extrapol();
+void test_NaClH2O_props(double Tmin, double Tmax, double Pmin, double Pmax, double dP=1E5, double dT=1, bool writeTP = false);
 
-int main( int argc, char** argv )
+void test_NaClH2O_props(double Tmin, double Tmax, double Pmin, double Pmax, double dP, double dT, bool writeTP)
 {
-  std::cout<<"开始测试计算"<<std::endl;
-  // test_CriticalPressure_Composition();
-  // test_SublimationBoiling();
-  // test_HaliteMelting();
-  // test_HaliteLiquidus();
-  // test_HaliteSaturatedVaporComposition(); 
-  // test_P_VLH();
-  // test_Salinity_VaporLiquidCoexist_LiquidBranch();
-  // test_water_Curves();
-  // test_water_props(130, 200, 2, 10, 0.1, 1, true);
-  // testT_V_star();
-  test_V_extrapol();
-
-  std::cout<<"测试计算完毕"<<std::endl;
+  H2ONaCl::cH2ONaCl eos;
+  vector<double> arrX={10, 20};
+  for (size_t i = 0; i < arrX.size(); i++)
+  {
+    double X = arrX[i]/100.0;
+    string filename="H2ONaCl_rho_X"+to_string((int)arrX[i])+".dat";
+    ofstream fout(filename);
+    if(!fout)
+    {
+      cout<<"Open file failed: "<<filename<<endl;
+    }
+    for (double P = Pmin; P <= Pmax; P=P+dP)
+    {
+      for (double T = Tmin; T <= Tmax; T=T+dT)
+      {
+        double rho = eos.Rho(T, P, X);
+        fout<<rho<<" ";
+      }
+      fout<<"\n";
+    }
+    fout.close();
+  }
+  
+  if(writeTP)
+  {
+    string filename_TT="H2ONaCl_T.dat";
+    ofstream fout_TT(filename_TT);
+    if(!fout_TT)cout<<"Open file failed: "<<filename_TT<<endl;
+    string filename_PP="H2ONaCl_P.dat";
+    ofstream fout_PP(filename_PP);
+    if(!fout_PP)cout<<"Open file failed: "<<filename_PP<<endl;
+    for (double T = Tmin; T <= Tmax; T=T+dT)
+    {
+      fout_TT<<T<<"\n";
+    }
+    fout_TT.close();
+    for (double P = Pmin; P <= Pmax; P=P+dP)
+    {
+        fout_PP<<P<<"\n";
+    }
+    fout_PP.close();
+  }
 }
 void test_water_props(double Tmin, double Tmax, double Pmin, double Pmax, double dP, double dT, bool writeTP)
 {
@@ -368,7 +398,7 @@ void test_Salinity_VaporLiquidCoexist_LiquidBranch()
   }
   std::cout<<"Test composition on liquid branch of vapor liquid coexist surface end\n"<<endl;
 }
-void test_V_extrapol()
+void test_V_brine_NaCl_lowThighT()
 {
   std::cout<<"Test V_extrapol start"<<endl;
   H2ONaCl::cH2ONaCl eos;
@@ -380,7 +410,7 @@ void test_V_extrapol()
     for (size_t j = 0; j < arryX.size(); j++)
     {
       double X_mol = eos.Wt2Mol(arryX[j]/100.0);
-      string filename="V_extrapol_P"+to_string((int)P)+"bar_X"+to_string((int)arryX[j])+"wt.dat";
+      string filename="V_brine_NaCl_lowThighT_P"+to_string((int)P)+"bar_X"+to_string((int)arryX[j])+"wt.dat";
       ofstream fout(filename);
       if(!fout)
       {
@@ -441,4 +471,37 @@ void testT_V_star()
   }
   
   std::cout<<"Test T_V_star end\n"<<endl;
+}
+
+void test_V_extrapol()
+{
+  std::cout<<"Test V_extrapol start"<<endl;
+  H2ONaCl::cH2ONaCl eos;
+  double T=140, P=2, X=0.1;
+  double v_extrapol = eos.V_extrapol(T,P,X);
+  printf("T: %.1f C, P: %.1f bar, X: %.1f mol frac\n", T, P, X);
+  printf("\tH2O boling P: %f bar\n",eos.m_water.BoilingCurve(T));
+  printf("\tH2O-NaCl liquidus X: %f mol frac\n",eos.X_HaliteLiquidus(T,P));
+  printf("\tV_extrapol: %f\n",v_extrapol);
+  std::cout<<"Test V_extrapol end"<<endl;
+}
+
+int main( int argc, char** argv )
+{
+  std::cout<<"开始测试计算"<<std::endl;
+  // test_CriticalPressure_Composition();
+  // test_SublimationBoiling();
+  // test_HaliteMelting();
+  // test_HaliteLiquidus();
+  // test_HaliteSaturatedVaporComposition(); 
+  // test_P_VLH();
+  // test_Salinity_VaporLiquidCoexist_LiquidBranch();
+  // test_water_Curves();
+  // test_water_props(130, 200, 2, 10, 0.1, 1, true);
+  // testT_V_star();
+  // test_V_brine_NaCl_lowThighT();
+  // test_V_extrapol();
+  test_NaClH2O_props(0, 800, 1, 1000, 5, 5, true);
+
+  std::cout<<"测试计算完毕"<<std::endl;
 }

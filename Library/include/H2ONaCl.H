@@ -195,6 +195,15 @@ namespace H2ONaCl
          * @return double Density [\f$ kg/m^3 \f$]
          */
         double Rho_Br_for_V_extrapol(double T, double P, double X);
+        /**
+         * @brief Density of brine.
+         * 
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
+         * @param P Pressure [bar]
+         * @param X Salinity [Mole fraction of NaCl]
+         * @return double Density [\f$ kg/m^3 \f$]
+         */
+        double Rho(double T, double P, double X);
     private:
         
         inline double Xwt2Xmol(double X){return (X/NaCl::MolarMass)/(X/NaCl::MolarMass+(1-X)/H2O::MolarMass);};
