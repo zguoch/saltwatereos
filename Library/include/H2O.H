@@ -36,8 +36,13 @@ namespace H2O
 
     double const T_Triple_K = 273.16; /**< [K] */
     double const T_Triple = 273.16 - Kelvin; /**< [\f$^{\circ}\text{C} \f$] */
+    double const P_Triple = 611.655E-5; /**< Pressure at triple point of H2O, [bar]. IAPWS-95 */
     double const Rho_Triple_liquid = 999.793; /**< Liquid density at triple point, [\f$ kg \ m^{-3} \f$]. IAPWS-95 */ 
     double const Rho_Triple_vapor = 0.00485458; /**< Vapor density at triple point, [\f$ kg \ m^{-3} \f$]. IAPWS-95 */ 
+
+    enum PhaseRegion {iceI, iceIII, iceV, iceVI, iceVII};
+    double const T_K_ice_min[5]={251.165, 251.165, 256.164, 273.31, 355};
+    double const T_K_ice_max[5]={T_Triple_K, 256.164, 273.31, 355, 715};
 
     double const R_const = 0.46151805; /**< Specific gas constant [\f$ kJ kg^{-1} K^{-1} \f$] */
     // =======================================================================================================
@@ -66,13 +71,6 @@ namespace H2O
          * @return double Pressure [bar]
          */
         virtual double P_Boiling(double T);
-        /**
-         * @brief Calculate pressure based saturated vapor density #Rho_Vapor_Saturated  and relations between pressure, density and temperautre #Pressure_T_Rho.
-         * 
-         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
-         * @return double Pressure [bar]
-         */
-        double BoilingCurve(double T);
         /**
          * @brief Saturated liquid density. See equation (2.6) of reference \cite wagner2002iapws. 
          * 
@@ -112,6 +110,27 @@ namespace H2O
          * @return double Pressure [bar]
          */
         double Pressure_T_Rho(double T, double Rho);
+        /**
+         * @brief Sublimation-Pressure. \b Solid-Vapor phase boundary. The valid temperature region is \f$[T_{min}, T_{triple}] \f$. See equation (2.21) of reference \cite wagner2002iapws.
+         * 
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
+         * @return double Pressure [bar]
+         */
+        double SublimationCurve(double T);
+        /**
+         * @brief \b Liquid-Vapor phase boundary. Calculate pressure based saturated vapor density #Rho_Vapor_Saturated  and relations between pressure, density and temperautre #Pressure_T_Rho. The valid temperature region is \f$[T_{triple}, T_{critic}] \f$.
+         * 
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
+         * @return double Pressure [bar]
+         */
+        double BoilingCurve(double T);
+        /**
+         * @brief Melting-Pressure. \b Solid-Liquid phase boundary. See equation (2.16) of reference \cite wagner2002iapws.
+         * 
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
+         * @return double Pressure [bar]
+         */
+        double MeltingCurve(double T, bool isIceI=false);
     public:
         
     };

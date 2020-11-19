@@ -115,25 +115,126 @@ void test_water_props(double Tmin, double Tmax, double Pmin, double Pmax, double
 void test_water_Curves()
 {
   H2ONaCl::cH2ONaCl eos;
-  // full range
+  // boiling curve
   {
-    string filename="Water_P_boiling.dat";
+    string filename="Water_boiling.dat";
     ofstream fout(filename);
     if(!fout)
     {
       cout<<"Open file failed: "<<filename<<endl;
     }
-    for (double T = 0; T <= 400; T=T+1)
+    for (double T = H2O::T_Triple; T <= H2O::T_Critic; T=T+1)
     {
-      double P=eos.m_water.P_Boiling(T);
-      double P2=eos.m_water.BoilingCurve(T);
-      double rho_v_sat = eos.m_water.Rho_Vapor_Saturated(T);
-      double rho_l_sat = eos.m_water.Rho_Liquid_Saturated(T);
-      double rho = eos.m_water.Rho(T,P2);
-      double P_T_rho = eos.m_water.Pressure_T_Rho(T, rho_v_sat);
-      fout<<T<<" "<<P<<" "<<P2<<" "<<rho_v_sat<<" "<<rho_l_sat<<" "<<rho<<" "<<P_T_rho<<endl;
+      // double P=eos.m_water.P_Boiling(T);
+      double P=eos.m_water.BoilingCurve(T);
+      // double rho_v_sat = eos.m_water.Rho_Vapor_Saturated(T);
+      // double rho_l_sat = eos.m_water.Rho_Liquid_Saturated(T);
+      // double rho = eos.m_water.Rho(T,P2);
+      // double P_T_rho = eos.m_water.Pressure_T_Rho(T, rho_v_sat);
+      // fout<<T<<" "<<P<<" "<<P2<<" "<<rho_v_sat<<" "<<rho_l_sat<<" "<<rho<<" "<<P_T_rho<<endl;
+      fout<<T<<" "<<P<<endl;
     }
-    fout<<H2O::T_Critic<<" "<<H2O::P_Critic<<" "<<H2O::P_Critic<<" "<<0<<" "<<0<<" "<<0<<" "<<0<<endl;
+    fout<<H2O::T_Critic<<" "<<H2O::P_Critic<<endl;
+    fout.close();
+  }
+  // sublimation curve
+  {
+    string filename="Water_sublimation.dat";
+    ofstream fout(filename);
+    if(!fout)
+    {
+      cout<<"Open file failed: "<<filename<<endl;
+    }
+    for (double T = -50; T <= H2O::T_Triple; T=T+0.001)
+    {
+      double P=eos.m_water.SublimationCurve(T);
+      fout<<T<<" "<<P<<endl;
+    }
+    fout.close();
+  }
+  // melting curve: ice I
+  {
+    string filename="Water_iceI.dat";
+    ofstream fout(filename);
+    if(!fout)
+    {
+      cout<<"Open file failed: "<<filename<<endl;
+    }
+    // iceI
+    for (double T = H2O::T_K_ice_min[H2O::iceI]; T <= H2O::T_Triple_K; T=T+0.1)
+    {
+      double P=eos.m_water.MeltingCurve(T-Kelvin, true);
+      fout<<T-Kelvin<<" "<<P<<endl;
+    }
+    fout<<H2O::T_Triple<<" "<<H2O::P_Triple<<endl;
+    fout.close();
+  }
+  // melting curve: ice III
+  {
+    string filename="Water_iceIII.dat";
+    ofstream fout(filename);
+    if(!fout)
+    {
+      cout<<"Open file failed: "<<filename<<endl;
+    }
+    double Tend = H2O::T_K_ice_max[H2O::iceIII];
+    for (double T = H2O::T_K_ice_min[H2O::iceIII]; T < Tend; T=T+0.01)
+    {
+      double P=eos.m_water.MeltingCurve(T-Kelvin);
+      fout<<T-Kelvin<<" "<<P<<endl;
+    }
+    fout<<Tend-Kelvin<<" "<<eos.m_water.MeltingCurve(Tend-Kelvin)<<endl;
+    fout.close();
+  }
+  // melting curve: ice III
+  {
+    string filename="Water_iceV.dat";
+    ofstream fout(filename);
+    if(!fout)
+    {
+      cout<<"Open file failed: "<<filename<<endl;
+    }
+    double Tend = H2O::T_K_ice_max[H2O::iceV];
+    for (double T = H2O::T_K_ice_min[H2O::iceV]; T < Tend; T=T+0.01)
+    {
+      double P=eos.m_water.MeltingCurve(T-Kelvin);
+      fout<<T-Kelvin<<" "<<P<<endl;
+    }
+    // fout<<Tend<<" "<<eos.m_water.MeltingCurve(Tend-Kelvin)<<endl;
+    fout.close();
+  }
+  // melting curve: ice VI
+  {
+    string filename="Water_iceVI.dat";
+    ofstream fout(filename);
+    if(!fout)
+    {
+      cout<<"Open file failed: "<<filename<<endl;
+    }
+    double Tend = H2O::T_K_ice_max[H2O::iceVI];
+    for (double T = H2O::T_K_ice_min[H2O::iceVI]; T < Tend; T=T+0.1)
+    {
+      double P=eos.m_water.MeltingCurve(T-Kelvin);
+      fout<<T-Kelvin<<" "<<P<<endl;
+    }
+    // fout<<Tend<<" "<<eos.m_water.MeltingCurve(Tend-Kelvin)<<endl;
+    fout.close();
+  }
+  // melting curve: ice VI
+  {
+    string filename="Water_iceVII.dat";
+    ofstream fout(filename);
+    if(!fout)
+    {
+      cout<<"Open file failed: "<<filename<<endl;
+    }
+    double Tend = H2O::T_K_ice_max[H2O::iceVII];
+    for (double T = H2O::T_K_ice_min[H2O::iceVII]; T < Tend; T=T+0.1)
+    {
+      double P=eos.m_water.MeltingCurve(T-Kelvin);
+      fout<<T-Kelvin<<" "<<P<<endl;
+    }
+    // fout<<Tend<<" "<<eos.m_water.MeltingCurve(Tend-Kelvin)<<endl;
     fout.close();
   }
 }
@@ -496,12 +597,12 @@ int main( int argc, char** argv )
   // test_HaliteSaturatedVaporComposition(); 
   // test_P_VLH();
   // test_Salinity_VaporLiquidCoexist_LiquidBranch();
-  // test_water_Curves();
+  test_water_Curves();
   // test_water_props(130, 200, 2, 10, 0.1, 1, true);
   // testT_V_star();
   // test_V_brine_NaCl_lowThighT();
   // test_V_extrapol();
-  test_NaClH2O_props(0, 800, 1, 1000, 5, 5, true);
+  // test_NaClH2O_props(0, 800, 1, 1000, 5, 5, true);
 
   std::cout<<"测试计算完毕"<<std::endl;
 }

@@ -260,6 +260,9 @@ namespace H2O
         
         return pressure;
     }
+    /**
+     * \sa #SublimationCurve and #MeltingCurve
+     */
     double cH2O::BoilingCurve(double T)
     {
         double Rho_Vapor_sat = Rho_Vapor_Saturated(T);
@@ -344,5 +347,81 @@ namespace H2O
             }
         }
         return Rho1;
+    }
+    /**
+     * \image html Wagner2002_Fig2.1.png "The phase boundary curves of water in a p-T diagram." width=25%.
+     * Fig. 2.1 of \cite wagner2002iapws. The phase–boundary curves of water in a p–T diagram. The sublimation curve psubl and the several melting curves pm plotted in bold correspond to the lower limit of the range of validity of IAPWS-95 with regard to temperature. The dashed line corresponds to the range of validity of IAPWS-95 with regard to pressure.
+     * 
+     * \image html water_PhaseDiagram.svg "Phase diagram calculated by swEOS" width=50%.
+     * where Sublimation curve, boiling curve and melting curve are calculated by #SublimationCurve, #BoilingCurve and #MeltingCurve, respectively. The triple point and critical point are defined as (#T_Critic, #P_Critic) and (#T_Triple, #P_Triple), respectively.
+     */
+    double cH2O::SublimationCurve(double T)
+    {
+        double T_K = T + Kelvin;
+        double Pn = 0.000611657; //MPa
+        double Tn = 273.16; // K
+        double theta = T_K / Tn;
+        return 10 * Pn * exp(-13.928169 * (1 - pow(theta, -1.5)) + 34.7078238 * (1 - pow(theta, -1.25))); //MPa -> bar
+    }
+    /**
+     * The melting curve is separated into 5 segments, they are ice I, III, V, VI, VII. The corresponding equation can be written as(see equation 2.16-2.20 of \cite wagner2002iapws),
+     * \f{equation}
+     * \left\{ \begin{matrix}
+     *  p_{m,ice\ I} = ..., &T\in [251.165, T_{triple}] K \\ \\[1ex]
+     *  p_{m,ice\ III} = ..., &T\in [251.165, 256.164] K \\ \\[1ex]
+     *  p_{m,ice\ V} = ..., &T\in [256.164, 273.31] K \\ \\[1ex]
+     *  p_{m,ice\ VI} = ..., &T\in [273.31, 355] K \\ \\[1ex]
+     *  p_{m,ice\ VII} = ..., &T\in [355, 715] K \\ \\[1ex]
+     * \end{matrix}\right.
+     * \f}
+     * \image html Wagner2002_Fig2.1.png "The phase boundary curves of water in a p-T diagram." width=25%.
+     * Fig. 2.1 of \cite wagner2002iapws. The phase–boundary curves of water in a p–T diagram. The sublimation curve psubl and the several melting curves pm plotted in bold correspond to the lower limit of the range of validity of IAPWS-95 with regard to temperature. The dashed line corresponds to the range of validity of IAPWS-95 with regard to pressure.
+     * 
+     * \sa #SublimationCurve and #BoilingCurve
+     */
+    double cH2O::MeltingCurve(double T, bool isIceI)
+    {
+        double T_K = T + Kelvin;
+        double P_m =0;
+        if(isIceI && T_K>=T_K_ice_min[iceI] && T_K<T_K_ice_max[iceI]) //segment I
+        {
+            double Tn = 273.15;
+            double Pn = 0.000611657;
+            double theta = T_K / Tn;
+            P_m = Pn * (1 - 0.626 * 1E6 * (1 - pow(theta, -3)) + 0.197135 * 1E6 * (1 - pow(theta, 21.2))); //MPa
+        }else if(T_K>=T_K_ice_min[iceIII] && T_K<T_K_ice_max[iceIII]) //ice III
+        {
+            double Tn = 251.165;
+            double Pn = 209.9;
+            double theta = T_K / Tn;
+            P_m = Pn * (1 - 0.0295252 * (1 - pow(theta, 60.0)));
+        }else if(T_K>=T_K_ice_min[iceV] && T_K<T_K_ice_max[iceV]) //ice V
+        {
+            double Tn = 256.164;
+            double Pn = 350.1;
+            double theta = T_K / Tn;
+            P_m = Pn * (1 - 1.18721 * (1 - pow(theta, 8.0)));
+        }else if(T_K>=T_K_ice_min[iceVI] && T_K<T_K_ice_max[iceVI]) //ice VI
+        {
+            double Tn = 273.31;
+            double Pn = 632.4;
+            double theta = T_K / Tn;
+            P_m = Pn * (1 - 1.07476 * (1 - pow(theta, 4.6)));
+        }else if(T_K>=T_K_ice_min[iceVII] && T_K<T_K_ice_max[iceVII]) //ice VII
+        {
+            double Tn = 355;
+            double Pn = 2216;
+            double theta = T_K / Tn;
+            P_m = Pn * exp(1.73683 * (1 - 1.0/theta) - 0.0544606 * (1 - pow(theta, 5.0)) + 0.806106 * 1E-07 * (1 - pow(theta, 22.0)));
+        }else
+        {
+            double Tn = 273.15;
+            double Pn = 0.000611657;
+            double theta = T_K / Tn;
+            P_m = Pn * (1 - 0.626 * 1E6 * (1 - pow(theta, -3)) + 0.197135 * 1E6 * (1 - pow(theta, 21.2))); //MPa
+        }
+        
+        
+        return P_m * 10.0; //MPa to bar
     }
 } // namespace H2O

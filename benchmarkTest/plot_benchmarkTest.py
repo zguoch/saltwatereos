@@ -158,8 +158,8 @@ def plot_SublimationBoiling(fname0='HaliteSublimationBoilingCurve.dat'):
     ax.set_xlim(300, 1100)
     ax.set_ylim(1E-14, 1E-1)
     ax.xaxis.set_major_locator(MultipleLocator(100))
-    ax.yaxis.set_major_locator(mpl.ticker.LogLocator(base=10.0, subs=(1.0,),numticks=20))
     ax.xaxis.set_minor_locator(MultipleLocator(20))
+    ax.yaxis.set_major_locator(mpl.ticker.LogLocator(base=10.0, subs=(1.0,),numticks=20))
     ax.yaxis.set_minor_locator(mpl.ticker.LogLocator(base=10.0, subs=(0.2,0.4,0.6,0.8),numticks=20))
     ax.grid(which='major',color='gray',lw=0.03)
     ax.grid(which='minor',color='lightgray',lw=0.03)
@@ -378,55 +378,57 @@ def plot_X_VL(fname0='X_VL'):
     for fmt in fmt_figs:
         figname=str('%s/%s.%s'%(figpath,'X_VaporLiquidCoexistSurface',fmt))
         plt.savefig(figname, bbox_inches='tight')
-def plot_water_boilingCurve(fname0='Water_P_boiling.dat'):
-    data=np.loadtxt('%s/%s'%(datapath,fname0))
-    T=data[0:-1,0]
-    P1=data[0:-1,1]
-    P2=data[0:-1,2]
-    rho_v_sat=data[0:-1,3]
-    rho_l_sat=data[0:-1,4]
-    rho = data[0:-1,5]
-    P_T_rho = data[0:-1,6]
-    fig=plt.figure(figsize=(w_singleFig,w_singleFig))
+def plot_water_phaseDiagram(fname0='Water'):
+    fig=plt.figure(figsize=(w_singleFig*1.5,w_singleFig))
     ax=plt.gca()
-    ax.plot(T,P1,label='cH2O::P_Boiling')
-    ax.plot(T,P2,label='cH2O::BoilingCurve')
-    ax.plot(data[-1][0],data[-1][1],'o',mfc='red',mec='w',label='Critical point')
-    ax.plot(T,P_T_rho,label='cH2O::Pressure_T_Rho()',ls='dotted')
-    # sat_liquid=IAPWS95(T=370, x=0)            #saturated liquid with known T
-    # steam=IAPWS95(P=2.5, T=500)               #steam with known P and T
-    # density
-    ax2=ax.twinx()
-    ax2.plot(T,rho_v_sat,'k',label='Vapor saturated')
-    ax2.plot(T,rho_l_sat,'k',label='Liquid saturated')
-    ax2.plot(T, rho,'gray',ls='dashed',label='cH2O::Rho')
-    # IAPWS95
-    # T_iapws=np.linspace(0.5+273.15, _iapws.Tc-1, 100)
-    # P_iapws = np.zeros_like(T_iapws)
-    # rho_l_iapws=np.zeros_like(T_iapws)
-    # rho_v_iapws=np.zeros_like(T_iapws)
-    # for i in range(0,len(T_iapws)):
-    #     sat_steam=IAPWS95(T=T_iapws[i],x=1) 
-    #     P_iapws[i]=sat_steam.P*10
-    #     rho_v_iapws[i]=sat_steam.rho
-    #     sat_liquid=IAPWS95(T=T_iapws[i],x=0) 
-    #     rho_l_iapws[i]=sat_liquid.rho
-    # ax.plot(T_iapws - 273.15,P_iapws, ls='dashed')
-    # ax2.plot(T_iapws - 273.15,rho_l_iapws, ls='dashed')
-    # ax2.plot(T_iapws - 273.15,rho_v_iapws, ls='dashed')
-    ax.legend()
-    # ax.set_xlim(800,930)
-    # ax.set_ylim(0,5000)
-    # ax.xaxis.set_major_locator(MultipleLocator(50))
-    # ax.yaxis.set_major_locator(MultipleLocator(1000))
-    # ax.xaxis.set_minor_locator(MultipleLocator(10))
-    # ax.yaxis.set_minor_locator(MultipleLocator(200))
+    ax.set_yscale('log')
+    ax.set_xlim(200-273.15,1000)
+    ax.set_ylim(1E-4, 2E5)
+    handles_boundary=[]
+    alpha_region,zorder_region=1,1
+    # sublimation curve 
+    data=np.loadtxt('%s/%s_sublimation.dat'%(datapath,fname0))
+    T=data[:,0]
+    P=data[:,1]
+    l_sub,=ax.plot(T,P,label='Sublimation')
+    handles_boundary.append(l_sub)
+    region_solid=ax.fill_betweenx(P,ax.get_xlim()[0],T,color='aquamarine', zorder=zorder_region,alpha=alpha_region,label='Solid')
+    region_vapor=ax.fill_betweenx(P,ax.get_xlim()[1],T,color='lightgray', zorder=zorder_region,alpha=alpha_region,label='Vapor')
+    # boiling curve 
+    data=np.loadtxt('%s/%s_boiling.dat'%(datapath,fname0))
+    T=data[:,0]
+    P=data[:,1]
+    l_boil,=ax.plot(T,P,label='Boiling')
+    p_trip,=ax.plot(T[0],P[0],'o',mfc='red',mec='b',label='Triple point',zorder=5)
+    p_crit,=ax.plot(T[-1],P[-1],'o',mfc='red',mec='orange',label='Critical point',zorder=5)
+    ax.fill_betweenx(P,ax.get_xlim()[1],T,color=region_vapor._facecolors[0],alpha=alpha_region)
+    region_liquid=ax.fill_between(np.append(ax.get_xlim()[0],T),ax.get_ylim()[1],np.append(P[0],P),color='lightcyan',alpha=alpha_region,label='Liquid')
+    region_supercrit=ax.fill_between([T[-1], ax.get_xlim()[1]],[P[-1], P[-1]], ax.get_ylim()[1],color='lightblue',alpha=alpha_region,label='Supercritical fluid')
+    # melting curve 
+    handles_boundary.append(l_boil)
+    handles_boundary.append(p_trip)
+    handles_boundary.append(p_crit)
+    for ice in ['I','III','V','VI','VII']:
+        data=np.loadtxt('%s/%s_ice%s.dat'%(datapath,fname0,ice))
+        T=data[:,0]
+        P=data[:,1]
+        l,=ax.plot(T,P,label='ice %s'%(ice))
+        handles_boundary.append(l)
+        ax.fill_betweenx(P,ax.get_xlim()[0],T,color=region_solid._facecolors[0], zorder=zorder_region,alpha=alpha_region)
+    ax.hlines(5000,ax.get_xlim()[0],ax.get_xlim()[1],ls='dashed',color='k',alpha=0.5)
+    leg1=ax.legend(handles=handles_boundary,ncol=3,loc='lower right',title='Phase boundaries')
+    ax.add_artist(leg1)
+    ax.legend(handles=(region_solid,region_vapor,region_liquid,region_supercrit),title='Phase regions',loc='center right')
+    ax.xaxis.set_major_locator(MultipleLocator(100))
+    ax.xaxis.set_minor_locator(MultipleLocator(20))
+    ax.yaxis.set_major_locator(mpl.ticker.LogLocator(base=10.0, subs=(1.0,),numticks=20))
+    ax.yaxis.set_minor_locator(mpl.ticker.LogLocator(base=10.0, subs=(0.1, 0.2,0.3, 0.4,0.5, 0.6,0.7, 0.8, 0.9),numticks=20))
     # ax.grid(which='major',color='gray',lw=0.03)
     # ax.grid(which='minor',color='lightgray',lw=0.03)
     ax.set_xlabel('T [$^{\circ}$C]')
     ax.set_ylabel('P [bar]')
     for fmt in fmt_figs:
-        figname=str('%s/%s.%s'%(figpath,'water_boilingCurve',fmt))
+        figname=str('%s/%s.%s'%(figpath,'water_PhaseDiagram',fmt))
         plt.savefig(figname, bbox_inches='tight')
 def plot_V_brine(fname0='V_brine'):
     fig=plt.figure(figsize=(w_singleFig,w_singleFig))
@@ -442,8 +444,8 @@ def plot_V_brine(fname0='V_brine'):
     # ax.set_ylim(15,50)
     ax.fill_between([200,700],y1=15, y2=50,color='lightgray',label='Fig. 2 (Driesner, 2007)',alpha=0.5)
     ax.xaxis.set_major_locator(MultipleLocator(100))
-    ax.yaxis.set_major_locator(MultipleLocator(10))
     ax.xaxis.set_minor_locator(MultipleLocator(20))
+    ax.yaxis.set_major_locator(MultipleLocator(10))
     ax.yaxis.set_minor_locator(MultipleLocator(2))
     ax.grid(which='major',color='gray',lw=0.03)
     ax.grid(which='minor',color='lightgray',lw=0.03)
@@ -561,11 +563,11 @@ def main(argv):
     # plot_HaliteSaturatedVaporComposition()
     # plot_P_VLH()
     # plot_X_VL()
-    # plot_water_boilingCurve()
+    plot_water_phaseDiagram()
     # plot_water_prop('rho')
     # plot_V_brine()
     # plot_V_brine_lowThighT()
-    plot_H2ONaCl_prop('rho')
+    # plot_H2ONaCl_prop('rho')
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

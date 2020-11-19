@@ -3,6 +3,14 @@
  * 
  * \section Gallery_water Pure water
  * 
+ * <table style="width:100%">
+    <tr>
+        <td class="Gallery">\link H2O::cH2O::SublimationCurve \image html water_PhaseDiagram.svg "Phase diagram." width=500px. \endlink</td>
+        <td class="Gallery"> \endlink</td> 
+        <td class="Gallery"> </td>
+        <td class="Gallery"> </td>
+    </tr>
+</table>
  * \section Gallery_salt NaCl
  <table style="width:100%">
     <tr>
