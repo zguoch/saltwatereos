@@ -274,8 +274,8 @@ namespace H2O
         double Rho1 = 0, Rho2 = 0;
         if(T_K <= T_Critic_K)
         {
-            double RoundDown_P = floor(P*1000)/1000.0;//DEBUG
-            double RoundDown_BoilingCurve = floor(BoilingCurve(T)*1000)/1000.0;//DEBUG
+            // double RoundDown_P = floor(P*1000)/1000.0;//DEBUG
+            // double RoundDown_BoilingCurve = floor(BoilingCurve(T)*1000)/1000.0;//DEBUG
             if(P <= BoilingCurve(T))
             {
                 Rho1 = 1E-6;

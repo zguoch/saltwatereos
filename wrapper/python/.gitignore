@@ -1,3 +1,6 @@
-build/
-*.so
-rect.cpp
+*
+!*.pxd
+!*.pyx
+!setup.py
+!*.py
+!*.sh
