@@ -43,7 +43,7 @@ if(Build_API_MultiLanguage)
         SOURCES H2O.i ${PROJECT_SOURCE_DIR}/src/H2O.C ${PROJECT_SOURCE_DIR}/src/Fluid.C )
         SWIG_LINK_LIBRARIES(tclH2O ${TCL_LIBRARY})
         # install
-        set_target_properties( tclH2O PROPERTIES OUTPUT_NAME "H2O" )
+        set_target_properties( tclH2O PROPERTIES OUTPUT_NAME "H2O" SUFFIX "")
         install(TARGETS tclH2O DESTINATION ${PROJECT_SOURCE_DIR}/API/tcl RENAME "H2O")
         install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/test.tcl DESTINATION ${PROJECT_SOURCE_DIR}/API/tcl)
     endif(Build_API_tcl)
