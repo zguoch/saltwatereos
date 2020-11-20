@@ -1,1 +1,0 @@
-g++ -shared -fPIC Rectangle.cpp -o librect.so

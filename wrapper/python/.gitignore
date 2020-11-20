@@ -1,6 +1,0 @@
-*
-!*.pxd
-!*.pyx
-!setup.py
-!*.py
-!*.sh

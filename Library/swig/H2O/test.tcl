@@ -1,4 +1,4 @@
-load H2O.so H2O
+load H2O H2O
 puts "Test tcl API"
 cH2O water
 set p_boling [water P_Boiling 200]
