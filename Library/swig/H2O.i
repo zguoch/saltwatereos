@@ -1,12 +1,8 @@
-#ifndef WATER_H
-#define WATER_H
-#include <iostream>
-#include <fstream>
-#include <string> 
-#include <cmath>
-#include <vector>
-using namespace std;
-#include "Fluid.H"
+%module H2O
+%{
+    // #define SWIG_FILE_WITH_INIT
+    #include "H2O.H"
+%}
 
 namespace H2O
 {
@@ -70,7 +66,7 @@ namespace H2O
          * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
          * @return double Pressure [bar]
          */
-        double P_Boiling(double T);
+        virtual double P_Boiling(double T);
         /**
          * @brief Saturated liquid density. See equation (2.6) of reference \cite wagner2002iapws. 
          * 
@@ -136,5 +132,3 @@ namespace H2O
     };
     
 }
-
-#endif

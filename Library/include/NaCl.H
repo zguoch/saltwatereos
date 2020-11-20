@@ -37,9 +37,9 @@ namespace NaCl
          * @return double Sublimation pressure of NaCl, [bar]
          * 
          */
-        virtual double P_Boiling(double T);
+        double P_Boiling(double T);
         
-        // virtual double P_Boiling(double T);
+        // double P_Boiling(double T);
         /**
          * @brief Melting curve of NaCl. 
          * Equation (1) of reference \cite Driesner2007Part1. 

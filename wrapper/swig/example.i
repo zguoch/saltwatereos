@@ -20,3 +20,12 @@
 %}
 
 int fact(int n);
+#define aaa 100
+// Very simple C++ example for linked list
+class Foo {
+public:
+      Foo(){};
+     ~Foo(){};
+      int  bar(int x);
+      int  x;
+};

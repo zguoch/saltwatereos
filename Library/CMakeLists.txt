@@ -1,5 +1,12 @@
 # 0. CMake Minimum version
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 2.12)
+if (POLICY CMP0086)
+  # cmake warns if loaded from a min-3.0-required parent dir, so silence the warning:
+  cmake_policy(SET CMP0086 NEW)
+endif()
+if (POLICY CMP0078)
+  cmake_policy(SET CMP0078 NEW)
+endif()
 
 project(H2ONaCl)
 project(SaltWaterEOS LANGUAGES CXX)
@@ -9,13 +16,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #2. Source code dir
 aux_source_directory(. SRC_MAIN)
 
-
-# library
+# source
 add_subdirectory(src)
+add_subdirectory(swig)
 # Head files dir
 include_directories(src include)
-
-
 
 # add Executable target
 add_executable(example main.cpp)
@@ -44,5 +49,29 @@ add_library(NaCl STATIC src/NaCl.C)
 target_link_libraries(eosH2ONaCl water Fluid NaCl)
 install (TARGETS eosH2ONaCl DESTINATION ${PROJECT_SOURCE_DIR}/lib)
 
+# # ================== whether build wrapper for other language, e.g. python, tcl =====================
+# option(Build_API_MultiLanguage "whether build API for other langulages" OFF)
+# if(Build_API_MultiLanguage)
+#     FIND_PACKAGE(SWIG REQUIRED)  
+#     INCLUDE(${SWIG_USE_FILE})  
+#     FIND_PACKAGE(PythonLibs)  
+#     if(PYTHONLIBS_FOUND)
+#         message("Python include found" ${PYTHON_INCLUDE_PATH} )
+#         message("Python libs found" ${PYTHON_LIBRARIES} )
+#         INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
+#         SET(CMAKE_SWIG_FLAGS "")
+#     endif(PYTHONLIBS_FOUND)
+#     include_directories("${PROJECT_SOURCE_DIR}/include")
+#     SET_SOURCE_FILES_PROPERTIES(swig/H2O.i PROPERTIES CPLUSPLUS ON)
+#     SET_SOURCE_FILES_PROPERTIES(swig/H2O.i PROPERTIES SWIG_FLAGS "-includeall")
+#     # set ( CMAKE_C_FLAGS "-flat_namespace") # important
+#     set (CMAKE_CXX_FLAGS "-flat_namespace") # important
+#     swig_add_library(H2O
+#         LANGUAGE python
+#         SOURCES swig/H2O.i src/H2O.C src/Fluid.C )
+#     SWIG_LINK_LIBRARIES(H2O ${PYTHON_LIBRARIES})
+# endif(Build_API_MultiLanguage)
+
+# # ===================================================================================================
 
 

@@ -32,7 +32,7 @@ namespace Fluid
          * @param T T Temperature, [\f$ ^{\circ}C\f$]
          * @return double Pressure [bar]
          */
-        virtual double P_Boiling(double T) = 0;
+        // virtual double P_Boiling(double T) = 0;
     };
     
 }
