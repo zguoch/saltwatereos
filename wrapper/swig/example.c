@@ -1,0 +1,33 @@
+// /* File : example.c */
+
+// double  My_variable  = 3.0;
+
+// /* Compute factorial of n */
+// int fact(int n) {
+//   if (n <= 1)
+//     return 1;
+//   else
+//     return n*fact(n-1);
+// }
+
+// /* Compute n mod m */
+// int my_mod(int n, int m) {
+//   return(n % m);
+// }
+
+/* File: example.c */
+
+#include "example.h"
+
+int fact(int n) {
+    if (n < 0){ /* This should probably return an error, but this is simpler */
+        return 0;
+    }
+    if (n == 0) {
+        return 1;
+    }
+    else {
+        /* testing for overflow would be a good idea here */
+        return n * fact(n-1);
+    }
+}
