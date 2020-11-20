@@ -61,18 +61,6 @@ class _SwigNonDynamicMeta(type):
     __setattr__ = _swig_setattr_nondynamic_class_variable(type.__setattr__)
 
 
-Kelvin = _H2O.Kelvin
-class cFluid(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self):
-        _H2O.cFluid_swiginit(self, _H2O.new_cFluid())
-    __swig_destroy__ = _H2O.delete_cFluid
-
-# Register cFluid in _H2O:
-_H2O.cFluid_swigregister(cFluid)
-
 class Table62(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -104,7 +92,7 @@ iceIII = _H2O.iceIII
 iceV = _H2O.iceV
 iceVI = _H2O.iceVI
 iceVII = _H2O.iceVII
-class cH2O(cFluid):
+class cH2O(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
 
