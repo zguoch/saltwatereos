@@ -1,7 +1,7 @@
 
 # ================== whether build wrapper for other language, e.g. python, tcl =====================
 option(Build_API_MultiLanguage "whether build API for other langulages" ON)
-set(specie "H2O")
+set(specie "NaCl")
 file(GLOB API_SRC "${PROJECT_SOURCE_DIR}/src/${specie}.C" "${PROJECT_SOURCE_DIR}/src/Fluid.C")
 
 if(Build_API_MultiLanguage)

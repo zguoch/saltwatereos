@@ -1,9 +1,11 @@
 
 # ================== whether build wrapper for other language, e.g. python, tcl =====================
 option(Build_API_MultiLanguage "whether build API for other langulages" ON)
-set(specie "H2O")
-file(GLOB API_SRC "${PROJECT_SOURCE_DIR}/src/${specie}.C" "${PROJECT_SOURCE_DIR}/src/Fluid.C")
-
+set(specie "H2ONaCl")
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/PROST)
+file(GLOB PROST_SRC "${PROJECT_SOURCE_DIR}/src/PROST/*.c")
+file(GLOB SWEOS_SRC "${PROJECT_SOURCE_DIR}/src/*.C")
+set(API_SRC ${PROST_SRC} ${SWEOS_SRC})
 if(Build_API_MultiLanguage)
     FIND_PACKAGE(SWIG REQUIRED)  
     INCLUDE(${SWIG_USE_FILE})  

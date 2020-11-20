@@ -19,6 +19,8 @@ aux_source_directory(. SRC_MAIN)
 # source
 add_subdirectory(src)
 add_subdirectory(swig/H2O)
+add_subdirectory(swig/NaCl)
+add_subdirectory(swig/H2ONaCl)
 # Head files dir
 include_directories(src include)
 
@@ -42,11 +44,9 @@ endif()
 # install path 
 INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/include )
 FILE(GLOB SC_FILES "${PROJECT_SOURCE_DIR}/src/PROST/*.c" "${PROJECT_SOURCE_DIR}/src/PROST/*.h" "${PROJECT_SOURCE_DIR}/src/*.H" "${PROJECT_SOURCE_DIR}/src/*.C")
-add_library (eosH2ONaCl ${SC_FILES})
-add_library(water STATIC src/H2O.C)
-add_library(Fluid STATIC src/Fluid.C)
-add_library(NaCl STATIC src/NaCl.C)
-target_link_libraries(eosH2ONaCl water Fluid NaCl)
+add_library (eosH2ONaCl ${SC_FILES} src/H2O.C src/Fluid.C src/NaCl.C)
+# add_library(water STATIC src/H2O.C)
+# target_link_libraries(eosH2ONaCl water Fluid NaCl)
 install (TARGETS eosH2ONaCl DESTINATION ${PROJECT_SOURCE_DIR}/lib)
 
 # # ================== whether build wrapper for other language, e.g. python, tcl =====================
