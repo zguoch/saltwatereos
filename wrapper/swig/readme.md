@@ -23,3 +23,17 @@ gcc -shared -o _example.so  example_wrap.o example.o -L$python_lib -lpython3.7m 
 - 最后生成的动态库的名称必须遵守规则！！！`_example.so`前面的下划线不能省略！不能省略！不能省略！[官方的强调如下](http://www.swig.org/Doc1.3/Python.html)：
 
     When linking the module, **the name of the output file has to match the name of the module prefixed by an underscore**. If the name of your module is "example", then the name of the corresponding object file should be "_example.so" or "_examplemodule.so". The name of the module is specified using the %module directive or the -module command line option.
+
+# Java script
+
+## dependence 
+
+- v8: `brew install v8`
+
+```
+# -jsc, -v8 -DV8_VERSION=0x032530
+swig -c++ -javascript -v8 example.i
+# only once
+npm install -g node-gyp
+
+```

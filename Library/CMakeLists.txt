@@ -18,7 +18,7 @@ aux_source_directory(. SRC_MAIN)
 
 # source
 add_subdirectory(src)
-add_subdirectory(swig)
+add_subdirectory(swig/H2O)
 # Head files dir
 include_directories(src include)
 

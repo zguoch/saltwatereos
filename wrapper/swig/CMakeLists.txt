@@ -40,17 +40,17 @@ set ( CMAKE_CXX_FLAGS "-flat_namespace") # important
 # SWIG_ADD_LIBRARY(example python example.i example.c)
 
 
-# swig_add_library(example
-#         LANGUAGE python
-#         SOURCES example.i example.cpp)
-
-# SWIG_LINK_LIBRARIES(example ${PYTHON_LIBRARIES})
-
 swig_add_library(example
-        LANGUAGE tcl
+        LANGUAGE python
         SOURCES example.i example.cpp)
 
-SWIG_LINK_LIBRARIES(example tcl)
+SWIG_LINK_LIBRARIES(example ${PYTHON_LIBRARIES})
+
+# swig_add_library(example
+#         LANGUAGE tcl
+#         SOURCES example.i example.cpp)
+
+# SWIG_LINK_LIBRARIES(example tcl)
 
 # # install
 # # execute_process(COMMAND python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()" OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE)
