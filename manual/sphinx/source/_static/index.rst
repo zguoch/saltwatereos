@@ -2,7 +2,7 @@
 
 SaltWater EOS Documentation
 =======================================
-`testjs <./_static/test.html>`_
+`testjs <./test.html>`_
 Welcome to the SaltWater EOS Docs! Here you'll find resources for using SaltWater EOS and examples of what
 it can do.
 
