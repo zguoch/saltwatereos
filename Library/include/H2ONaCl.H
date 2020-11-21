@@ -12,7 +12,7 @@ using namespace std;
 // if H2ONaCl class is called by swift on ios platform, we change to use PROST to calculate water properties
 // if on desktop platform, please comment this line
 #include "stdfunc.H"
-#include "Fluid.H"
+// #include "Fluid.H"
 #include "H2O.H"
 #include "NaCl.H"
 #include "dataStruct_H2ONaCl.H"

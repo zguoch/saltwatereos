@@ -43,34 +43,11 @@ endif()
 
 # install path 
 INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/include )
-FILE(GLOB SC_FILES "${PROJECT_SOURCE_DIR}/src/PROST/*.c" "${PROJECT_SOURCE_DIR}/src/PROST/*.h" "${PROJECT_SOURCE_DIR}/src/*.H" "${PROJECT_SOURCE_DIR}/src/*.C")
-add_library (eosH2ONaCl ${SC_FILES} src/H2O.C src/Fluid.C src/NaCl.C)
-# add_library(water STATIC src/H2O.C)
+FILE(GLOB SC_FILES "${PROJECT_SOURCE_DIR}/src/PROST/*.c" "${PROJECT_SOURCE_DIR}/src/PROST/*.h" "${PROJECT_SOURCE_DIR}/src/*.H" "${PROJECT_SOURCE_DIR}/src/*.cpp")
+add_library (eosH2ONaCl ${SC_FILES} src/H2O.cpp src/Fluid.cpp src/NaCl.cpp)
+# add_library(water STATIC src/H2O.cpp)
 # target_link_libraries(eosH2ONaCl water Fluid NaCl)
 install (TARGETS eosH2ONaCl DESTINATION ${PROJECT_SOURCE_DIR}/lib)
-
-# # ================== whether build wrapper for other language, e.g. python, tcl =====================
-# option(Build_API_MultiLanguage "whether build API for other langulages" OFF)
-# if(Build_API_MultiLanguage)
-#     FIND_PACKAGE(SWIG REQUIRED)  
-#     INCLUDE(${SWIG_USE_FILE})  
-#     FIND_PACKAGE(PythonLibs)  
-#     if(PYTHONLIBS_FOUND)
-#         message("Python include found" ${PYTHON_INCLUDE_PATH} )
-#         message("Python libs found" ${PYTHON_LIBRARIES} )
-#         INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
-#         SET(CMAKE_SWIG_FLAGS "")
-#     endif(PYTHONLIBS_FOUND)
-#     include_directories("${PROJECT_SOURCE_DIR}/include")
-#     SET_SOURCE_FILES_PROPERTIES(swig/H2O.i PROPERTIES CPLUSPLUS ON)
-#     SET_SOURCE_FILES_PROPERTIES(swig/H2O.i PROPERTIES SWIG_FLAGS "-includeall")
-#     # set ( CMAKE_C_FLAGS "-flat_namespace") # important
-#     set (CMAKE_CXX_FLAGS "-flat_namespace") # important
-#     swig_add_library(H2O
-#         LANGUAGE python
-#         SOURCES swig/H2O.i src/H2O.C src/Fluid.C )
-#     SWIG_LINK_LIBRARIES(H2O ${PYTHON_LIBRARIES})
-# endif(Build_API_MultiLanguage)
 
 # # ===================================================================================================
 

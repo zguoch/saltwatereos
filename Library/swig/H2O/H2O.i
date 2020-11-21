@@ -51,7 +51,7 @@ namespace H2O
      * The formulation is valid in the entire stable fluid region from the melting curve to 1273 K at pressures to 1000 MPa. It extrapolates in a physically reasonable way outside this region. See also <a href="http://www.iapws.org/relguide/IAPWS-95.html">IAPWS95</a>.
      * 
      */
-    class cH2O : public Fluid::cFluid
+    class cH2O
     {
     private:
         Table62 m_Table62;
@@ -66,7 +66,7 @@ namespace H2O
          * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
          * @return double Pressure [bar]
          */
-        virtual double P_Boiling(double T);
+        double P_Boiling(double T);
         /**
          * @brief Saturated liquid density. See equation (2.6) of reference \cite wagner2002iapws. 
          * 

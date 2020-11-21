@@ -6,8 +6,10 @@
 #include <cmath>
 #include <vector>
 using namespace std;
-#include "Fluid.H"
-
+// #include "Fluid.H"
+// ============= Constants ====================
+#define Kelvin 273.15
+// ============================================
 namespace H2O
 {
     /**
@@ -55,7 +57,7 @@ namespace H2O
      * The formulation is valid in the entire stable fluid region from the melting curve to 1273 K at pressures to 1000 MPa. It extrapolates in a physically reasonable way outside this region. See also <a href="http://www.iapws.org/relguide/IAPWS-95.html">IAPWS95</a>.
      * 
      */
-    class cH2O : public Fluid::cFluid
+    class cH2O// : public Fluid::cFluid
     {
     private:
         Table62 m_Table62;

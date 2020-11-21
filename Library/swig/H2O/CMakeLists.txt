@@ -2,7 +2,7 @@
 # ================== whether build wrapper for other language, e.g. python, tcl =====================
 option(Build_API_MultiLanguage "whether build API for other langulages" ON)
 set(specie "H2O")
-file(GLOB API_SRC "${PROJECT_SOURCE_DIR}/src/${specie}.C" "${PROJECT_SOURCE_DIR}/src/Fluid.C")
+file(GLOB API_SRC "${PROJECT_SOURCE_DIR}/src/${specie}.cpp" "${PROJECT_SOURCE_DIR}/src/Fluid.cpp")
 
 if(Build_API_MultiLanguage)
     FIND_PACKAGE(SWIG REQUIRED)  
