@@ -27,7 +27,7 @@ source $(brew --prefix nvm)/nvm.sh
 ```
 ## Using nvm install node v8
 Firstly, you have to using command of `nvm ls` to list all the available versions of nodejs, the results looks like this,
-```
+```bash
 nvm ls
         v6.14.4
 ->      v8.17.0
@@ -49,7 +49,7 @@ lts/fermium -> v14.15.1
 
 Then install `v8.17.0` using command of `nvm install 8.17.0`, and finally set it to default `nvm alias default 8.17.0`. Now it should works on Mac, check node and npm version,
 
-```
+```bash
 ➜  swig git:(master) ✗ node --version
 v8.17.0
 ➜  swig git:(master) ✗ npm --version          
@@ -60,3 +60,11 @@ v8.17.0
 ```
 
 Using v8 node install `node-gyp`: `npm install node-gyp -g` and then build js API, `node-gyp configure build`
+
+```bash
+# rm example_wrap.cxx
+swig -c++ -javascript -node H2O.i
+rm -rf build
+node-gyp configure build
+# node-gyp configure build 
+```

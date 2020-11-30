@@ -50,6 +50,30 @@ if(Build_API_MultiLanguage)
         install(TARGETS tcl${specie} DESTINATION ${PROJECT_SOURCE_DIR}/API/tcl RENAME "${specie}")
         install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/test_${specie}.tcl DESTINATION ${PROJECT_SOURCE_DIR}/API/tcl)
     endif(Build_API_tcl)
+    # ------ 3. javascript ------------------
+    # option(Build_API_js "whether build API for JavaScript" ON)
+    # if(Build_API_js)
+    #     find_package (Nodejs REQUIRED)
+    #     include_directories (
+    #     ${NODEJS_INCLUDE_DIRS}
+    #     ${CMAKE_CURRENT_SOURCE_DIR}/..
+    #     )
+    #     # if(TCL_FOUND)
+    #     #     message("TCL include found: " ${TCL_INCLUDE_PATH} )
+    #     #     message("TCL libs found: " ${TCL_LIBRARY} )
+    #     #     INCLUDE_DIRECTORIES(${TCL_INCLUDE_PATH})
+    #     #     SET(CMAKE_SWIG_FLAGS "")
+    #     # endif(TCL_FOUND)
+    #     SET(CMAKE_SWIG_FLAGS "-node")
+    #     swig_add_library(js${specie}
+    #     LANGUAGE javascript
+    #     SOURCES ${specie}.i ${API_SRC})
+    #     SWIG_LINK_LIBRARIES(js${specie})
+    #     # install
+    #     # set_target_properties( js${specie} PROPERTIES OUTPUT_NAME "${specie}" SUFFIX "")
+    #     # install(TARGETS js${specie} DESTINATION ${PROJECT_SOURCE_DIR}/API/js RENAME "${specie}")
+    #     # install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/test_${specie}.tcl DESTINATION ${PROJECT_SOURCE_DIR}/API/tcl)
+    # endif(Build_API_js)
     # ------------------------------------
 endif(Build_API_MultiLanguage)
 
