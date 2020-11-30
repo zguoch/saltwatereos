@@ -621,8 +621,9 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = ./Library \
-                        ./desktop \
+INPUT                  = ./Library/include \
+                        ./Library/src \
+                        ./commandline \
                         ./doxygen \
 
 # This tag can be used to specify the character encoding of the source files
@@ -1188,7 +1189,7 @@ GENERATE_LATEX         = NO
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be
 # put in front of it. If left blank `latex' will be used as the default path.
 
-LATEX_OUTPUT           = latex
+LATEX_OUTPUT           = doxygen/latex
 
 # The LATEX_CMD_NAME tag can be used to specify the LaTeX command name to be
 # invoked. If left blank `latex' will be used as the default command name.

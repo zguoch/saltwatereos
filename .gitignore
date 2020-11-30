@@ -5,3 +5,5 @@ lib
 build-*/
 .DS_Store
 doxygen/html
+doxygen/latex
+latex/
