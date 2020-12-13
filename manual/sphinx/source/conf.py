@@ -50,7 +50,7 @@ smartquotes_action = 'qe'
 # default language to highlight source code
 highlight_language = 'cpp'
 pygments_style = 'monokai'
-
+bibtex_bibfiles = ['manual.bib']
 # -- Project configuration ------------------------------------------------
 
 # The version shown at the top of the sidebar
@@ -163,9 +163,9 @@ texinfo_documents = [
 ]
 
 def setup(app):
-    app.add_stylesheet("style.css")
+    app.add_css_file("style.css")
     # app.add_javascript("js/custom.js")
-    app.add_javascript(
+    app.add_js_file(
         "https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js")
     
 # new defined cite style
