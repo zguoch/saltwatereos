@@ -5,7 +5,7 @@
  * 
     <table style="width:100%">
         <tr>
-            <td class="Gallery"><a href=vtk_js/index.html?fileURL=pipe_3D_mesh.vtkjs> <img src="PhaseDiagram_NaCl_H2O_3D.png" width=300px> </a> </td>
+            <td class="Gallery"><a href=vtk_js/index.html?fileURL=phaseDiagram_NaClH2O.vtkjs> <img src="PhaseDiagram_NaCl_H2O_3D.png" width=300px> </a> </td>
             <td class="Gallery">\link H2ONaCl::cH2ONaCl::P_X_Critical \image html HaliteCriticalCurves.jpg "Critical pressure and composition." width=300px. \endlink</td>
             <td class="Gallery">\link H2ONaCl::cH2ONaCl::X_HaliteLiquidus \image html HaliteLiquidus.jpg "Liquid composition for the halite liquidus." width=300px. \endlink</td>
             <td class="Gallery">\link H2ONaCl::cH2ONaCl::X_VaporHaliteCoexist \image html HaliteSaturatedVaporComposition.jpg "Halite-saturated vapor composition." width=300px. \endlink</td>
