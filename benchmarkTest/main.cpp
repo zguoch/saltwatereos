@@ -1,6 +1,6 @@
 #include "H2ONaCl.H"
 #include "omp.h"
-
+H2ONaCl::cH2ONaCl eos;
 // 1. Halite melting curve, Fig. 3 of Driesner and Heinrich(2007)
 void test_HaliteMelting();
 // 2. Vapor pressure curves (sublimation and boling curves), Fig. 4 of Driesner and Heinrich(2007)
@@ -587,6 +587,14 @@ void test_V_extrapol()
   std::cout<<"Test V_extrapol end"<<endl;
 }
 
+void test_writeCriticalCurve()
+{
+  eos.writeCriticalCurve();
+}
+void test_writeHaliteLiquidus()
+{
+  eos.writeHaliteLiquidus();
+}
 int main( int argc, char** argv )
 {
   std::cout<<"开始测试计算"<<std::endl;
@@ -597,12 +605,15 @@ int main( int argc, char** argv )
   // test_HaliteSaturatedVaporComposition(); 
   // test_P_VLH();
   // test_Salinity_VaporLiquidCoexist_LiquidBranch();
-  test_water_Curves();
+  // test_water_Curves();
   // test_water_props(130, 200, 2, 10, 0.1, 1, true);
   // testT_V_star();
   // test_V_brine_NaCl_lowThighT();
   // test_V_extrapol();
   // test_NaClH2O_props(0, 800, 1, 1000, 5, 5, true);
+
+  // test_writeCriticalCurve();
+  test_writeHaliteLiquidus();
 
   std::cout<<"测试计算完毕"<<std::endl;
 }

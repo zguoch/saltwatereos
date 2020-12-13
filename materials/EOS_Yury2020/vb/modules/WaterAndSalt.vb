@@ -249,20 +249,20 @@ Isob_Heat_cap = (Water_Isobaric_Heat_capacity_calc(ThSt, RhoW) * q2) / (1 + xNaC
 End Function
 
 Public Function WtToMol#(wtPecent#)
-' this and next functions are designed to convert wt to mol % and back.
-' these simple equations works faster compared to complicated S_Unit_Converter function
-Dim mH2O#, mNaCl#, Tmp#
-mH2O = 18.015268
-mNaCl = 58.4428
-Tmp = wtPecent / 100
-WtToMol = Tmp / mNaCl / (Tmp / mNaCl + (1 - Tmp) / mH2O) * 100
+    ' this and next functions are designed to convert wt to mol % and back.
+    ' these simple equations works faster compared to complicated S_Unit_Converter function
+    Dim mH2O#, mNaCl#, Tmp#
+    mH2O = 18.015268
+    mNaCl = 58.4428
+    Tmp = wtPecent / 100
+    WtToMol = Tmp / mNaCl / (Tmp / mNaCl + (1 - Tmp) / mH2O) * 100
 End Function
 Public Function MolToWt#(MolPercent#)
-Dim mH2O#, mNaCl#, Tmp#
-mH2O = 18.015268
-mNaCl = 58.4428
-Tmp = MolPercent / 100
-MolToWt = mNaCl * Tmp / (mNaCl * Tmp + (1 - Tmp) * mH2O) * 100
+    Dim mH2O#, mNaCl#, Tmp#
+    mH2O = 18.015268
+    mNaCl = 58.4428
+    Tmp = MolPercent / 100
+    MolToWt = mNaCl * Tmp / (mNaCl * Tmp + (1 - Tmp) * mH2O) * 100
 End Function
 
 Public Function SuplFuncs_LV_P_ActualFinder#(T#, x_wt#, VaporSide As Boolean, LowerEnd As Boolean, UnderBeak As Boolean)
