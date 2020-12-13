@@ -142,7 +142,7 @@ namespace H2ONaCl
          * @param nT 
          * @param nP 
          */
-        void writeHaliteLiquidus(string filename="HaliteLiquidus",double Tmin=TMIN_C, double Tmax=NaCl::T_Triple, double Pmax=2000, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nT=100, int nP=200);
+        void writeHaliteLiquidusSurface(string filename="HaliteLiquidus",double Tmin=TMIN_C, double Tmax=NaCl::T_Triple, double Pmax=2000, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nT=100, int nP=200);
         /**
          * @brief Composition of halite-saturated vapor. See equation (9) and (14) of reference \cite Driesner2007Part1.
          * 
@@ -165,7 +165,7 @@ namespace H2ONaCl
          * @param Tmax [C]
          * @param dT [C]
          */
-        void writeVaporLiquidHaliteCoexist(string filename="VaporLiquidHalite", double Tmin=TMIN_C, double Tmax=NaCl::T_Triple, double dT=1, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk);
+        void writeVaporLiquidHaliteCoexistSurface(string filename="VaporLiquidHalite", double Tmin=TMIN_C, double Tmax=NaCl::T_Triple, double dT=1, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk);
 
         /**
          * @brief Salinity on liquid branch of Vapor + Liquid coexist surface. See equation (11) and Table 7 of reference \cite Driesner2007Part1.

@@ -11,6 +11,7 @@ pages:
   script:
   # doxygen documentation
   - doxygen Doxyfile
+  - cp -rf doxygen/vtk_js doxygen/html
   - mv doxygen/html/ public/
   # sphinx manual
   # to use sphinxcontrib-bibtex, the sphinx version must be 1.6.7 or lower

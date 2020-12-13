@@ -1,6 +1,9 @@
 /**
  * @page Gallery Gallery of swEOS library
  * 
+ * 
+ * <a href="https://www.hydrothermalfoam.info/manual/en/_static/vtk_js/index.html?fileURL=pipe_3D_mesh.vtkjs" target="_self">Google</a>
+
  * \section Gallery_water Pure water
  * 
  * <table style="width:100%">
@@ -32,7 +35,7 @@
         <tr>
             <td class="Gallery">\link H2ONaCl::cH2ONaCl::X_VaporLiquidCoexistSurface_LiquidBranch \image html X_VaporLiquidCoexistSurface.jpg "Isothermal sections of the V + L surface." width=300px. \endlink</td>
             <td class="Gallery">\link H2ONaCl::cH2ONaCl::T_star_V \image html V_brine_T_P1000bar.jpg "Molar volume of brine." width=300px. \endlink</td>
-            <td class="Gallery"> </td>
+            <td class="Gallery">\link vtk_js/index.html?fileURL=pipe_3D_mesh.vtkjs \image html PhaseDiagram_NaCl_H2O_3D.png "Phase diagram of NaCl-H2O system in P-T-X space." width=300px. \endlink </td>
             <td class="Gallery"> </td>
         </tr>
     </table>

@@ -3266,12 +3266,13 @@ namespace H2ONaCl
         // 1. Calculate 
         double P_crit=0, X_crit=0;
         vector<double> vecT, vecP, vecX;
+        const double lenT=TMAX_C-TMIN_C, lenP=PMAX-PMIN, lenX=XMAX-XMIN;
         for (double T = Tmin; T < Tmax; T=T+dT)
         {
             P_X_Critical(T, P_crit, X_crit);
-            vecT.push_back(T);
-            vecP.push_back(P_crit);
-            vecX.push_back(Mol2Wt(X_crit)*100); // convert molar fraction to weight percent, [0, 100]
+            vecT.push_back((T-TMIN_C)/lenT);
+            vecP.push_back((P_crit-PMIN)/lenP);
+            vecX.push_back(Mol2Wt(X_crit)); // convert molar fraction to weight percent, [0, 1]
         }
         // 2. Write
         switch (fmt)
@@ -3288,15 +3289,16 @@ namespace H2ONaCl
     }
     void cH2ONaCl::writeNaClMeltingCurve(string filename,double Pmin, double Pmax, double dP, fmtOutPutFile fmt)
     {
+        const double lenT=TMAX_C-TMIN_C, lenP=PMAX-PMIN, lenX=XMAX-XMIN;
         // 1. Calculate 
         double T=0;
         vector<double> vecT, vecP, vecX;
         for (double P = Pmin; P < Pmax; P=P+dP)
         {
             T=m_NaCl.T_Melting(P);
-            vecT.push_back(T);
-            vecP.push_back(P);
-            vecX.push_back(100); // weight percent NaCl, this is pure NaCl
+            vecT.push_back((T-TMIN_C)/lenT);
+            vecP.push_back((P-PMIN)/lenP);
+            vecX.push_back(1); // weight percent NaCl, this is pure NaCl
         }
         // 2. Write
         switch (fmt)
@@ -3313,6 +3315,7 @@ namespace H2ONaCl
     }
     void cH2ONaCl::writeVaporLiquidHalite_V_L_H_Curve(string filename,double Tmin, double Tmax, fmtOutPutFile fmt, int nT)
     {
+        const double lenT=TMAX_C-TMIN_C, lenP=PMAX-PMIN, lenX=XMAX-XMIN;
         // 1. Calculate 
         double dT=(Tmax-Tmin)/(nT-1);
         double T, P, X_L, X_V=0, X_H=1;
@@ -3323,11 +3326,11 @@ namespace H2ONaCl
             P = P_VaporLiquidHaliteCoexist(T);
             X_L=X_HaliteLiquidus(T,P);
             
-            vecT.push_back(T);
-            vecP.push_back(P);
-            vecX_L.push_back(Mol2Wt(X_L)*100);
-            vecX_V.push_back(Mol2Wt(X_V)*100);
-            vecX_H.push_back(Mol2Wt(X_H)*100);
+            vecT.push_back((T-TMIN_C)/lenT);
+            vecP.push_back((P-PMIN)/lenP);
+            vecX_L.push_back(Mol2Wt(X_L));
+            vecX_V.push_back(Mol2Wt(X_V));
+            vecX_H.push_back(Mol2Wt(X_H));
         }
         // 2. Write
         switch (fmt)
@@ -3337,6 +3340,34 @@ namespace H2ONaCl
                 writeVTK_PolyLine(filename+"_V.vtk", vecX_V, vecT, vecP);
                 writeVTK_PolyLine(filename+"_L.vtk", vecX_L, vecT, vecP);
                 writeVTK_PolyLine(filename+"_H.vtk", vecX_H, vecT, vecP);
+            }
+            break;
+        
+        default:
+            break;
+        }
+    }
+    void cH2ONaCl::writeH2OBoilingCurve(string filename,double Tmin, double Tmax, H2ONaCl::fmtOutPutFile fmt,int nT)
+    {
+        const double lenT=TMAX_C-TMIN_C, lenP=PMAX-PMIN, lenX=XMAX-XMIN;
+        // 1. Calculate 
+        double dT=(Tmax-Tmin)/(nT-1);
+        double T, P;
+        vector<double> vecT, vecP, vecX;
+        for (size_t i = 0; i < nT; i++)
+        {
+            T=Tmin+i*dT;
+            P =m_water.P_Boiling(T);
+            vecT.push_back((T-TMIN_C)/lenT);
+            vecP.push_back((P-PMIN)/lenP);
+            vecX.push_back(0);
+        }
+        // 2. Write
+        switch (fmt)
+        {
+        case fmt_vtk:
+            {
+                writeVTK_PolyLine(filename+".vtk", vecX, vecT, vecP);
             }
             break;
         
@@ -3424,8 +3455,9 @@ namespace H2ONaCl
 
         fpout.close();
     }
-    void cH2ONaCl::writeHaliteLiquidus(string filename,double Tmin, double Tmax, double Pmax, fmtOutPutFile fmt, int nT, int nP)
+    void cH2ONaCl::writeHaliteLiquidusSurface(string filename,double Tmin, double Tmax, double Pmax, fmtOutPutFile fmt, int nT, int nP)
     {
+        const double lenT=TMAX_C-TMIN_C, lenP=PMAX-PMIN, lenX=XMAX-XMIN;
         double T=0,P=0, X=0, Pmin=0;
         double dT=(Tmax-Tmin)/(nT-1);
         double T_NaClMelting = 0;
@@ -3443,9 +3475,9 @@ namespace H2ONaCl
                 {
                     P = Pmin + j*dP;
                     X=X_HaliteLiquidus(T,P);
-                    vecT.push_back(T);
-                    vecP.push_back(P);
-                    vecX.push_back(Mol2Wt(X)*100); // convert molar fraction to weight percent, [0, 100]
+                    vecT.push_back((T-TMIN_C)/lenT);
+                    vecP.push_back((P-PMIN)/lenP);
+                    vecX.push_back(Mol2Wt(X)); // convert molar fraction to weight percent, [0, 1]
                 }
             }else
             {
@@ -3454,9 +3486,9 @@ namespace H2ONaCl
                     P = Pmin + j*dP;
                     T = m_NaCl.T_Melting(P);
                     X=X_HaliteLiquidus(T,P);
-                    vecT.push_back(T);
-                    vecP.push_back(P);
-                    vecX.push_back(Mol2Wt(X)*100); // convert molar fraction to weight percent, [0, 100]
+                    vecT.push_back((T-TMIN_C)/lenT);
+                    vecP.push_back((P-PMIN)/lenP);
+                    vecX.push_back(Mol2Wt(X)); // convert molar fraction to weight percent, [0, 1]
                 }
                 
             }
@@ -3477,8 +3509,9 @@ namespace H2ONaCl
             break;
         }
     }
-    void cH2ONaCl::writeVaporLiquidHaliteCoexist(string filename, double Tmin, double Tmax, double dT, fmtOutPutFile fmt)
+    void cH2ONaCl::writeVaporLiquidHaliteCoexistSurface(string filename, double Tmin, double Tmax, double dT, fmtOutPutFile fmt)
     {
+        const double lenT=TMAX_C-TMIN_C, lenP=PMAX-PMIN, lenX=XMAX-XMIN;
         vector<vector<double> > vec2T, vec2P, vec2X;
         int nX=101;
         double Xmin=0, Xmax=1;
@@ -3492,9 +3525,9 @@ namespace H2ONaCl
             for (size_t i = 0; i < nX; i++)
             {
                 double X=Xmin+i*dx;
-                vecT.push_back(T);
-                vecP.push_back(P);
-                vecX.push_back(Mol2Wt(X)*100); // convert molar fraction to weight percent, [0, 100]
+                vecT.push_back((T-TMIN_C)/lenT);
+                vecP.push_back((P-PMIN)/lenP);
+                vecX.push_back(Mol2Wt(X)); // convert molar fraction to weight percent, [0, 1]
             }
             vec2T.push_back(vecT);
             vec2P.push_back(vecP);
@@ -3506,6 +3539,78 @@ namespace H2ONaCl
         case fmt_vtk:
             {
                 writeVTK_Triangle_Strip(filename+".vtu", vec2X, vec2T, vec2P);
+            }
+            break;
+
+        default:
+            break;
+        }
+    }
+    void cH2ONaCl::writeVaporLiquidCoexistSurface(string filename, double Tmin, double Tmax, H2ONaCl::fmtOutPutFile fmt,int nT, int nP)
+    {
+        const double lenT=TMAX_C-TMIN_C, lenP=PMAX-PMIN, lenX=XMAX-XMIN;
+        vector<vector<double> > vec2T, vec2P, vec2T_v, vec2P_v, vec2X_l, vec2X_v;
+        double dT=(Tmax-Tmin)/(nT-1);
+        double T, P, X, Pmin, Pmax, X_crit, X_l, X_v;
+        // 1. calculate
+        for (size_t i = 0; i < nT; i++)
+        {
+            T = Tmin + i*dT;
+            Pmin = PMIN;
+            if(T<NaCl::T_Triple)Pmin = P_VaporLiquidHaliteCoexist(T);
+            if(T>H2O::T_Critic)
+            {
+                P_X_Critical(T,Pmax, X_crit);
+            }else
+            {
+                Pmax = m_water.P_Boiling(T);
+            }
+            double dP = (Pmax-Pmin)/(nP-1);
+            vector<double> vecT, vecP, vecX_l, vecX_v;
+            int n_dP_refine = 2;
+            for (size_t j = 0; j < nP-n_dP_refine; j++)
+            {
+                P = Pmin + j*dP;
+                X_l = X_VaporLiquidCoexistSurface_LiquidBranch(T,P);
+                X_v = X_VaporLiquidCoexistSurface_VaporBranch(T,P);
+                vecT.push_back((T-TMIN_C)/lenT);
+                vecP.push_back((P-PMIN)/lenP);
+                vecX_l.push_back(Mol2Wt(X_l)); // convert molar fraction to weight percent, [0, 1]
+                vecX_v.push_back(Mol2Wt(X_v)); // convert molar fraction to weight percent, [0, 1]
+            }
+            // refine where close to top
+            int np_refine = nP;
+            double Pmin_refine=Pmin + (nP-n_dP_refine-1)*dP;
+            double dP_refine=(Pmax-Pmin_refine)/(np_refine-1);
+            for (size_t j = 0; j < np_refine; j++)
+            {
+                P = Pmin_refine + j*dP_refine;
+                X_l = X_VaporLiquidCoexistSurface_LiquidBranch(T,P);
+                X_v = X_VaporLiquidCoexistSurface_VaporBranch(T,P);
+                vecT.push_back((T-TMIN_C)/lenT);
+                vecP.push_back((P-PMIN)/lenP);
+                vecX_l.push_back(Mol2Wt(X_l)); // convert molar fraction to weight percent, [0, 1]
+                vecX_v.push_back(Mol2Wt(X_v)); // convert molar fraction to weight percent, [0, 1]
+            }
+            
+            vec2T.push_back(vecT);
+            vec2P.push_back(vecP);
+            vec2X_l.push_back(vecX_l);
+            // if temperature too low, vapor branch area is too small.
+            if(T>50)
+            {
+                vec2T_v.push_back(vecT);
+                vec2P_v.push_back(vecP);
+                vec2X_v.push_back(vecX_v);
+            }
+        }
+        // 2. Write
+        switch (fmt)
+        {
+        case fmt_vtk:
+            {
+                writeVTK_Triangle_Strip(filename+"_V.vtu", vec2X_v, vec2T_v, vec2P_v);
+                writeVTK_Triangle_Strip(filename+"_L.vtu", vec2X_l, vec2T, vec2P);
             }
             break;
 

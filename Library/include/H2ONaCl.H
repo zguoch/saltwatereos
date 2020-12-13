@@ -29,7 +29,7 @@ namespace H2ONaCl
 {
     // ============= Constants of H2O-NaCl =======================================
     double const PMIN = 1; /**< Minimum valid pressure of H2O, [bar]. */ 
-    double const PMAX = 5000; /**< Maximum valid pressure of H2O, [bar]. */ 
+    double const PMAX = 2200; /**< Maximum valid pressure of H2O, [bar]. */ 
     double const TMIN = 273.15; /**< Minimum valid pressure of H2O, [K].  */ //TODO： 最后统一为C
     double const TMAX = 1273.15; /**< Maximum valid pressure of H2O, [K]. */ //TODO: 最后统一为C
     double const TMIN_K = 273.15; /**< Minimum valid pressure of H2O, [K].  */ 
@@ -138,7 +138,7 @@ namespace H2ONaCl
         void writeCriticalCurve(string filename="CriticalCurve",double Tmin=H2O::T_Critic, double Tmax=TMAX_C, double dT=1, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk);
         void writeNaClMeltingCurve(string filename="NaClMeltingCurve",double Pmin=PMIN, double Pmax=PMAX, double dP=1, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk);
         void writeVaporLiquidHalite_V_L_H_Curve(string filename="VaporLiquidHalite",double Tmin=TMIN_C, double Tmax=NaCl::T_Triple, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nT=100);
-
+        void writeH2OBoilingCurve(string filename="BoilingCurve_H2O",double Tmin=TMIN_C, double Tmax=H2O::T_Critic, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nT=100);
         /**
          * @brief The composition of halite-saturated liquid, \f$ X_{NaCl, sat}^L \f$ (the halite liquidus), is rather well known at high temperatures from about 400 \f$^{\circ}C \f$ to the melting curve of NaCl at pressures to about 4000 bar. See equation (8) of reference \cite Driesner2007Part1.
          * 
@@ -159,7 +159,7 @@ namespace H2ONaCl
          * @param nT 
          * @param nP 
          */
-        void writeHaliteLiquidus(string filename="HaliteLiquidus",double Tmin=TMIN_C, double Tmax=NaCl::T_Triple, double Pmax=2000, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nT=100, int nP=200);
+        void writeHaliteLiquidusSurface(string filename="HaliteLiquidus",double Tmin=TMIN_C, double Tmax=NaCl::T_Triple, double Pmax=PMAX, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nT=100, int nP=200);
         /**
          * @brief Composition of halite-saturated vapor. See equation (9) and (14) of reference \cite Driesner2007Part1.
          * 
@@ -182,7 +182,7 @@ namespace H2ONaCl
          * @param Tmax [C]
          * @param dT [C]
          */
-        void writeVaporLiquidHaliteCoexist(string filename="VaporLiquidHalite", double Tmin=TMIN_C, double Tmax=NaCl::T_Triple, double dT=1, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk);
+        void writeVaporLiquidHaliteCoexistSurface(string filename="VaporLiquidHalite", double Tmin=TMIN_C, double Tmax=NaCl::T_Triple, double dT=1, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk);
 
         /**
          * @brief Salinity on liquid branch of Vapor + Liquid coexist surface. See equation (11) and Table 7 of reference \cite Driesner2007Part1.
@@ -200,6 +200,9 @@ namespace H2ONaCl
          * @return double Salinity [Mole fraction of NaCl]
          */
         double X_VaporLiquidCoexistSurface_VaporBranch(double T, double P);
+
+        void writeVaporLiquidCoexistSurface(string filename="VaporLiquid", double Tmin=TMIN_C, double Tmax=TMAX_C, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nT=100, int nP=100); 
+
         /**
          * @brief \f$ T_V^* \f$ is used to determin the correction between NaCl-H2O and H2O. For a given molar volume, NaCl solution and pure water temperature are \f$ T \f$ and \f$ T_V^* \f$, respectively. The principle is shown in Fig.2 (below) of reference \cite Driesner2007Part2. \f$ T_V^* \f$ is calculated from equation (8, 13) of \cite Driesner2007Part2.
          * 
