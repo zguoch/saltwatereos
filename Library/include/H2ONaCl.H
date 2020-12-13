@@ -85,14 +85,14 @@ namespace H2ONaCl
         ~cH2ONaCl();
         H2O::cH2O m_water;
         NaCl::cNaCl m_NaCl;
-        MAP_PHASE_REGION m_phaseRegion_name;
+        H2ONaCl::MAP_PHASE_REGION m_phaseRegion_name;
         void prop_pTX(double p, double T_K, double X_wt, bool visc_on=true);
         void prop_pHX(double p, double H, double X_wt); /** Calculate properties by P, H, X */
         double rho_pTX(double p, double T_K, double X_wt); //get bulk density. p: Pa; T: K; X: wt%
         double rho_l_pTX(double p, double T_K, double X_wt); //get density of liquid. p: Pa; T: K; X: wt%
         double mu_l_pTX(double p, double T_K, double X_wt); //get dynamic viscosity of liquid. p: Pa; T: K; X: wt%
         double mu_pTX(double p, double T_K, double X_wt); //get bulk dynamic viscosity. p: Pa; T: K; X: wt%
-        PROP_H2ONaCl m_prop;
+        H2ONaCl::PROP_H2ONaCl m_prop;
         //X:[0,1]; T: deg. C; P: bar
         void writeProps2VTK(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, std::string fname, bool isWritePy=true, std::string xTitle="x", std::string yTitle="y", std::string zTitle="z");
         void writeProps2xyz(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, std::string fname, std::string xTitle="x", std::string yTitle="y", std::string zTitle="z", string delimiter=" ");
@@ -135,7 +135,9 @@ namespace H2ONaCl
          * @param dT Temperature spacing of the critical curve. Default is 1 \f$ ^{\circ}C\f$.
          * @param fmt Output file format. Option is one of H2ONaCl::fmt_vtk, H2ONaCl::fmt_dat.
          */
-        void writeCriticalCurve(string filename="CriticalCurve",double Tmin=H2O::T_Critic, double Tmax=TMAX_C, double dT=1, fmtOutPutFile fmt=fmt_vtk);
+        void writeCriticalCurve(string filename="CriticalCurve",double Tmin=H2O::T_Critic, double Tmax=TMAX_C, double dT=1, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk);
+        void writeNaClMeltingCurve(string filename="NaClMeltingCurve",double Pmin=PMIN, double Pmax=PMAX, double dP=1, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk);
+        void writeVaporLiquidHalite_V_L_H_Curve(string filename="VaporLiquidHalite",double Tmin=TMIN_C, double Tmax=NaCl::T_Triple, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nT=100);
 
         /**
          * @brief The composition of halite-saturated liquid, \f$ X_{NaCl, sat}^L \f$ (the halite liquidus), is rather well known at high temperatures from about 400 \f$^{\circ}C \f$ to the melting curve of NaCl at pressures to about 4000 bar. See equation (8) of reference \cite Driesner2007Part1.
@@ -157,7 +159,7 @@ namespace H2ONaCl
          * @param nT 
          * @param nP 
          */
-        void writeHaliteLiquidus(string filename="HaliteLiquidus",double Tmin=TMIN_C, double Tmax=TMAX_C, double Pmax=2000, fmtOutPutFile fmt=fmt_vtk, int nT=100, int nP=200);
+        void writeHaliteLiquidus(string filename="HaliteLiquidus",double Tmin=TMIN_C, double Tmax=NaCl::T_Triple, double Pmax=2000, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nT=100, int nP=200);
         /**
          * @brief Composition of halite-saturated vapor. See equation (9) and (14) of reference \cite Driesner2007Part1.
          * 
@@ -173,6 +175,15 @@ namespace H2ONaCl
          * @return double Pressure [bar]
          */
         double P_VaporLiquidHaliteCoexist(double T);
+        /**
+         * @brief Write vapor+Liquid+Halite coexist surface
+         * 
+         * @param Tmin [C]
+         * @param Tmax [C]
+         * @param dT [C]
+         */
+        void writeVaporLiquidHaliteCoexist(string filename="VaporLiquidHalite", double Tmin=TMIN_C, double Tmax=NaCl::T_Triple, double dT=1, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk);
+
         /**
          * @brief Salinity on liquid branch of Vapor + Liquid coexist surface. See equation (11) and Table 7 of reference \cite Driesner2007Part1.
          * 

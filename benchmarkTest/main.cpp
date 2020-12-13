@@ -595,6 +595,18 @@ void test_writeHaliteLiquidus()
 {
   eos.writeHaliteLiquidus();
 }
+void test_writePressure_VLH()
+{
+  eos.writeVaporLiquidHaliteCoexist();
+}
+void test_NaClMeltingCurve()
+{
+  eos.writeNaClMeltingCurve();
+}
+void test_VaporLiquidHaliteCoexistCurves()
+{
+  eos.writeVaporLiquidHalite_V_L_H_Curve();
+}
 int main( int argc, char** argv )
 {
   std::cout<<"开始测试计算"<<std::endl;
@@ -613,7 +625,9 @@ int main( int argc, char** argv )
   // test_NaClH2O_props(0, 800, 1, 1000, 5, 5, true);
 
   // test_writeCriticalCurve();
-  test_writeHaliteLiquidus();
-
+  // test_writeHaliteLiquidus();
+  // test_writePressure_VLH();
+  // test_NaClMeltingCurve();
+  // test_VaporLiquidHaliteCoexistCurves();
   std::cout<<"测试计算完毕"<<std::endl;
 }

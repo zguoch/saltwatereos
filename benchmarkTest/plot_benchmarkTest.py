@@ -24,6 +24,11 @@ mpl.rcParams['font.family'] = 'Arial'  #default font family
 mpl.rcParams['mathtext.fontset'] = 'cm' #font for math
 from iapws import IAPWS95
 from iapws import _iapws
+import H2ONaCl
+import NaCl
+import H2O
+water=H2O.cH2O()
+sw=H2ONaCl.cH2ONaCl()
 
 fmt_figs = ['jpg','svg'] # jpg have to before svg !!!
 units={'rho':'kg/m$^\mathregular{3}$'}
@@ -350,6 +355,8 @@ def plot_X_VL(fname0='X_VL'):
                 ax.axis('off')
                 continue
             T=arryT[index]
+            P_VLH=sw.P_VaporLiquidHaliteCoexist(float(T))
+            X_VLH=sw.X_HaliteLiquidus(float(T),P_VLH)
             fname=str('%s/%s_LiquidBranch_T%.0fC.dat'%(datapath,fname0,T))
             fname_vaporBranch=str('%s/%s_VaporBranch_T%.0fC.dat'%(datapath,fname0,T))
             data=np.loadtxt(fname)
@@ -358,8 +365,18 @@ def plot_X_VL(fname0='X_VL'):
             X=data[:,1]
             P_vaporBranch=data_vaporBranch[:,0]
             X_vaporBranch=data_vaporBranch[:,1]
-            l_l,=ax.semilogx(X,P,label='Liquid branch')
-            l_v,=ax.semilogx(X_vaporBranch,P_vaporBranch,label='Vapor branch')
+            if(T>NaCl.T_Triple):
+                P_VLH=np.min([P.min(),P_vaporBranch.min()])
+            l_l,=ax.semilogx(X[P>=P_VLH],P[P>=P_VLH],label='Liquid branch')
+            l_v,=ax.semilogx(X_vaporBranch[P>=P_VLH],P_vaporBranch[P>=P_VLH],label='Vapor branch')
+            if(T<NaCl.T_Triple):
+                ax.semilogx(X_VLH, P_VLH, 'o',mfc='red',mec='b',label='V+L+H, liquid')
+            if(T>H2O.T_Critic):
+                P_crit,X_crit=sw.P_X_Critical(float(T))
+                ax.semilogx(X_crit,P_crit,'o',mfc='b',mec='orange',label='Critical point')
+            else:
+                P_crit=water.P_Boiling(float(T))
+            ax.semilogx([10.0**xmin_axes[index], 1],[P_crit,P_crit],ls=':',color='green',label='Critical pressure')
             ax.set_xlim(10.0**xmin_axes[index], 1)
             ax.xaxis.set_major_locator(mpl.ticker.LogLocator(base=10.0, subs=(1.0,),numticks=20))
             ax.xaxis.set_minor_locator(mpl.ticker.LogLocator(base=10.0, subs=(0.1, 0.2,0.3, 0.4,0.5, 0.6,0.7, 0.8, 0.9),numticks=20))
@@ -562,12 +579,13 @@ def main(argv):
     # plot_HaliteLiquidus()
     # plot_HaliteSaturatedVaporComposition()
     # plot_P_VLH()
-    # plot_X_VL()
-    plot_water_phaseDiagram()
+    plot_X_VL()
+    # plot_water_phaseDiagram()
     # plot_water_prop('rho')
     # plot_V_brine()
     # plot_V_brine_lowThighT()
     # plot_H2ONaCl_prop('rho')
 
+    # print(sw.P_VaporLiquidHaliteCoexist(200))
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

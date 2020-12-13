@@ -1,77 +1,26 @@
 %module H2ONaCl
+%include "typemaps.i"
+%apply double *OUTPUT { double& P_crit, double& X_crit }; //multi return, use typemaps.i and something like this
 %{
     // #define SWIG_FILE_WITH_INIT
     #include "H2ONaCl.H"
-    // #include "stdfunc.H"
-    // #include "dataStruct_H2ONaCl.H"
+    #include "stdfunc.H"
+    #include "dataStruct_H2ONaCl.H"
     #define USE_PROST 1
 %}
-
 namespace H2ONaCl
 {
-    // define index of region
-    enum PhaseRegion {SinglePhase_L, TwoPhase_L_V_X0, SinglePhase_V, 
-                    TwoPhase_L_H, TwoPhase_V_H, ThreePhase_V_L_H, TwoPhase_V_L_L, TwoPhase_V_L_V};
-                    
-    typedef std::map<int,std::string> MAP_PHASE_REGION;
-
-    struct PROP_H2ONaCl
-    {
-        PhaseRegion Region;
-        double T, H, Rho, Mu; //temperature(C), bulk enthalpy, bulk density
-        double Rho_l, Rho_v, Rho_h; //density
-        double H_l, H_v, H_h; //enthalpy
-        double S_l, S_v, S_h; //saturation
-        double X_l, X_v; // volume fraction of NaCl in vaper and liquid, it is a composition fraction. H2O + NaCl
-        double Mu_l, Mu_v;//viscosity
-        // derivertive
-        // double dS_hdh, dS_vdh, dS_ldh, dRhodh;
-    };
-
-    struct MP_STRUCT
-    {
-        double b1, b1t, b1tt;
-        double b2, b2t, b2tt;
-    };
-    struct ID_STRUCT
-    {
-        double f, ft, ftt;
-    };
-    struct TWOPHASEPROP_STRUCT
-    {
-        double f, p, s, g, u, h, dpd, dpt, cv, x;
-    };
-    struct BS_STRUCT
-    {
-        double x, f;
-        double fd, fdd, ft, ftd, ftt;
-    };
-    struct RS_STRUCT
-    {
-        double f, ft, ftd;
-        double fd, fdd, ftt;
-    };
-    struct Cr_STRUCT
-    {
-        double g[9][6], k[4], l[4], gg[4], t[4], d[4], a[4], b[4];
-    };
-    struct f_STRUCT
-    {
-        double f[11];
-        double sum_f10;
-    };
-
     // ============= Constants of H2O-NaCl =======================================
     double const PMIN = 1; /**< Minimum valid pressure of H2O, [bar]. */ 
-    double const PMAX = 1000; /**< Minimum valid pressure of H2O, [bar]. */ 
+    double const PMAX = 5000; /**< Maximum valid pressure of H2O, [bar]. */ 
     double const TMIN = 273.15; /**< Minimum valid pressure of H2O, [K].  */ //TODO： 最后统一为C
-    double const TMAX = 1273.15; /**< Minimum valid pressure of H2O, [K]. */ //TODO: 最后统一为C
+    double const TMAX = 1273.15; /**< Maximum valid pressure of H2O, [K]. */ //TODO: 最后统一为C
     double const TMIN_K = 273.15; /**< Minimum valid pressure of H2O, [K].  */ 
-    double const TMAX_K = 1273.15; /**< Minimum valid pressure of H2O, [K]. */ 
+    double const TMAX_K = 1273.15; /**< Maximum valid pressure of H2O, [K]. */ 
     double const TMIN_C = 0; /**< Minimum valid pressure of H2O, [C].  */ 
-    double const TMAX_C = 1000; /**< Minimum valid pressure of H2O, [C]. */ 
-    double const XMIN = 0;
-    double const XMAX = 1;
+    double const TMAX_C = 1000; /**< Maximum valid pressure of H2O, [C]. */ 
+    double const XMIN = 0;  /**< Minimum valid salinity, [mol fraction].  */ 
+    double const XMAX = 1;  /**< Maximum valid salinity, [mol fraction].  */ 
     // ===========================================================================
 
     /**
@@ -119,14 +68,14 @@ namespace H2ONaCl
         ~cH2ONaCl();
         H2O::cH2O m_water;
         NaCl::cNaCl m_NaCl;
-        MAP_PHASE_REGION m_phaseRegion_name;
+        H2ONaCl::MAP_PHASE_REGION m_phaseRegion_name;
         void prop_pTX(double p, double T_K, double X_wt, bool visc_on=true);
         void prop_pHX(double p, double H, double X_wt); /** Calculate properties by P, H, X */
         double rho_pTX(double p, double T_K, double X_wt); //get bulk density. p: Pa; T: K; X: wt%
         double rho_l_pTX(double p, double T_K, double X_wt); //get density of liquid. p: Pa; T: K; X: wt%
         double mu_l_pTX(double p, double T_K, double X_wt); //get dynamic viscosity of liquid. p: Pa; T: K; X: wt%
         double mu_pTX(double p, double T_K, double X_wt); //get bulk dynamic viscosity. p: Pa; T: K; X: wt%
-        PROP_H2ONaCl m_prop;
+        H2ONaCl::PROP_H2ONaCl m_prop;
         //X:[0,1]; T: deg. C; P: bar
         void writeProps2VTK(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, std::string fname, bool isWritePy=true, std::string xTitle="x", std::string yTitle="y", std::string zTitle="z");
         void writeProps2xyz(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, std::string fname, std::string xTitle="x", std::string yTitle="y", std::string zTitle="z", string delimiter=" ");
@@ -159,6 +108,20 @@ namespace H2ONaCl
          * 
          */
         void P_X_Critical(double T, double& P_crit, double& X_crit);
+
+        /**
+         * @brief Calculate critical curve of \f$H_2O-NaCl \f$ system in the whole valid region, and then write as to file in format of VTK or dat.
+         * 
+         * @param filename File name without extension, default filename is "CriticalCurve", i.e. the default output path is the current path.
+         * @param Tmin Minimum temperature (in unit of \f$ ^{\circ}C\f$) of temperature for critical curve, default is TMIN_C.
+         * @param Tmax Maximum temperature (in unit of \f$ ^{\circ}C\f$) of temperature for critical curve, default is TMIN_C.
+         * @param dT Temperature spacing of the critical curve. Default is 1 \f$ ^{\circ}C\f$.
+         * @param fmt Output file format. Option is one of H2ONaCl::fmt_vtk, H2ONaCl::fmt_dat.
+         */
+        void writeCriticalCurve(string filename="CriticalCurve",double Tmin=H2O::T_Critic, double Tmax=TMAX_C, double dT=1, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk);
+        void writeNaClMeltingCurve(string filename="NaClMeltingCurve",double Pmin=PMIN, double Pmax=PMAX, double dP=1, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk);
+        void writeVaporLiquidHalite_V_L_H_Curve(string filename="VaporLiquidHalite",double Tmin=TMIN_C, double Tmax=NaCl::T_Triple, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nT=100);
+
         /**
          * @brief The composition of halite-saturated liquid, \f$ X_{NaCl, sat}^L \f$ (the halite liquidus), is rather well known at high temperatures from about 400 \f$^{\circ}C \f$ to the melting curve of NaCl at pressures to about 4000 bar. See equation (8) of reference \cite Driesner2007Part1.
          * 
@@ -167,6 +130,19 @@ namespace H2ONaCl
          * @return double Salinity [Mole fraction of NaCl]
          */
         double X_HaliteLiquidus(double T, double P);
+        /**
+         * @brief Write halite liquidus surface as vtk file format
+         * 
+         * @param filename 
+         * @param Tmin [C]
+         * @param Tmax [C]
+
+         * @param Pmax [bar]
+         * @param fmt 
+         * @param nT 
+         * @param nP 
+         */
+        void writeHaliteLiquidus(string filename="HaliteLiquidus",double Tmin=TMIN_C, double Tmax=NaCl::T_Triple, double Pmax=2000, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nT=100, int nP=200);
         /**
          * @brief Composition of halite-saturated vapor. See equation (9) and (14) of reference \cite Driesner2007Part1.
          * 
@@ -182,6 +158,15 @@ namespace H2ONaCl
          * @return double Pressure [bar]
          */
         double P_VaporLiquidHaliteCoexist(double T);
+        /**
+         * @brief Write vapor+Liquid+Halite coexist surface
+         * 
+         * @param Tmin [C]
+         * @param Tmax [C]
+         * @param dT [C]
+         */
+        void writeVaporLiquidHaliteCoexist(string filename="VaporLiquidHalite", double Tmin=TMIN_C, double Tmax=NaCl::T_Triple, double dT=1, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk);
+
         /**
          * @brief Salinity on liquid branch of Vapor + Liquid coexist surface. See equation (11) and Table 7 of reference \cite Driesner2007Part1.
          * 
@@ -216,9 +201,26 @@ namespace H2ONaCl
          * @return double \f$ V_{extrapol} \f$ [\f$cm^3\ mol^{-1} \f$] 
          */
         double V_extrapol(double T, double P, double X);
+
+        /**
+         * @brief Convert mass fraction of NaCl to molar fraction. 
+         * 
+         * @param X_wt [0,1]
+         * @return double [0,1]
+         */
         inline double Wt2Mol(double X_wt)
         {
             return X_wt/NaCl::MolarMass/(X_wt/NaCl::MolarMass + (1-X_wt)/H2O::MolarMass);
+        };
+        /**
+         * @brief Convert molar fraction of NaCl to mass fraction.
+         * 
+         * @param X_mol [0,1]
+         * @return double [0,1]
+         */
+        inline double Mol2Wt(double X_mol)
+        {
+            return NaCl::MolarMass * X_mol / (NaCl::MolarMass * X_mol + (1 - X_mol) * H2O::MolarMass);
         };
         /**
          * @brief Only used in #V_extrapol
@@ -239,7 +241,6 @@ namespace H2ONaCl
          */
         double Rho(double T, double P, double X);
     private:
-        
         inline double Xwt2Xmol(double X){return (X/NaCl::MolarMass)/(X/NaCl::MolarMass+(1-X)/H2O::MolarMass);};
         void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);
         MP_STRUCT bb(double T);
@@ -255,5 +256,17 @@ namespace H2ONaCl
         template <typename T> T sum_array1d(T* a, int n);
         template <typename T> T max(std::vector<T> data);
         template <typename T> T min(std::vector<T> data);
+    private:
+        /**
+         * @brief Write array of X,Y,Z to VTU (Serial vtkUnstructuredGrid) file as a 3D line.
+         * 
+         * @param filename 
+         * @param X 
+         * @param Y 
+         * @param Z 
+         * @return void 
+         */
+        void writeVTK_PolyLine(string filename,vector<double> X, vector<double> Y, vector<double> Z);
+        void writeVTK_Triangle_Strip(string filename, vector<vector<double> > X, vector<vector<double> > Y, vector<vector<double> > Z);
     };
 }
