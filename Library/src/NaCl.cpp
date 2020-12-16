@@ -53,6 +53,16 @@ namespace NaCl
         double T_square = T*T;
         double P_square = P*P;
         double T_minus_Ttriple = T - T_Triple;
+        double c[3]={226713, 44.6652, -7.41999E-05};
+        double r[5]={1148.81, 0.275774, 8.8103E-05,
+                    -0.0017099 - 3.82734E-06 * T / 2.0 - 8.65455E-09 * T_square / 3.0,
+                    5.29063E-08 - 9.63084E-11 * T / 2.0 + 6.50745E-13 * T_square / 3.0
+                    };
+        return c[0] + r[0]*T_minus_Ttriple 
+                    + r[1]*pow(T_minus_Ttriple, 2.0)
+                    + r[2]*pow(T_minus_Ttriple, 3.0)
+                    + (c[1] + r[3]*T)*P 
+                    + (c[2] + r[4]*T)*P_square;
     }
     double cNaCl::Cp(double T, double P)
     {

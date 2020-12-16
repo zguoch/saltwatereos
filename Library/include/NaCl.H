@@ -88,14 +88,7 @@ namespace NaCl
          * @return double Density [kg/m3]
          */
         double Rho_Liquid(double T, double P);
-        /**
-         * @brief Specific enthalpy of NaCl as a function of T and P.
-         * 
-         * @param T Temperature, [\f$ ^{\circ}C\f$]
-         * @param P Pressure, [bar]
-         * @return double 
-         */
-        double SpecificEnthalpy(double T, double P);
+        
         /**
          * @brief Isobaric heat capacity of halite(NaCl). 
          * See equation 30 and table 5 of \cite Driesner2007Part2. 
@@ -105,6 +98,16 @@ namespace NaCl
          * @return double 
          */
         double Cp(double T, double P);
+
+        /**
+         * @brief Specific enthalpy of NaCl as a function of T and P.
+         * Using the halite enthalpy at the NaCl triple point, equation 30 of \cite Driesner2007Part2.  can be integrated to obtain the specific enthalpy of halite (referenced to a value of 0 J/kg for the enthalpy of pure liquid water at the H2O triple point) at the T and P of interest. 
+         * 
+         * @param T Temperature, [\f$ ^{\circ}C\f$]
+         * @param P Pressure, [bar]
+         * @return double 
+         */
+        double SpecificEnthalpy(double T, double P);
     public:
         
     };
