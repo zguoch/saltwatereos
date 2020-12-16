@@ -48,4 +48,24 @@ namespace NaCl
         double kappa = m[4] + m[5]*T;
         return rho0/(1 - 0.1*log(1 + 10*P*kappa));
     }
+    double cNaCl::SpecificEnthalpy(double T, double P)
+    {
+        double T_square = T*T;
+        double P_square = P*P;
+        double T_minus_Ttriple = T - T_Triple;
+    }
+    double cNaCl::Cp(double T, double P)
+    {
+        double T_square = T*T;
+        double P_square = P*P;
+        double T_minus_Ttriple = T - T_Triple;
+        double r[5] = {1148.81, 0.275774, 8.8103E-05, 
+                    -0.0017099 - 3.82734E-06 * T - 8.65455E-09 * T_square,
+                    5.29063E-08 - 9.63084E-11 * T + 6.50745E-13 * T_square};
+        return r[0] 
+               + 2 * r[1] * T_minus_Ttriple 
+               + 3 * r[2] * T_minus_Ttriple*T_minus_Ttriple 
+               + r[3] * P 
+               + r[4] * P_square;
+    }
 } // namespace NaCl

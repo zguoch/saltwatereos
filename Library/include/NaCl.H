@@ -88,6 +88,23 @@ namespace NaCl
          * @return double Density [kg/m3]
          */
         double Rho_Liquid(double T, double P);
+        /**
+         * @brief Specific enthalpy of NaCl as a function of T and P.
+         * 
+         * @param T Temperature, [\f$ ^{\circ}C\f$]
+         * @param P Pressure, [bar]
+         * @return double 
+         */
+        double SpecificEnthalpy(double T, double P);
+        /**
+         * @brief Isobaric heat capacity of halite(NaCl). 
+         * See equation 30 and table 5 of \cite Driesner2007Part2. 
+         * 
+         * @param T Temperature, [\f$ ^{\circ}C\f$]
+         * @param P Pressure, [bar]
+         * @return double 
+         */
+        double Cp(double T, double P);
     public:
         
     };
