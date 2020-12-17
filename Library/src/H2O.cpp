@@ -424,4 +424,59 @@ namespace H2O
         
         return P_m * 10.0; //MPa to bar
     }
+
+    double cH2O::Phi0_tau(double delta, double tau)
+    {
+        double sum = 0;
+        for (size_t i = 3; i < 8; i++)
+        {
+            sum += m_Table61.gama0[i]*( 1.0/(1 - exp(-m_Table61.gama0[i] * tau)) - 1);
+        }
+        
+        return m_Table61.n0[1] + m_Table61.n0[2]/tau;
+    }
+    double cH2O::Phi_r_tau(double delta, double tau)
+    {
+        double sum1 = 0, sum2 = 0, sum3 = 0, sum4 = 0;
+        for (size_t i = 0; i < 7; i++)
+        {
+            sum1 += m_Table62.n[i] * m_Table62.t[i] * pow(delta, m_Table62.d[i]) * pow(tau, m_Table62.t[i]-1);
+        }
+        for (size_t i = 7; i < 51; i++)
+        {
+            sum2 += m_Table62.n[i] * m_Table62.t[i] * exp(-pow(delta,m_Table62.c[i])) * 
+                    pow(delta, m_Table62.d[i]) * pow(tau, m_Table62.t[i]-1);
+        }
+        for (size_t i = 51; i < 54; i++)
+        {
+            sum3 += m_Table62.n[i] * pow(delta,m_Table62.d[i]) * pow(tau, m_Table62.t[i]) * exp(-m_Table62.alpha[i]*pow(delta - m_Table62.epsilon[i], 2.0) - m_Table62.beta[i]*pow(tau - m_Table62.gamma[i], 2.0) ) * (m_Table62.d[i]/delta - 2*m_Table62.beta[i]*(tau - m_Table62.gamma[i]) );
+        }
+        double psi = 0, theta = 0, Delta = 0, dpsidtau = 0, dDeltabidtau = 0, delta_minus_one_squre = 0;
+        for (size_t i = 54; i < 56; i++)
+        {
+            delta_minus_one_squre = pow(delta - 1, 2.0);
+            psi = exp(-m_Table62.C[i]*delta_minus_one_squre - m_Table62.D[i]*pow(tau - 1, 2.0));
+            theta = (1-tau) + m_Table62.A[i]*pow(delta_minus_one_squre, 0.5/m_Table62.beta[i]);
+            Delta = pow(theta, 2.0) + m_Table62.B[i]*pow(delta_minus_one_squre, m_Table62.a[i]);
+
+            dpsidtau = -2*m_Table62.D[i]*(tau - 1) * psi;
+            dDeltabidtau = -2*theta*m_Table62.b[i]*pow(Delta, m_Table62.b[i]-1);
+            
+            sum4 += m_Table62.n[i]*delta*(dDeltabidtau * psi + pow(Delta, m_Table62.b[i])*dpsidtau);
+        }
+        
+        return sum1+sum2+sum3+sum4;
+    }
+    double cH2O::SpecificEnthalpy_T_Rho(double T, double Rho)
+    {
+        double T_K = T + Kelvin;
+        double delta = Rho/Rho_Critic;
+        double tau = T_Critic_K/T_K;
+
+        return R_const*T_K*(1 + tau*(Phi0_tau(delta, tau) + Phi_r_tau(delta, tau)) + delta*Phi_r_delta(delta, tau) );
+    }
+    double cH2O::SpecificEnthalpy(double T, double P)
+    {
+        return SpecificEnthalpy_T_Rho(T, Rho(T, P));
+    }
 } // namespace H2O
