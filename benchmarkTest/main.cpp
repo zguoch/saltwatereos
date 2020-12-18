@@ -75,22 +75,32 @@ void test_water_props(double Tmin, double Tmax, double Pmin, double Pmax, double
   H2ONaCl::cH2ONaCl eos;
   // full range
   {
-    string filename="water_rho.dat";
-    ofstream fout(filename);
-    if(!fout)
+    string filename_rho="water_rho.dat";
+    string filename_h="water_h.dat";
+    ofstream fout_rho(filename_rho);
+    ofstream fout_h(filename_h);
+    if(!fout_rho)
     {
-      cout<<"Open file failed: "<<filename<<endl;
+      cout<<"Open file failed: "<<filename_rho<<endl;
+    }
+    if(!fout_h)
+    {
+      cout<<"Open file failed: "<<filename_h<<endl;
     }
     for (double P = Pmin; P <= Pmax; P=P+dP)
     {
       for (double T = Tmin; T <= Tmax; T=T+dT)
       {
         double rho = eos.m_water.Rho(T, P);
-        fout<<rho<<" ";
+        double h = eos.m_water.SpecificEnthalpy_T_Rho(T, rho);
+        fout_rho<<rho<<" ";
+        fout_h<<h<<" ";
       }
-      fout<<"\n";
+      fout_rho<<"\n";
+      fout_h<<"\n";
     }
-    fout.close();
+    fout_rho.close();
+    fout_h.close();
     if(writeTP)
     {
       string filename_TT="water_T.dat";
@@ -627,18 +637,19 @@ int main( int argc, char** argv )
   // test_Salinity_VaporLiquidCoexist_LiquidBranch();
   // test_water_Curves();
   // test_water_props(130, 200, 2, 10, 0.1, 1, true);
+    test_water_props(H2O::TMIN, H2O::TMAX,H2O::PMIN/1E5, 1000, 4, 4, true);
   // testT_V_star();
   // test_V_brine_NaCl_lowThighT();
   // test_V_extrapol();
   // test_NaClH2O_props(0, 800, 1, 1000, 5, 5, true);
 
-  test_writeCriticalCurve();
-  test_writeHaliteLiquidus();
-  test_writePressure_VLH();
-  test_NaClMeltingCurve();
-  test_H2OBoilingCurve();
-  test_VaporLiquidHaliteCoexistCurves();
-  test_VaporLiquidCoexistSurface();
+  // test_writeCriticalCurve();
+  // test_writeHaliteLiquidus();
+  // test_writePressure_VLH();
+  // test_NaClMeltingCurve();
+  // test_H2OBoilingCurve();
+  // test_VaporLiquidHaliteCoexistCurves();
+  // test_VaporLiquidCoexistSurface();
 
 
   std::cout<<"测试计算完毕"<<std::endl;

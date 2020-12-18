@@ -179,7 +179,7 @@ namespace H2O
          * 
          * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
          * @param Rho Density [\f$ kg/m^3 \f$]
-         * @return Specific enthalpy [\f$ J/kg \f$]
+         * @return Specific enthalpy [\f$ kJ/kg \f$]
          */
         double SpecificEnthalpy_T_Rho(double T, double Rho);
         /**
@@ -187,7 +187,7 @@ namespace H2O
          * 
          * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
          * @param P Pressure [\f$ bar \f$]
-         * @return Specific enthalpy [\f$ J/kg \f$] 
+         * @return Specific enthalpy [\f$ kJ/kg \f$] 
          */
         double SpecificEnthalpy(double T, double P);
     public:

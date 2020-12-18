@@ -16,7 +16,15 @@ namespace H2O
         double c[numCoeff], d[numCoeff], t[numCoeff], n[numCoeff];
         double alpha[numCoeff], beta[numCoeff], gamma[numCoeff], epsilon[numCoeff], a[numCoeff], b[numCoeff], A[numCoeff], B[numCoeff], C[numCoeff], D[numCoeff];
     };
-    
+    /**
+     * @brief Table 6.1 of \cite wagner2002iapws.
+     * 
+     */
+    struct Table61
+    {
+        double n0[8]={-8.32044648201, 6.6832105268, 3.00632, 0.012436, 0.97315, 1.2795, 0.96956, 0.24873};
+        double gama0[8]={0, 0, 0, 1.28728967, 3.53734222, 7.74073708, 9.24437796, 27.5075105};
+    };
     // ============= Constants of H2O ========================================================================
     double const PMIN = 1E5; /**< Minimum valid pressure of H2O, [Pa]. IAPWS-95 */ 
     double const PMAX = 10000E5; /**< Minimum valid pressure of H2O, [Pa]. IAPWS-95 */ 
@@ -51,10 +59,11 @@ namespace H2O
      * The formulation is valid in the entire stable fluid region from the melting curve to 1273 K at pressures to 1000 MPa. It extrapolates in a physically reasonable way outside this region. See also <a href="http://www.iapws.org/relguide/IAPWS-95.html">IAPWS95</a>.
      * 
      */
-    class cH2O
+    class cH2O// : public Fluid::cFluid
     {
     private:
         Table62 m_Table62;
+        Table61 m_Table61;
         void LoadTable62(Table62& m_Table62);
         bool m_isHighAccuracy;
     public:
@@ -85,19 +94,48 @@ namespace H2O
          * @brief Water density as a function of T and P.
          * 
          * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
-         * @param P Density [\f$ kg\ m^{-3} \f$]
+         * @param P Pressure [\f$ bar \f$]
          * @return double Density [\f$ kg\ m^{-3} \f$]
          */
         double Rho(double T, double P);
         /**
          * @brief Derivative of the residual part \f$ \phi^r \f$ of the dimensionless Helmholtz free energy. See Table 6.5 of the reference \cite wagner2002iapws.
          * 
+         * \f$ \phi^{r}_{\delta} = \left[ \frac{\partial \phi^r}{\partial \delta} \right]_{\tau} \f$.  
+         * \f$ \phi^r\f$  is defined in equation 6.6 of \cite wagner2002iapws, where \f$ \delta, \tau \f$ are defined in equation 6.4 of \cite wagner2002iapws.
          * 
          * @param delta \f$ \delta = \frac{\rho}{\rho_c} \f$
-         * * @param tau \f$ \tau = \frac{T_c}{T} \f$
+         * @param tau \f$ \tau = \frac{T_c}{T} \f$
          * @return double 
          */
         double Phi_r_delta(double delta, double tau);
+        /**
+         * @brief See Table 6.3 of\cite wagner2002iapws. 
+         * 
+         * \f$ \phi^{0}_{\tau} = \left[ \frac{\partial \phi^0}{\partial \tau} \right]_{\delta} \f$.  
+         * \f$ \phi^0\f$  is defined in equation 6.5 of \cite wagner2002iapws.
+         * 
+         * Where \f$ \delta, \tau \f$ are defined in equation 6.4 of \cite wagner2002iapws.
+         * 
+         * @param delta \f$ \delta =  \rho / \rho_c\f$
+         * @param tau \f$ \tau = T_c / T\f$, unit of \f$ T, T_c \f$ is K.
+         * @return double 
+         */
+        double Phi0_tau(double delta, double tau);
+        /**
+         * @brief See Table 6.3 of\cite wagner2002iapws. 
+         * 
+         * \f$ \phi^{r}_{\tau} = \left[ \frac{\partial \phi^r}{\partial \tau} \right]_{\delta} \f$.  
+         * \f$ \phi^r\f$  is defined in equation 6.6 of \cite wagner2002iapws.
+         * 
+         * Where \f$ \delta, \tau \f$ are defined in equation 6.4 of \cite wagner2002iapws.
+         * 
+         * @param delta \f$ \delta =  \rho / \rho_c\f$
+         * @param tau \f$ \tau = T_c / T\f$, unit of \f$ T, T_c \f$ is K.
+         * @return double 
+         */
+        double Phi_r_tau(double delta, double tau);
+
         /**
          * @brief Calculate pressure given temperature and density. See equation in Table 6.3 of reference \cite wagner2002iapws.
          * 
@@ -127,6 +165,25 @@ namespace H2O
          * @return double Pressure [bar]
          */
         double MeltingCurve(double T, bool isIceI=false);
+        
+        /**
+         * @brief Specific enthalpy as a function of temperature and density.
+         * See Table 6.3 of \cite wagner2002iapws.
+         * 
+         * 
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
+         * @param Rho Density [\f$ kg/m^3 \f$]
+         * @return Specific enthalpy [\f$ J/kg \f$]
+         */
+        double SpecificEnthalpy_T_Rho(double T, double Rho);
+        /**
+         * @brief 
+         * 
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
+         * @param P Pressure [\f$ bar \f$]
+         * @return Specific enthalpy [\f$ J/kg \f$] 
+         */
+        double SpecificEnthalpy(double T, double P);
     public:
         
     };

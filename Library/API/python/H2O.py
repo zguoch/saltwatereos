@@ -87,6 +87,19 @@ class Table62(object):
 # Register Table62 in _H2O:
 _H2O.Table62_swigregister(Table62)
 
+class Table61(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+    n0 = property(_H2O.Table61_n0_get, _H2O.Table61_n0_set)
+    gama0 = property(_H2O.Table61_gama0_get, _H2O.Table61_gama0_set)
+
+    def __init__(self):
+        _H2O.Table61_swiginit(self, _H2O.new_Table61())
+    __swig_destroy__ = _H2O.delete_Table61
+
+# Register Table61 in _H2O:
+_H2O.Table61_swigregister(Table61)
+
 iceI = _H2O.iceI
 iceIII = _H2O.iceIII
 iceV = _H2O.iceV
@@ -115,6 +128,12 @@ class cH2O(object):
     def Phi_r_delta(self, delta, tau):
         return _H2O.cH2O_Phi_r_delta(self, delta, tau)
 
+    def Phi0_tau(self, delta, tau):
+        return _H2O.cH2O_Phi0_tau(self, delta, tau)
+
+    def Phi_r_tau(self, delta, tau):
+        return _H2O.cH2O_Phi_r_tau(self, delta, tau)
+
     def Pressure_T_Rho(self, T, Rho):
         return _H2O.cH2O_Pressure_T_Rho(self, T, Rho)
 
@@ -126,6 +145,12 @@ class cH2O(object):
 
     def MeltingCurve(self, T, isIceI=False):
         return _H2O.cH2O_MeltingCurve(self, T, isIceI)
+
+    def SpecificEnthalpy_T_Rho(self, T, Rho):
+        return _H2O.cH2O_SpecificEnthalpy_T_Rho(self, T, Rho)
+
+    def SpecificEnthalpy(self, T, P):
+        return _H2O.cH2O_SpecificEnthalpy(self, T, P)
 
 # Register cH2O in _H2O:
 _H2O.cH2O_swigregister(cH2O)

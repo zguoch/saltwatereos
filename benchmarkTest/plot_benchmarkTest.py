@@ -23,6 +23,7 @@ from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,AutoMinorLoca
 mpl.rcParams['font.family'] = 'Arial'  #default font family
 mpl.rcParams['mathtext.fontset'] = 'cm' #font for math
 from iapws import IAPWS95
+from iapws import IAPWS97
 from iapws import _iapws
 import H2ONaCl
 import NaCl
@@ -31,7 +32,7 @@ water=H2O.cH2O()
 sw=H2ONaCl.cH2ONaCl()
 
 fmt_figs = ['jpg','svg'] # jpg have to before svg !!!
-units={'rho':'kg/m$^\mathregular{3}$'}
+units={'rho':'Density (kg/m$^\mathregular{3}$)','h':'Specific enthalpy (kJ/kg)'}
 
 def usage(argv):
     basename = argv[0].split('/')
@@ -530,18 +531,38 @@ def plot_V_brine_lowThighT(fname0='V_brine_NaCl_lowThighT'):
         plt.savefig(figname, bbox_inches='tight')
 def plot_water_prop(propname='rho'):
     prop=np.loadtxt('%s/water_%s.dat'%(datapath,propname))
+    # if(propname=='h'):
+    #     prop=prop/1E6
     T=np.loadtxt('%s/water_%s.dat'%(datapath,'T'))
     P=np.loadtxt('%s/water_%s.dat'%(datapath,'P'))
     TT,PP=np.meshgrid(T,P)
-    # for i in range(0,TT.shape[0]):
-    #     for j in range(0,TT.shape[1]):
-    #         # steam=IAPWS95(T=TT[i][j]+273.15,P=PP[i][j]/10)
-    #         prop[i][j]= TT[i][j] #steam.rho
-    #     print(i)
+    fname_prop_iapws='%s/water_%s_iapws.dat'%(datapath,propname)
+    if(not os.path.exists(fname_prop_iapws)):
+        fpout_iapws=open(fname_prop_iapws,'w')
+        for i in range(0,TT.shape[0]):
+            for j in range(0,TT.shape[1]):
+                steam=IAPWS95(T=TT[i][j]+273.15,P=PP[i][j]/10)
+                # steam=IAPWS97(T=TT[i][j]+273.15,P=PP[i][j]/10)
+                if(propname=='rho'):
+                    fpout_iapws.write('%.6E '%(steam.rho))
+                elif(propname=='h'):
+                    fpout_iapws.write('%.6E '%(steam.h))
+            fpout_iapws.write('\n')
+            print(i)
+        fpout_iapws.close()
+    prop_iapws=np.loadtxt(fname_prop_iapws)
     fig=plt.figure(figsize=(w_singleFig+2,w_singleFig))
     ax=plt.gca()
     CS=ax.contourf(TT,PP,prop,levels=50)
-    plt.colorbar(CS,label='$\%s$ (%s)'%(propname, units[propname]))
+    ax_hist = ax.inset_axes([0.48,0.8,0.5,0.2])
+    error_iapws=prop-prop_iapws
+    ax_hist.hist(error_iapws.reshape((-1,1)), 100)
+    ax_hist.text(0.5,0.98,'Error between swEOS and iapws',ha='center',va='top',transform=ax_hist.transAxes)
+    text_error_sta='Max = %.1E\nMin = %.1E\nMean = %.1E'%(error_iapws.max(),error_iapws.min(),error_iapws.mean())
+    ax_hist.text(0.02,0.05,text_error_sta,ha='left',va='bottom',transform=ax_hist.transAxes)
+    ax_hist.yaxis.set_ticks([])
+    ax_hist.set_facecolor((1,1,1,0.5))
+    plt.colorbar(CS,label='%s'%(units[propname]))
     ax.set_xlabel('T [$^{\circ}$C]')
     ax.set_ylabel('P [bar]')
     for fmt in fmt_figs:
@@ -579,9 +600,10 @@ def main(argv):
     # plot_HaliteLiquidus()
     # plot_HaliteSaturatedVaporComposition()
     # plot_P_VLH()
-    plot_X_VL()
+    # plot_X_VL()
     # plot_water_phaseDiagram()
     # plot_water_prop('rho')
+    plot_water_prop('h')
     # plot_V_brine()
     # plot_V_brine_lowThighT()
     # plot_H2ONaCl_prop('rho')

@@ -196,52 +196,6 @@ namespace H2O
         return rho_V_sat;
     }
     /**
-     * 
-     */
-    double cH2O::Phi_r_delta(double delta, double tau)
-    {
-        double sum1 = 0, sum2 = 0, sum3 = 0, sum4 = 0;
-        for (size_t i = 0; i < 7; i++)
-        {
-            sum1 += m_Table62.n[i] * m_Table62.d[i] * pow(delta, m_Table62.d[i] -1) * pow(tau, m_Table62.t[i]);
-        }
-        for (size_t i = 7; i < 51; i++)
-        {
-            sum2 += m_Table62.n[i] * exp(-pow(delta,m_Table62.c[i])) * 
-                    (pow(delta, m_Table62.d[i] -1) * pow(tau, m_Table62.t[i]) * 
-                    (m_Table62.d[i] - m_Table62.c[i]*pow(delta, m_Table62.c[i])));
-        }
-        for (size_t i = 51; i < 54; i++)
-        {
-            sum3 += m_Table62.n[i] * pow(delta,m_Table62.d[i]) * pow(tau, m_Table62.t[i]) * exp(-m_Table62.alpha[i]*pow(delta - m_Table62.epsilon[i], 2.0) - m_Table62.beta[i]*pow(tau - m_Table62.gamma[i], 2.0) ) * (m_Table62.d[i]/delta - 2*m_Table62.alpha[i]*(delta - m_Table62.epsilon[i]) );
-        }
-        double psi = 0, theta = 0, Delta = 0, dpsiddelta = 0, dDeltaddelta = 0, dDeltabiddelta = 0, delta_minus_one_squre = 0;
-        for (size_t i = 54; i < 56; i++)
-        {
-            delta_minus_one_squre = pow(delta - 1, 2.0);
-
-            psi = exp(-m_Table62.C[i]*delta_minus_one_squre - m_Table62.D[i]*pow(tau - 1, 2.0));
-
-            theta = (1-tau) + m_Table62.A[i]*pow(delta_minus_one_squre, 0.5/m_Table62.beta[i]);
-
-            Delta = pow(theta, 2.0) + m_Table62.B[i]*pow(delta_minus_one_squre, m_Table62.a[i]);
-            dpsiddelta = -2*m_Table62.C[i]*(delta - 1) * psi;
-
-            dDeltaddelta = 2*(delta - 1)*(theta * m_Table62.A[i]/m_Table62.beta[i]*pow(delta_minus_one_squre, 0.5/m_Table62.beta[i] - 1) + m_Table62.B[i]*m_Table62.a[i]*pow(delta_minus_one_squre, m_Table62.a[i]-1));
-            if(Delta == 0)
-            {
-                dDeltabiddelta = 0;
-            }else
-            {
-                dDeltabiddelta = dDeltaddelta*m_Table62.b[i]*pow(Delta, m_Table62.b[i]-1);
-            }
-            
-            sum4 += m_Table62.n[i]*(pow(Delta, m_Table62.b[i]) * (psi + delta*dpsiddelta) + dDeltabiddelta*delta*psi);
-        }
-        
-        return sum1+sum2+sum3+sum4;
-    }
-    /**
      * \f{equation}
      \left\{ \begin{matrix}
      *      p = \rho^2 \left( \frac{\partial f}{\partial \rho} \right)_T\\ \\[1ex]
@@ -424,32 +378,74 @@ namespace H2O
         
         return P_m * 10.0; //MPa to bar
     }
+    double cH2O::Phi_r_delta(double delta, double tau)
+    {
+        double sum1 = 0, sum2 = 0, sum3 = 0, sum4 = 0;
+        for (size_t i = 0; i < 7; i++)
+        {
+            sum1 += m_Table62.n[i] * m_Table62.d[i] * pow(delta, m_Table62.d[i] -1) * pow(tau, m_Table62.t[i]);
+        }
+        for (size_t i = 7; i < 51; i++)
+        {
+            sum2 += m_Table62.n[i] * exp(-pow(delta,m_Table62.c[i])) * 
+                    (pow(delta, m_Table62.d[i] -1) * pow(tau, m_Table62.t[i]) * 
+                    (m_Table62.d[i] - m_Table62.c[i]*pow(delta, m_Table62.c[i])));
+        }
+        for (size_t i = 51; i < 54; i++)
+        {
+            sum3 += m_Table62.n[i] * pow(delta,m_Table62.d[i]) * pow(tau, m_Table62.t[i]) * exp(-m_Table62.alpha[i]*pow(delta - m_Table62.epsilon[i], 2.0) - m_Table62.beta[i]*pow(tau - m_Table62.gamma[i], 2.0) ) * (m_Table62.d[i]/delta - 2*m_Table62.alpha[i]*(delta - m_Table62.epsilon[i]) );
+        }
+        double psi = 0, theta = 0, Delta = 0, dpsiddelta = 0, dDeltaddelta = 0, dDeltabiddelta = 0, delta_minus_one_squre = 0;
+        for (size_t i = 54; i < 56; i++)
+        {
+            delta_minus_one_squre = pow(delta - 1, 2.0);
 
+            psi = exp(-m_Table62.C[i]*delta_minus_one_squre - m_Table62.D[i]*pow(tau - 1, 2.0));
+
+            theta = (1-tau) + m_Table62.A[i]*pow(delta_minus_one_squre, 0.5/m_Table62.beta[i]);
+
+            Delta = pow(theta, 2.0) + m_Table62.B[i]*pow(delta_minus_one_squre, m_Table62.a[i]);
+            dpsiddelta = -2*m_Table62.C[i]*(delta - 1) * psi;
+
+            dDeltaddelta = 2*(delta - 1)*(theta * m_Table62.A[i]/m_Table62.beta[i]*pow(delta_minus_one_squre, 0.5/m_Table62.beta[i] - 1) + m_Table62.B[i]*m_Table62.a[i]*pow(delta_minus_one_squre, m_Table62.a[i]-1));
+            if(Delta == 0)
+            {
+                dDeltabiddelta = 0;
+            }else
+            {
+                dDeltabiddelta = dDeltaddelta*m_Table62.b[i]*pow(Delta, m_Table62.b[i]-1);
+            }
+            
+            sum4 += m_Table62.n[i]*(pow(Delta, m_Table62.b[i]) * (psi + delta*dpsiddelta) + dDeltabiddelta*delta*psi);
+        }
+        
+        return sum1+sum2+sum3+sum4;
+    }
     double cH2O::Phi0_tau(double delta, double tau)
     {
         double sum = 0;
         for (size_t i = 3; i < 8; i++)
         {
-            sum += m_Table61.gama0[i]*( 1.0/(1 - exp(-m_Table61.gama0[i] * tau)) - 1);
+            sum += m_Table61.n0[i]*m_Table61.gama0[i]*( 1.0/(1.0 - exp(-m_Table61.gama0[i] * tau)) - 1.0);
         }
         
-        return m_Table61.n0[1] + m_Table61.n0[2]/tau;
+        return m_Table61.n0[1] + m_Table61.n0[2]/tau + sum;
     }
     double cH2O::Phi_r_tau(double delta, double tau)
     {
         double sum1 = 0, sum2 = 0, sum3 = 0, sum4 = 0;
         for (size_t i = 0; i < 7; i++)
         {
-            sum1 += m_Table62.n[i] * m_Table62.t[i] * pow(delta, m_Table62.d[i]) * pow(tau, m_Table62.t[i]-1);
+            sum1 += m_Table62.n[i] * m_Table62.t[i] * pow(delta, m_Table62.d[i]) * pow(tau, m_Table62.t[i]-1.0);
         }
         for (size_t i = 7; i < 51; i++)
         {
             sum2 += m_Table62.n[i] * m_Table62.t[i] * exp(-pow(delta,m_Table62.c[i])) * 
-                    pow(delta, m_Table62.d[i]) * pow(tau, m_Table62.t[i]-1);
+                    pow(delta, m_Table62.d[i]) * pow(tau, m_Table62.t[i]-1.0);
         }
         for (size_t i = 51; i < 54; i++)
         {
-            sum3 += m_Table62.n[i] * pow(delta,m_Table62.d[i]) * pow(tau, m_Table62.t[i]) * exp(-m_Table62.alpha[i]*pow(delta - m_Table62.epsilon[i], 2.0) - m_Table62.beta[i]*pow(tau - m_Table62.gamma[i], 2.0) ) * (m_Table62.d[i]/delta - 2*m_Table62.beta[i]*(tau - m_Table62.gamma[i]) );
+            sum3 += m_Table62.n[i] * pow(delta,m_Table62.d[i]) * pow(tau, m_Table62.t[i]) * exp(-m_Table62.alpha[i]*pow(delta - m_Table62.epsilon[i], 2.0) - m_Table62.beta[i]*pow(tau - m_Table62.gamma[i], 2.0) ) * (m_Table62.t[i]/tau - 2*m_Table62.beta[i]*(tau - m_Table62.gamma[i]) );
         }
         double psi = 0, theta = 0, Delta = 0, dpsidtau = 0, dDeltabidtau = 0, delta_minus_one_squre = 0;
         for (size_t i = 54; i < 56; i++)
@@ -472,7 +468,7 @@ namespace H2O
         double T_K = T + Kelvin;
         double delta = Rho/Rho_Critic;
         double tau = T_Critic_K/T_K;
-
+        // Note that, R_const in unit of kJ/kg/K
         return R_const*T_K*(1 + tau*(Phi0_tau(delta, tau) + Phi_r_tau(delta, tau)) + delta*Phi_r_delta(delta, tau) );
     }
     double cH2O::SpecificEnthalpy(double T, double P)
