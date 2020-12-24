@@ -83,12 +83,17 @@ release = '1.0'
 # a list of builtin themes.
 #
 html_theme = 'rtd'
-html_theme_path = ["themes"]
+html_theme_path = ["_themes"]
 html_theme_options = {
     'sticky_navigation': False,
     'includehidden': False,
-    'logo_only': True,
-    # 'navigation_depth': 5,
+    'logo_only' : True,
+    'sticky_navigation': True,
+    'titles_only': True,
+    'display_version': False,
+    'prev_next_buttons_location': 'both',
+    'style_nav_header_background': 'purple',
+    # 'gitlab_url': 'https://gitlab.com/gmdpapers/hydrothermalfoam'
 }
 
 html_context = {

@@ -20,7 +20,7 @@ msgstr ""
 
 #: ../../source/index.rst:29
 msgid "Contents"
-msgstr ""
+msgstr "目录"
 
 #: ../../source/index.rst:35
 msgid "Build"
