@@ -105,5 +105,6 @@
         "NaClH2O.C": "cpp",
         "NaCl.C": "cpp"
     },
-    "C_Cpp.errorSquiggles": "Disabled"
+    "C_Cpp.errorSquiggles": "Disabled",
+    "restructuredtext.linter.disabled": true
 }

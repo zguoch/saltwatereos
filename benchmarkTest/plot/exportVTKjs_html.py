@@ -11,7 +11,7 @@ def export2VTKJS_HTML(path_vtkjs):
     paraview.simple._DisableFirstRenderCameraReset()
 
     # load state
-    LoadState('model_geometry_geology_exportVTKJS.pvsm', DataDirectory='.')
+    LoadState('phaseDiagram.pvsm', DataDirectory='.')
 
     # find view
     renderView1 = FindViewOrCreate('RenderView1', viewtype='RenderView')

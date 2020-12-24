@@ -39,7 +39,11 @@ release = ''
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.mathjax', 'jinja','sphinxcontrib.bibtex']
+extensions = ['sphinx.ext.mathjax', 
+            'jinja',
+            'sphinx.ext.ifconfig',
+            'sphinx_inline_tabs',
+            'sphinxcontrib.bibtex']
 source_encoding = 'utf-8-sig'
 source_suffix = '.rst'
 master_doc = 'index'
@@ -47,10 +51,16 @@ templates_path = ['_templates']
 language = 'en'
 # Set smartquotes_action to 'qe' to disable Smart Quotes transform of -- and ---
 smartquotes_action = 'qe'
+# customize OpenFOAM syntax highlight
+from sphinx.highlighting import lexers
+from pygments_OpenFOAM.foam import OpenFOAMLexer
+lexers['foam'] = OpenFOAMLexer(startinline=True)
+# default language to highlight source code
+# highlight_language = 'foam'
 # default language to highlight source code
 highlight_language = 'cpp'
 pygments_style = 'monokai'
-bibtex_bibfiles = ['manual.bib']
+bibtex_bibfiles = ['manual.bib'] 
 # -- Project configuration ------------------------------------------------
 
 # The version shown at the top of the sidebar
