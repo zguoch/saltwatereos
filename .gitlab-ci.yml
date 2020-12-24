@@ -6,23 +6,22 @@ before_script:
 ## Uncomment the following line if you use graphviz dot graphs
 - apk add graphviz
 
-
 pages:
   script:
   # doxygen documentation
   - doxygen Doxyfile
-  - cp -rf doxygen/vtk_js doxygen/html
-  - mv doxygen/html/ public/
+  - mkdir public
+  - mv doxygen/html public/doxygen
   # sphinx manual
   # to use sphinxcontrib-bibtex, the sphinx version must be 1.6.7 or lower
   - pip install sphinx==1.6.7
   - pip install sphinxcontrib-bibtex
   - pip install sphinx-intl
   - sphinx-intl build # generate translation .mo files
-  - sphinx-build -b html sphinx/source public/en
-  - sphinx-build -b html sphinx/source public/zh -Dlanguage=zh
-  - cp sphinx/index.html public # the default entrance
-  - sed 's/en\/index.html/manual\/en\/index.html/g' sphinx/index.html | sed 's/zh\/index.html/manual\/zh\/index.html/g' >public/index.html # main entrance
+  - sphinx-build -b html manual/sphinx/source public/manual/en
+  - sphinx-build -b html manual/sphinx/source public/manual/zh -Dlanguage=zh
+  - cp manual/sphinx/index.html public/manual # the default entrance
+  - sed 's/en\/index.html/manual\/en\/index.html/g' manual/sphinx/index.html | sed 's/zh\/index.html/manual\/zh\/index.html/g' >public/index.html # main entrance
   # - sphinx-build -b html manual/sphinx/source public/manual
   artifacts:
     paths:
