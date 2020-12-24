@@ -45,8 +45,8 @@ def usage(argv):
     print('Zhikui Guo, 2020/11/15, GEOMAR')
     print('[Example]: '+C_RED + basename+C_BLUE + ' example usage'+C_DEFAULT)
     print('='*len(head))
-datapath='build'
-figpath='../doxygen/images'
+datapath='../build'
+figpath='../../doxygen/images'
 
 mH2O = 18.015268
 mNaCl = 58.4428
@@ -557,7 +557,7 @@ def plot_water_prop(propname='rho'):
     ax_hist = ax.inset_axes([0.48,0.8,0.5,0.2])
     error_iapws=prop-prop_iapws
     ax_hist.hist(error_iapws.reshape((-1,1)), 100)
-    ax_hist.text(0.5,0.98,'Error between swEOS and iapws',ha='center',va='top',transform=ax_hist.transAxes)
+    ax_hist.text(0.5,0.98,'swEOS - iapws.IAPWS95',ha='center',va='top',transform=ax_hist.transAxes)
     text_error_sta='Max = %.1E\nMin = %.1E\nMean = %.1E'%(error_iapws.max(),error_iapws.min(),error_iapws.mean())
     ax_hist.text(0.02,0.05,text_error_sta,ha='left',va='bottom',transform=ax_hist.transAxes)
     ax_hist.yaxis.set_ticks([])
@@ -602,7 +602,7 @@ def main(argv):
     # plot_P_VLH()
     # plot_X_VL()
     # plot_water_phaseDiagram()
-    # plot_water_prop('rho')
+    plot_water_prop('rho')
     plot_water_prop('h')
     # plot_V_brine()
     # plot_V_brine_lowThighT()

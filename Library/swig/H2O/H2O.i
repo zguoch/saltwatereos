@@ -121,7 +121,7 @@ namespace H2O
          * @param tau \f$ \tau = T_c / T\f$, unit of \f$ T, T_c \f$ is K.
          * @return double 
          */
-        double Phi0_tau(double delta, double tau);
+        double Phi_o_tau(double delta, double tau);
         /**
          * @brief See Table 6.3 of\cite wagner2002iapws. 
          * 

@@ -118,22 +118,35 @@ namespace H2O
         /**
          * @brief See Table 6.3 of\cite wagner2002iapws. 
          * 
-         * \f$ \phi^{0}_{\tau} = \left[ \frac{\partial \phi^0}{\partial \tau} \right]_{\delta} \f$.  
-         * \f$ \phi^0\f$  is defined in equation 6.5 of \cite wagner2002iapws.
-         * 
+         * \f$ \phi^{o}_{\tau} = \left[ \frac{\partial \phi^0}{\partial \tau} \right]_{\delta} \f$.  
+         * \f$ \phi^o\f$  is defined in equation 6.5 of \cite wagner2002iapws.
+         * \f{equation}
+         * \phi^o_{\tau} = n^o_2 + \frac{n^o_3}{\tau} + \sum\limits_{i=4}^8 n^o_i \gamma^o_i \left( \frac{1}{1-e^{-\gamma^o_i \tau}} - 1 \right)
+         * \f} 
          * Where \f$ \delta, \tau \f$ are defined in equation 6.4 of \cite wagner2002iapws.
          * 
          * @param delta \f$ \delta =  \rho / \rho_c\f$
          * @param tau \f$ \tau = T_c / T\f$, unit of \f$ T, T_c \f$ is K.
          * @return double 
          */
-        double Phi0_tau(double delta, double tau);
+        double Phi_o_tau(double delta, double tau);
         /**
          * @brief See Table 6.3 of\cite wagner2002iapws. 
          * 
-         * \f$ \phi^{r}_{\tau} = \left[ \frac{\partial \phi^r}{\partial \tau} \right]_{\delta} \f$.  
+         * \f$ \phi^{r}_{\tau\tau} = \left[ \frac{\partial \phi^r}{\partial \tau} \right]_{\delta} \f$.  
          * \f$ \phi^r\f$  is defined in equation 6.6 of \cite wagner2002iapws.
+         * \f{equation}
+         * \phi^r_{\tau} = part_1 + part_2 + part_3 + part_4
+         * \f} 
          * 
+         * \f{equation}
+         * \begin{matrix}
+         * part_1 = & \sum\limits_{i=1}^{7} n_i \delta^{d_i}t_i \tau^{t_i -1} \\
+         * part_2 = & \sum\limits_{i=8}^{51} n_i \delta^{d_i} t_i e^{-\delta^{c_i}}  \tau^{t_i-1} \\
+         * part_3 = & \sum\limits_{i=52}^{54} n_i \delta^{d_i} \tau^{t_i - 1} e^{-\alpha_i (\delta -\epsilon_i)^2 - \beta_i(\tau - \gamma_i)^2} \left[ t_i -2\tau \beta_i  (\tau - \gamma_i) \right] \\
+         * part_4 = & \sum\limits_{i=55}^{56} n_i \delta \left( \psi\color{blue}{\frac{\partial \Delta^{bi}}{\partial \tau}} + \Delta^{b_i}\color{blue}{\frac{\partial \psi}{\partial \tau}} \right) \\
+         * \end{matrix}
+         * \f} 
          * Where \f$ \delta, \tau \f$ are defined in equation 6.4 of \cite wagner2002iapws.
          * 
          * @param delta \f$ \delta =  \rho / \rho_c\f$
@@ -141,7 +154,34 @@ namespace H2O
          * @return double 
          */
         double Phi_r_tau(double delta, double tau);
+        /**
+         * @brief See Table 6.3 of\cite wagner2002iapws. 
+         * 
+         * \f$ \phi^{o}_{\tau} = \left[ \frac{\partial^2 \phi^o}{\partial \tau ^2} \right]_{\delta} \f$.  
+         * \f$ \phi^o\f$  is defined in equation 6.5 of \cite wagner2002iapws.
+         * \f{equation}
+         * \phi^o_{\tau} = - \frac{n^o_3}{\tau^2} - \sum\limits_{i=4}^8  \frac{n^o_i \gamma^{o2}_i e^{-\gamma^o_i \tau}}{1-e^{-\gamma^o_i \tau}}  
+         * \f} 
+         * Where \f$ \delta, \tau \f$ are defined in equation 6.4 of \cite wagner2002iapws.
+         * 
+         * @param delta \f$ \delta =  \rho / \rho_c\f$
+         * @param tau \f$ \tau = T_c / T\f$, unit of \f$ T, T_c \f$ is K.
+         * @return double 
+         */
+        double Phi_o_tautau(double delta, double tau);
 
+        /**
+         * @brief See Table 6.3 of\cite wagner2002iapws. 
+         * 
+         * \f$ \phi^{r}_{\tau\tau} = \left[ \frac{\partial^2 \phi^r}{\partial \tau^2} \right]_{\delta} \f$.  
+         * \f$ \phi^r\f$  is defined in equation 6.6 of \cite wagner2002iapws.
+         * Where \f$ \delta, \tau \f$ are defined in equation 6.4 of \cite wagner2002iapws.
+         * 
+         * @param delta \f$ \delta =  \rho / \rho_c\f$
+         * @param tau \f$ \tau = T_c / T\f$, unit of \f$ T, T_c \f$ is K.
+         * @return double 
+         */
+        double Phi_r_tautau(double delta, double tau);
         /**
          * @brief Calculate pressure given temperature and density. See equation in Table 6.3 of reference \cite wagner2002iapws.
          * 
@@ -190,6 +230,17 @@ namespace H2O
          * @return Specific enthalpy [\f$ kJ/kg \f$] 
          */
         double SpecificEnthalpy(double T, double P);
+
+        /**
+         * @brief Isochoric heat capacity as a function of temperature and density.
+         * See Table 6.3 of \cite wagner2002iapws.
+         * 
+         * 
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
+         * @param Rho Density [\f$ kg/m^3 \f$]
+         * @return Specific enthalpy [\f$ kJ/kg \f$]
+         */
+        double Cv(double T, double Rho);
     public:
         
     };
