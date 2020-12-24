@@ -1,0 +1,66 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) Zhikui Guo, Lars Ruepke
+# This file is distributed under the same license as the SaltWater EOS
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SaltWater EOS 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-12-24 21:07+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.7.0\n"
+
+#: ../../source/compile/cmd.rst:4
+msgid "Command line tool"
+msgstr ""
+
+#: ../../source/compile/cmd.rst:8
+msgid "It's pretty easy to build command line version of swEOS from source code."
+msgstr ""
+
+#: ../../source/compile/cmd.rst:10
+msgid "Download or clone source code"
+msgstr ""
+
+#: ../../source/compile/cmd.rst:16
+msgid "Change directory to the source code"
+msgstr ""
+
+#: ../../source/compile/cmd.rst:22
+msgid "Compile c++ library"
+msgstr ""
+
+#: ../../source/compile/cmd.rst:32
+msgid ""
+"Then you will get :code:`libeosH2ONaCl.a` static library in "
+":code:`saltwatereos/Library/lib` folder."
+msgstr ""
+
+#: ../../source/compile/cmd.rst:34
+msgid "Build command line tool"
+msgstr ""
+
+#: ../../source/compile/cmd.rst:47
+msgid ""
+"If there are some error information about openmp during cmake, please "
+"just type :code:`cmake ..` again."
+msgstr ""
+
+#: ../../source/compile/cmd.rst:49
+msgid ""
+"Then you will get the executable file :code:`swEOS` in the current path. "
+"In tutorial of :ref:`cmd` you can find detail usage and example."
+msgstr ""
+
+#: ../../source/compile/index.rst:5
+msgid "Build from source"
+msgstr ""
+

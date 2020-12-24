@@ -48,7 +48,12 @@ source_encoding = 'utf-8-sig'
 source_suffix = '.rst'
 master_doc = 'index'
 templates_path = ['_templates']
+
+# internationalization
 language = 'en'
+locale_dirs = ['locale/']
+gettext_compact = True
+gettext_auto_build=True
 # Set smartquotes_action to 'qe' to disable Smart Quotes transform of -- and ---
 smartquotes_action = 'qe'
 # customize OpenFOAM syntax highlight

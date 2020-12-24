@@ -1,0 +1,389 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) Zhikui Guo, Lars Ruepke
+# This file is distributed under the same license as the SaltWater EOS
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SaltWater EOS 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-12-24 21:07+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.7.0\n"
+
+#: ../../source/Tutorial/cmd.rst:4
+msgid "Command line tool"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:7
+msgid "Synopsis"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:14
+msgid ""
+"**swEOS** [ |-D|\\ [ *dimension* ]] [ |-V|\\ [ *variables* ] ] [ |-P|\\ "
+"[:math:`p_{bar}`] ] [ |-T|\\ [:math:`T_{^{\\circ}C}`] ] [ |-X|\\ "
+"[:math:`x_{wt. NaCl}`] ] [ |-H|\\ [:math:`h_{kJ/kg}`] ] [ |-R|\\ "
+"*min1/delta1/max1/min2/delta2/max2/min3/delta3/max3* ] [ |-G|\\ "
+"[*inputfile*] ] [ |-O|\\ [*outputfile*] ] [ |-t|\\ [*threads*] ]"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:25
+msgid "|No-spaces|"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:29
+msgid "Description"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:31
+msgid ""
+"**swEOS** can calculate phase relations and thermodynamic properties of "
+"salt water in single point, one-dimension, two-dimension and three-"
+"dimension, respectively."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:34
+msgid "Required Arguments"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:47
+msgid "|-D|\\ [ *dimension* ]"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:39
+msgid ""
+"Sets dimension. This is the first key option, the available arguments are"
+" **0**, **1**, **2** and **3**."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:41
+msgid ""
+"**0** means **single point** calculation. If |-D| is set to **0**, the "
+"|-V| option only support **PTX** or **PHX**. In addition, the pressure, "
+"salinity, temperature or enthalpy must be specified by |-P|, |-X|, |-T| "
+"or |-H| option, respectively."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:43
+msgid ""
+"**1** means only one variable changes and the others are set to fixed "
+"value. If |-D| is set to **1**, the |-V| option only support **P**, "
+"**T**, **X**, or **H**. The range of variable specified by |-V| option is"
+" set by |-R| option. And the other variables are set to fixed value by "
+"|-P|, |-X|, |-T| or |-H| options. The result will be saved to file. If "
+"the output file name is not specified by |-O| option, swEOS will use the "
+"default file name and print the file path in terminal."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:45
+msgid ""
+"**2** means change two variables and fixed the third variable. Similar to"
+" **-D1** case."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:47
+msgid "**3** means no fixed variable. Similar to **-D1** case."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:60
+msgid "|-V|\\ [ *variables* ]"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:52
+msgid ""
+"Sets variables accroding to |-D| option. This is the second key option, "
+"the available arguments are **PTX**, **PHX**, **P**, **T**, **X**, **H**,"
+" **PT**, **PX**, **TX**, **PH** and **HX**."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:54
+msgid ""
+"**PTX**, if argument of |-D| option is **0** (single point or multiple "
+"points case), then the pressure, temperature and salinity is set by |-P|,"
+" |-T| and |-X| option, respectively. While if argument of |-D| is **3** "
+"(three dimension case), the range of pressure, temperature and salinity "
+"must be specified by |-R| option **in the same order** of argument of "
+"|-V| option. Therefore, for the same calculation, |-V| option can be "
+"**PTX**, **PXT**, **TPX**, **TXP**, **XPT** and **XTP** unless you set "
+"|-R| option in the save order. For example, :code:`-VXPT "
+"-R0/0.1/1/5/1/400/0/1/100` means salinity in range of [0, 1] with "
+"interval of 0.1, pressure in range of [5, 400] bar with interval of 1 "
+"bar, temperature in range of [0, 100] :math:`^{\\circ}\\text{C}` with "
+"interval 1 :math:`^{\\circ}\\text{C}` . Alternately, you can also do the "
+"same thing using command of |-V|\\ *TPX* |-R|\\ *0/1/100/5/1/400/0/0.1/1*"
+" ."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:56
+msgid "**PHX**, similar to **PTX**, it just replaced temperature with enthalpy."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:58
+msgid ""
+"**T**. This is only valid when argument of |-D| option is **1** (one "
+"dimension case). It means temperature is the independent variable, its "
+"range is specified by |-R| option, e.g. :code:`-R0/1/100` means "
+"temperature in range of [0, 100] |ssd| with interval of 1 |ssd|,  "
+"pressure and salinity are fixed by |-P| and |-X| option, respectively. In"
+" addition, the output file name has to be specified by |-O| option, will "
+"write as csv file format. **P**, **X**, **H** similar to **T**."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:60
+msgid ""
+"**PT**. This is only valid when argument of |-D| option is set to **2** "
+"(two dimension case). It means pressure and temperature are the "
+"independent variable, their range are specified by |-R| option, e.g. "
+":code:`-R5/1/500/0/1/100` means temperature in range of [0, 100] |ssd| "
+"with interval of 1 |ssd|, pressure in range of [5, 500] bar with interval"
+" of 1 bar. Salinity is the fixed variable and the fixed value is "
+"specified by |-X| option. Note that it doesn't matter what the order of "
+"variable follow |-V| option, e.g. :code:`-VPT` and :code:`-VTP` are all "
+"valid, but the order of range follow |-R| option matters, it must be the "
+"same order with |-V| option. For example, :code:`-VPT -R5/1/500/0/100` "
+"and :code:`-VTP -R0/1/100/5/1/500` are equivalent. Of course, you also "
+"have to specify output file by |-O| option. **PX**, **TX**, **PH**, "
+"**HX** are similar with **PT**."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:65
+msgid "|-P|\\ [ *pressure* ]"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:65
+msgid ""
+"Sets fixed pressure value, it should be a float or integer number. The "
+"unit is **bar**."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:70
+msgid "|-T|\\ [ *temperature* ]"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:70
+msgid ""
+"Sets fixed temperature value, it should be a float or integer number. The"
+" unit is |ssd|."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:75
+msgid "|-X|\\ [ *salinity* ]"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:75
+msgid ""
+"Sets fixed salinity value, it should be a float or integer number. The "
+"unit is :math:`wt. NaCl`."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:80
+msgid "|-H|\\ [ *enthalpy* ]"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:80
+msgid "Sets fixed enthalpy value, it should be a float or integer number."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:85
+msgid "|-R|\\ [ *min/delta/max* ]"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:85
+msgid ""
+"Sets range and interval of independent variable(s), |-R| option must "
+"correspond to |-V| and |-D| options. For example, :code:`-D1 -VT "
+"-R0/1/100` , :code:`-D2 -VTX -R0/1/100/0/0.1/0.8` , :code:`-D3 -VTXP "
+"-R0/1/100/0/0.1/0.8/5/1/500` ."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:108
+msgid "|-G|\\ [ *inputfile* ]"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:90
+msgid ""
+"Sets input file for multiple points calculation, the input file with "
+"three columns with delimiter of space or table( :code:`\\t` ) "
+"correspondint to |-V| option. For example, :code:`-D0 -VPTX -Ginput.txt` "
+"means calculate EOS of some points, independent variables of each point "
+"are pressure, temperature and salinity which are listed in "
+":code:`input.txt` as belows"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:113
+msgid "|-O|\\ [ *outputfile* ]"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:113
+msgid ""
+"Sets output file name for one, two and three-dimensional calculation. The"
+" supported file format for 1D is csv, for 2D and 3D can be one of "
+"txt(delimiter is :code:`\\t` ), csv(delimiter is :code:`,` ) and vtk. "
+"Because temperature, pressure and salinity have different scaling, if "
+"open the vtk file directlly by paraview, you can not see anything in "
+"salinity dimension. Therefore there is a python script generated by "
+":code:`swEOS` can deal with the scaling issue automatically. You just "
+"need to type a command in terminal to visualize the result. e.g.  "
+":code:`paraview --script=test3D.vtk.py` ."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:119
+msgid "|-t|\\ [ *thread* ]"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:118
+msgid "Sets number of threads for parallel computing."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:122
+msgid "Examples"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:125 ../../source/Tutorial/gui.rst:7
+#: ../../source/Tutorial/ios.rst:10
+msgid "Single point calculation"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:133 ../../source/Tutorial/gui.rst:14
+msgid "Multi-points calculation"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:143
+msgid "One-dimensional calculation"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:153
+msgid "Two-dimensional calculation"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:165
+msgid "Three-dimensional calculation"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:174
+msgid ""
+"Please see table :ref:`phaseRegion_Name_tab` for phase index and phae "
+"region"
+msgstr ""
+
+#: ../../source/Tutorial/gui.rst:4
+msgid "Desktop application with GUI"
+msgstr ""
+
+#: ../../source/Tutorial/gui.rst:21 ../../source/Tutorial/ios.rst:16
+msgid "1D chart"
+msgstr ""
+
+#: ../../source/Tutorial/gui.rst:27 ../../source/Tutorial/ios.rst:25
+msgid "2D chart"
+msgstr ""
+
+#: ../../source/Tutorial/gui.rst:33 ../../source/Tutorial/ios.rst:35
+msgid "3D chart"
+msgstr ""
+
+#: ../../source/Tutorial/gui.rst:37 ../../source/Tutorial/ios.rst:39
+#: ../../source/Tutorial/ios.rst:46
+msgid "Coming soon!"
+msgstr ""
+
+#: ../../source/Tutorial/index.rst:5
+msgid "Tutorial"
+msgstr ""
+
+#: ../../source/Tutorial/ios.rst:4
+msgid "Apple ios app"
+msgstr ""
+
+#: ../../source/Tutorial/ios.rst:7
+msgid "iPhone"
+msgstr ""
+
+#: ../../source/Tutorial/ios.rst:42
+msgid "iPad"
+msgstr ""
+
+#: ../../source/Tutorial/phaseRegion_tab.rst:4
+msgid "Lookup table of phase index"
+msgstr ""
+
+#: ../../source/Tutorial/phaseRegion_tab.rst:7
+msgid "Phase region index"
+msgstr ""
+
+#: ../../source/Tutorial/phaseRegion_tab.rst:7
+msgid "Phase region"
+msgstr ""
+
+#: ../../source/Tutorial/phaseRegion_tab.rst:9
+msgid "0"
+msgstr ""
+
+#: ../../source/Tutorial/phaseRegion_tab.rst:9
+msgid "Single phase(Liquid)"
+msgstr ""
+
+#: ../../source/Tutorial/phaseRegion_tab.rst:11
+msgid "1"
+msgstr ""
+
+#: ../../source/Tutorial/phaseRegion_tab.rst:11
+msgid "Liquid + Vapor at X=0"
+msgstr ""
+
+#: ../../source/Tutorial/phaseRegion_tab.rst:13
+msgid "2"
+msgstr ""
+
+#: ../../source/Tutorial/phaseRegion_tab.rst:13
+msgid "Pure vapour phase"
+msgstr ""
+
+#: ../../source/Tutorial/phaseRegion_tab.rst:15
+msgid "3"
+msgstr ""
+
+#: ../../source/Tutorial/phaseRegion_tab.rst:15
+msgid "Liquid + Halite"
+msgstr ""
+
+#: ../../source/Tutorial/phaseRegion_tab.rst:17
+msgid "4"
+msgstr ""
+
+#: ../../source/Tutorial/phaseRegion_tab.rst:17
+msgid "Vapour + Halite"
+msgstr ""
+
+#: ../../source/Tutorial/phaseRegion_tab.rst:19
+msgid "5"
+msgstr ""
+
+#: ../../source/Tutorial/phaseRegion_tab.rst:19
+msgid "Vapour + Liquid + Halite"
+msgstr ""
+
+#: ../../source/Tutorial/phaseRegion_tab.rst:21
+msgid "6"
+msgstr ""
+
+#: ../../source/Tutorial/phaseRegion_tab.rst:21
+msgid "Vapour + Liquid on the liquid side"
+msgstr ""
+
+#: ../../source/Tutorial/phaseRegion_tab.rst:23
+msgid "7"
+msgstr ""
+
+#: ../../source/Tutorial/phaseRegion_tab.rst:23
+msgid "Vapour + Liquid on the vapour side"
+msgstr ""
+

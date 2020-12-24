@@ -1,0 +1,58 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) Zhikui Guo, Lars Ruepke
+# This file is distributed under the same license as the SaltWater EOS
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SaltWater EOS 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-12-24 21:07+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.7.0\n"
+
+#: ../../source/index.rst:29
+msgid "Contents"
+msgstr ""
+
+#: ../../source/index.rst:35
+msgid "Build"
+msgstr ""
+
+#: ../../source/index.rst:41
+msgid "Tutorials"
+msgstr ""
+
+#: ../../source/index.rst:4
+msgid "SaltWater EOS Documentation"
+msgstr ""
+
+#: ../../source/index.rst:18
+msgid ""
+"Welcome to the SaltWater EOS Docs! Here you'll find resources for using "
+"SaltWater EOS and examples of what it can do."
+msgstr ""
+
+#: ../../source/index.rst
+msgid "CS=10,FWHM=300"
+msgstr ""
+
+#: ../../source/index.rst:23
+msgid "Cell size = 10 m, FWHM = 300 m."
+msgstr ""
+
+#: ../../source/index.rst
+msgid "CS=10,FWHM=400"
+msgstr ""
+
+#: ../../source/index.rst:27
+msgid "Cell size = 10 m, FWHM = 400 m."
+msgstr ""
+

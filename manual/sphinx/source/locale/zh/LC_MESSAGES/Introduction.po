@@ -1,0 +1,123 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) Zhikui Guo, Lars Ruepke
+# This file is distributed under the same license as the SaltWater EOS
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SaltWater EOS 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-12-24 21:07+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.7.0\n"
+
+#: ../../source/Introduction/index.rst:5
+msgid "Introduction"
+msgstr ""
+
+#: ../../source/Introduction/index.rst:9
+msgid ""
+"Realistic simulations of fluid flow in natural hydrothermal systems "
+"require accurate formulation of fluid properties especially for seawater "
+"convection at mid-ocean ridges. In order to explore circulation patterns "
+"and realistic phase seperation phenomenon, we have to calculate equation "
+"of state of binary salt-water fluids over pressure-temperature-salinity "
+"ranges encountered in the Earth's crust. Fortunately, pure water can be "
+"described by the IAPS-84 equation of state and "
+":cite:`Driesner2007Part1,Driesner2007Part2` have developed a set of "
+"correction formulations of phase relations and thermodynamic properties "
+"for NaCl-H2O system. Further, we have developed a set of multi-language ("
+" `C++ <https://www>`_ , `Swift <https://www>`_ , `Python <https://www>`_ "
+", `Matlab <https://www>`_ ) and multi-platform ( `Windows <https://www>`_"
+" , `MacOS <https://www>`_ , `Linux <https://www>`_ , `IOS <https://www>`_"
+" ) tools, including callable `C++ library <https://www>`_ , `desktop "
+"application <../Application/desktop.html>`_ with graphical user interface"
+" (GUI), `command line tools <https://www>`_ (just like `gmt "
+"<http://gmt.soest.hawaii.edu>`_ style), and Mobile apps for `iphone "
+"<https://www>`_ and `ipad <https://www>`_ . In addition, parallel "
+"computing is available for desktop application and command line tool."
+msgstr ""
+
+#: ../../source/Introduction/index.rst:17
+msgid "Languages"
+msgstr ""
+
+#: ../../source/Introduction/index.rst:20
+msgid "|c++|"
+msgstr ""
+
+#: ../../source/Introduction/index.rst:20
+msgid "|matlab|"
+msgstr ""
+
+#: ../../source/Introduction/index.rst:20
+msgid "|python|"
+msgstr ""
+
+#: ../../source/Introduction/index.rst:39
+msgid "Platforms"
+msgstr ""
+
+#: ../../source/Introduction/index.rst:42
+msgid "|mac|"
+msgstr ""
+
+#: ../../source/Introduction/index.rst:42
+msgid "|linux|"
+msgstr ""
+
+#: ../../source/Introduction/index.rst:42
+msgid "|windows|"
+msgstr ""
+
+#: ../../source/Introduction/index.rst:42
+msgid "|ios|"
+msgstr ""
+
+#: ../../source/Introduction/index.rst:67
+msgid "Applications"
+msgstr ""
+
+#: ../../source/Introduction/index.rst:70
+msgid ":ref:`desktop`"
+msgstr ""
+
+#: ../../source/Introduction/index.rst:72
+msgid "|desktop|"
+msgstr ""
+
+#: ../../source/Introduction/index.rst:70
+msgid ":ref:`cmd`"
+msgstr ""
+
+#: ../../source/Introduction/index.rst:72
+msgid "|cmd|"
+msgstr ""
+
+#: ../../source/Introduction/index.rst:70
+msgid ":ref:`mobile`"
+msgstr ""
+
+#: ../../source/Introduction/index.rst:72
+msgid "|mobile|"
+msgstr ""
+
+#: ../../source/Introduction/index.rst:88
+msgid "C++ Library"
+msgstr ""
+
+#: ../../source/Introduction/index.rst:91
+msgid "Acknowledgments"
+msgstr ""
+
+#: ../../source/Introduction/index.rst:94
+msgid "Cite"
+msgstr ""
+
