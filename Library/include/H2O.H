@@ -232,10 +232,10 @@ namespace H2O
         /**
          * @brief See Table 6.3 of \cite wagner2002iapws. 
          * 
-         * \f$ \phi^{o}_{\tau} = \left[ \frac{\partial^2 \phi^o}{\partial \tau ^2} \right]_{\delta} \f$.  
+         * \f$ \phi^{o}_{\tau\tau} = \left[ \frac{\partial^2 \phi^o}{\partial \tau ^2} \right]_{\delta} \f$.  
          * \f$ \phi^o\f$  is defined in equation 6.5 of \cite wagner2002iapws.
          * \f{equation}
-         * \phi^o_{\tau} = - \frac{n^o_3}{\tau^2} - \sum\limits_{i=4}^8  \frac{n^o_i \gamma^{o2}_i e^{-\gamma^o_i \tau}}{1-e^{-\gamma^o_i \tau}}  
+         * \phi^o_{\tau\tau} = - \frac{n^o_3}{\tau^2} - \sum\limits_{i=4}^8  \frac{n^o_i \gamma^{o2}_i e^{-\gamma^o_i \tau}}{1-e^{-\gamma^o_i \tau}}  
          * \f} 
          * Where \f$ \delta, \tau \f$ are defined in equation 6.4 of \cite wagner2002iapws.
          * 
@@ -331,17 +331,24 @@ namespace H2O
          * @return Specific enthalpy [\f$ kJ/kg \f$] 
          */
         double SpecificEnthalpy(double T, double P);
-
         /**
          * @brief Isochoric heat capacity as a function of temperature and density.
          * See Table 6.3 of \cite wagner2002iapws.
          * 
+         * \f{equation}
+         * c_v(T,p)=c_v(T,\rho)=c_v(\delta, \tau) = -R\tau^2 (\phi_{\tau\tau}^o + \phi_{\tau\tau}^r)
+         * \f}
+         * 
+         * \f$\phi_{\tau\tau}^o\f$ is calculated from H2O::cH2O::Phi_o_tautau, and \f$\phi_{\tau\tau}^r\f$ is calculated from H2O::cH2O::Phi_r_tautau
          * 
          * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
          * @param Rho Density [\f$ kg/m^3 \f$]
          * @return Specific enthalpy [\f$ kJ/kg \f$]
          */
-        double Cv(double T, double Rho);
+        double Cv_T_Rho(double T, double Rho);
+        double Cv(double T, double P);
+        double Cp_T_Rho(double T, double Rho);
+        double Cp(double T, double P);
     public:
         
     };

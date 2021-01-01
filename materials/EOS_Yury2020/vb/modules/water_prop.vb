@@ -238,13 +238,13 @@ For i = 55 To 56
     
     Psi = Exp(-c_Caps(i) * (Delta_Rho - 1) ^ 2 - D_Caps(i) * (Tau - 1) ^ 2)
     
-    dPsidTau = -2 * D_Caps(i) * (Tau - 1) * Psi
-    d2PsidTauDelta = 4 * c_Caps(i) * Psi * D_Caps(i) * (Delta_Rho - 1) * (Tau - 1)
+    ' dPsidTau = -2 * D_Caps(i) * (Tau - 1) * Psi
+    ' d2PsidTauDelta = 4 * c_Caps(i) * Psi * D_Caps(i) * (Delta_Rho - 1) * (Tau - 1)
     dDeltaddelta = (Delta_Rho - 1) * (A_caps(i) * Theta * 2 / Beta(i) * ((Delta_Rho - 1) ^ 2) ^ (1 / (2 * Beta(i)) - 1) + 2 * B_Caps(i) * a(i) * ((Delta_Rho - 1) ^ 2) ^ (a(i) - 1))
     dDeltaBIdDelta = b(i) * Delta ^ (b(i) - 1) * dDeltaddelta
-    dDeltaBIdTau = -2 * Theta * b(i) * Delta ^ (b(i) - 1)
+    ' dDeltaBIdTau = -2 * Theta * b(i) * Delta ^ (b(i) - 1)
     dPsidDelta = -2 * c_Caps(i) * (Delta_Rho - 1) * Psi
-    d2DeltaBIdRhoTau = -A_caps(i) * b(i) * 2 / Beta(i) * Delta ^ (b(i) - 1) * (Delta_Rho - 1) * ((Delta_Rho - 1) ^ 2) ^ (1 / (2 * Beta(i)) - 1) - 2 * Theta * b(i) * (b(i) - 1) * Delta ^ (b(i) - 2) * dDeltaddelta
+    ' d2DeltaBIdRhoTau = -A_caps(i) * b(i) * 2 / Beta(i) * Delta ^ (b(i) - 1) * (Delta_Rho - 1) * ((Delta_Rho - 1) ^ 2) ^ (1 / (2 * Beta(i)) - 1) - 2 * Theta * b(i) * (b(i) - 1) * Delta ^ (b(i) - 2) * dDeltaddelta
     d2Psiddeltadelta = (2 * c_Caps(i) * (Delta_Rho - 1) ^ 2 - 1) * 2 * c_Caps(i) * Psi
     d2Deltaddeltadelta = 1 / (Delta_Rho - 1) * dDeltaddelta + (Delta_Rho - 1) ^ 2 * (4 * B_Caps(i) * a(i) * (a(i) - 1) * ((Delta_Rho - 1) ^ 2) ^ (a(i) - 2) + 2 * A_caps(i) ^ 2 * Beta(i) ^ -2 * (((Delta_Rho - 1) ^ 2) ^ (1 / 2 / Beta(i) - 1)) ^ 2 + A_caps(i) * Theta * 4 / Beta(i) * (1 / 2 / Beta(i) - 1) * ((Delta_Rho - 1) ^ 2) ^ (1 / 2 / Beta(i) - 2))
     d2DeltaBIddeltadelta = b(i) * (Delta ^ (b(i) - 1) * d2Deltaddeltadelta + (b(i) - 1) * Delta ^ (b(i) - 2) * dDeltaddelta ^ 2)
