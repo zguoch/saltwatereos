@@ -467,6 +467,50 @@ namespace H2O
         
         return sum1+sum2+sum3+sum4;
     }
+    double cH2O::Phi_r_deltatau(double delta, double tau)
+    {
+        double sum1 = 0, sum2 = 0, sum3 = 0, sum4 = 0;
+        for (size_t i = 0; i < 7; i++)
+        {
+            sum1 += m_Table62.n[i] * m_Table62.d[i] * m_Table62.t[i] * pow(delta, m_Table62.d[i]-1.0) * pow(tau, m_Table62.t[i]-1.0);
+        }
+        for (size_t i = 7; i < 51; i++)
+        {
+            sum2 += m_Table62.n[i] * m_Table62.t[i] * pow(delta, m_Table62.d[i]-1.0) * pow(tau, m_Table62.t[i]-1.0) * (m_Table62.d[i] - m_Table62.c[i] * pow(delta, m_Table62.c[i])) * exp(-pow(delta,m_Table62.c[i]));
+        }
+        for (size_t i = 51; i < 54; i++)
+        {
+            sum3 += m_Table62.n[i] * pow(delta, m_Table62.d[i]) * pow(tau,m_Table62.t[i]) * exp(-m_Table62.alpha[i] * pow(delta - m_Table62.epsilon[i], 2.0) - m_Table62.beta[i] * pow(tau - m_Table62.gamma[i], 2.0)) * (m_Table62.d[i] / delta - 2 * m_Table62.alpha[i] * (delta - m_Table62.epsilon[i])) * (m_Table62.t[i] / tau - 2 * m_Table62.beta[i] * (tau - m_Table62.gamma[i]));
+        }
+        double psi = 0, theta = 0, Delta = 0, dpsiddelta = 0, dpsidtau=0, dDeltaddelta = 0, dDeltabiddelta = 0,dDeltabidtau=0, dDeltabidtauddelta=0,d2psidtauddelta=0,delta_minus_one_squre = 0, tau_minus_one_squre=0;
+        for (size_t i = 54; i < 56; i++)
+        {
+            delta_minus_one_squre = pow(delta - 1, 2.0);
+            tau_minus_one_squre = pow(tau - 1, 2.0);
+            psi = exp(-m_Table62.C[i]*delta_minus_one_squre - m_Table62.D[i]*tau_minus_one_squre);
+
+            theta = (1-tau) + m_Table62.A[i]*pow(delta_minus_one_squre, 0.5/m_Table62.beta[i]);
+
+            Delta = pow(theta, 2.0) + m_Table62.B[i]*pow(delta_minus_one_squre, m_Table62.a[i]);
+            dpsiddelta = -2*m_Table62.C[i]*(delta - 1) * psi;
+            dpsidtau = -2*m_Table62.D[i]*(tau - 1) * psi;
+            d2psidtauddelta = 4 * m_Table62.C[i] * psi * m_Table62.D[i] * (delta - 1) * (tau - 1);
+            dDeltaddelta = 2*(delta - 1)*(theta * m_Table62.A[i]/m_Table62.beta[i]*pow(delta_minus_one_squre, 0.5/m_Table62.beta[i] - 1) + m_Table62.B[i]*m_Table62.a[i]*pow(delta_minus_one_squre, m_Table62.a[i]-1));
+            // if(Delta == 0)
+            // {
+            //     dDeltabiddelta = 0;
+            // }else
+            // {
+                dDeltabiddelta = dDeltaddelta*m_Table62.b[i]*pow(Delta, m_Table62.b[i]-1);
+                dDeltabidtau = -2*theta*m_Table62.b[i]*pow(Delta, m_Table62.b[i]-1);
+                dDeltabidtauddelta = -m_Table62.A[i] * m_Table62.b[i] * 2 / m_Table62.beta[i] * pow(Delta, m_Table62.b[i]-1.0) * (delta - 1) * pow(pow(delta - 1, 2.0), 0.5/m_Table62.beta[i] - 1.0) - 2 * theta * m_Table62.b[i] * (m_Table62.b[i] - 1) * pow(Delta, m_Table62.b[i]-2.0) * dDeltaddelta;
+            // }
+            
+            sum4 += m_Table62.n[i]*(pow(Delta,m_Table62.b[i]) * (dpsidtau + delta * d2psidtauddelta) + delta * dDeltabiddelta * dpsidtau + dDeltabidtau * (psi + delta * dpsiddelta) + dDeltabidtauddelta * delta * psi);
+        }
+        
+        return sum1+sum2+sum3+sum4;
+    }
     double cH2O::Phi_o(double delta, double tau)
     {
         double sum = 0;

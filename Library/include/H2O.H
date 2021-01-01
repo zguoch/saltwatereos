@@ -282,6 +282,7 @@ namespace H2O
          * @return double 
          */
         double Phi_r_tautau(double delta, double tau);
+        double Phi_r_deltatau(double delta, double tau);
         /**
          * @brief Calculate pressure given temperature and density. See equation in Table 6.3 of reference \cite wagner2002iapws.
          * 
