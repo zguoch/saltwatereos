@@ -92,7 +92,7 @@ html_theme_options = {
     'titles_only': True,
     'display_version': False,
     'prev_next_buttons_location': 'both',
-    'style_nav_header_background': 'purple',
+    'style_nav_header_background': 'skyblue',
     # 'gitlab_url': 'https://gitlab.com/gmdpapers/hydrothermalfoam'
 }
 

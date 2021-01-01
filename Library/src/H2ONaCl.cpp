@@ -2934,7 +2934,7 @@ namespace H2ONaCl
      * \image html Driesner_Heinrich_Fig8.png "Halite-saturated vapor composition in comparison to experimental data." width=50%. 
      * Halite-saturated vapor composition in comparison to experimental data. (a) Isotherms, (b) isobars (Figure 8 of reference \cite Driesner2007Part1)
      * 
-     * \image html HaliteSaturatedVaporComposition.svg "Halite-saturated vapor composition calculated using H2ONaCl." width=50%. 
+     * \image html HaliteSaturatedVaporComposition.svg "Halite-saturated vapor composition calculawithted using H2ONaCl." width=50%. 
      * Halite-saturated vapor composition calculated using #H2ONaCl -> #cH2ONaCl ->#X_VaporHaliteCoexist. 
      */
     double cH2ONaCl::X_VaporHaliteCoexist(double T, double P)

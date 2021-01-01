@@ -145,6 +145,8 @@ namespace H2O
          * part_2 = & \sum\limits_{i=8}^{51} n_i \delta^{d_i} t_i e^{-\delta^{c_i}}  \tau^{t_i-1} \\
          * part_3 = & \sum\limits_{i=52}^{54} n_i \delta^{d_i} \tau^{t_i - 1} e^{-\alpha_i (\delta -\epsilon_i)^2 - \beta_i(\tau - \gamma_i)^2} \left[ t_i -2\tau \beta_i  (\tau - \gamma_i) \right] \\
          * part_4 = & \sum\limits_{i=55}^{56} n_i \delta \left( \psi\color{blue}{\frac{\partial \Delta^{bi}}{\partial \tau}} + \Delta^{b_i}\color{blue}{\frac{\partial \psi}{\partial \tau}} \right) \\
+         * \color{blue}{\frac{\partial \Delta^{bi}}{\partial \tau}} = & -2b_i\theta\Delta^{b_i - 1} \\
+         * \color{blue}{\frac{\partial \psi}{\partial \tau}} = & -2D_i(\tau -1) \psi
          * \end{matrix}
          * \f} 
          * Where \f$ \delta, \tau \f$ are defined in equation 6.4 of \cite wagner2002iapws.
@@ -175,6 +177,32 @@ namespace H2O
          * 
          * \f$ \phi^{r}_{\tau\tau} = \left[ \frac{\partial^2 \phi^r}{\partial \tau^2} \right]_{\delta} \f$.  
          * \f$ \phi^r\f$  is defined in equation 6.6 of \cite wagner2002iapws.
+         * Where \f$ \delta, \tau \f$ are defined in equation 6.4 of \cite wagner2002iapws.
+         * 
+         * @brief See Table 6.3 of\cite wagner2002iapws. 
+         * 
+         * \f$ \phi^{r}_{\tau\tau} = \left[ \frac{\partial \phi^r}{\partial \tau} \right]_{\delta} \f$.  
+         * \f$ \phi^r\f$  is defined in equation 6.6 of \cite wagner2002iapws.
+         * \f{equation}
+         * \phi^r_{\tau\tau} = part_1 + part_2 + part_3 + part_4
+         * \f} 
+         * 
+         * \f{equation}
+         * \begin{matrix}
+         * part_1 = & \sum\limits_{i=1}^{7} n_i \delta^{d_i}t_i(t_i -1) \tau^{t_i -2} \\
+         * part_2 = & \sum\limits_{i=8}^{51} n_i \delta^{d_i} t_i(t_i - 1) e^{-\delta^{c_i}}  \tau^{t_i-2} \\
+         * part_3 = & \left ( \sum\limits_{i=52}^{54} n_i \delta^{d_i} \tau^{t_i - 1} e^{-\alpha_i (\delta -\epsilon_i)^2 - \beta_i(\tau - \gamma_i)^2} \left[ t_i -2\tau \beta_i  (\tau - \gamma_i) \right] \right)_{\tau} \\
+         * = & \sum\limits_{i=52}^{54} n_i \delta^{d_i} \tau^{t_i - 2} e^{-\alpha_i (\delta -\epsilon_i)^2 - \beta_i(\tau - \gamma_i)^2} \left[ t_i -1 -2\tau \beta_i  (\tau - \gamma_i) \right] \left[ t_i -2\tau \beta_i  (\tau - \gamma_i) \right]  + n_i \delta^{d_i} \tau^{t_i - 1} e^{-\alpha_i (\delta -\epsilon_i)^2 - \beta_i(\tau - \gamma_i)^2} (2\beta_i\gamma_i - 4\tau\beta_i) \\
+         * = & \sum\limits_{i=52}^{54} n_i \delta^{d_i} \tau^{t_i - 2} e^{-\alpha_i (\delta -\epsilon_i)^2 - \beta_i(\tau - \gamma_i)^2} \left[ \left[ t_i -2\tau \beta_i  (\tau - \gamma_i) \right]^2 -(t_i -2\tau \beta_i  (\tau - \gamma_i)) + \tau(2\beta_i\gamma_i - 4\tau\beta_i) \right] \\
+         * = & \sum\limits_{i=52}^{54} n_i \delta^{d_i} \tau^{t_i - 2} e^{-\alpha_i (\delta -\epsilon_i)^2 - \beta_i(\tau - \gamma_i)^2} \left[ \left[ t_i -2\tau \beta_i  (\tau - \gamma_i) \right]^2 -t_i - 2\tau^2\beta_i\right] \\
+         * part_4 = & \left ( \sum\limits_{i=55}^{56} n_i \delta \left( \psi\color{blue}{\frac{\partial \Delta^{b_i}}{\partial \tau}} + \Delta^{b_i}\color{blue}{\frac{\partial \psi}{\partial \tau}} \right) \right)_{\tau} \\
+         * = & \sum\limits_{i=55}^{56} n_i \delta \left( \color{blue}{\frac{\partial \psi}{\partial \tau}}\color{blue}{\frac{\partial \Delta^{b_i}}{\partial \tau}} + \psi\color{blue}{\frac{\partial^2 \Delta^{b_i}}{\partial \tau^2}}  + \color{blue}{\frac{\partial \Delta^{b_i}}{\partial \tau}}\color{blue}{\frac{\partial \psi}{\partial \tau}} + \Delta^{b_i}\color{blue}{\frac{\partial^2 \psi}{\partial \tau^2}} \right) \\
+         * \color{blue}{\frac{\partial \Delta^{bi}}{\partial \tau}} = & -2b_i\theta\Delta^{b_i - 1} \\
+         * \color{blue}{\frac{\partial \psi}{\partial \tau}} = & -2D_i(\tau -1) \psi \\
+         * \color{blue}{\frac{\partial^2 \Delta^{bi}}{\partial \tau^2}} = & 2b_i\Delta^{b_i-2}\left[ \Delta + 2\theta^2 (b_i -1) \right] \\
+         * \color{blue}{\frac{\partial^2 \psi}{\partial \tau^2}} = & 2D_i \psi \left[2D_i(\tau -1)^2 - 1 \right]
+         * \end{matrix}
+         * \f} 
          * Where \f$ \delta, \tau \f$ are defined in equation 6.4 of \cite wagner2002iapws.
          * 
          * @param delta \f$ \delta =  \rho / \rho_c\f$
