@@ -22,10 +22,16 @@
  * 
  * <table style="width:100%">
     <tr>
-        <td class="Gallery">\link H2O::cH2O::SublimationCurve \image html water_PhaseDiagram.svg "Phase diagram." width=500px. \endlink</td>
-        <td class="Gallery"> \endlink</td> 
-        <td class="Gallery"> </td>
-        <td class="Gallery"> </td>
+        <td class="Gallery">\link H2O::cH2O::SublimationCurve \image html water_PhaseDiagram.svg "Phase diagram." width=300px. \endlink</td>
+        <td class="Gallery">\link H2O::cH2O::SpecificEnthalpy \image html water_h.jpg "Specific enthalpy." width=300px. \endlink</td>
+        <td class="Gallery">\link H2O::cH2O::Cp \image html water_cp.jpg "Isobaric heat capacity." width=300px. \endlink</td>
+        <td class="Gallery">\link H2O::cH2O::Rho \image html water_rho.jpg "Density." width=300px. \endlink</td>
+    </tr>
+    <tr>
+        <td class="Gallery">\link H2O::cH2O::Cv \image html water_cv.jpg "Isochoric heat capacity." width=300px. \endlink</td>
+        <td class="Gallery"> \endlink</td>
+        <td class="Gallery"> \endlink</td>
+        <td class="Gallery"> \endlink</td>
     </tr>
 </table>
  * \section Gallery_salt NaCl

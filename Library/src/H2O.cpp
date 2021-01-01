@@ -637,6 +637,10 @@ namespace H2O
         // Note that, R_const in unit of kJ/kg/K
         return R_const*T_K*(1 + tau*(Phi_o_tau(delta, tau) + Phi_r_tau(delta, tau)) + delta*Phi_r_delta(delta, tau) );
     }
+    /**
+     * \image html water_h.svg "Specific enthalpy of water calculated by swEOS" width=50%.
+     * \note The result is compared with python package of <a href="https://iapws.readthedocs.io/en/latest/iapws.iapws95.html#">iapws.IAPWS95</a>
+     */
     double cH2O::SpecificEnthalpy(double T, double P)
     {
         return SpecificEnthalpy_T_Rho(T, Rho(T, P));
@@ -648,6 +652,10 @@ namespace H2O
         double tau = T_Critic_K/T_K;
         return (-tau*tau * (Phi_o_tautau(delta, tau) + Phi_r_tautau(delta, tau))) * R_const;
     }
+    /**
+     * \image html water_cv.svg "Isochoric heat capacity of water calculated by swEOS" width=50%.
+     * \note The result is compared with python package of <a href="https://iapws.readthedocs.io/en/latest/iapws.iapws95.html#">iapws.IAPWS95</a>
+     */
     double cH2O::Cv(double T, double P)
     {
         return Cv_T_Rho(T, Rho(T, P));
@@ -660,6 +668,10 @@ namespace H2O
         double Cv=Cv_T_Rho(T, Rho);
         return Cv + R_const*pow(1+delta*Phi_r_delta(delta,tau) - delta*tau*Phi_r_deltatau(delta,tau), 2.0)/(1 + 2*delta*Phi_r_delta(delta,tau) + delta*delta*Phi_r_deltadelta(delta,tau));
     }
+    /**
+     * \image html water_cp.svg "Isobaric heat capacity of water calculated by swEOS" width=50%.
+     * \note The result is compared with python package of <a href="https://iapws.readthedocs.io/en/latest/iapws.iapws95.html#">iapws.IAPWS95</a>
+     */
     double cH2O::Cp(double T, double P)
     {
         return Cp_T_Rho(T, Rho(T, P));
