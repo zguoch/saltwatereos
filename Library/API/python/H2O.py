@@ -91,7 +91,7 @@ class Table61(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
     n0 = property(_H2O.Table61_n0_get, _H2O.Table61_n0_set)
-    gama0 = property(_H2O.Table61_gama0_get, _H2O.Table61_gama0_set)
+    gamma0 = property(_H2O.Table61_gamma0_get, _H2O.Table61_gamma0_set)
 
     def __init__(self):
         _H2O.Table61_swiginit(self, _H2O.new_Table61())
@@ -128,8 +128,8 @@ class cH2O(object):
     def Phi_r_delta(self, delta, tau):
         return _H2O.cH2O_Phi_r_delta(self, delta, tau)
 
-    def Phi0_tau(self, delta, tau):
-        return _H2O.cH2O_Phi0_tau(self, delta, tau)
+    def Phi_o_tau(self, delta, tau):
+        return _H2O.cH2O_Phi_o_tau(self, delta, tau)
 
     def Phi_r_tau(self, delta, tau):
         return _H2O.cH2O_Phi_r_tau(self, delta, tau)

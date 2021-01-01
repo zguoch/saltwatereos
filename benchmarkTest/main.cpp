@@ -635,9 +635,9 @@ int main( int argc, char** argv )
   // test_HaliteSaturatedVaporComposition(); 
   // test_P_VLH();
   // test_Salinity_VaporLiquidCoexist_LiquidBranch();
-  // test_water_Curves();
+  test_water_Curves();
   // test_water_props(130, 200, 2, 10, 0.1, 1, true);
-    test_water_props(H2O::TMIN, H2O::TMAX,H2O::PMIN/1E5, 1000, 4, 4, true);
+    // test_water_props(H2O::TMIN, H2O::TMAX,H2O::PMIN/1E5, 1000, 4, 4, true);
   // testT_V_star();
   // test_V_brine_NaCl_lowThighT();
   // test_V_extrapol();

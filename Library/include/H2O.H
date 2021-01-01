@@ -29,7 +29,7 @@ namespace H2O
     struct Table61
     {
         double n0[8]={-8.32044648201, 6.6832105268, 3.00632, 0.012436, 0.97315, 1.2795, 0.96956, 0.24873};
-        double gama0[8]={0, 0, 0, 1.28728967, 3.53734222, 7.74073708, 9.24437796, 27.5075105};
+        double gamma0[8]={0, 0, 0, 1.28728967, 3.53734222, 7.74073708, 9.24437796, 27.5075105};
     };
     // ============= Constants of H2O ========================================================================
     double const PMIN = 1E5; /**< Minimum valid pressure of H2O, [Pa]. IAPWS-95 */ 
@@ -105,18 +105,91 @@ namespace H2O
          */
         double Rho(double T, double P);
         /**
+         * @brief See equation 6.6 of \cite wagner2002iapws. 
+         * 
+         * \f{matrix}
+         * \phi^r & = & \sum\limits_{i=1}^{7} n_i \delta^{d_i}\tau^{t_i} + \sum\limits_{i=8}^{51} n_i \delta^{d_i} e^{-\delta^{c_i}}  \tau^{t_i} + \sum\limits_{i=52}^{54} n_i \delta^{d_i} \tau^{t_i - 1} e^{-\alpha_i (\delta -\epsilon_i)^2 - \beta_i(\tau - \gamma_i)^2} + \sum\limits_{i=55}^{56} n_i \delta \Delta^{b_i}\psi \\
+         * \Delta & = & \theta^2 + B_i [\color{red}{(\delta -1)^2}]^{a_i} \\
+         * \theta & = & (1-\tau) + A_i [\color{red}{(\delta -1)^2}]^{1/2\beta_i} \\
+         * \psi & = & e^{-C_i (\delta -1)^2 - D_i (\tau - 1)^2}
+         * \f}
+         * Where \f$ \delta, \tau \f$ are defined in equation 6.4 of \cite wagner2002iapws.
+         * \note \f$\color{red}{ (\delta -1)^2} \f$ term has to be kept to make sure it is a positive 
+         * 
+         * @param delta \f$ \delta =  \rho / \rho_c\f$
+         * @param tau \f$ \tau = T_c / T\f$, unit of \f$ T, T_c \f$ is K.
+         * @return double 
+         */
+        double Phi_r(double delta, double tau);
+        /**
          * @brief Derivative of the residual part \f$ \phi^r \f$ of the dimensionless Helmholtz free energy. See Table 6.5 of the reference \cite wagner2002iapws.
          * 
          * \f$ \phi^{r}_{\delta} = \left[ \frac{\partial \phi^r}{\partial \delta} \right]_{\tau} \f$.  
          * \f$ \phi^r\f$  is defined in equation 6.6 of \cite wagner2002iapws, where \f$ \delta, \tau \f$ are defined in equation 6.4 of \cite wagner2002iapws.
          * 
+         * \f{equation}
+         * \phi^r_{\delta} = part_1 + part_2 + part_3 + part_4
+         * \f} 
+         * 
+         * \f{equation}
+         * \begin{matrix}
+         * part_1 & = & \sum\limits_{i=1}^{7} n_i d_i \delta^{d_i -1} \tau^{t_i} \\
+         * part_2 & = & \sum\limits_{i=8}^{51} n_i \delta^{d_i - 1}  e^{-\delta^{c_i}}  \tau^{t_i} (d_i -c_i \delta^{c_i}) \\
+         * part_3 & = & \sum\limits_{i=52}^{54} n_i \delta^{d_i - 1} \tau^{t_i} e^{-\alpha_i (\delta -\epsilon_i)^2 - \beta_i(\tau - \gamma_i)^2} \left[ d_i -2\delta \alpha_i  (\delta - \epsilon_i) \right] \\
+         * part_4 & = & \sum\limits_{i=55}^{56} n_i \left[ \Delta^{b_i}\psi +  \delta \left( \psi\color{blue}{\frac{\partial \Delta^{bi}}{\partial \delta}} + \Delta^{b_i}\color{blue}{\frac{\partial \psi}{\partial \delta}} \right) \right] \\
+         * \color{blue}{\frac{\partial \Delta^{bi}}{\partial \delta}} & = & 2b_i\Delta^{b_i -1} (\delta -1) \left[ \theta \frac{A_i}{\beta_i} [ \color{red}{(\delta -1)^2} ]^{1/2\beta_i -1} + B_ia_i[\color{red}{ (\delta -1)^2 } ]^{a_i-1} \right] \\
+         * \color{blue}{\frac{\partial \psi}{\partial \delta}} & = & -2C_i(\delta -1) \psi 
+         * \end{matrix}
+         * \f} 
+         * \note \f$\color{red}{ (\delta -1)^2} \f$ term has to be kept to make sure it is a positive value.
          * @param delta \f$ \delta = \frac{\rho}{\rho_c} \f$
          * @param tau \f$ \tau = \frac{T_c}{T} \f$
          * @return double 
          */
         double Phi_r_delta(double delta, double tau);
         /**
-         * @brief See Table 6.3 of\cite wagner2002iapws. 
+         * @brief Derivative of the residual part \f$ \phi^r \f$ of the dimensionless Helmholtz free energy. See Table 6.5 of the reference \cite wagner2002iapws.
+         * 
+         * \f$ \phi^{r}_{\delta\delta} = \left[ \frac{\partial^2 \phi^r}{\partial \delta^2} \right]_{\tau} \f$.  
+         * \f$ \phi^r\f$  is defined in equation 6.6 of \cite wagner2002iapws, where \f$ \delta, \tau \f$ are defined in equation 6.4 of \cite wagner2002iapws.
+         * 
+         * \f{equation}
+         * \phi^r_{\delta\delta} = part_1 + part_2 + part_3 + part_4
+         * \f} 
+         * 
+         * \f{equation}
+         * \begin{matrix}
+         * part_1 & = & \sum\limits_{i=1}^{7} n_i d_i (d_i - 1) \delta^{d_i -2} \tau^{t_i} \\
+         * part_2 & = & \sum\limits_{i=8}^{51} n_i \delta^{d_i - 2}  e^{-\delta^{c_i}}  \tau^{t_i}\left[ (d_i -c_i \delta^{c_i})(d_i -1 -c_i \delta^{c_i}) - c_i^2\delta^{c_i} \right] \\
+         * part_3 & = & \sum\limits_{i=52}^{54} n_i \delta^{d_i - 2} \tau^{t_i} e^{-\alpha_i (\delta -\epsilon_i)^2 - \beta_i(\tau - \gamma_i)^2} \left[  \color{red}{[d_i - 1 -2\delta\alpha_i(\delta-\epsilon_i)]}\color{green}{[d_i -2\delta\alpha_i(\delta-\epsilon_i)]} -\color{blue}{\delta (4\delta\alpha_i + 2\alpha_i \epsilon_i)} \right] \\
+         * part_4 & = & \sum\limits_{i=55}^{56} n_i \left[ \color{blue}{\frac{\partial \Delta^{b_i}}{\partial \delta}}\psi + \Delta^{b_i}\frac{\partial \psi}{\partial \delta} +  \left( \psi\color{blue}{\frac{\partial \Delta^{bi}}{\partial \delta}} + \Delta^{b_i}\color{blue}{\frac{\partial \psi}{\partial \delta}} \right) +\delta \left(\frac{\partial \psi}{\partial \delta}\color{blue}{\frac{\partial \Delta^{bi}}{\partial \delta}}  +  \psi\color{blue}{\frac{\partial^2 \Delta^{bi}}{\partial \delta^2}} + \frac{\partial \Delta^{b_i}}{\partial \delta}\color{blue}{\frac{\partial \psi}{\partial \delta}} + \Delta^{b_i}\color{blue}{\frac{\partial^2 \psi}{\partial \delta^2}} \right) \right] \\
+         * \color{blue}{\frac{\partial \Delta^{bi}}{\partial \delta}} & = & b_i\Delta^{b_i -1} \frac{\partial \Delta}{\partial \delta} \\
+         * \frac{\partial^2 \Delta^{b_i}}{\partial \delta^2} & = & b_i\Delta^{b_i - 2} \left[ (b_i -1)(\frac{\partial \Delta}{\partial \delta})^2 + \Delta \frac{\partial^2 \Delta}{\partial \delta^2} \right] \\
+         * \color{blue}{\frac{\partial \Delta}{\partial \delta}} & = & 2(\delta -1) \left[ \theta \frac{A_i}{\beta_i} [ \color{red}{(\delta -1)^2} ]^{1/2\beta_i -1} + B_ia_i[\color{red}{ (\delta -1)^2 } ]^{a_i-1} \right] \\
+         * \color{blue}{\frac{\partial \psi}{\partial \delta}} & = & -2C_i(\delta -1) \psi 
+         * \end{matrix}
+         * \f} 
+         * \note \f$\color{red}{ (\delta -1)^2} \f$ term has to be kept to make sure it is a positive value.
+         * @param delta \f$ \delta = \frac{\rho}{\rho_c} \f$
+         * @param tau \f$ \tau = \frac{T_c}{T} \f$
+         * @return double 
+         */
+        double Phi_r_deltadelta(double delta, double tau);
+        /**
+         * @brief See equation 6.5 of \cite wagner2002iapws. 
+         * 
+         * \f{equation}
+         * \phi^o = ln\delta + n_1^o + n_2^o\tau + n_3^o ln\tau + \sum\limits_{i=4}^8 n_i^o ln[1-e^{-\gamma_i^o \tau}]
+         * \f}
+         * Where \f$ \delta, \tau \f$ are defined in equation 6.4 of \cite wagner2002iapws.
+         * 
+         * @param delta \f$ \delta =  \rho / \rho_c\f$
+         * @param tau \f$ \tau = T_c / T\f$, unit of \f$ T, T_c \f$ is K.
+         * @return double 
+         */
+        double Phi_o(double delta, double tau);
+        /**
+         * @brief See Table 6.3 of \cite wagner2002iapws. 
          * 
          * \f$ \phi^{o}_{\tau} = \left[ \frac{\partial \phi^0}{\partial \tau} \right]_{\delta} \f$.  
          * \f$ \phi^o\f$  is defined in equation 6.5 of \cite wagner2002iapws.
@@ -131,7 +204,7 @@ namespace H2O
          */
         double Phi_o_tau(double delta, double tau);
         /**
-         * @brief See Table 6.3 of\cite wagner2002iapws. 
+         * @brief See Table 6.3 of \cite wagner2002iapws. 
          * 
          * \f$ \phi^{r}_{\tau\tau} = \left[ \frac{\partial \phi^r}{\partial \tau} \right]_{\delta} \f$.  
          * \f$ \phi^r\f$  is defined in equation 6.6 of \cite wagner2002iapws.
@@ -157,7 +230,7 @@ namespace H2O
          */
         double Phi_r_tau(double delta, double tau);
         /**
-         * @brief See Table 6.3 of\cite wagner2002iapws. 
+         * @brief See Table 6.3 of \cite wagner2002iapws. 
          * 
          * \f$ \phi^{o}_{\tau} = \left[ \frac{\partial^2 \phi^o}{\partial \tau ^2} \right]_{\delta} \f$.  
          * \f$ \phi^o\f$  is defined in equation 6.5 of \cite wagner2002iapws.
@@ -171,15 +244,14 @@ namespace H2O
          * @return double 
          */
         double Phi_o_tautau(double delta, double tau);
-
         /**
-         * @brief See Table 6.3 of\cite wagner2002iapws. 
+         * @brief See Table 6.3 of \cite wagner2002iapws. 
          * 
          * \f$ \phi^{r}_{\tau\tau} = \left[ \frac{\partial^2 \phi^r}{\partial \tau^2} \right]_{\delta} \f$.  
          * \f$ \phi^r\f$  is defined in equation 6.6 of \cite wagner2002iapws.
          * Where \f$ \delta, \tau \f$ are defined in equation 6.4 of \cite wagner2002iapws.
          * 
-         * @brief See Table 6.3 of\cite wagner2002iapws. 
+         * @brief See Table 6.3 of \cite wagner2002iapws. 
          * 
          * \f$ \phi^{r}_{\tau\tau} = \left[ \frac{\partial \phi^r}{\partial \tau} \right]_{\delta} \f$.  
          * \f$ \phi^r\f$  is defined in equation 6.6 of \cite wagner2002iapws.
