@@ -312,7 +312,6 @@ namespace H2O
          * @return double Pressure [bar]
          */
         double MeltingCurve(double T, bool isIceI=false);
-        
         /**
          * @brief Specific enthalpy as a function of temperature and density.
          * See Table 6.3 of \cite wagner2002iapws.
@@ -343,11 +342,32 @@ namespace H2O
          * 
          * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
          * @param Rho Density [\f$ kg/m^3 \f$]
-         * @return Specific enthalpy [\f$ kJ/kg \f$]
+         * @return Isochoric heat capacity [\f$ kJ/kg/K \f$]
          */
         double Cv_T_Rho(double T, double Rho);
+        /**
+         * @brief Isochoric heat capacity
+         * 
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
+         * @param P Pressure [\f$ bar \f$]
+         * @return Isochoric heat capacity [\f$ kJ/kg/K \f$] 
+         */
         double Cv(double T, double P);
+        /**
+         * @brief Isobaric heat capacity
+         * 
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
+         * @param Rho Density [\f$ kg/m^3 \f$]
+         * @return Isobaric heat capacity [\f$ kJ/kg/K \f$] 
+         */
         double Cp_T_Rho(double T, double Rho);
+        /**
+         * @brief Isobaric heat capacity
+         * 
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
+         * @param P Pressure [\f$ bar \f$]
+         * @return Isobaric heat capacity [\f$ kJ/kg/K \f$] 
+         */
         double Cp(double T, double P);
     public:
         

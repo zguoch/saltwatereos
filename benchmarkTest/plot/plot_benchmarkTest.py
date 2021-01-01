@@ -557,7 +557,7 @@ def plot_water_prop(propname='rho'):
     prop_iapws=np.loadtxt(fname_prop_iapws)
     fig=plt.figure(figsize=(w_singleFig+2,w_singleFig))
     ax=plt.gca()
-    CS=ax.contourf(TT,PP,prop_iapws,levels=50)
+    CS=ax.contourf(TT,PP,prop,levels=50)
     ax_hist = ax.inset_axes([0.48,0.8,0.5,0.2])
     error_iapws=prop-prop_iapws
     ax_hist.hist(error_iapws.reshape((-1,1)), 100)
