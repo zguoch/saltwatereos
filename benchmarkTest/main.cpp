@@ -75,40 +75,47 @@ void test_water_props(double Tmin, double Tmax, double Pmin, double Pmax, double
   H2ONaCl::cH2ONaCl eos;
   // full range
   {
-    string filename_rho="water_rho.dat";
-    string filename_h="water_h.dat";
-    string filename_cv="water_cv.dat";
-    string filename_cp="water_cp.dat";
-    ofstream fout_rho(filename_rho);
-    ofstream fout_h(filename_h);
-    ofstream fout_cv(filename_cv);
-    ofstream fout_cp(filename_cp);
-    if(!fout_rho){ cout<<"Open file failed: "<<filename_rho<<endl;}
-    if(!fout_h){cout<<"Open file failed: "<<filename_h<<endl;}
-    if(!fout_cv){cout<<"Open file failed: "<<filename_cv<<endl;}
-    if(!fout_cp){cout<<"Open file failed: "<<filename_cp<<endl;}
+    // string filename_rho="water_rho.dat";
+    // string filename_h="water_h.dat";
+    // string filename_cv="water_cv.dat";
+    // string filename_cp="water_cp.dat";
+    string filename_mu="water_mu.dat";
+    // ofstream fout_rho(filename_rho);
+    // ofstream fout_h(filename_h);
+    // ofstream fout_cv(filename_cv);
+    // ofstream fout_cp(filename_cp);
+    ofstream fout_mu(filename_mu);
+    // if(!fout_rho){ cout<<"Open file failed: "<<filename_rho<<endl;}
+    // if(!fout_h){cout<<"Open file failed: "<<filename_h<<endl;}
+    // if(!fout_cv){cout<<"Open file failed: "<<filename_cv<<endl;}
+    // if(!fout_cp){cout<<"Open file failed: "<<filename_cp<<endl;}
+    if(!fout_mu){cout<<"Open file failed: "<<filename_mu<<endl;}
     for (double P = Pmin; P <= Pmax; P=P+dP)
     {
       for (double T = Tmin; T <= Tmax; T=T+dT)
       {
-        double rho = eos.m_water.Rho(T, P);
-        double h = eos.m_water.SpecificEnthalpy_T_Rho(T, rho);
-        double cv = eos.m_water.Cv(T, P);
-        double cp = eos.m_water.Cp(T, P);
-        fout_rho<<rho<<" ";
-        fout_h<<h<<" ";
-        fout_cv<<cv<<" ";
-        fout_cp<<cp<<" ";
+        // double rho = eos.m_water.Rho(T, P);
+        // double h = eos.m_water.SpecificEnthalpy_T_Rho(T, rho);
+        // double cv = eos.m_water.Cv(T, P);
+        // double cp = eos.m_water.Cp(T, P);
+        double mu = eos.m_water.mu(T, P);
+        // fout_rho<<rho<<" ";
+        // fout_h<<h<<" ";
+        // fout_cv<<cv<<" ";
+        // fout_cp<<cp<<" ";
+        fout_mu<<mu<<" ";
       }
-      fout_rho<<"\n";
-      fout_h<<"\n";
-      fout_cv<<"\n";
-      fout_cp<<"\n";
+      // fout_rho<<"\n";
+      // fout_h<<"\n";
+      // fout_cv<<"\n";
+      // fout_cp<<"\n";
+      fout_mu<<"\n";
     }
-    fout_rho.close();
-    fout_h.close();
-    fout_cv.close();
-    fout_cp.close();
+    // fout_rho.close();
+    // fout_h.close();
+    // fout_cv.close();
+    // fout_cp.close();
+    fout_mu.close();
     if(writeTP)
     {
       string filename_TT="water_T.dat";

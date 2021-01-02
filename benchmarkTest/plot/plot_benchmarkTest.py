@@ -33,7 +33,7 @@ sw=H2ONaCl.cH2ONaCl()
 
 fmt_figs = ['jpg','svg'] # jpg have to before svg !!!
 units={'rho':'Density (kg/m$^\mathregular{3}$)','h':'Specific enthalpy (kJ/kg)',
-'cv':'Isochoric heat capacity','cp':'Isobaric heat capacity (log10 scale)'}
+'cv':'Isochoric heat capacity','cp':'Isobaric heat capacity (log10 scale)', 'mu':'Dynamic viscosity (Pa s)'}
 
 def usage(argv):
     basename = argv[0].split('/')
@@ -552,13 +552,15 @@ def plot_water_prop(propname='rho'):
                     fpout_iapws.write('%.6E '%(steam.cv))
                 elif(propname=='cp'):
                     fpout_iapws.write('%.6E '%(steam.cp))
+                elif(propname=='mu'):
+                    fpout_iapws.write('%.6E '%(steam.mu))
             fpout_iapws.write('\n')
             print(i)
         fpout_iapws.close()
     prop_iapws=np.loadtxt(fname_prop_iapws)
     fig=plt.figure(figsize=(w_singleFig+2,w_singleFig))
     ax=plt.gca()
-    CS=ax.contourf(TT,PP,np.log10(prop),levels=50)
+    CS=ax.contourf(TT,PP,prop,levels=50)
     ax_hist = ax.inset_axes([0.48,0.8,0.5,0.2])
     error_iapws=prop-prop_iapws
     ax_hist.hist(error_iapws.reshape((-1,1)), 100)
@@ -610,7 +612,8 @@ def main(argv):
     # plot_water_prop('rho')
     # plot_water_prop('h')
     # plot_water_prop('cv')
-    plot_water_prop('cp')
+    # plot_water_prop('cp')
+    plot_water_prop('mu')
     # plot_V_brine()
     # plot_V_brine_lowThighT()
     # plot_H2ONaCl_prop('rho')

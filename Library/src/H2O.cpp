@@ -676,4 +676,73 @@ namespace H2O
     {
         return Cp_T_Rho(T, Rho(T, P));
     }
+    double cH2O::mu_T_Rho(double T, double Rho)
+    {
+        double T_K = T + Kelvin;
+        double T_bar=T_K/T_Critic_K;        //T* is critical temperature
+        double Rho_bar=Rho/Rho_Critic;      //rho* is the critical density
+        // double P_bar=;                   //p* is the critical perssure
+        double mu_star = 1E-6; // equation 1 of Huber(2002)
+        
+        // 1.1 mu0
+        double mu0=0;
+        for (size_t i = 0; i < 4; i++)
+        {
+            mu0 += m_Table235.H[i]/pow(T_bar,i); //eq. 11
+        }
+        mu0 = 100*sqrt(T_bar)/mu0; //eq. 11
+        // 1.2 mu1
+        double mu1=0, mu1_inner=0;
+        for (size_t i = 0; i < 6; i++)
+        {
+            mu1_inner=0;
+            for (size_t j = 0; j < 7; j++)
+            {
+                mu1_inner += m_Table235.Hij[i][j]*pow(Rho_bar - 1, j);
+            }
+            mu1 += pow(1/T_bar - 1.0, i)*mu1_inner;
+        }
+        mu1 = exp(mu1*Rho_bar);
+        // 1.3 mu2
+        double Rho2=Rho/0.9995; // small change of rho which is used to calculate gradient(derivative)
+        double Tbig = T_Critic_K*1.5;//eq. 28
+
+        double chi1 = ((Rho-Rho2)/(Pressure_T_Rho(T, Rho)-Pressure_T_Rho(T, Rho2)))*P_Critic*Rho_Critic;
+        double chi2 = ((Rho-Rho2)/(Pressure_T_Rho(Tbig, Rho)-Pressure_T_Rho(Tbig, Rho2)))*P_Critic/Rho_Critic;
+        double chi_bar = (chi1 - chi2*Tbig/T_K)*Rho_bar; //eq. 28
+        if(chi_bar<0)chi_bar=0;
+
+        double xi = m_Table235.xi0 * pow(chi_bar/m_Table235.Gamma0, m_Table235.nu/m_Table235.gamma);
+        double Y=0;
+        const double q_C_xi = m_Table235.q_C*xi;
+        const double q_C_xi_square = q_C_xi*q_C_xi;
+        const double q_D_xi = m_Table235.q_D*xi;
+        const double q_D_xi_square = q_D_xi*q_D_xi;
+        if(xi<0)xi=0;
+        if(xi>=0 && xi<=0.3817016416) //page 114 and figure 9
+        {
+            Y = 0.2 * q_C_xi * pow(q_D_xi, 5.0) * (1 - q_C_xi + q_C_xi_square - 765.0 / 504.0 * q_D_xi_square); //eq 20
+        }else
+        {
+            double psi_D = acos(1.0/sqrt(1 + q_D_xi_square));
+            double omega = sqrt(fabs((q_C_xi-1)/(q_C_xi+1)))*tan(psi_D/2.0);
+            double L_omega = 0;
+            if(q_C_xi>1)
+            {
+                L_omega = log((1+omega)/(1-omega));
+            }else
+            {
+                L_omega = 2*atan(fabs(omega));
+            }
+            
+            Y = 1.0 / 12.0 * sin(3 * psi_D) - 0.25 / q_C_xi * sin(2 * psi_D) + 1.0 / q_C_xi_square * (1 - 1.25 * q_C_xi_square) * sin(psi_D) - 1.0 / pow(q_C_xi, 3.0) * ((1 - 1.5 * q_C_xi_square) * psi_D - pow(fabs(q_C_xi_square - 1), 1.5) * L_omega); //eq. 26
+        }
+        double mu2 = exp(m_Table235.chi_mu*Y);
+
+        return mu0*mu1*mu2/1E6;
+    }
+    double cH2O::mu(double T, double P)
+    {
+        return mu_T_Rho(T, Rho(T, P));
+    }
 } // namespace H2O

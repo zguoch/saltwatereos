@@ -483,14 +483,14 @@ P_Star = 22.064
 
 Mu_star = 1E-06
 Hi(0) = 1.67752:  Hi(1) = 2.20462: Hi(2) = 0.6366564: Hi(3) = -0.241605
-
+' table 3 of Huber 2009
 Hij(0, 0) = 0.520094:  Hij(1, 0) = 0.0850895:   Hij(2, 0) = -1.08374:  Hij(3, 0) = -0.289555
 Hij(0, 1) = 0.222531:  Hij(1, 1) = 0.999115:    Hij(2, 1) = 1.88797:   Hij(3, 1) = 1.26613
 Hij(5, 1) = 0.120573:  Hij(0, 2) = -0.281378:   Hij(1, 2) = -0.906851: Hij(2, 2) = -0.772479
 Hij(3, 2) = -0.489837: Hij(4, 2) = -0.25704:    Hij(0, 3) = 0.161913:  Hij(1, 3) = 0.257399
 Hij(0, 4) = -0.0325372: Hij(3, 4) = 0.0698452:  Hij(4, 5) = 0.00872102: Hij(3, 6) = -0.00435673
 Hij(5, 6) = -0.000593264
-
+' Table 5 of Huber 2009
 Chi_Mu = 0.068: qc = 1.9 ^ -1:    qd = 1.1 ^ -1: Upsilon = 0.63: Gamma = 1.239
 Xi0 = 0.13:     gamma0 = 0.06: T_r = 1.5
 T = T_Inc
@@ -512,10 +512,10 @@ Tmp_Sum2 = 0
 For i = 0 To 3
     Tmp_Sum1 = Tmp_Sum1 + Hi(i) / T_ ^ i
 Next i
-
+' Equation 11 of Huber 2009
 Mu_0 = 100 * T_ ^ 0.5 / Tmp_Sum1
 Tmp_Sum1 = 0
-
+' Equation 12
 For i = 0 To 5
     For j = 0 To 6
         Tmp_Sum1 = Tmp_Sum1 + Hij(i, j) * (Rho_ - 1) ^ j
@@ -531,6 +531,7 @@ Xi = Xi0 * (Chi_ / gamma0) ^ (Upsilon / Gamma)
 
 If Xi < 0 Then Xi = 0
 If Xi >= 0 And Xi <= 0.3817016416 Then
+' eq 26
     Y = 0.2 * qc * Xi * (qd * Xi) ^ 5 * (1 - qc * Xi + (qc * Xi) ^ 2 - 765 / 504 * (qd * Xi) ^ 2)
 Else
     'Psi_D = WorksheetFunction.Acos((1 + (qd * Xi) ^ 2) ^ -0.5)
@@ -538,10 +539,12 @@ Else
     Psi_D = Arccs((1 + (qd * Xi) ^ 2) ^ -0.5)
     w = Abs((qc * Xi - 1) / (qc * Xi + 1)) ^ 0.5 * Tan(Psi_D / 2)
     If qc * Xi > 1 Then l = LogExp((1 + w) / (1 - w)) Else l = 2 * Atn(Abs(w))
+    ' eq 20
     Y = 1 / 12 * Sin(3 * Psi_D) - 0.25 / (qc * Xi) * Sin(2 * Psi_D) + 1 / (qc * Xi) ^ 2 * (1 - 1.25 * (qc * Xi) ^ 2) * Sin(Psi_D) - 1 / (qc * Xi) ^ 3 * ((1 - 1.5 * (qc * Xi) ^ 2) * Psi_D - Abs((qc * Xi) ^ 2 - 1) ^ 1.5 * l)
 End If
+' Equation 33
 Mu_2 = Exp(Chi_Mu * Y)
-
+' Equation 2 of Huber 2009
 Mu = Mu_0 * Mu_1 * Mu_2
 Water_Viscosity_calc = Mu
 

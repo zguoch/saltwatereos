@@ -31,6 +31,25 @@ namespace H2O
         double n0[8]={-8.32044648201, 6.6832105268, 3.00632, 0.012436, 0.97315, 1.2795, 0.96956, 0.24873};
         double gamma0[8]={0, 0, 0, 1.28728967, 3.53734222, 7.74073708, 9.24437796, 27.5075105};
     };
+    /**
+     * @brief Table 2, 3 and 5 of \cite huber2009new.
+     * 
+     */
+    struct Table235
+    {
+        double H[4]={1.67752, 2.20462, 0.6366564, -0.241605}; //table 2
+        double Hij[6][7]=
+        {
+            {0.520094,  0.222531,   -0.281378,  0.161913,   -0.0325372,     0,              0},
+            {0.0850895, 0.999115,   -0.906851,  0.257399,   0,              0,              0},
+            {-1.08374,  1.88797,    -0.772479,  0,          0,              0,              0},
+            {-0.289555, 1.26613,    -0.489837,  0,          0.0698452,      0,              -0.00435673},
+            {0,         0,          -0.25704,   0,          0,              0.00872102,     0},
+            {0,         0.120573,   0,          0,          0,              0,              -0.000593264}
+        }; //table 3
+        double chi_mu=0.068, q_C=1.0/1.9, q_D=1.0/1.1, nu=0.63, gamma=1.239, xi0=0.13, Gamma0=0.06, T_bar_R=1.5;
+    };
+    
     // ============= Constants of H2O ========================================================================
     double const PMIN = 1E5; /**< Minimum valid pressure of H2O, [Pa]. IAPWS-95 */ 
     double const PMAX = 10000E5; /**< Minimum valid pressure of H2O, [Pa]. IAPWS-95 */ 
@@ -68,8 +87,9 @@ namespace H2O
     class cH2O// : public Fluid::cFluid
     {
     private:
-        Table62 m_Table62;
-        Table61 m_Table61;
+        Table62 m_Table62;  /*< table 6.2 of wagner(2002) */
+        Table61 m_Table61; //table 6.1 of wagner(2002)
+        Table235 m_Table235; //table 2 and table 3 of Huber(2009)
         void LoadTable62(Table62& m_Table62);
         bool m_isHighAccuracy;
     public:
@@ -369,6 +389,46 @@ namespace H2O
          * @return Isobaric heat capacity [\f$ kJ/kg/K \f$] 
          */
         double Cp(double T, double P);
+        /**
+         * @brief Dynamic viscosity.
+         * 
+         * See equation 2, 11, 16, 20, 26, 33 and table 2, 3, 5  of \cite huber2009new.
+         * 
+         * \f{equation}
+         * \bar\mu = \bar{\mu_0}(\bar{T}) \times \bar{\mu_1}(\bar{T}, \bar{\rho}) \times \bar{\mu_2}(\bar{T}, \bar{\rho}),\ \ \  (\color{red}{\text{eq 2}})
+         * \f}
+         * The first factor \f$ \bar{\mu_0} \f$ of the product represents the viscosity in the zero-density limit and is a function of temperature only. The second factor \f$ \bar{\mu_1} \f$ represents the contribution to viscosity due to increasing density, while the third factor \f$ \bar{\mu_2} \f$ represents an enhancement of the viscosity near the critical point. The determination of each of these contributions will be consid- ered in the following sections. 
+         * 
+         * \f{equation}\left\{
+         * \begin{matrix}
+         * \bar{\mu_0}(\bar T) & =  & \frac{100\sqrt{\bar T}}{\sum\limits_{i=0}^3\frac{H_i}{\bar{T^i}}} &,& (\color{red}{\text{eq 11}}) \\
+         * \bar{\mu_1}(\bar{T}, \bar{\rho})  & =  & exp\left[ \bar{\rho}\sum\limits_{i=0}^5\left(\frac{1}{\bar T} - 1\right)^i\sum\limits_{j=0}^6H_{ij}(\bar{\rho} - 1)^j \right] &,& (\color{red}{\text{eq 12}}) \\
+         * \bar{\mu_2}(\bar{T}, \bar{\rho})  & = & e^{\chi_{\mu} Y}, \chi_{\mu} = 0.068 &,& (\color{red}{\text{eq 33}})
+         * \end{matrix}\right.
+         * \f}
+         * 
+         * \f{equation}
+         * \xi = \xi_0\left( \frac{\bar{\chi}}{\Gamma_0}\right)^{\nu/\gamma}, \ \ \  (\color{red}{\text{eq 16}})
+         * \f}
+         * \f{equation}\left\{ \begin{matrix}
+         * Y & = & \frac{1}{5}\color{blue}{q_C\xi}(q_D\xi)^5\left(1 - \color{blue}{q_C\xi} + (\color{blue}{q_C\xi})^2 - \frac{765}{504}(q_D\xi)^2 \right) &,& 0\le\xi\le 0.3817016416&,& (\color{red}{\text{eq 20, page 114 and figure 9}}) \\
+         * Y & = & \frac{1}{12}sin(3\psi_D) - \frac{1}{4\color{blue}{q_C\xi}}sin(2\psi_D) + \frac{1}{(\color{blue}{q_C\xi})^2}\left[1- \frac{5}{4}(\color{blue}{q_C\xi})^2 \right]sin(\psi_D) - \frac{1}{(\color{blue}{q_C\xi})^3}\left\{\left[ 1 - \frac{3}{2}(\color{blue}{q_C\xi})^2 \right]\psi_D - |(\color{blue}{q_C\xi})^2-1|^{3/2}L(\omega) \right\} &,& else &,& (\color{red}{\text{eq 26}})
+         * \end{matrix}\right.
+         * \f}
+         * \sa H2O::Table235
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
+         * @param Rho Density [\f$ kg/m^3 \f$]
+         * @return Dynamic viscosity [\f$ ?? \f$]  
+         */
+        double mu_T_Rho(double T, double Rho);
+        /**
+         * @brief Dynamic viscosity
+         * 
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
+         * @param P Pressure [\f$ bar \f$]
+         * @return Dynamic viscosity [\f$ ?? \f$] 
+         */
+        double mu(double T, double P);
     public:
         
     };
