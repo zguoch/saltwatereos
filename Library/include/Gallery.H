@@ -30,8 +30,8 @@
     <tr>
         <td class="Gallery">\link H2O::cH2O::Cv \image html water_cv.jpg "Isochoric heat capacity." width=300px. \endlink</td>
         <td class="Gallery">\link H2O::cH2O::mu \image html water_mu.jpg "Dynamic viscosity." width=300px. \endlink</td>
-        <td class="Gallery"> \endlink</td>
-        <td class="Gallery"> \endlink</td>
+        <td class="Gallery">\link H2O::cH2O::alpha \image html water_alpha.jpg "Isobaric expansivity." width=300px. \endlink</td>
+        <td class="Gallery">\link H2O::cH2O::beta \image html water_beta.jpg "Isotermal compressibility." width=300px. \endlink</td>
     </tr>
 </table>
  * \section Gallery_salt NaCl

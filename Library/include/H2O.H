@@ -92,6 +92,8 @@ namespace H2O
         Table235 m_Table235; //table 2 and table 3 of Huber(2009)
         void LoadTable62(Table62& m_Table62);
         bool m_isHighAccuracy;
+        template <class T>
+        inline int sign (const T& x){return (x > 0) ? 1 : ((x < 0) ? -1 : 0);};
     public:
         cH2O(/* args */);
         ~cH2O();
@@ -429,6 +431,24 @@ namespace H2O
          * @return Dynamic viscosity [\f$ Pa s \f$] 
          */
         double mu(double T, double P);
+        /**
+         * @brief Isotermal compressibility \f$ \beta_T = \frac{1}{\rho}\left(\frac{\partial \rho}{\partial P}\right)_T \f$
+         * 
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
+         * @param P Pressure [\f$ bar \f$]
+         * @param dP Pressure changes [\f$ \Delta P \f$], default is 0.1 bar
+         * @return double Isotermal compressibility [\f$ \frac{1}{Pa} \f$]
+         */
+        double beta(double T, double P, double dP=1E-7);
+        /**
+         * @brief Isobaric expansivity \f$ \alpha_P = \frac{1}{\rho}\left(\frac{\partial \rho}{\partial P}\right)_P \f$
+         * 
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
+         * @param P Pressure [\f$ bar \f$]
+         * @param dT Pressure changes [\f$ \Delta T \f$], default is -0.5 \f$ ^{\circ}C \f$
+         * @return double Isobaric expansivity [\f$ \frac{1}{T} \f$]
+         */
+        double alpha(double T, double P, double dT=-1E-7);
     public:
         
     };

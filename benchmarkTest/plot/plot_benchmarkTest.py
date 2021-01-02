@@ -33,7 +33,7 @@ sw=H2ONaCl.cH2ONaCl()
 
 fmt_figs = ['jpg','svg'] # jpg have to before svg !!!
 units={'rho':'Density (kg/m$^\mathregular{3}$)','h':'Specific enthalpy (kJ/kg)',
-'cv':'Isochoric heat capacity','cp':'Isobaric heat capacity (log10 scale)', 'mu':'Dynamic viscosity (Pa s)'}
+'cv':'Isochoric heat capacity (kJ/kg/K, log10 scale)','cp':'Isobaric heat capacity (kJ/kg/K, log10 scale)', 'mu':'Dynamic viscosity (Pa s, log10 scale)','alpha':'Isobaric expansivity (1/K)','beta':'Isotermal compressibility (1/MPa, log10 scale)'}
 
 def usage(argv):
     basename = argv[0].split('/')
@@ -530,7 +530,7 @@ def plot_V_brine_lowThighT(fname0='V_brine_NaCl_lowThighT'):
     for fmt in fmt_figs:
         figname=str('%s/%s.%s'%(figpath,'V_brine_NaCl_lowThighT',fmt))
         plt.savefig(figname, bbox_inches='tight')
-def plot_water_prop(propname='rho'):
+def plot_water_prop(propname='rho',scale=None):
     prop=np.loadtxt('%s/water_%s.dat'%(datapath,propname))
     # if(propname=='h'):
     #     prop=prop/1E6
@@ -554,13 +554,20 @@ def plot_water_prop(propname='rho'):
                     fpout_iapws.write('%.6E '%(steam.cp))
                 elif(propname=='mu'):
                     fpout_iapws.write('%.6E '%(steam.mu))
+                elif(propname=='alpha'):
+                    fpout_iapws.write('%.6E '%(steam.alfav))
+                elif(propname=='beta'):
+                    fpout_iapws.write('%.6E '%(steam.kappa))
             fpout_iapws.write('\n')
             print(i)
         fpout_iapws.close()
     prop_iapws=np.loadtxt(fname_prop_iapws)
     fig=plt.figure(figsize=(w_singleFig+2,w_singleFig))
     ax=plt.gca()
-    CS=ax.contourf(TT,PP,prop,levels=50)
+    if(scale=='log10'):
+        CS=ax.contourf(TT,PP,np.log10(prop),levels=50)
+    else:
+        CS=ax.contourf(TT,PP,prop,levels=50)
     ax_hist = ax.inset_axes([0.48,0.8,0.5,0.2])
     error_iapws=prop-prop_iapws
     ax_hist.hist(error_iapws.reshape((-1,1)), 100)
@@ -599,7 +606,7 @@ def plot_H2ONaCl_prop(propname='rho'):
 def test_singlePoint_water(T, P):
     steam=IAPWS95(T=T+273.15,P=P/10)
     print('T: %f C, P: %f bar'%(T, P))
-    print('rho: %f kg/m3, h: %f kJ/kg, mu: %f Pa s'%(steam.rho, steam.h, steam.mu))
+    print('rho: %f kg/m3, h: %f kJ/kg, mu: %f Pa s, alpha: %f 1/K, beta: %f 1/MPa'%(steam.rho, steam.h, steam.mu,steam.alfav, steam.kappa))
 def main(argv):
     # argc=len(argv)
     # usage(argv)
@@ -615,10 +622,12 @@ def main(argv):
     # plot_water_phaseDiagram()
     # plot_water_prop('rho')
     # plot_water_prop('h')
-    # plot_water_prop('cv')
-    # plot_water_prop('cp')
-    plot_water_prop('mu')
-    # test_singlePoint_water(100, 100)
+    plot_water_prop('cv', scale='log10')
+    plot_water_prop('cp', scale='log10')
+    plot_water_prop('mu',scale='log10')
+    # plot_water_prop('alpha')
+    plot_water_prop('beta',scale='log10')
+    # test_singlePoint_water(100, 300)
     # plot_V_brine()
     # plot_V_brine_lowThighT()
     # plot_H2ONaCl_prop('rho')

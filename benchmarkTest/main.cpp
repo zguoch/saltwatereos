@@ -79,17 +79,23 @@ void test_water_props(double Tmin, double Tmax, double Pmin, double Pmax, double
     // string filename_h="water_h.dat";
     // string filename_cv="water_cv.dat";
     // string filename_cp="water_cp.dat";
-    string filename_mu="water_mu.dat";
+    // string filename_mu="water_mu.dat";
+    string filename_alpha="water_alpha.dat";
+    string filename_beta="water_beta.dat";
     // ofstream fout_rho(filename_rho);
     // ofstream fout_h(filename_h);
     // ofstream fout_cv(filename_cv);
     // ofstream fout_cp(filename_cp);
-    ofstream fout_mu(filename_mu);
+    // ofstream fout_mu(filename_mu);
+    ofstream fout_alpha(filename_alpha);
+    ofstream fout_beta(filename_beta);
     // if(!fout_rho){ cout<<"Open file failed: "<<filename_rho<<endl;}
     // if(!fout_h){cout<<"Open file failed: "<<filename_h<<endl;}
     // if(!fout_cv){cout<<"Open file failed: "<<filename_cv<<endl;}
     // if(!fout_cp){cout<<"Open file failed: "<<filename_cp<<endl;}
-    if(!fout_mu){cout<<"Open file failed: "<<filename_mu<<endl;}
+    // if(!fout_mu){cout<<"Open file failed: "<<filename_mu<<endl;}
+    if(!fout_alpha){cout<<"Open file failed: "<<filename_alpha<<endl;}
+    if(!fout_beta){cout<<"Open file failed: "<<filename_beta<<endl;}
     for (double P = Pmin; P <= Pmax; P=P+dP)
     {
       for (double T = Tmin; T <= Tmax; T=T+dT)
@@ -98,24 +104,32 @@ void test_water_props(double Tmin, double Tmax, double Pmin, double Pmax, double
         // double h = eos.m_water.SpecificEnthalpy_T_Rho(T, rho);
         // double cv = eos.m_water.Cv(T, P);
         // double cp = eos.m_water.Cp(T, P);
-        double mu = eos.m_water.mu(T, P);
+        // double mu = eos.m_water.mu(T, P);
+        double alpha = eos.m_water.alpha(T, P);
+        double beta = eos.m_water.beta(T, P)*1E6;
         // fout_rho<<rho<<" ";
         // fout_h<<h<<" ";
         // fout_cv<<cv<<" ";
         // fout_cp<<cp<<" ";
-        fout_mu<<mu<<" ";
+        // fout_mu<<mu<<" ";
+        fout_alpha<<alpha<<" ";
+        fout_beta<<beta<<" ";
       }
       // fout_rho<<"\n";
       // fout_h<<"\n";
       // fout_cv<<"\n";
       // fout_cp<<"\n";
-      fout_mu<<"\n";
+      // fout_mu<<"\n";
+      fout_alpha<<"\n";
+      fout_beta<<"\n";
     }
     // fout_rho.close();
     // fout_h.close();
     // fout_cv.close();
     // fout_cp.close();
-    fout_mu.close();
+    // fout_mu.close();
+    fout_alpha.close();
+    fout_beta.close();
     if(writeTP)
     {
       string filename_TT="water_T.dat";
@@ -646,6 +660,8 @@ void test_singlePoint_water(double T, double P)
   cout<<"Rho: "<<eos.m_water.Rho(T,P)<<" kg/m3"<<endl;
   cout<<"h: "<<eos.m_water.SpecificEnthalpy(T,P)<<" kJ/kg"<<endl;
   cout<<"mu: "<<eos.m_water.mu(T,P)<<" uPa s"<<endl;
+  cout<<"alpha: "<<eos.m_water.alpha(T,P)<<" 1/T"<<endl;
+  cout<<"beta: "<<eos.m_water.beta(T,P)<<" 1/Pa"<<endl;
 }
 int main( int argc, char** argv )
 {
@@ -660,11 +676,12 @@ int main( int argc, char** argv )
   // test_water_Curves();
   // test_water_props(130, 200, 2, 10, 0.1, 1, true);
     test_water_props(H2O::TMIN, H2O::TMAX,H2O::PMIN/1E5, 1000, 4, 4, true);
+    // test_singlePoint_water(100,300);
   // testT_V_star();
   // test_V_brine_NaCl_lowThighT();
   // test_V_extrapol();
   // test_NaClH2O_props(0, 800, 1, 1000, 5, 5, true);
-  // test_singlePoint_water(100,300);
+  
   // test_writeCriticalCurve();
   // test_writeHaliteLiquidus();
   // test_writePressure_VLH();

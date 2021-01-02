@@ -748,4 +748,38 @@ namespace H2O
     {
         return mu_T_Rho(T, Rho(T, P));
     }
+    /**
+     * \image html water_beta.svg "Isotermal compressibility of water calculated by swEOS" width=50%.
+     * \note The result is compared with python package of <a href="https://iapws.readthedocs.io/en/latest/iapws.iapws95.html#">iapws.IAPWS95</a>
+     */
+    double cH2O::beta(double T, double P, double dP)
+    {
+        double rho = Rho(T, P);
+        double P2 = P + dP;
+        double P_boil = P_Boiling(T);
+        if((sign(P - P_boil)!=sign(P2 - P_boil)) && ((rho - Rho_Critic)<0) )
+        {
+            P2 = P - dP;
+        }
+        double rho2 = Rho(T, P2);
+
+        return 1.0/rho * (rho-rho2)/(P-P2) * 1E-5;
+    }
+    /**
+     * \image html water_alpha.svg "Isobaric expansivity of water calculated by swEOS" width=50%.
+     * \note The result is compared with python package of <a href="https://iapws.readthedocs.io/en/latest/iapws.iapws95.html#">iapws.IAPWS95</a>
+     */
+    double cH2O::alpha(double T, double P, double dT)
+    {
+        double rho = Rho(T, P);
+        double T2 = T + dT;
+        double P_boil = P_Boiling(T);
+        double P2_boil = P_Boiling(T2);
+        if ((sign(P - P_boil) != sign(P-P2_boil)) && (P!=P_boil))
+        {
+            T2 = T - dT;
+        }
+        double rho2 = Rho(T2, P);
+        return -1.0/rho * (rho - rho2)/(T - T2);
+    }
 } // namespace H2O
