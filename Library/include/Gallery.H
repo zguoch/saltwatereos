@@ -29,7 +29,7 @@
     </tr>
     <tr>
         <td class="Gallery">\link H2O::cH2O::Cv \image html water_cv.jpg "Isochoric heat capacity." width=300px. \endlink</td>
-        <td class="Gallery"> \endlink</td>
+        <td class="Gallery">\link H2O::cH2O::mu \image html water_mu.jpg "Dynamic viscosity." width=300px. \endlink</td>
         <td class="Gallery"> \endlink</td>
         <td class="Gallery"> \endlink</td>
     </tr>

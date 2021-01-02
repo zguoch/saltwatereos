@@ -418,7 +418,7 @@ namespace H2O
          * \sa H2O::Table235
          * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
          * @param Rho Density [\f$ kg/m^3 \f$]
-         * @return Dynamic viscosity [\f$ ?? \f$]  
+         * @return Dynamic viscosity [\f$ Pa s \f$]  
          */
         double mu_T_Rho(double T, double Rho);
         /**
@@ -426,7 +426,7 @@ namespace H2O
          * 
          * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
          * @param P Pressure [\f$ bar \f$]
-         * @return Dynamic viscosity [\f$ ?? \f$] 
+         * @return Dynamic viscosity [\f$ Pa s \f$] 
          */
         double mu(double T, double P);
     public:

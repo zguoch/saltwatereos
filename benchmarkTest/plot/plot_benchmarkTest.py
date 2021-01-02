@@ -596,6 +596,10 @@ def plot_H2ONaCl_prop(propname='rho'):
         for fmt in fmt_figs:
             figname=str('%s/%s.%s'%(figpath,'H2ONaCl_%s_X%.0f'%(propname,X),fmt))
             plt.savefig(figname, bbox_inches='tight')
+def test_singlePoint_water(T, P):
+    steam=IAPWS95(T=T+273.15,P=P/10)
+    print('T: %f C, P: %f bar'%(T, P))
+    print('rho: %f kg/m3, h: %f kJ/kg, mu: %f Pa s'%(steam.rho, steam.h, steam.mu))
 def main(argv):
     # argc=len(argv)
     # usage(argv)
@@ -614,6 +618,7 @@ def main(argv):
     # plot_water_prop('cv')
     # plot_water_prop('cp')
     plot_water_prop('mu')
+    # test_singlePoint_water(100, 100)
     # plot_V_brine()
     # plot_V_brine_lowThighT()
     # plot_H2ONaCl_prop('rho')

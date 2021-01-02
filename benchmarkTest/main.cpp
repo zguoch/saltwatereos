@@ -640,6 +640,13 @@ void test_VaporLiquidCoexistSurface()
 {
   eos.writeVaporLiquidCoexistSurface();
 }
+void test_singlePoint_water(double T, double P)
+{
+  cout<<"T: "<<T<<" C, P: "<<P<<" bar"<<endl;
+  cout<<"Rho: "<<eos.m_water.Rho(T,P)<<" kg/m3"<<endl;
+  cout<<"h: "<<eos.m_water.SpecificEnthalpy(T,P)<<" kJ/kg"<<endl;
+  cout<<"mu: "<<eos.m_water.mu(T,P)<<" uPa s"<<endl;
+}
 int main( int argc, char** argv )
 {
   std::cout<<"开始测试计算"<<std::endl;
@@ -657,7 +664,7 @@ int main( int argc, char** argv )
   // test_V_brine_NaCl_lowThighT();
   // test_V_extrapol();
   // test_NaClH2O_props(0, 800, 1, 1000, 5, 5, true);
-
+  // test_singlePoint_water(100,300);
   // test_writeCriticalCurve();
   // test_writeHaliteLiquidus();
   // test_writePressure_VLH();

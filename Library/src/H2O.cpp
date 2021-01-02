@@ -681,9 +681,7 @@ namespace H2O
         double T_K = T + Kelvin;
         double T_bar=T_K/T_Critic_K;        //T* is critical temperature
         double Rho_bar=Rho/Rho_Critic;      //rho* is the critical density
-        // double P_bar=;                   //p* is the critical perssure
-        double mu_star = 1E-6; // equation 1 of Huber(2002)
-        
+
         // 1.1 mu0
         double mu0=0;
         for (size_t i = 0; i < 4; i++)
@@ -700,25 +698,26 @@ namespace H2O
             {
                 mu1_inner += m_Table235.Hij[i][j]*pow(Rho_bar - 1, j);
             }
-            mu1 += pow(1/T_bar - 1.0, i)*mu1_inner;
+            mu1 += pow(1.0/T_bar - 1.0, i)*mu1_inner;
         }
         mu1 = exp(mu1*Rho_bar);
         // 1.3 mu2
-        double Rho2=Rho/0.9995; // small change of rho which is used to calculate gradient(derivative)
-        double Tbig = T_Critic_K*1.5;//eq. 28
+        double Rho2=Rho*0.9995; // small change of rho which is used to calculate gradient(derivative)
+        double Tbig_K = T_Critic_K*1.5;//eq. 28
+        double Tbig_C = Tbig_K - Kelvin;
 
-        double chi1 = ((Rho-Rho2)/(Pressure_T_Rho(T, Rho)-Pressure_T_Rho(T, Rho2)))*P_Critic*Rho_Critic;
-        double chi2 = ((Rho-Rho2)/(Pressure_T_Rho(Tbig, Rho)-Pressure_T_Rho(Tbig, Rho2)))*P_Critic/Rho_Critic;
-        double chi_bar = (chi1 - chi2*Tbig/T_K)*Rho_bar; //eq. 28
+        double chi1 = ((Rho-Rho2)/(Pressure_T_Rho(T, Rho)-Pressure_T_Rho(T, Rho2)))*P_Critic/Rho_Critic;
+        double chi2 = ((Rho-Rho2)/(Pressure_T_Rho(Tbig_C, Rho)-Pressure_T_Rho(Tbig_C, Rho2)))*P_Critic/Rho_Critic;
+        double chi_bar = (chi1 - chi2*Tbig_K/T_K)*Rho_bar; //eq. 28
         if(chi_bar<0)chi_bar=0;
 
         double xi = m_Table235.xi0 * pow(chi_bar/m_Table235.Gamma0, m_Table235.nu/m_Table235.gamma);
+        if(xi<0)xi=0;
         double Y=0;
         const double q_C_xi = m_Table235.q_C*xi;
         const double q_C_xi_square = q_C_xi*q_C_xi;
         const double q_D_xi = m_Table235.q_D*xi;
         const double q_D_xi_square = q_D_xi*q_D_xi;
-        if(xi<0)xi=0;
         if(xi>=0 && xi<=0.3817016416) //page 114 and figure 9
         {
             Y = 0.2 * q_C_xi * pow(q_D_xi, 5.0) * (1 - q_C_xi + q_C_xi_square - 765.0 / 504.0 * q_D_xi_square); //eq 20
@@ -741,6 +740,10 @@ namespace H2O
 
         return mu0*mu1*mu2/1E6;
     }
+    /**
+     * \image html water_mu.svg "Dynamic viscosity of water calculated by swEOS" width=50%.
+     * \note The result is compared with python package of <a href="https://iapws.readthedocs.io/en/latest/iapws.iapws95.html#">iapws.IAPWS95</a>
+     */
     double cH2O::mu(double T, double P)
     {
         return mu_T_Rho(T, Rho(T, P));
