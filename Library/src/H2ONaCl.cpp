@@ -2430,6 +2430,7 @@ namespace H2ONaCl
             // SteamState S = freesteam_set_pT(P_star_l*1e5, T_star_l+Kelvin);
             // h_l=freesteam_h(S);
             h_l=water_h_pT(P_star_l*1e5, T_star_l+Kelvin);
+            // printf("P_star_l: %f, T_star_l: %f, h_l: %f\n",P_star_l, T_star_l,h_l);
             //nedded for boiling temps from 180 to Tcri, is not in Driesners Paper
             bool ind_low = ( (h_l > 2.086e6 || std::isnan(h_l))  &&  P_star_l < P_crit  &&  T_in < 375 );
             if(ind_low)
@@ -2446,6 +2447,7 @@ namespace H2ONaCl
                 double o0 = h_l_crit - o1 * T_crit ;
                 h_l = o0 + o1 *  T_star_l;
             }
+            // printf("h_l: %f\n",h_l);
             bool ind_high = ( P_in <= 390.147  &&  T_in > 600);
             if(ind_high)
             {
@@ -2484,7 +2486,7 @@ namespace H2ONaCl
                 q23  = 0.941423327837196;
                 q1_l = q10 + q11*(1-X_l) + q12*pow((1-X_l),2);
                 q2_l = q20 + q21*sqrt(X_l+q22) + q23*X_l;
-//                double T_star_l_P1 = q1_l + q2_l*T_in;
+               double T_star_l_P1 = q1_l + q2_l*T_in;
 
                 // S = freesteam_set_pT(P_390*1e5, T_star_l_P390+Kelvin);
                 // double h_l_390=freesteam_h(S);
@@ -2496,8 +2498,8 @@ namespace H2ONaCl
 
                 // S = freesteam_set_pT(P1*1e5, P1+Kelvin);
                 // double h_l_1000=freesteam_h(S);
-                double h_l_1000=water_h_pT(P1*1e5, P1+Kelvin);
-
+                double h_l_1000=water_h_pT(P1*1e5, T_star_l_P1+Kelvin);
+                // printf("hl390: %f, hl400: %f, hl1000: %f\n",h_l_390, h_l_400, h_l_1000);
                 double dh_l_dP = (h_l_400 - h_l_390) / (P4 - P_390);
                 double P_610 = P1 - P_390;
                 double P_1390 = P1 + P_390; 
@@ -2505,9 +2507,11 @@ namespace H2ONaCl
                 double o5 = dh_l_dP - o4 / P_1390;
                 double o3 = h_l_390 - o4 * log(P_1390) - o5 * P_390;
                 double h_l_ind_high = o3 + o4 * log(P_star_l+P1) + o5 * P_star_l;
+                // printf("h_l_ind_high: %f, o3: %f, o4: %f, P_star_l: %f, P1: %f, o5: %f\n",h_l_ind_high, o3, o4, P_star_l, P1, o5);
                 h_l = h_l_ind_high;
             }
         }
+        // printf("h_l: %f\n",h_l);
         //FIND ENTHALPY OF HALITE
         if(ind_h)
         {

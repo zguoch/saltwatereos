@@ -610,9 +610,10 @@ def test_singlePoint_water(T, P):
 # Vehling 2020 Fig. 3, 10.1007/s11242-020-01499-6
 def test_props_p0hx(p0_bar=300):
     p0=p0_bar*1E5
-    prop=sw.prop_pHX(100E5, 2.5E6, 0.8)
-    print(prop.T,prop.Rho_l,prop.Region)
-    return
+    # prop=sw.prop_pHX(100E5, 2.5E6, 0.75)
+    # print(prop.T,prop.Rho_l,prop.Region, sw.Wt2Mol(0.75))
+    # prop=sw.prop_pTX(100E5, 921.57+273.15, 0.75)
+    # print(prop.H,prop.H_l,prop.H_v)
     # 1. calculate temperature
     X=np.linspace(1E-5,1,200)
     H=np.linspace(1E-5,4.5,200)*1E6
@@ -680,11 +681,13 @@ def test_props_p0hx(p0_bar=300):
     # plot V+L phase boundary
     # ax.plot(X_LV*100,H_LV/1E6,marker='.',color='k')
     # print(X_LV,H_LV)
+    # ax.grid(axis='both',which='both')
     ax.set_xlabel('Salinity (wt% NaCl)')
     ax.set_ylabel('Specific enthalpy (MJ/kg)')
     for fmt in fmt_figs:
         figname=str('%s/%s.%s'%(figpath,dataname,fmt))
         plt.savefig(figname, bbox_inches='tight')
+        # print(figname)
 def main(argv):
     # argc=len(argv)
     # usage(argv)
@@ -709,7 +712,7 @@ def main(argv):
     # plot_V_brine()
     # plot_V_brine_lowThighT()
     # plot_H2ONaCl_prop('rho')
-    test_props_p0hx(10)
+    test_props_p0hx(100)
     # print(sw.P_VaporLiquidHaliteCoexist(200))
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
