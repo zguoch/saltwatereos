@@ -10,6 +10,67 @@
 %}
 namespace H2ONaCl
 {
+    /// Output file format
+    enum fmtOutPutFile {
+        /// <a href=https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf> VTK </a>
+        fmt_vtk, 
+        /// ASCII file with multi-columns
+        fmt_dat
+        };
+    // enum CELL_TYPES_VTK{VTK_EMPTY, VTK_VERTEX, VTK_POLY_VERTEX, VTK_LINE, VTK_POLY_LINE, VTK_TRIANGLE, VTK_TRIANGLE_STRIP,
+    //                     VTK_POLYGON, VTK_PIXEL, VTK_QUAD, VTK_TETRA, VTK_VOXEL, VTK_HEXAHEDRON, VTK_WEDGE, VTK_PYRAMID};
+    // define index of region
+    enum PhaseRegion {SinglePhase_L, TwoPhase_L_V_X0, SinglePhase_V, 
+                    TwoPhase_L_H, TwoPhase_V_H, ThreePhase_V_L_H, TwoPhase_V_L_L, TwoPhase_V_L_V};
+                    
+    typedef std::map<int,std::string> MAP_PHASE_REGION;
+
+    struct PROP_H2ONaCl
+    {
+        PhaseRegion Region;
+        double T, H, Rho, Mu; //temperature(C), bulk enthalpy, bulk density
+        double Rho_l, Rho_v, Rho_h; //density
+        double H_l, H_v, H_h; //enthalpy
+        double S_l, S_v, S_h; //saturation
+        double X_l, X_v; // volume fraction of NaCl in vaper and liquid, it is a composition fraction. H2O + NaCl
+        double Mu_l, Mu_v;//viscosity
+        // derivertive
+        // double dS_hdh, dS_vdh, dS_ldh, dRhodh;
+    };
+
+    struct MP_STRUCT
+    {
+        double b1, b1t, b1tt;
+        double b2, b2t, b2tt;
+    };
+    struct ID_STRUCT
+    {
+        double f, ft, ftt;
+    };
+    struct TWOPHASEPROP_STRUCT
+    {
+        double f, p, s, g, u, h, dpd, dpt, cv, x;
+    };
+    struct BS_STRUCT
+    {
+        double x, f;
+        double fd, fdd, ft, ftd, ftt;
+    };
+    struct RS_STRUCT
+    {
+        double f, ft, ftd;
+        double fd, fdd, ftt;
+    };
+    struct Cr_STRUCT
+    {
+        double g[9][6], k[4], l[4], gg[4], t[4], d[4], a[4], b[4];
+    };
+    struct f_STRUCT
+    {
+        double f[11];
+        double sum_f10;
+    };
+
     // ============= Constants of H2O-NaCl =======================================
     double const PMIN = 1; /**< Minimum valid pressure of H2O, [bar]. */ 
     double const PMAX = 5000; /**< Maximum valid pressure of H2O, [bar]. */ 
@@ -69,8 +130,8 @@ namespace H2ONaCl
         H2O::cH2O m_water;
         NaCl::cNaCl m_NaCl;
         H2ONaCl::MAP_PHASE_REGION m_phaseRegion_name;
-        void prop_pTX(double p, double T_K, double X_wt, bool visc_on=true);
-        void prop_pHX(double p, double H, double X_wt); /** Calculate properties by P, H, X */
+        H2ONaCl::PROP_H2ONaCl prop_pTX(double p, double T_K, double X_wt, bool visc_on=true);
+        H2ONaCl::PROP_H2ONaCl prop_pHX(double p, double H, double X_wt); /** Calculate properties by P, H, X */
         double rho_pTX(double p, double T_K, double X_wt); //get bulk density. p: Pa; T: K; X: wt%
         double rho_l_pTX(double p, double T_K, double X_wt); //get density of liquid. p: Pa; T: K; X: wt%
         double mu_l_pTX(double p, double T_K, double X_wt); //get dynamic viscosity of liquid. p: Pa; T: K; X: wt%
@@ -239,7 +300,7 @@ namespace H2ONaCl
          * @param X Salinity [Mole fraction of NaCl]
          * @return double Density [\f$ kg/m^3 \f$]
          */
-        double Rho(double T, double P, double X);
+        double Rho_brine(double T, double P, double X);
     private:
         inline double Xwt2Xmol(double X){return (X/NaCl::MolarMass)/(X/NaCl::MolarMass+(1-X)/H2O::MolarMass);};
         void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);

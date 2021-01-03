@@ -3,10 +3,11 @@
 namespace H2ONaCl
 {
     cH2ONaCl::cH2ONaCl()
-    :m_Parray(NULL),
-    m_Tarray(NULL),
-    m_Xarray(NULL),
-    m_number(1),
+    :
+    // m_Parray(NULL),
+    // m_Tarray(NULL),
+    // m_Xarray(NULL),
+    // m_number(1),
     m_Cr(init_Cr()),
     m_f(init_f()),
     m_colorPrint(false)
@@ -95,9 +96,9 @@ namespace H2ONaCl
         if(A.m_colorPrint)
         {
             out<<COLOR_BLUE<<"--------------------------------------------------------------------------------\n";
-            out<<COLOR_RED<<"Temperature = "<<COLOR_DEFAULT<<A.m_prop.T<<" °C, "
-               <<COLOR_RED<<"Pressure = "<<COLOR_DEFAULT<<A.m_P/1e5<<" bar, "
-               <<COLOR_RED<<"Salinity = "<<COLOR_DEFAULT<<A.m_Xwt<<" wt. % NaCl\n";
+            // out<<COLOR_RED<<"Temperature = "<<COLOR_DEFAULT<<A.m_prop.T<<" °C, "
+            //    <<COLOR_RED<<"Pressure = "<<COLOR_DEFAULT<<A.m_P/1e5<<" bar, "
+            //    <<COLOR_RED<<"Salinity = "<<COLOR_DEFAULT<<A.m_Xwt<<" wt. % NaCl\n";
             out<<COLOR_BLUE<<"--------------------------------------------------------------------------------\n";
             out<<COLOR_GREEN<<"Phase region = "<<COLOR_DEFAULT<<A.m_phaseRegion_name[A.m_prop.Region]<<"\n";
             out<<COLOR_GREEN<<"Bulk density = "<<COLOR_DEFAULT<<A.m_prop.Rho<<" kg/m3, "
@@ -119,9 +120,9 @@ namespace H2ONaCl
         }else
         {
             out<<"--------------------------------------------------------------------------------\n";
-            out<<"Temperature = "<<A.m_prop.T<<" °C, "
-            <<"Pressure = "<<A.m_P/1e5<<" bar, "
-            <<"Salinity = "<<A.m_Xwt<<" wt. % NaCl\n";
+            // out<<"Temperature = "<<A.m_prop.T<<" °C, "
+            // <<"Pressure = "<<A.m_P/1e5<<" bar, "
+            // <<"Salinity = "<<A.m_Xwt<<" wt. % NaCl\n";
             out<<"--------------------------------------------------------------------------------\n";
             out<<"Phase region = "<<A.m_phaseRegion_name[A.m_prop.Region]<<"\n";
             out<<"Bulk density = "<<A.m_prop.Rho<<" kg/m3, "
@@ -145,22 +146,23 @@ namespace H2ONaCl
         
         return out;
     }
-    void cH2ONaCl:: prop_pHX(double p, double H, double X_wt)
+    H2ONaCl::PROP_H2ONaCl cH2ONaCl:: prop_pHX(double p, double H, double X_wt)
     {
-        static_cast<void>(m_P=p);
-        m_Xwt=X_wt;
-        m_Xmol=Xwt2Xmol(X_wt);
+        // static_cast<void>(m_P=p);
+        // m_Xwt=X_wt;
+        // m_Xmol=Xwt2Xmol(X_wt);
+        init_prop();// initialize it first
         double T1, T2;
         double tol=1e-4;
         guess_T_PhX(p, H, X_wt, T1, T2);
         // cout<<"T1: "<<T1<<" T2: "<<T2<<endl;
         PROP_H2ONaCl prop1, prop2;
-        prop_pTX(p,T1+Kelvin,X_wt, false); prop1=m_prop;
-        prop_pTX(p,T2+Kelvin,X_wt, false); prop2=m_prop;
+        prop1 = prop_pTX(p,T1+Kelvin,X_wt, false); 
+        prop2 = prop_pTX(p,T2+Kelvin,X_wt, false); 
 
         double h1 = prop1.H;
         double h2 = prop2.H;
-        // cout<<"h1: "<<h1<<" h2: "<<h2<<endl;
+        // printf("H: %f X_wt: %f T1: %f T2: %f h1: %f h2: %f\n",H,X_wt,T1,T2, h1, h2);
         double h_l = prop2.H_l;
         while(h2 < H)
         {
@@ -202,9 +204,9 @@ namespace H2ONaCl
         {
             int iteri=0;
             double T_new_mid=0;
-//            double h_search=H;
+            //            double h_search=H;
             bool ind_iter=true;
-//            bool indmu=true;
+            //            bool indmu=true;
             while (ind_iter)
             {
                 iteri = iteri +1;
@@ -212,7 +214,7 @@ namespace H2ONaCl
                 double T_new=0;
                 if(T_new_mid == 0)
                 {
-//                    double dT = (H - h1) * (T2 - T1) / (h2-h1);
+                    //                    double dT = (H - h1) * (T2 - T1) / (h2-h1);
                     T_new = T1 +  (H - h1) * (T2 - T1) / (h2-h1); 
                     T_new_mid = 1;
                 }else
@@ -317,6 +319,12 @@ namespace H2ONaCl
                         PROP_new.H    = h_hm; 
                     }
                 }
+                if (isnan(T_new))
+                {
+                    cout<<"error, T_new->prop_pHX is nan: "<<T_new<<endl;
+                    exit(0);
+                }
+                
                 //  writing global storage
                 m_prop.Region = PROP_new.Region;
                 m_prop.T = T_new;
@@ -361,6 +369,7 @@ namespace H2ONaCl
         }
 
         calcViscosity(m_prop.Region, p, m_prop.T, m_prop.X_l, m_prop.X_v, m_prop.Mu_l, m_prop.Mu_v);
+        return m_prop;
     }
 
     void cH2ONaCl:: calc_halit_liqidus(double Pres, double Temp, double& X_hal_liq, double& T_hm)
@@ -552,10 +561,12 @@ namespace H2ONaCl
         }
     }
 
-    void cH2ONaCl:: prop_pTX(double p, double T_K, double X_wt, bool visc_on)
+    H2ONaCl::PROP_H2ONaCl cH2ONaCl:: prop_pTX(double p, double T_K, double X_wt, bool visc_on)
     {
-        static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
-        m_prop.T=m_T;
+        // static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
+        init_prop();
+
+        m_prop.T=T_K-Kelvin;
         //---------------------------------------------------------
         double T=T_K-Kelvin,Xl_all,Xv_all;
         // 1. 
@@ -621,12 +632,14 @@ namespace H2ONaCl
         if(m_prop.Region==ThreePhase_V_L_H) m_prop.Mu= NAN; 
         // v+l-region X = 0;
         if(m_prop.Region==TwoPhase_L_V_X0) m_prop.Mu = NAN; 
+
+        return m_prop;
     }
 
     double cH2ONaCl:: rho_pTX(double p, double T_K, double X_wt)
     {
-        static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
-        m_prop.T=m_T;
+        // static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
+        m_prop.T=T_K-Kelvin;
         // 1. 
         double T=T_K-Kelvin,Xl_all,Xv_all;
         m_prop.Region=findRegion(T, p, Xwt2Xmol(X_wt), Xl_all,Xv_all);
@@ -672,8 +685,8 @@ namespace H2ONaCl
 
     double cH2ONaCl:: rho_l_pTX(double p, double T_K, double X_wt)
     {
-        static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
-        m_prop.T=m_T;
+        // static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
+        m_prop.T=T_K-Kelvin;
         // 1. 
         double T=T_K-Kelvin,Xl_all,Xv_all;
         m_prop.Region=findRegion(T, p, Xwt2Xmol(X_wt), Xl_all,Xv_all);
@@ -688,8 +701,8 @@ namespace H2ONaCl
 
     double cH2ONaCl:: mu_l_pTX(double p, double T_K, double X_wt)
     {
-        static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
-        m_prop.T=m_T;
+        // static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
+        m_prop.T=T_K-Kelvin;
         // 1. 
         double T=T_K-Kelvin,Xl_all,Xv_all;
         m_prop.Region=findRegion(T, p, Xwt2Xmol(X_wt), Xl_all,Xv_all);
@@ -704,8 +717,8 @@ namespace H2ONaCl
     }
     double cH2ONaCl:: mu_pTX(double p, double T_K, double X_wt)
     {
-        static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
-        m_prop.T=m_T;
+        // static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
+        m_prop.T=T_K-Kelvin;
         // 1. 
         double T=T_K-Kelvin,Xl_all,Xv_all;
         m_prop.Region=findRegion(T, p, Xwt2Xmol(X_wt), Xl_all,Xv_all);
@@ -805,7 +818,7 @@ namespace H2ONaCl
                 + cn3[2]*pow((T-500),(11+3 -12));
         }else
         {
-            cout<<"Never happens in cH2ONaCl:: findRegion->P_crit"<<endl;
+            cout<<"Never happens in cH2ONaCl:: findRegion->P_crit, T: "<<T<<endl;
         }
         // cout<<"T: "<<T<<" P_crit: "<<P_crit<<" P_crit_h20: "<<P_crit_h20<<endl;exit(0);
         // X_crit
@@ -839,7 +852,7 @@ namespace H2ONaCl
             logP_subboil = log10(P_trip_salt) + b_boil*(1/(T_trip_salt+273.15) - 1/(T+273.15));
         }else
         {
-            cout<<"Never happens in cH2ONaCl:: findRegion->logP_subboil"<<endl;
+            cout<<"Never happens in cH2ONaCl:: findRegion->logP_subboil, T: "<<T<<endl;
         }
         double PNacl = pow(10,(logP_subboil)); // halite vapor pressure
         // cout<<"logP_subboil: "<<logP_subboil<<" PNacl: "<<PNacl<<endl;exit(0);
@@ -3224,7 +3237,7 @@ namespace H2ONaCl
         }
         return V_extrapol0;
     }
-    double cH2ONaCl::Rho(double T, double P, double X)
+    double cH2ONaCl::Rho_brine(double T, double P, double X)
     {
         double T_star = T_star_V(T, P, X);
         double V_water = V_extrapol(T, P, X);
@@ -3623,93 +3636,92 @@ namespace H2ONaCl
     }
     PhaseRegion cH2ONaCl::findPhaseRegion(const double T, const double P, const double X, double& Xl_all, double& Xv_all)
     {
-        // old function from Falko's code
-        // return findRegion(T, P*1E5, X, Xl_all, Xv_all);
+        return findRegion(T, P*1E5, X, Xl_all, Xv_all);
 
-        PhaseRegion region_ind=SinglePhase_L;
-        double P_crit = 0, X_crit = 0;
-        //1. calculate critical pressure and salinity given T in deg.C
-        P_X_Critical(T, P_crit, X_crit); 
-        // 2. Halite vapor pressure
-        double P_NaCl_vapor = m_NaCl.P_Vapor(T);
-        // 3. paressure of v+l+h surface
-        double P_vlh = P_VaporLiquidHaliteCoexist(T);
-        // 4. salinity of liquid at the V+L+H surface, so the pressure is P_vlh
-        double Xl_vlh = X_HaliteLiquidus(T, P_vlh);
-        double X_lh = X_HaliteLiquidus(T,P);
-        // 5. salinity of vapor at V+H surface, the valid T and P should in V+H region
-        double Xv_vh = X_VaporHaliteCoexist(T, P);
-        // 6. salinity of liquid and vapor at V+L surface
-        double Xl_vl = X_VaporLiquidCoexistSurface_LiquidBranch(T, P);
-        double Xv_vl = X_VaporLiquidCoexistSurface_VaporBranch(T, P);
-        // calculate phase regions
-        double tol_P_LVH = 1e-6; 
-        double P_crit_s = P_crit;
-        if(P_crit_s<H2O::P_Critic)P_crit_s=H2O::P_Critic;
-        double temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8;
-        double T_crit=0;
-        // TODO: this should be a member function of water, move it to H2O class later!!!
-        fluidProp_crit_P( P*1e5 , 1e-10, T_crit, temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8);
+    //     PhaseRegion region_ind=SinglePhase_L;
+    //     double P_crit = 0, X_crit = 0;
+    //     //1. calculate critical pressure and salinity given T in deg.C
+    //     P_X_Critical(T, P_crit, X_crit); 
+    //     // 2. Halite vapor pressure
+    //     double P_NaCl_vapor = m_NaCl.P_Vapor(T);
+    //     // 3. paressure of v+l+h surface
+    //     double P_vlh = P_VaporLiquidHaliteCoexist(T);
+    //     // 4. salinity of liquid at the V+L+H surface, so the pressure is P_vlh
+    //     double Xl_vlh = X_HaliteLiquidus(T, P_vlh);
+    //     double X_lh = X_HaliteLiquidus(T,P);
+    //     // 5. salinity of vapor at V+H surface, the valid T and P should in V+H region
+    //     double Xv_vh = X_VaporHaliteCoexist(T, P);
+    //     // 6. salinity of liquid and vapor at V+L surface
+    //     double Xl_vl = X_VaporLiquidCoexistSurface_LiquidBranch(T, P);
+    //     double Xv_vl = X_VaporLiquidCoexistSurface_VaporBranch(T, P);
+    //     // calculate phase regions
+    //     double tol_P_LVH = 1e-6; 
+    //     double P_crit_s = P_crit;
+    //     if(P_crit_s<H2O::P_Critic)P_crit_s=H2O::P_Critic;
+    //     double temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8;
+    //     double T_crit=0;
+    //     // TODO: this should be a member function of water, move it to H2O class later!!!
+    //     fluidProp_crit_P( P*1e5 , 1e-10, T_crit, temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8);
         
-        double Xv = Xv_vl;
-        if(P<(P_vlh+tol_P_LVH))Xv = Xv_vh;
-        if(P>=P_crit)Xv = 0;
-        double Xl = Xl_vl;
-        if(P>=P_crit)Xl = 0;
-        if(P<=(P_vlh-tol_P_LVH))Xl = 0;
-        // Xv, Xl, P_crit_s, T_crit, P_NaCl_vapor, NaCl::T_Triple, X_crit, P_vlh
-        // printf("Xv: %f\nXl: %f\nP_crit_s: %f\nT_crit: %f\nP_NaCl_vapor: %f\nNaCl::T_Triple: %f\nX_crit: %f\nP_vlh: %f\n",
-        //         Xv, Xl, P_crit_s, T_crit, P_NaCl_vapor, NaCl::T_Triple, X_crit, P_vlh);
-        // TODO: plot a flow chart of this check process
-        if(X<Xv && P<=(P_crit_s) && T>=(T_crit) )region_ind  = SinglePhase_V;   // V  & Temp>=(T_crit)
-        if(P<P_NaCl_vapor && T>NaCl::T_Triple)region_ind = SinglePhase_V;   // V: below NaCl vapor pressure (for all NaCl values)
-        if( X == 0 && P <= H2O::P_Critic && T<(T_crit+1e-9) && T>(T_crit-1e-9))region_ind = TwoPhase_L_V_X0;
-        if(X>0 && X>=Xv && T<=NaCl::T_Triple && P<=(P_vlh-tol_P_LVH) )region_ind   = TwoPhase_V_H;   // V+H & V+H-surface
-        if(X>0 && X>=Xv && T<=NaCl::T_Triple && P<(P_vlh+tol_P_LVH) && P>(P_vlh-tol_P_LVH) )region_ind   = ThreePhase_V_L_H;
-        if(X>0 && X<=Xl && X>=Xv && X>=X_crit && P>=(P_vlh+tol_P_LVH)  && P<=P_crit_s)region_ind  = TwoPhase_V_L_L;  
-        if(X>0 && X>=Xv && X<X_crit && P>=(P_vlh+tol_P_LVH) && P<=P_crit_s)region_ind           = TwoPhase_V_L_V;  
-        if(X>=X_lh &&  T<=m_NaCl.T_Melting(P) && P>=(P_vlh+tol_P_LVH))region_ind = TwoPhase_L_H;  // L+H & L+H-surface
-        switch (region_ind)
-        {
-        case SinglePhase_L:
-            Xl_all=X;
-            break;
-        case TwoPhase_L_H:
-            Xl_all=X_lh;
-            break;
-        case ThreePhase_V_L_H:
-            Xl_all=Xl;
-            break;
-        case TwoPhase_V_L_L:
-            Xl_all=Xl;
-            break;
-        case TwoPhase_V_L_V:
-            Xl_all=Xl;
-            break;
-        default:
-            break;
-        }
+    //     double Xv = Xv_vl;
+    //     if(P<(P_vlh+tol_P_LVH))Xv = Xv_vh;
+    //     if(P>=P_crit)Xv = 0;
+    //     double Xl = Xl_vl;
+    //     if(P>=P_crit)Xl = 0;
+    //     if(P<=(P_vlh-tol_P_LVH))Xl = 0;
+    //     // Xv, Xl, P_crit_s, T_crit, P_NaCl_vapor, NaCl::T_Triple, X_crit, P_vlh
+    //     // printf("Xv: %f\nXl: %f\nP_crit_s: %f\nT_crit: %f\nP_NaCl_vapor: %f\nNaCl::T_Triple: %f\nX_crit: %f\nP_vlh: %f\n",
+    //     //         Xv, Xl, P_crit_s, T_crit, P_NaCl_vapor, NaCl::T_Triple, X_crit, P_vlh);
+    //     // TODO: plot a flow chart of this check process
+    //     if(X<Xv && P<=(P_crit_s) && T>=(T_crit) )region_ind  = SinglePhase_V;   // V  & Temp>=(T_crit)
+    //     if(P<P_NaCl_vapor && T>NaCl::T_Triple)region_ind = SinglePhase_V;   // V: below NaCl vapor pressure (for all NaCl values)
+    //     if( X == 0 && P <= H2O::P_Critic && T<(T_crit+1e-9) && T>(T_crit-1e-9))region_ind = TwoPhase_L_V_X0;
+    //     if(X>0 && X>=Xv && T<=NaCl::T_Triple && P<=(P_vlh-tol_P_LVH) )region_ind   = TwoPhase_V_H;   // V+H & V+H-surface
+    //     if(X>0 && X>=Xv && T<=NaCl::T_Triple && P<(P_vlh+tol_P_LVH) && P>(P_vlh-tol_P_LVH) )region_ind   = ThreePhase_V_L_H;
+    //     if(X>0 && X<=Xl && X>=Xv && X>=X_crit && P>=(P_vlh+tol_P_LVH)  && P<=P_crit_s)region_ind  = TwoPhase_V_L_L;  
+    //     if(X>0 && X>=Xv && X<X_crit && P>=(P_vlh+tol_P_LVH) && P<=P_crit_s)region_ind           = TwoPhase_V_L_V;  
+    //     if(X>=X_lh &&  T<=m_NaCl.T_Melting(P) && P>=(P_vlh+tol_P_LVH))region_ind = TwoPhase_L_H;  // L+H & L+H-surface
+    //     switch (region_ind)
+    //     {
+    //     case SinglePhase_L:
+    //         Xl_all=X;
+    //         break;
+    //     case TwoPhase_L_H:
+    //         Xl_all=X_lh;
+    //         break;
+    //     case ThreePhase_V_L_H:
+    //         Xl_all=Xl;
+    //         break;
+    //     case TwoPhase_V_L_L:
+    //         Xl_all=Xl;
+    //         break;
+    //     case TwoPhase_V_L_V:
+    //         Xl_all=Xl;
+    //         break;
+    //     default:
+    //         break;
+    //     }
 
-        switch (region_ind)
-        {
-        case SinglePhase_V:
-            Xv_all=X;
-            break;
-        case TwoPhase_V_H:
-            Xv_all=Xv;
-            break;
-        case ThreePhase_V_L_H:
-            Xv_all=Xv;
-            break;
-        case TwoPhase_V_L_L:
-            Xv_all=Xv;
-            break;
-        case TwoPhase_V_L_V:
-            Xv_all=Xv;
-            break;
-        default:
-            break;
-        }
-        return region_ind;
+    //     switch (region_ind)
+    //     {
+    //     case SinglePhase_V:
+    //         Xv_all=X;
+    //         break;
+    //     case TwoPhase_V_H:
+    //         Xv_all=Xv;
+    //         break;
+    //     case ThreePhase_V_L_H:
+    //         Xv_all=Xv;
+    //         break;
+    //     case TwoPhase_V_L_L:
+    //         Xv_all=Xv;
+    //         break;
+    //     case TwoPhase_V_L_V:
+    //         Xv_all=Xv;
+    //         break;
+    //     default:
+    //         break;
+    //     }
+    //     return region_ind;
     }
 }

@@ -42,7 +42,7 @@ void test_NaClH2O_props(double Tmin, double Tmax, double Pmin, double Pmax, doub
     {
       for (double T = Tmin; T <= Tmax; T=T+dT)
       {
-        double rho = eos.Rho(T, P, X);
+        double rho = eos.Rho_brine(T, P, X);
         fout<<rho<<" ";
       }
       fout<<"\n";
@@ -667,7 +667,13 @@ void test_findPhaseRegion_TPX(double T, double P, double X)
 {
   double xv, xl;
   H2ONaCl::PhaseRegion phaseregion=eos.findPhaseRegion(T, P, eos.Wt2Mol(X/100.0),xl,xv);
-  printf("T: %f C, P: %f bar, X: %f wt%% NaCl %f mol fraction\nphase region: %s xl: %f wt%%, xv: %f wt%%", T, P, X,eos.Wt2Mol(X/100.0),eos.m_phaseRegion_name[phaseregion].c_str(), eos.Mol2Wt(xl)*100.0, eos.Mol2Wt(xv)*100.0);
+  printf("T: %f C, P: %f bar, X: %f wt%% NaCl %f mol fraction\nphase region: %s xl: %f wt%% %f mol fraction, xv: %f wt%% %f mol fraction \n", T, P, X,eos.Wt2Mol(X/100.0),eos.m_phaseRegion_name[phaseregion].c_str(), eos.Mol2Wt(xl)*100.0, xl, eos.Mol2Wt(xv)*100.0, xv);
+}
+void test_NaClH2O_props_p0hx(double P0_bar)
+{
+  H2ONaCl::cH2ONaCl sw;
+  sw.prop_pHX(P0_bar*1E5, 1E6, 0.2);
+  cout<<sw.m_prop.T<<endl;
 }
 int main( int argc, char** argv )
 {
@@ -695,7 +701,8 @@ int main( int argc, char** argv )
   // test_H2OBoilingCurve();
   // test_VaporLiquidHaliteCoexistCurves();
   // test_VaporLiquidCoexistSurface();
-  test_findPhaseRegion_TPX(500, 400, 40);
+  // test_findPhaseRegion_TPX(500, 400, 40);
+  test_NaClH2O_props_p0hx(300);
 
   std::cout<<"测试计算完毕"<<std::endl;
 }

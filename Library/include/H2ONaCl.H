@@ -51,12 +51,12 @@ namespace H2ONaCl
     private:
         void init_PhaseRegionName();
         void init_prop();
-        double m_P, m_T, m_Xwt, m_Xmol; //P: Pa; T: C; X, wt%: (0, 1]. 
+        // double m_P, m_T, m_Xwt, m_Xmol; //P: Pa; T: C; X, wt%: (0, 1]. 
         // Note that !!! m_T unite is C, but to keep consistent with OpenFoam, the T variable in public member function with unit of K
-        const double *m_Parray;
-        const double *m_Tarray;
-        const double *m_Xarray;
-        int m_number; //how many points of (P, T, X)
+        // const double *m_Parray;
+        // const double *m_Tarray;
+        // const double *m_Xarray;
+        // int m_number; //how many points of (P, T, X)
         Cr_STRUCT m_Cr;
         Cr_STRUCT init_Cr();
         f_STRUCT m_f;
@@ -86,13 +86,20 @@ namespace H2ONaCl
         H2O::cH2O m_water;
         NaCl::cNaCl m_NaCl;
         H2ONaCl::MAP_PHASE_REGION m_phaseRegion_name;
-        void prop_pTX(double p, double T_K, double X_wt, bool visc_on=true);
-        void prop_pHX(double p, double H, double X_wt); /** Calculate properties by P, H, X */
+        H2ONaCl::PROP_H2ONaCl m_prop;
+        H2ONaCl::PROP_H2ONaCl prop_pTX(double p, double T_K, double X_wt, bool visc_on=true);
+        /**
+         * @brief Calculate thermal dynamic properties of NaCl-H2O system.
+         * 
+         * @param p pressure [Pa]
+         * @param H specific enthalpy [J/kg]
+         * @param X_wt Salinity [mass fraction, [0,1]]
+         */
+        H2ONaCl::PROP_H2ONaCl prop_pHX(double p, double H, double X_wt); /** Calculate properties by P, H, X */
         double rho_pTX(double p, double T_K, double X_wt); //get bulk density. p: Pa; T: K; X: wt%
         double rho_l_pTX(double p, double T_K, double X_wt); //get density of liquid. p: Pa; T: K; X: wt%
         double mu_l_pTX(double p, double T_K, double X_wt); //get dynamic viscosity of liquid. p: Pa; T: K; X: wt%
         double mu_pTX(double p, double T_K, double X_wt); //get bulk dynamic viscosity. p: Pa; T: K; X: wt%
-        H2ONaCl::PROP_H2ONaCl m_prop;
         //X:[0,1]; T: deg. C; P: bar
         void writeProps2VTK(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, std::string fname, bool isWritePy=true, std::string xTitle="x", std::string yTitle="y", std::string zTitle="z");
         void writeProps2xyz(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, std::string fname, std::string xTitle="x", std::string yTitle="y", std::string zTitle="z", string delimiter=" ");
@@ -259,7 +266,7 @@ namespace H2ONaCl
          * @param X Salinity [Mole fraction of NaCl]
          * @return double Density [\f$ kg/m^3 \f$]
          */
-        double Rho(double T, double P, double X);
+        double Rho_brine(double T, double P, double X);
         /**
          * @brief Find phase region for giving T, P and X.
          * 
