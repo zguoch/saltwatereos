@@ -51,6 +51,7 @@ namespace H2ONaCl
     private:
         void init_PhaseRegionName();
         void init_prop();
+        void init_prop(H2ONaCl::PROP_H2ONaCl& prop);
         // double m_P, m_T, m_Xwt, m_Xmol; //P: Pa; T: C; X, wt%: (0, 1]. 
         // Note that !!! m_T unite is C, but to keep consistent with OpenFoam, the T variable in public member function with unit of K
         // const double *m_Parray;

@@ -610,56 +610,75 @@ def test_singlePoint_water(T, P):
 # Vehling 2020 Fig. 3, 10.1007/s11242-020-01499-6
 def test_props_p0hx(p0_bar=300):
     p0=p0_bar*1E5
-    # prop=sw.prop_pHX(p0_bar*1E5, 4E6, 0.1)
-    # print(prop.T,prop.Rho_l,prop.Region)
+    prop=sw.prop_pHX(100E5, 2.5E6, 0.8)
+    print(prop.T,prop.Rho_l,prop.Region)
+    return
     # 1. calculate temperature
-    X=np.linspace(0,1,200)
-    H=np.linspace(0,4,200)*1E6
+    X=np.linspace(1E-5,1,200)
+    H=np.linspace(1E-5,4.5,200)*1E6
     XX,HH=np.meshgrid(X,H)
     TT=np.zeros_like(XX)
+    Region=np.zeros_like(XX)
     dataname='T_p%.0fMPa_H_X'%(p0_bar/10)
     datafile='%s/%s.dat'%(datapath,dataname)
+    datafile_region='%s/%s.dat'%(datapath,dataname.replace('T_','Region_'))
     calculate=False
-    fpout=None
+    fpout,fpout_region=None,None
     if(os.path.exists(datafile)):
         data=np.loadtxt(datafile)
+        Region=np.loadtxt(datafile_region)
         if(data.shape==TT.shape):
             TT=np.loadtxt(datafile)
         else:
             calculate=True
             fpout=open(datafile,'w')
+            fpout_region=open(datafile_region,'w')
     else:
         calculate=True
         fpout=open(datafile,'w')
+        fpout_region=open(datafile_region,'w')
     if(calculate):
         for i in range(0,len(H)):
             for j in range(0,len(X)):
                 prop=sw.prop_pHX(p0, H[i], X[j])
                 TT[i][j]=prop.T
+                Region[i][j]=prop.Region
                 fpout.write('%.6E '%(prop.T))
+                fpout_region.write('%.6E '%(prop.Region))
             fpout.write('\n')
+            fpout_region.write('\n')
         fpout.close()
+        fpout_region.close()
     # 2. calculate phase boundary
     # 2.1 L+V
-    T_LV=np.linspace(0,1000,100)
-    X_LV,H_LV=[],[]
-    for i in range(0,len(T_LV)):
-        x_mol=sw.X_VaporLiquidCoexistSurface_LiquidBranch(T_LV[i],p0_bar)
-        x_wt=sw.Mol2Wt(x_mol)
-        p,x=sw.P_X_Critical(T_LV[i])
-        print(p,x)
-        prop=sw.prop_pTX(p0, T_LV[i]+273.15, x_wt)
-        X_LV.append(x_wt)
-        H_LV.append(prop.H)
-    X_LV,H_LV=np.array(X_LV),np.array(H_LV)
+    # T_LV=np.linspace(1E-5,1000,100)
+    # X_LV,H_LV=[],[]
+    # for i in range(0,len(T_LV)):
+    #     x_mol=sw.X_VaporLiquidCoexistSurface_LiquidBranch(T_LV[i],p0_bar)
+    #     x_wt=sw.Mol2Wt(x_mol)
+    #     p,x=sw.P_X_Critical(T_LV[i])
+    #     # print(p,x)
+    #     prop=sw.prop_pTX(p0, T_LV[i]+273.15, x_wt)
+    #     X_LV.append(x_wt)
+    #     H_LV.append(prop.H)
+    # X_LV,H_LV=np.array(X_LV),np.array(H_LV)
     # plot
     fig=plt.figure()
     ax=plt.gca()
-    ax.contourf(XX*100,HH/1E6,TT,levels=50)
-    CS=ax.contour(XX*100,HH/1E6,TT,levels=range(0,1000,100),colors='w',linewidths=0.5)
+    minlevel,maxlevel=0,9
+    nlevel=int(maxlevel-minlevel)+1
+    print(nlevel)
+    norm = mpl.colors.BoundaryNorm(np.linspace(minlevel-0.5,maxlevel+0.5, nlevel+1), nlevel) # 划重点
+    CSf=ax.contourf(XX*100,HH/1E6,Region+0.5,cmap=plt.get_cmap("Paired", nlevel), norm=norm,vmin=0,vmax=7)
+    cbar_kw=dict(ticks=np.arange(minlevel,maxlevel+1))
+    ax_cb=ax.inset_axes([1.02,0,0.03,1],transform=ax.transAxes)
+    cbar = plt.colorbar(CSf, cax=ax_cb,label='Phase region',**cbar_kw)
+    cbar.set_ticks(np.array([0,1,2,3,4,5,6,7])+0.5)
+    cbar.set_ticklabels(['L','VL','V','L+H','V+H','VLH','VL-L','VL-V'])
+    CS=ax.contour(XX*100,HH/1E6,TT,levels=range(0,1001,100),colors='w',linewidths=0.5)
     ax.clabel(CS,fmt='%.0f $^{\circ}$C',fontsize=7)
     # plot V+L phase boundary
-    ax.plot(X_LV*100,H_LV/1E6,marker='.',color='k')
+    # ax.plot(X_LV*100,H_LV/1E6,marker='.',color='k')
     # print(X_LV,H_LV)
     ax.set_xlabel('Salinity (wt% NaCl)')
     ax.set_ylabel('Specific enthalpy (MJ/kg)')
@@ -690,7 +709,7 @@ def main(argv):
     # plot_V_brine()
     # plot_V_brine_lowThighT()
     # plot_H2ONaCl_prop('rho')
-    test_props_p0hx(300)
+    test_props_p0hx(10)
     # print(sw.P_VaporLiquidHaliteCoexist(200))
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
