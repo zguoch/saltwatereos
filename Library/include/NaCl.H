@@ -71,6 +71,13 @@ namespace NaCl
          */
         inline double P_Sublimation(double T){return pow(10, (log10(P_Triple) + 11806.1 * (1.0 / (T_Triple + 273.15) - 1.0 / (T + 273.15))));};
         /**
+         * @brief Calculate halite vapor pressure.
+         * 
+         * @param T Temperature, [\f$ ^{\circ}C\f$]
+         * @return double 
+         */
+        inline double P_Vapor(double T){ return T<T_Triple ? P_Sublimation(T) : P_Boiling(T);}
+        /**
          * @brief Density of solid NaCl as function of temperature and pressure.
          * See equation (1-3) of \cite Driesner2007Part2. 
          * 

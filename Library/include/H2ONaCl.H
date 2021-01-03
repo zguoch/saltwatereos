@@ -260,6 +260,17 @@ namespace H2ONaCl
          * @return double Density [\f$ kg/m^3 \f$]
          */
         double Rho(double T, double P, double X);
+        /**
+         * @brief Find phase region for giving T, P and X.
+         * 
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
+         * @param P Pressure [bar]
+         * @param X Salinity [Mole fraction of NaCl]
+         * @param Xl_all 
+         * @param Xv_all 
+         * @return PhaseRegion 
+         */
+        PhaseRegion findPhaseRegion(const double T, const double P, const double X_wt, double& Xl_all, double& Xv_all);
     private:
         inline double Xwt2Xmol(double X){return (X/NaCl::MolarMass)/(X/NaCl::MolarMass+(1-X)/H2O::MolarMass);};
         void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);

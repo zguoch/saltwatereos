@@ -663,6 +663,12 @@ void test_singlePoint_water(double T, double P)
   cout<<"alpha: "<<eos.m_water.alpha(T,P)<<" 1/T"<<endl;
   cout<<"beta: "<<eos.m_water.beta(T,P)<<" 1/Pa"<<endl;
 }
+void test_findPhaseRegion_TPX(double T, double P, double X)
+{
+  double xv, xl;
+  H2ONaCl::PhaseRegion phaseregion=eos.findPhaseRegion(T, P, eos.Wt2Mol(X/100.0),xl,xv);
+  printf("T: %f C, P: %f bar, X: %f wt%% NaCl %f mol fraction\nphase region: %s xl: %f wt%%, xv: %f wt%%", T, P, X,eos.Wt2Mol(X/100.0),eos.m_phaseRegion_name[phaseregion].c_str(), eos.Mol2Wt(xl)*100.0, eos.Mol2Wt(xv)*100.0);
+}
 int main( int argc, char** argv )
 {
   std::cout<<"开始测试计算"<<std::endl;
@@ -675,7 +681,7 @@ int main( int argc, char** argv )
   // test_Salinity_VaporLiquidCoexist_LiquidBranch();
   // test_water_Curves();
   // test_water_props(130, 200, 2, 10, 0.1, 1, true);
-    test_water_props(H2O::TMIN, H2O::TMAX,H2O::PMIN/1E5, 1000, 4, 4, true);
+    // test_water_props(H2O::TMIN, H2O::TMAX,H2O::PMIN/1E5, 1000, 4, 4, true);
     // test_singlePoint_water(100,300);
   // testT_V_star();
   // test_V_brine_NaCl_lowThighT();
@@ -689,7 +695,7 @@ int main( int argc, char** argv )
   // test_H2OBoilingCurve();
   // test_VaporLiquidHaliteCoexistCurves();
   // test_VaporLiquidCoexistSurface();
-
+  test_findPhaseRegion_TPX(500, 400, 40);
 
   std::cout<<"测试计算完毕"<<std::endl;
 }
