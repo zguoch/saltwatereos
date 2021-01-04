@@ -88,7 +88,7 @@ namespace H2ONaCl
         NaCl::cNaCl m_NaCl;
         H2ONaCl::MAP_PHASE_REGION m_phaseRegion_name;
         H2ONaCl::PROP_H2ONaCl m_prop;
-        H2ONaCl::PROP_H2ONaCl prop_pTX(double p, double T_K, double X_wt, bool visc_on=true);
+        void prop_pTX(H2ONaCl::PROP_H2ONaCl& prop,double p, double T_K, double X_wt, bool visc_on=true);
         /**
          * @brief Calculate thermal dynamic properties of NaCl-H2O system.
          * 
@@ -96,7 +96,7 @@ namespace H2ONaCl
          * @param H specific enthalpy [J/kg]
          * @param X_wt Salinity [mass fraction, [0,1]]
          */
-        H2ONaCl::PROP_H2ONaCl prop_pHX(double p, double H, double X_wt); /** Calculate properties by P, H, X */
+        void prop_pHX(H2ONaCl::PROP_H2ONaCl& prop, double p, double H, double X_wt); /** Calculate properties by P, H, X */
         double rho_pTX(double p, double T_K, double X_wt); //get bulk density. p: Pa; T: K; X: wt%
         double rho_l_pTX(double p, double T_K, double X_wt); //get density of liquid. p: Pa; T: K; X: wt%
         double mu_l_pTX(double p, double T_K, double X_wt); //get dynamic viscosity of liquid. p: Pa; T: K; X: wt%

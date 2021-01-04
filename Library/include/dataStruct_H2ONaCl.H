@@ -25,14 +25,14 @@ namespace H2ONaCl
     //                     VTK_POLYGON, VTK_PIXEL, VTK_QUAD, VTK_TETRA, VTK_VOXEL, VTK_HEXAHEDRON, VTK_WEDGE, VTK_PYRAMID};
     // define index of region
     enum PhaseRegion {SinglePhase_L, TwoPhase_L_V_X0, SinglePhase_V, 
-                    TwoPhase_L_H, TwoPhase_V_H, ThreePhase_V_L_H, TwoPhase_V_L_L, TwoPhase_V_L_V};
+                    TwoPhase_L_H, TwoPhase_V_H, ThreePhase_V_L_H, TwoPhase_V_L_L, TwoPhase_V_L_V, UnknownPhaseRegion};
                     
     typedef std::map<int,std::string> MAP_PHASE_REGION;
 
     struct PROP_H2ONaCl
     {
         PhaseRegion Region;
-        double T, H, Rho, Mu; //temperature(C), bulk enthalpy, bulk density
+        double T, P, X_wt, H, Rho, Mu; //temperature(C), P(Pa), X_wt(wt%),bulk enthalpy, bulk density
         double Rho_l, Rho_v, Rho_h; //density
         double H_l, H_v, H_h; //enthalpy
         double S_l, S_v, S_h; //saturation

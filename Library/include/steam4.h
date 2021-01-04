@@ -97,23 +97,22 @@ extern "C"
 #endif
     
     extern Prop *newProp(int indep1, int indep2, int deriv);
+    /*
+    Allocate memory for a Prop structure. Call newProp() with characters 
+    as argument for indep1 and indep2.
+    For example:
+        Prop *myProp = newProp('p', 'h', 2);
+  */
+
+  extern Prop *freeProp(Prop *prop);
+  /*
+    Free all the memory allocated for a Prop structure. If you just call
+    free(), you will keep allocated memory.
+  */
     
 #ifdef __cplusplus
 } // extern "C"
 #endif
-
-/*
-  Allocate memory for a Prop structure. Call newProp() with characters 
-  as argument for indep1 and indep2.
-  For example:
-      Prop *myProp = newProp('p', 'h', 2);
-*/
-
-extern Prop *freeProp(Prop *prop);
-/*
-  Free all the memory allocated for a Prop structure. If you just call
-  free(), you will keep allocated memory.
-*/
 
 extern void dumpProp(FILE *fp, Prop *prop);
 /*

@@ -114,9 +114,9 @@ namespace H2ONaCl
         if(A.m_colorPrint)
         {
             out<<COLOR_BLUE<<"--------------------------------------------------------------------------------\n";
-            // out<<COLOR_RED<<"Temperature = "<<COLOR_DEFAULT<<A.m_prop.T<<" °C, "
-            //    <<COLOR_RED<<"Pressure = "<<COLOR_DEFAULT<<A.m_P/1e5<<" bar, "
-            //    <<COLOR_RED<<"Salinity = "<<COLOR_DEFAULT<<A.m_Xwt<<" wt. % NaCl\n";
+            out<<COLOR_RED<<"Temperature = "<<COLOR_DEFAULT<<A.m_prop.T<<" °C, "
+               <<COLOR_RED<<"Pressure = "<<COLOR_DEFAULT<<A.m_prop.P/1e5<<" bar, "
+               <<COLOR_RED<<"Salinity = "<<COLOR_DEFAULT<<A.m_prop.X_wt*100<<" wt. % NaCl\n";
             out<<COLOR_BLUE<<"--------------------------------------------------------------------------------\n";
             out<<COLOR_GREEN<<"Phase region = "<<COLOR_DEFAULT<<A.m_phaseRegion_name[A.m_prop.Region]<<"\n";
             out<<COLOR_GREEN<<"Bulk density = "<<COLOR_DEFAULT<<A.m_prop.Rho<<" kg/m3, "
@@ -138,9 +138,9 @@ namespace H2ONaCl
         }else
         {
             out<<"--------------------------------------------------------------------------------\n";
-            // out<<"Temperature = "<<A.m_prop.T<<" °C, "
-            // <<"Pressure = "<<A.m_P/1e5<<" bar, "
-            // <<"Salinity = "<<A.m_Xwt<<" wt. % NaCl\n";
+            out<<"Temperature = "<<A.m_prop.T<<" °C, "
+            <<"Pressure = "<<A.m_prop.P/1e5<<" bar, "
+            <<"Salinity = "<<A.m_prop.X_wt*100<<" wt. % NaCl\n";
             out<<"--------------------------------------------------------------------------------\n";
             out<<"Phase region = "<<A.m_phaseRegion_name[A.m_prop.Region]<<"\n";
             out<<"Bulk density = "<<A.m_prop.Rho<<" kg/m3, "
@@ -164,34 +164,35 @@ namespace H2ONaCl
         
         return out;
     }
-    H2ONaCl::PROP_H2ONaCl cH2ONaCl:: prop_pHX(double p, double H, double X_wt)
+    /**
+     * \todo 搞清楚pHX的算法流程并补充完剩下的部分
+     */
+    void cH2ONaCl:: prop_pHX(H2ONaCl::PROP_H2ONaCl& prop, double p, double H, double X_wt)
     {
-        // static_cast<void>(m_P=p);
-        // m_Xwt=X_wt;
-        // m_Xmol=Xwt2Xmol(X_wt);
-        H2ONaCl::PROP_H2ONaCl prop;
         init_prop(prop);
+        prop.P=p; prop.H=H; prop.X_wt=X_wt;
         double T1, T2;
         double tol=1e-4;
         guess_T_PhX(p, H, X_wt, T1, T2);
         // cout<<"T1: "<<T1<<" T2: "<<T2<<endl;
         PROP_H2ONaCl prop1, prop2;
-        prop1 = prop_pTX(p,T1+Kelvin,X_wt, false); 
-        prop2 = prop_pTX(p,T2+Kelvin,X_wt, false); 
-
+        prop_pTX(prop1, p,T1+Kelvin,X_wt, false); 
+        prop_pTX(prop2, p,T2+Kelvin,X_wt, false); 
         double h1 = prop1.H;
         double h2 = prop2.H;
         // printf("H: %f X_wt: %f T1: %f T2: %f h1: %f h2: %f\n",H,X_wt,T1,T2, h1, h2);
         double h_l = prop2.H_l;
+        PROP_H2ONaCl prop22;
         while(h2 < H)
         {
             T2 = T2 + 1;
-            PROP_H2ONaCl prop22 = prop_pTX(p,T2+Kelvin,X_wt, false);
+            prop_pTX(prop22, p,T2+Kelvin,X_wt, false);
             h2 = prop22.H;
             h_l = prop22.H_l;
             if(h2<H && T2>1000) break;
             if(X_wt==0) break;
         }
+        
         if (isnan(T2))
         {
             cout<<"error, T2->prop_pHX is nan: "<<T2<<endl;
@@ -200,12 +201,12 @@ namespace H2ONaCl
         if(h1>H)
         {
             T1=0;
-            prop1=prop_pTX(p,T1+Kelvin,X_wt, false); 
+            prop_pTX(prop1, p,T1+Kelvin,X_wt, false); 
             h1=prop1.H;
         }
         if((T2 > 1000 || h1 > H) || (h2 < H && T2 == 1000  && p >= 1.7e7) )
         {
-            // prop.Region=NAN;
+            prop.Region=UnknownPhaseRegion;
             prop.Rho=NAN;
             prop.Rho_l=NAN;
             prop.Rho_v=NAN;
@@ -221,8 +222,10 @@ namespace H2ONaCl
             prop.Mu_l=NAN;
             prop.X_l=NAN;
             prop.X_v=NAN;
-        }else
+        }
+        else
         {
+            
             int iteri=0;
             double T_new_mid=0;
             //            double h_search=H;
@@ -231,7 +234,7 @@ namespace H2ONaCl
             while (ind_iter)
             {
                 iteri = iteri +1;
-                // find new T with regula falsi method
+                // find new T with regular falsi method
                 double T_new=0;
                 if(T_new_mid == 0)
                 {
@@ -245,12 +248,12 @@ namespace H2ONaCl
                 }
                 // claculate new h
                 PROP_H2ONaCl PROP_new;
-                // if (isnan(T_new))
-                // {
-                //     printf("T_new is nan, T1: %f, T2: %f, H: %f, X:%f, h1: %f, h2: %f\n", T1, T2, H, X_wt, h1, h2);
-                //     exit(0);
-                // }
-                PROP_new=prop_pTX(p,T_new+Kelvin,X_wt, false);
+                prop_pTX(PROP_new, p,T_new+Kelvin,X_wt, false);
+                if (isnan(T_new))
+                {
+                    printf("T_new is nan, T1: %f, T2: %f, H: %f, X:%f, h1: %f, h2: %f\n", T1, T2, H, X_wt, h1, h2);
+                    exit(0);
+                }
                 // cout<<"new H: "<<PROP_new.H<<" region: "<<m_phaseRegion_name[PROP_new.Region]<<endl; exit(0);
                 // claculate new h in  L+V+H region 
                 calc_sat_lvh(PROP_new, H ,X_wt, false); 
@@ -345,11 +348,11 @@ namespace H2ONaCl
                         PROP_new.H    = h_hm; 
                     }
                 }
-                // if (isnan(T_new))
-                // {
-                //     cout<<"error, T_new->prop_pHX is nan: "<<T_new<<endl;
-                //     exit(0);
-                // }
+                if (isnan(T_new))
+                {
+                    cout<<"error, T_new->prop_pHX is nan: "<<T_new<<endl;
+                    exit(0);
+                }
                 
                 //  writing global storage
                 prop.Region = PROP_new.Region;
@@ -368,7 +371,7 @@ namespace H2ONaCl
                 prop.X_l = PROP_new.X_l;
                 prop.X_v = PROP_new.X_v;
 
-                if(abs(PROP_new.H - H)/H  < tol) ind_iter=false;
+                if(fabs(PROP_new.H - H)/H  < tol) ind_iter=false;
                 if(prop.H> H)
                 {
                     T2 = prop.T; 
@@ -386,20 +389,22 @@ namespace H2ONaCl
                 // h2( abs(PROP_new.h - h(ind_iter))./h(ind_iter)  < tol ) = [];   
                 
                 // ind_iter( abs(PROP_new.h - h(ind_iter))./h(ind_iter)  < tol ) = []; 
-                if(iteri==500)
+                if(iteri>=500)
                 {
+                    ind_iter=false;
                     break;
                 }
             }
             
         }
-        // if (isnan(prop.T))
-        // {
-        //     cout<<"error, prop.T is nan in prop_pHX: "<<prop.T<<endl;
-        //     exit(0);
-        // }
+        if (isnan(prop.T))
+        {
+            cout<<"error, prop.T is nan in prop_pHX: "<<prop.T<<endl;
+            exit(0);
+        }
+
         calcViscosity(prop.Region, p, prop.T, prop.X_l, prop.X_v, prop.Mu_l, prop.Mu_v);
-        return prop;
+
     }
 
     void cH2ONaCl:: calc_halit_liqidus(double Pres, double Temp, double& X_hal_liq, double& T_hm)
@@ -591,12 +596,11 @@ namespace H2ONaCl
         }
     }
 
-    H2ONaCl::PROP_H2ONaCl cH2ONaCl:: prop_pTX(double p, double T_K, double X_wt, bool visc_on)
+    void cH2ONaCl:: prop_pTX(H2ONaCl::PROP_H2ONaCl& prop, double p, double T_K, double X_wt, bool visc_on)
     {
-        // static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
-        H2ONaCl::PROP_H2ONaCl prop;
         init_prop(prop);// initialize it first
-
+        
+        prop.P=p; prop.X_wt=X_wt;
         prop.T=T_K-Kelvin;
         //---------------------------------------------------------
         double T=T_K-Kelvin,Xl_all,Xv_all;
@@ -610,6 +614,7 @@ namespace H2ONaCl
         // 3. calculate enthalpy
         calcEnthalpy(prop.Region, T, p, Xl_all, Xv_all, 
                             prop.H_l, prop.H_v, prop.H_h);
+        
         // 4. 
         double Xw_l = Xl_all * NaCl::MolarMass / (Xl_all * NaCl::MolarMass + (1-Xl_all) * H2O::MolarMass);
         double Xw_v = Xv_all * NaCl::MolarMass / (Xv_all * NaCl::MolarMass + (1-Xv_all) * H2O::MolarMass);
@@ -664,137 +669,148 @@ namespace H2ONaCl
         // v+l-region X = 0;
         if(prop.Region==TwoPhase_L_V_X0) prop.Mu = NAN; 
 
-        return prop;
     }
 
     double cH2ONaCl:: rho_pTX(double p, double T_K, double X_wt)
     {
-        // static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
-        m_prop.T=T_K-Kelvin;
+        H2ONaCl::PROP_H2ONaCl prop;
+        init_prop(prop);
+        prop.T=T_K-Kelvin;
+        prop.P=p;
+        prop.X_wt=X_wt;
         // 1. 
         double T=T_K-Kelvin,Xl_all,Xv_all;
-        m_prop.Region=findRegion(T, p, Xwt2Xmol(X_wt), Xl_all,Xv_all);
+        prop.Region=findRegion(T, p, Xwt2Xmol(X_wt), Xl_all,Xv_all);
         // 2. calculate rho
         // still problematic at high T & low P
         double V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out;
-        calcRho(m_prop.Region, T, p, Xl_all, Xv_all, 
-                m_prop.Rho_l, m_prop.Rho_v, m_prop.Rho_h, V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out);
+        calcRho(prop.Region, T, p, Xl_all, Xv_all, 
+                prop.Rho_l, prop.Rho_v, prop.Rho_h, V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out);
         // 4. 
         double Xw_l = Xl_all * NaCl::MolarMass / (Xl_all * NaCl::MolarMass + (1-Xl_all) * H2O::MolarMass);
         double Xw_v = Xv_all * NaCl::MolarMass / (Xv_all * NaCl::MolarMass + (1-Xv_all) * H2O::MolarMass);
 
-        if(m_prop.Region==SinglePhase_L)m_prop.S_l=1;
+        if(prop.Region==SinglePhase_L)prop.S_l=1;
         double Xw=X_wt;
         //  Calculate saturation of liquid in L+V region
-        if(m_prop.Region==TwoPhase_V_L_L | m_prop.Region==TwoPhase_V_L_V)
+        if(prop.Region==TwoPhase_V_L_L | prop.Region==TwoPhase_V_L_V)
         {
-            m_prop.S_l = (m_prop.Rho_v *(Xw_v - Xw))/(m_prop.Rho_v*(Xw_v-Xw) + m_prop.Rho_l *(Xw-Xw_l)); 
+            prop.S_l = (prop.Rho_v *(Xw_v - Xw))/(prop.Rho_v*(Xw_v-Xw) + prop.Rho_l *(Xw-Xw_l)); 
         }
         // Calculate saturation of halite in V+H region
-        if(m_prop.Region==TwoPhase_V_H)
+        if(prop.Region==TwoPhase_V_H)
         {
-            m_prop.S_h = (m_prop.Rho_v*(Xw_v-Xw))/(m_prop.Rho_h*(Xw-1) + m_prop.Rho_v*(Xw_v-Xw));
+            prop.S_h = (prop.Rho_v*(Xw_v-Xw))/(prop.Rho_h*(Xw-1) + prop.Rho_v*(Xw_v-Xw));
         }
         //  Calculate saturation of halite in L+H region  % does not work for X = 1
-        if(m_prop.Region==TwoPhase_L_H)
+        if(prop.Region==TwoPhase_L_H)
         {
-            m_prop.S_h = (m_prop.Rho_l*(Xw_l-Xw))/(m_prop.Rho_h*(Xw-1) + m_prop.Rho_l*(Xw_l-Xw));
+            prop.S_h = (prop.Rho_l*(Xw_l-Xw))/(prop.Rho_h*(Xw-1) + prop.Rho_l*(Xw_l-Xw));
         }
         
-        if(m_prop.Region==SinglePhase_V) m_prop.S_v= 1;
-        if(m_prop.Region==TwoPhase_V_L_L || m_prop.Region==TwoPhase_V_L_V) m_prop.S_v= 1 - m_prop.S_l;
-        if(m_prop.Region==TwoPhase_V_H) m_prop.S_v= 1 - m_prop.S_h;
-        if(m_prop.Region==TwoPhase_L_H) m_prop.S_l= 1 - m_prop.S_h;
-        m_prop.Rho = m_prop.S_l*m_prop.Rho_l + m_prop.S_v*m_prop.Rho_v + m_prop.S_h *m_prop.Rho_h ;
+        if(prop.Region==SinglePhase_V) prop.S_v= 1;
+        if(prop.Region==TwoPhase_V_L_L || prop.Region==TwoPhase_V_L_V) prop.S_v= 1 - prop.S_l;
+        if(prop.Region==TwoPhase_V_H) prop.S_v= 1 - prop.S_h;
+        if(prop.Region==TwoPhase_L_H) prop.S_l= 1 - prop.S_h;
+        prop.Rho = prop.S_l*prop.Rho_l + prop.S_v*prop.Rho_v + prop.S_h *prop.Rho_h ;
         // v+l+h-region
-        if(m_prop.Region==ThreePhase_V_L_H) m_prop.Rho= NAN; 
+        if(prop.Region==ThreePhase_V_L_H) prop.Rho= NAN; 
         // v+l-region X = 0;
-        if(m_prop.Region==TwoPhase_L_V_X0) m_prop.Rho = NAN; 
+        if(prop.Region==TwoPhase_L_V_X0) prop.Rho = NAN; 
         
-        return m_prop.Rho;
+        return prop.Rho;
     }
 
     double cH2ONaCl:: rho_l_pTX(double p, double T_K, double X_wt)
     {
-        // static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
-        m_prop.T=T_K-Kelvin;
+        H2ONaCl::PROP_H2ONaCl prop;
+        init_prop(prop);
+        prop.T=T_K-Kelvin;
+        prop.P=p;
+        prop.X_wt=X_wt;
         // 1. 
         double T=T_K-Kelvin,Xl_all,Xv_all;
-        m_prop.Region=findRegion(T, p, Xwt2Xmol(X_wt), Xl_all,Xv_all);
+        prop.Region=findRegion(T, p, Xwt2Xmol(X_wt), Xl_all,Xv_all);
         // 2. calculate rho
         // still problematic at high T & low P
         double V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out;
-        calcRho(m_prop.Region, T, p, Xl_all, Xv_all, 
-                m_prop.Rho_l, m_prop.Rho_v, m_prop.Rho_h, V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out);
+        calcRho(prop.Region, T, p, Xl_all, Xv_all, 
+                prop.Rho_l, prop.Rho_v, prop.Rho_h, V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out);
         
-        return m_prop.Rho_l;
+        return prop.Rho_l;
     }
 
     double cH2ONaCl:: mu_l_pTX(double p, double T_K, double X_wt)
     {
-        // static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
-        m_prop.T=T_K-Kelvin;
+        H2ONaCl::PROP_H2ONaCl prop;
+        init_prop(prop);
+        prop.T=T_K-Kelvin;
+        prop.P=p;
+        prop.X_wt=X_wt;
         // 1. 
         double T=T_K-Kelvin,Xl_all,Xv_all;
-        m_prop.Region=findRegion(T, p, Xwt2Xmol(X_wt), Xl_all,Xv_all);
+        prop.Region=findRegion(T, p, Xwt2Xmol(X_wt), Xl_all,Xv_all);
         // 4. 
         double Xw_l = Xl_all * NaCl::MolarMass / (Xl_all * NaCl::MolarMass + (1-Xl_all) * H2O::MolarMass);
         double Xw_v = Xv_all * NaCl::MolarMass / (Xv_all * NaCl::MolarMass + (1-Xv_all) * H2O::MolarMass);
 
         // 4. calcViscosity
-        calcViscosity(m_prop.Region, p, T, Xw_l, Xw_v, m_prop.Mu_l, m_prop.Mu_v);
+        calcViscosity(prop.Region, p, T, Xw_l, Xw_v, prop.Mu_l, prop.Mu_v);
 
-        return m_prop.Mu_l;
+        return prop.Mu_l;
     }
     double cH2ONaCl:: mu_pTX(double p, double T_K, double X_wt)
     {
-        // static_cast<void>(m_P=p), static_cast<void>(m_T=T_K-Kelvin), static_cast<void>(m_Xwt=X_wt), m_Xmol=Xwt2Xmol(X_wt);
-        m_prop.T=T_K-Kelvin;
+        H2ONaCl::PROP_H2ONaCl prop;
+        init_prop(prop);
+        prop.T=T_K-Kelvin;
+        prop.P=p;
+        prop.X_wt=X_wt;
         // 1. 
         double T=T_K-Kelvin,Xl_all,Xv_all;
-        m_prop.Region=findRegion(T, p, Xwt2Xmol(X_wt), Xl_all,Xv_all);
+        prop.Region=findRegion(T, p, Xwt2Xmol(X_wt), Xl_all,Xv_all);
         // 2. calculate rho
         // still problematic at high T & low P
         double V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out;
-        calcRho(m_prop.Region, T, p, Xl_all, Xv_all, 
-                m_prop.Rho_l, m_prop.Rho_v, m_prop.Rho_h, V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out);
+        calcRho(prop.Region, T, p, Xl_all, Xv_all, 
+                prop.Rho_l, prop.Rho_v, prop.Rho_h, V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out);
         // 4. 
         double Xw_l = Xl_all * NaCl::MolarMass / (Xl_all * NaCl::MolarMass + (1-Xl_all) * H2O::MolarMass);
         double Xw_v = Xv_all * NaCl::MolarMass / (Xv_all * NaCl::MolarMass + (1-Xv_all) * H2O::MolarMass);
 
         // 4. calcViscosity
-        calcViscosity(m_prop.Region, p, T, Xw_l, Xw_v, m_prop.Mu_l, m_prop.Mu_v);
+        calcViscosity(prop.Region, p, T, Xw_l, Xw_v, prop.Mu_l, prop.Mu_v);
 
 
-        if(m_prop.Region==SinglePhase_L)m_prop.S_l=1;
+        if(prop.Region==SinglePhase_L)prop.S_l=1;
         double Xw=X_wt;
         //  Calculate saturation of liquid in L+V region
-        if(m_prop.Region==TwoPhase_V_L_L | m_prop.Region==TwoPhase_V_L_V)
+        if(prop.Region==TwoPhase_V_L_L | prop.Region==TwoPhase_V_L_V)
         {
-            m_prop.S_l = (m_prop.Rho_v *(Xw_v - Xw))/(m_prop.Rho_v*(Xw_v-Xw) + m_prop.Rho_l *(Xw-Xw_l)); 
+            prop.S_l = (prop.Rho_v *(Xw_v - Xw))/(prop.Rho_v*(Xw_v-Xw) + prop.Rho_l *(Xw-Xw_l)); 
         }
         // Calculate saturation of halite in V+H region
-        if(m_prop.Region==TwoPhase_V_H)
+        if(prop.Region==TwoPhase_V_H)
         {
-            m_prop.S_h = (m_prop.Rho_v*(Xw_v-Xw))/(m_prop.Rho_h*(Xw-1) + m_prop.Rho_v*(Xw_v-Xw));
+            prop.S_h = (prop.Rho_v*(Xw_v-Xw))/(prop.Rho_h*(Xw-1) + prop.Rho_v*(Xw_v-Xw));
         }
         //  Calculate saturation of halite in L+H region  % does not work for X = 1
-        if(m_prop.Region==TwoPhase_L_H)
+        if(prop.Region==TwoPhase_L_H)
         {
-            m_prop.S_h = (m_prop.Rho_l*(Xw_l-Xw))/(m_prop.Rho_h*(Xw-1) + m_prop.Rho_l*(Xw_l-Xw));
+            prop.S_h = (prop.Rho_l*(Xw_l-Xw))/(prop.Rho_h*(Xw-1) + prop.Rho_l*(Xw_l-Xw));
         }
         
-        if(m_prop.Region==SinglePhase_V) m_prop.S_v= 1;
-        if(m_prop.Region==TwoPhase_V_L_L || m_prop.Region==TwoPhase_V_L_V) m_prop.S_v= 1 - m_prop.S_l;
-        if(m_prop.Region==TwoPhase_V_H) m_prop.S_v= 1 - m_prop.S_h;
-        if(m_prop.Region==TwoPhase_L_H) m_prop.S_l= 1 - m_prop.S_h;
-        m_prop.Mu = m_prop.S_l*m_prop.Mu_l + m_prop.S_v*m_prop.Mu_v; //need to fix later!!! This is not correct, but to test thermophysical model in OpenFoam, use this at this moment
+        if(prop.Region==SinglePhase_V) prop.S_v= 1;
+        if(prop.Region==TwoPhase_V_L_L || prop.Region==TwoPhase_V_L_V) prop.S_v= 1 - prop.S_l;
+        if(prop.Region==TwoPhase_V_H) prop.S_v= 1 - prop.S_h;
+        if(prop.Region==TwoPhase_L_H) prop.S_l= 1 - prop.S_h;
+        prop.Mu = prop.S_l*prop.Mu_l + prop.S_v*prop.Mu_v; //need to fix later!!! This is not correct, but to test thermophysical model in OpenFoam, use this at this moment
         // v+l+h-region
-        if(m_prop.Region==ThreePhase_V_L_H) m_prop.Mu= NAN; 
+        if(prop.Region==ThreePhase_V_L_H) prop.Mu= NAN; 
         // v+l-region X = 0;
-        if(m_prop.Region==TwoPhase_L_V_X0) m_prop.Mu = NAN; 
+        if(prop.Region==TwoPhase_L_V_X0) prop.Mu = NAN; 
         
-        return m_prop.Mu;
+        return prop.Mu;
     }
     PhaseRegion cH2ONaCl:: findRegion(const double T, const double P, const double X, double& Xl_all, double& Xv_all)
     {
@@ -1963,6 +1979,7 @@ namespace H2ONaCl
         fpout<<"ASCII"<<endl;
         fpout<<"DATASET RECTILINEAR_GRID"<<endl;
         fpout<<"DIMENSIONS "<<x.size()<<" "<<y.size()<<" "<<z.size()<<endl;
+        double len_x=1, len_y=1, len_z=1;
         if(isWritePy)
         {
             double xMAX=max(x);
@@ -1971,9 +1988,9 @@ namespace H2ONaCl
             double yMIN=min(y);
             double zMAX=max(z);
             double zMIN=min(z);
-            double len_x=(xMAX-xMIN);
-            double len_y=(yMAX-yMIN);
-            double len_z=(zMAX-zMIN);
+            len_x=(xMAX-xMIN);
+            len_y=(yMAX-yMIN);
+            len_z=(zMAX-zMIN);
             double scale_x=1;
             double scale_y=(len_y==0 ? 1: len_x/len_y);
             double scale_z=(len_z==0 ? 1 : len_x/len_z);
@@ -2023,11 +2040,11 @@ namespace H2ONaCl
 
         }
         fpout<<"X_COORDINATES "<<x.size()<<" float"<<endl;
-        for(int i=0;i<x.size();i++)fpout<<x[i]<<" ";fpout<<endl;
+        for(int i=0;i<x.size();i++)fpout<<x[i]/len_x<<" ";fpout<<endl;
         fpout<<"Y_COORDINATES "<<y.size()<<" float"<<endl;
-        for(int i=0;i<y.size();i++)fpout<<y[i]<<" ";fpout<<endl;
+        for(int i=0;i<y.size();i++)fpout<<y[i]/len_y<<" ";fpout<<endl;
         fpout<<"Z_COORDINATES "<<z.size()<<" float"<<endl;
-        for(int i=0;i<z.size();i++)fpout<<z[i]<<" ";fpout<<endl;
+        for(int i=0;i<z.size();i++)fpout<<z[i]/len_z<<" ";fpout<<endl;
         fpout<<"POINT_DATA "<<props.size()<<endl;
         // 1. phase region
         fpout<<"SCALARS PhaseRegion int"<<endl;
@@ -2610,7 +2627,10 @@ namespace H2ONaCl
             prop0 = newProp('t', 'p', 1);
             d = 0.0;
             water_tp(T_K,p,d,dp,prop0);
-            return prop0->d;
+            d=prop0->d;
+            // very very important!!!!
+            prop0 = freeProp(prop0);
+            return d;
         #else 
             SteamState S = freesteam_set_pT(p, T_K);
             return freesteam_rho(S);
@@ -2628,7 +2648,10 @@ namespace H2ONaCl
             prop0 = newProp('t', 'p', 1);
             d = 0.0;
             water_tp(T_K,p,d,dp,prop0);
-            return prop0->h;
+            double h=prop0->h;
+            // very very important!!!!
+            prop0 = freeProp(prop0);
+            return h;
         #else 
             SteamState S = freesteam_set_pT(p, T_K);
             return freesteam_h(S);
@@ -2645,7 +2668,10 @@ namespace H2ONaCl
             prop0 = newProp('t', 'p', 1);
             d = 0.0;
             water_tp(T_K,p,d,dp,prop0);
-            return viscos(prop0);
+            double mu=viscos(prop0);
+            // very very important!!!!
+            prop0 = freeProp(prop0);
+            return mu;
         #else 
             SteamState S = freesteam_set_pT(p, T_K);
             return freesteam_mu(S);
@@ -2691,7 +2717,8 @@ namespace H2ONaCl
         double HMIN=1e30, HMAX=-1e30;
         double Trange[2]={TMIN, TMAX};
         double P,T,X;
-        H2ONaCl::cH2ONaCl eos;
+        // H2ONaCl::cH2ONaCl eos;
+        H2ONaCl::PROP_H2ONaCl prop;
         // for (int i = 0; i < 2; i++)
         {
         P=P0;
@@ -2701,9 +2728,9 @@ namespace H2ONaCl
             // for (int k = 0; k < 2; k++)
             {
             X=X0;
-            prop_pTX(P*1e5, T, X);
-            HMIN=(m_prop.H<HMIN ? m_prop.H : HMIN);
-            HMAX=(m_prop.H>HMAX ? m_prop.H : HMAX);
+            prop_pTX(prop,P*1e5, T, X);
+            HMIN=(prop.H<HMIN ? prop.H : HMIN);
+            HMAX=(prop.H>HMAX ? prop.H : HMAX);
             }
         }
         }
@@ -2722,7 +2749,8 @@ namespace H2ONaCl
         double HMIN=1e30, HMAX=-1e30;
         double Trange[2]={TMIN, TMAX};
         double P,T,X;
-        H2ONaCl::cH2ONaCl eos;
+        // H2ONaCl::cH2ONaCl eos;
+        H2ONaCl::PROP_H2ONaCl prop;
         for (int i = 0; i < 2; i++)
         {
         P=PXrange[i];
@@ -2732,9 +2760,9 @@ namespace H2ONaCl
             for (int k = 0; k < 2; k++)
             {
             X=PXrange[k+2];
-            prop_pTX(P*1e5, T, X);
-            HMIN=(m_prop.H<HMIN ? m_prop.H : HMIN);
-            HMAX=(m_prop.H>HMAX ? m_prop.H : HMAX);
+            prop_pTX(prop, P*1e5, T, X);
+            HMIN=(prop.H<HMIN ? prop.H : HMIN);
+            HMAX=(prop.H>HMAX ? prop.H : HMAX);
             }
         }
         }
@@ -2761,7 +2789,8 @@ namespace H2ONaCl
         double HMIN=1e30, HMAX=-1e30;
         double Trange[2]={TMIN, TMAX};
         double P,T,X;
-        H2ONaCl::cH2ONaCl eos;
+        // H2ONaCl::cH2ONaCl eos;
+        H2ONaCl::PROP_H2ONaCl prop;
         for (int i = 0; i < 2; i++)
         {
         P=Prange[i];
@@ -2771,9 +2800,9 @@ namespace H2ONaCl
             // for (int k = 0; k < 2; k++)
             {
             X=X0;
-            prop_pTX(P*1e5, T, X);
-            HMIN=(m_prop.H<HMIN ? m_prop.H : HMIN);
-            HMAX=(m_prop.H>HMAX ? m_prop.H : HMAX);
+            prop_pTX(prop, P*1e5, T, X);
+            HMIN=(prop.H<HMIN ? prop.H : HMIN);
+            HMAX=(prop.H>HMAX ? prop.H : HMAX);
             }
         }
         }
@@ -2800,7 +2829,8 @@ namespace H2ONaCl
         double HMIN=1e30, HMAX=-1e30;
         double Trange[2]={TMIN, TMAX};
         double P,T,X;
-        H2ONaCl::cH2ONaCl eos;
+        // H2ONaCl::cH2ONaCl eos;
+        H2ONaCl::PROP_H2ONaCl prop;
         // for (int i = 0; i < 2; i++)
         {
             P=P0;
@@ -2810,9 +2840,9 @@ namespace H2ONaCl
                 for (int k = 0; k < 2; k++)
                 {
                 X=Xrange[k];
-                prop_pTX(P*1e5, T, X);
-                HMIN=(m_prop.H<HMIN ? m_prop.H : HMIN);
-                HMAX=(m_prop.H>HMAX ? m_prop.H : HMAX);
+                prop_pTX(prop, P*1e5, T, X);
+                HMIN=(prop.H<HMIN ? prop.H : HMIN);
+                HMAX=(prop.H>HMAX ? prop.H : HMAX);
                 }
             }
         }

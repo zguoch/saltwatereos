@@ -145,7 +145,16 @@ namespace SWEOSbash
           break;
         }
       }
-      if(!(m_haveD && m_haveV))return false;//must have -D and -V arguments
+      if(!m_haveD)
+      {
+        cout<<ERROR_COUT<<"must have -D arguments"<<endl;
+        return false;
+      }
+      if(!m_haveV)
+      {
+        cout<<ERROR_COUT<<"must have -V arguments"<<endl;
+        return false;
+      }
       return true;
     }
   #endif
@@ -282,7 +291,7 @@ namespace SWEOSbash
       vector<double> arrT= linspace(m_valueR[ind_T][0], m_valueR[ind_T][2], m_valueR[ind_T][1]);
       vector<double> arrP= linspace(m_valueR[ind_P][0], m_valueR[ind_P][2], m_valueR[ind_P][1]);
       vector<double> arrX; arrX.push_back(m_valueX);
-      vector<SWEOS::PROP_H2ONaCl> props;
+      vector<H2ONaCl::PROP_H2ONaCl> props;
       props.resize(arrT.size()*arrP.size());
       
       MultiProgressBar multibar(arrP.size(),COLOR_BAR_BLUE);
@@ -299,9 +308,9 @@ namespace SWEOSbash
       {
         for (int k = 0; k < lenT; k++)
         {
-          SWEOS::cH2ONaCl eos;
-          eos.prop_pTX(arrP[j]*1e5, arrT[k]+SWEOS::Kelvin, arrX[0]);
-          props[k+j*lenT]=eos.m_prop;
+          H2ONaCl::cH2ONaCl eos;
+          eos.prop_pTX(props[k+j*lenT],arrP[j]*1e5, arrT[k]+Kelvin, arrX[0]);
+          // props[k+j*lenT]=eos.m_prop;
         }
         #pragma omp critical
         multibar.Update();
@@ -328,7 +337,7 @@ namespace SWEOSbash
       vector<double> arrX= linspace(m_valueR[ind_X][0], m_valueR[ind_X][2], m_valueR[ind_X][1]);
       vector<double> arrP= linspace(m_valueR[ind_P][0], m_valueR[ind_P][2], m_valueR[ind_P][1]);
       vector<double> arrT; arrT.push_back(m_valueT);
-      vector<SWEOS::PROP_H2ONaCl> props;
+      vector<H2ONaCl::PROP_H2ONaCl> props;
       props.resize(arrP.size()*arrX.size());
       MultiProgressBar multibar(arrP.size(),COLOR_BAR_BLUE);
       omp_set_num_threads(m_threadNumOMP);
@@ -344,9 +353,9 @@ namespace SWEOSbash
       {
         for (int k = 0; k < lenX; k++)
         {
-          SWEOS::cH2ONaCl eos;
-          eos.prop_pTX(arrP[j]*1e5, arrT[0]+SWEOS::Kelvin, arrX[k]);
-          props[k+j*lenX]=eos.m_prop;
+          H2ONaCl::cH2ONaCl eos;
+          eos.prop_pTX(props[k+j*lenX], arrP[j]*1e5, arrT[0]+Kelvin, arrX[k]);
+          // =eos.m_prop;
         }
         #pragma omp critical
         multibar.Update();
@@ -372,7 +381,7 @@ namespace SWEOSbash
       vector<double> arrX= linspace(m_valueR[ind_X][0], m_valueR[ind_X][2], m_valueR[ind_X][1]);
       vector<double> arrT= linspace(m_valueR[ind_T][0], m_valueR[ind_T][2], m_valueR[ind_T][1]);
       vector<double> arrP; arrP.push_back(m_valueP);
-      vector<SWEOS::PROP_H2ONaCl> props;
+      vector<H2ONaCl::PROP_H2ONaCl> props;
       props.resize(arrT.size()*arrX.size());
       MultiProgressBar multibar(arrX.size(),COLOR_BAR_BLUE);
       omp_set_num_threads(m_threadNumOMP);
@@ -388,9 +397,9 @@ namespace SWEOSbash
       {
         for (int k = 0; k < lenT; k++)
         {
-          SWEOS::cH2ONaCl eos;
-          eos.prop_pTX(arrP[0]*1e5, arrT[k]+SWEOS::Kelvin, arrX[j]);
-          props[k+j*lenT]=eos.m_prop;
+          H2ONaCl::cH2ONaCl eos;
+          eos.prop_pTX(props[k+j*lenT], arrP[0]*1e5, arrT[k]+Kelvin, arrX[j]);
+          // =eos.m_prop;
         }
         #pragma omp critical
         multibar.Update();
@@ -416,7 +425,7 @@ namespace SWEOSbash
       vector<double> arrH= linspace(m_valueR[ind_H][0], m_valueR[ind_H][2], m_valueR[ind_H][1]);
       vector<double> arrP= linspace(m_valueR[ind_P][0], m_valueR[ind_P][2], m_valueR[ind_P][1]);
       vector<double> arrX; arrX.push_back(m_valueX);
-      vector<SWEOS::PROP_H2ONaCl> props;
+      vector<H2ONaCl::PROP_H2ONaCl> props;
       props.resize(arrH.size()*arrP.size());
       
       MultiProgressBar multibar(arrP.size(),COLOR_BAR_BLUE);
@@ -433,9 +442,9 @@ namespace SWEOSbash
       {
         for (int k = 0; k < lenH; k++)
         {
-          SWEOS::cH2ONaCl eos;
-          eos.prop_pHX(arrP[j]*1e5, arrH[k]*1000.0, arrX[0]);
-          props[k+j*lenH]=eos.m_prop;
+          H2ONaCl::cH2ONaCl eos;
+          eos.prop_pHX(props[k+j*lenH], arrP[j]*1e5, arrH[k]*1000.0, arrX[0]);
+          // =eos.m_prop;
         }
         #pragma omp critical
         multibar.Update();
@@ -461,7 +470,7 @@ namespace SWEOSbash
       vector<double> arrH= linspace(m_valueR[ind_H][0], m_valueR[ind_H][2], m_valueR[ind_H][1]);
       vector<double> arrX= linspace(m_valueR[ind_X][0], m_valueR[ind_X][2], m_valueR[ind_X][1]);
       vector<double> arrP; arrP.push_back(m_valueP);
-      vector<SWEOS::PROP_H2ONaCl> props;
+      vector<H2ONaCl::PROP_H2ONaCl> props;
       props.resize(arrH.size()*arrX.size());
       
       MultiProgressBar multibar(arrX.size(),COLOR_BAR_BLUE);
@@ -478,9 +487,9 @@ namespace SWEOSbash
       {
         for (int k = 0; k < lenH; k++)
         {
-          SWEOS::cH2ONaCl eos;
-          eos.prop_pHX(arrP[0]*1e5, arrH[k]*1000.0, arrX[j]);
-          props[k+j*lenH]=eos.m_prop;
+          H2ONaCl::cH2ONaCl eos;
+          eos.prop_pHX(props[k+j*lenH], arrP[0]*1e5, arrH[k]*1000.0, arrX[j]);
+          // =eos.m_prop;
         }
         #pragma omp critical
         multibar.Update();
@@ -494,7 +503,7 @@ namespace SWEOSbash
     }
     return true;
   }
-  bool Write2D3DResult(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<SWEOS::PROP_H2ONaCl> props, 
+  bool Write2D3DResult(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, 
                        std::string outFile, std::string xTitle, std::string yTitle, std::string zTitle, bool isWritePy)
   {
     string extname;
@@ -506,15 +515,15 @@ namespace SWEOSbash
     }
     if(extname=="vtk")
     {
-      SWEOS::cH2ONaCl eos;
+      H2ONaCl::cH2ONaCl eos;
       eos.writeProps2VTK(x,y,z,props, outFile, isWritePy, xTitle, yTitle, zTitle);
     }else if(extname=="txt")
     {
-      SWEOS::cH2ONaCl eos;
+      H2ONaCl::cH2ONaCl eos;
       eos.writeProps2xyz(x,y,z,props, outFile, xTitle, yTitle, zTitle,"\t");
     }else if(extname=="csv")
     {
-      SWEOS::cH2ONaCl eos;
+      H2ONaCl::cH2ONaCl eos;
       eos.writeProps2xyz(x,y,z,props, outFile, xTitle, yTitle, zTitle,",");
     }
     else
@@ -527,7 +536,7 @@ namespace SWEOSbash
         newfilename+=tmp[i];
       }
       outFile=newfilename+".vtk";
-      SWEOS::cH2ONaCl eos;
+      H2ONaCl::cH2ONaCl eos;
       eos.writeProps2VTK(x,y,z,props, outFile, isWritePy, xTitle, yTitle, zTitle);
     }
     cout<<COLOR_BLUE<<"Results have been saved to file: "<<outFile<<endl;
@@ -602,7 +611,7 @@ namespace SWEOSbash
       vector<double> arrT= linspace(m_valueR[indT][0], m_valueR[indT][2], m_valueR[indT][1]);
       vector<double> arrP= linspace(m_valueR[indP][0], m_valueR[indP][2], m_valueR[indP][1]);
       vector<double> arrX= linspace(m_valueR[indX][0], m_valueR[indX][2], m_valueR[indX][1]);
-      vector<SWEOS::PROP_H2ONaCl> props;
+      vector<H2ONaCl::PROP_H2ONaCl> props;
       props.resize(arrT.size()*arrP.size()*arrX.size());
       //progressbar
       MultiProgressBar multiBar(arrP.size(),COLOR_BAR_BLUE);
@@ -623,9 +632,8 @@ namespace SWEOSbash
         {
           for (int k = 0; k < lenT; k++)
           {
-            SWEOS::cH2ONaCl eos;
-            eos.prop_pTX(arrP[i]*1e5, arrT[k]+SWEOS::Kelvin, arrX[j]);
-            props[k+j*lenT+i*lenTX]=eos.m_prop;
+            H2ONaCl::cH2ONaCl eos;
+            eos.prop_pTX(props[k+j*lenT+i*lenTX], arrP[i]*1e5, arrT[k]+Kelvin, arrX[j]);
           }
         }
         #pragma omp critical
@@ -662,7 +670,7 @@ namespace SWEOSbash
       vector<double> arrH= linspace(m_valueR[indH][0], m_valueR[indH][2], m_valueR[indH][1]);
       vector<double> arrP= linspace(m_valueR[indP][0], m_valueR[indP][2], m_valueR[indP][1]);
       vector<double> arrX= linspace(m_valueR[indX][0], m_valueR[indX][2], m_valueR[indX][1]);
-      vector<SWEOS::PROP_H2ONaCl> props;
+      vector<H2ONaCl::PROP_H2ONaCl> props;
       props.resize(arrH.size()*arrP.size()*arrX.size());
       //progressbar
       MultiProgressBar multiBar(arrP.size(),COLOR_BAR_BLUE);
@@ -676,16 +684,38 @@ namespace SWEOSbash
       int lenHX=arrH.size()*arrX.size();
       int lenX = (int)(arrX.size());
       int lenP = (int)(arrP.size());
-      #pragma omp parallel for shared(arrH, arrP, arrX, props, lenH, lenHX)
+      H2ONaCl::cH2ONaCl eos;
+      #pragma omp parallel for shared(arrH, arrP, arrX, lenH, lenHX, eos)
       for (int i = 0; i < lenP; i++)
       {
         for (int j = 0; j < lenX; j++)
         {
           for (int k = 0; k < lenH; k++)
           {
-            SWEOS::cH2ONaCl eos;
-            eos.prop_pHX(arrP[i]*1e5, arrH[k]*1000.0, arrX[j]);
-            props[k+j*lenH+i*lenHX]=eos.m_prop;
+            try
+            {
+              eos.prop_pHX(props[k+j*lenH+i*lenHX], arrP[i]*1e5, arrH[k]*1000.0, arrX[j]);
+            }
+            catch(const std::exception& e)
+            {
+              cout<<eos<<endl;
+              printf("P: %f, X: %f, H: %f\n",arrP[i], arrX[j], arrH[k]);
+              std::cerr << e.what() << '\n';
+            }
+            catch (...)
+            {
+              cout<<eos<<endl;
+              printf("P: %f, X: %f, H: %f\n",arrP[i], arrX[j], arrH[k]);
+              std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+              std::cerr << "Unknown exception!" << std::endl
+                        << "Aborting!" << std::endl
+                        << "----------------------------------------------------"
+                        << std::endl;
+              exit(0);
+            }
           }
         }
         #pragma omp critical
@@ -739,14 +769,14 @@ namespace SWEOSbash
         //calculate
         vector<double> arrT= linspace(m_valueR[0][0], m_valueR[0][2], m_valueR[0][1]);
         vector<double> arrP, arrX;
-        vector<SWEOS::PROP_H2ONaCl> props;
-        SWEOS::cH2ONaCl eos;
+        vector<H2ONaCl::PROP_H2ONaCl> props;
+        H2ONaCl::cH2ONaCl eos;
         MultiProgressBar multibar(arrT.size(),COLOR_BAR_BLUE);
         for (size_t i = 0; i < arrT.size(); i++)
         {
           arrP.push_back(m_valueP);
           arrX.push_back(m_valueX);
-          eos.prop_pTX(arrP[i]*1e5, arrT[i]+SWEOS::Kelvin, arrX[i]);
+          eos.prop_pTX(eos.m_prop, arrP[i]*1e5, arrT[i]+Kelvin, arrX[i]);
           props.push_back(eos.m_prop);
           multibar.Update();
         }
@@ -775,14 +805,14 @@ namespace SWEOSbash
         //calculate
         vector<double> arrP= linspace(m_valueR[0][0], m_valueR[0][2], m_valueR[0][1]);
         vector<double> arrT, arrX;
-        vector<SWEOS::PROP_H2ONaCl> props;
-        SWEOS::cH2ONaCl eos;
+        vector<H2ONaCl::PROP_H2ONaCl> props;
+        H2ONaCl::cH2ONaCl eos;
         MultiProgressBar multibar(arrP.size(),COLOR_BAR_BLUE);
         for (size_t i = 0; i < arrP.size(); i++)
         {
           arrT.push_back(m_valueT);
           arrX.push_back(m_valueX);
-          eos.prop_pTX(arrP[i]*1e5, arrT[i]+SWEOS::Kelvin, arrX[i]);
+          eos.prop_pTX(eos.m_prop, arrP[i]*1e5, arrT[i]+Kelvin, arrX[i]);
           props.push_back(eos.m_prop);
           multibar.Update();
         }
@@ -811,14 +841,14 @@ namespace SWEOSbash
         //calculate
         vector<double> arrX= linspace(m_valueR[0][0], m_valueR[0][2], m_valueR[0][1]);
         vector<double> arrT, arrP;
-        vector<SWEOS::PROP_H2ONaCl> props;
-        SWEOS::cH2ONaCl eos;
+        vector<H2ONaCl::PROP_H2ONaCl> props;
+        H2ONaCl::cH2ONaCl eos;
         MultiProgressBar multibar(arrX.size(),COLOR_BAR_BLUE);
         for (size_t i = 0; i < arrX.size(); i++)
         {
           arrT.push_back(m_valueT);
           arrP.push_back(m_valueP);
-          eos.prop_pTX(arrP[i]*1e5, arrT[i]+SWEOS::Kelvin, arrX[i]);
+          eos.prop_pTX(eos.m_prop, arrP[i]*1e5, arrT[i]+Kelvin, arrX[i]);
           props.push_back(eos.m_prop);
           multibar.Update();
         }
@@ -848,14 +878,14 @@ namespace SWEOSbash
         //calculate
         vector<double> arrH= linspace(m_valueR[0][0], m_valueR[0][2], m_valueR[0][1]);
         vector<double> arrP, arrX;
-        vector<SWEOS::PROP_H2ONaCl> props;
-        SWEOS::cH2ONaCl eos;
+        vector<H2ONaCl::PROP_H2ONaCl> props;
+        H2ONaCl::cH2ONaCl eos;
         MultiProgressBar multibar(arrH.size(),COLOR_BAR_BLUE);
         for (size_t i = 0; i < arrH.size(); i++)
         {
           arrP.push_back(m_valueP);
           arrX.push_back(m_valueX);
-          eos.prop_pHX(arrP[i]*1e5, arrH[i]*1000.0, arrX[i]);
+          eos.prop_pHX(eos.m_prop, arrP[i]*1e5, arrH[i]*1000.0, arrX[i]);
           props.push_back(eos.m_prop);
           multibar.Update();
         }
@@ -908,7 +938,7 @@ namespace SWEOSbash
         if(!CheckRange_P(m_valueP))return false;
         if(!CheckRange_T(m_valueT))return false;
         if(!CheckRange_X(m_valueX))return false;
-        calculateSinglePoint_PTX(m_valueP*1e5, m_valueT+SWEOS::Kelvin, m_valueX);
+        calculateSinglePoint_PTX(m_valueP*1e5, m_valueT+Kelvin, m_valueX);
       }else if(m_haveG)//not T, P, X value, but have intput file name
       {
         cout<<WARN_COUT<<"You specify a input file for multi-points calculation\n"
@@ -939,14 +969,14 @@ namespace SWEOSbash
         if(m_haveH && m_haveP && m_haveX)//single point calculation
         {
           //check range
-          if(m_valueP>SWEOS::PMAX/1e5 || m_valueP<SWEOS::PMIN/1e5)
+          if(m_valueP>H2ONaCl::PMAX || m_valueP<H2ONaCl::PMIN)
           {
-            cout<<ERROR_COUT<<"-P specify pressure ="<<m_valueP<<"bar = "<<m_valueP*1e5<<" Pa, out of range ["<<SWEOS::PMIN<<", "<<SWEOS::PMAX<<"] Pa"<<endl;
+            cout<<ERROR_COUT<<"-P specify pressure ="<<m_valueP<<"bar = "<<m_valueP*1e5<<" Pa, out of range ["<<H2ONaCl::PMIN<<", "<<H2ONaCl::PMAX<<"] Pa"<<endl;
             return false;
           }
-          if(m_valueX>SWEOS::XMAX || m_valueX<SWEOS::XMIN)
+          if(m_valueX>H2ONaCl::XMAX || m_valueX<H2ONaCl::XMIN)
           {
-            cout<<ERROR_COUT<<"-X specify salinity ="<<m_valueX<<" wt. % NaCl, out of range ["<<SWEOS::XMIN<<", "<<SWEOS::XMAX<<"] wt. % NaCl"<<endl;
+            cout<<ERROR_COUT<<"-X specify salinity ="<<m_valueX<<" wt. % NaCl, out of range ["<<H2ONaCl::XMIN<<", "<<H2ONaCl::XMAX<<"] wt. % NaCl"<<endl;
             return false;
           }
           calculateSinglePoint_PHX(m_valueP*1e5, m_valueH*1000, m_valueX);
@@ -971,30 +1001,30 @@ namespace SWEOSbash
   }
   bool cSWEOSarg::CheckRange_T(double T0, double TMIN, double TMAX)
   {
-    if(T0>SWEOS::TMAX-SWEOS::Kelvin || T0<SWEOS::TMIN-SWEOS::Kelvin)
+    if(T0>H2ONaCl::TMAX-Kelvin || T0<H2ONaCl::TMIN-Kelvin)
     {
-      cout<<ERROR_COUT<<"-T specify temperature ="<<T0<<"°C = "<<T0+SWEOS::Kelvin<<" K, out of range ["<<TMIN<<", "<<TMAX<<"] K"<<endl;
+      cout<<ERROR_COUT<<"-T specify temperature ="<<T0<<"°C = "<<T0+Kelvin<<" K, out of range ["<<TMIN<<", "<<TMAX<<"] K"<<endl;
       return false;
     }
     return true;
   }
   bool cSWEOSarg::CheckRanges_T(double Trange[2], double TMIN, double TMAX)
   {
-    if(Trange[0]>SWEOS::TMAX-SWEOS::Kelvin || Trange[0]<SWEOS::TMIN-SWEOS::Kelvin)
+    if(Trange[0]>H2ONaCl::TMAX-Kelvin || Trange[0]<H2ONaCl::TMIN-Kelvin)
     {
-      cout<<ERROR_COUT<<"The minimum value of temperature specified by -R argument Tmin ="<<Trange[0]<<"°C = "<<Trange[0]+SWEOS::Kelvin<<" K, out of range ["<<TMIN<<", "<<TMAX<<"] K"<<endl;
+      cout<<ERROR_COUT<<"The minimum value of temperature specified by -R argument Tmin ="<<Trange[0]<<"°C = "<<Trange[0]+Kelvin<<" K, out of range ["<<TMIN<<", "<<TMAX<<"] K"<<endl;
       return false;
     }
-    if(Trange[1]>SWEOS::TMAX-SWEOS::Kelvin || Trange[1]<SWEOS::TMIN-SWEOS::Kelvin)
+    if(Trange[1]>H2ONaCl::TMAX-Kelvin || Trange[1]<H2ONaCl::TMIN-Kelvin)
     {
-      cout<<ERROR_COUT<<"The maximum value of temperature specified by -R argument Tmax ="<<Trange[1]<<"°C = "<<Trange[1]+SWEOS::Kelvin<<" K, out of range ["<<TMIN<<", "<<TMAX<<"] K"<<endl;
+      cout<<ERROR_COUT<<"The maximum value of temperature specified by -R argument Tmax ="<<Trange[1]<<"°C = "<<Trange[1]+Kelvin<<" K, out of range ["<<TMIN<<", "<<TMAX<<"] K"<<endl;
       return false;
     }
     return true;
   }
   bool cSWEOSarg::CheckRange_P(double P0, double PMIN, double PMAX)
   {
-    if(P0>PMAX/1e5 || P0<PMIN/1e5)
+    if(P0>PMAX || P0<PMIN)
     {
       cout<<ERROR_COUT<<"-P specify pressure ="<<P0<<"bar = "<<P0*1e5<<" Pa, out of range ["<<PMIN<<", "<<PMAX<<"] Pa"<<endl;
       return false;
@@ -1003,12 +1033,12 @@ namespace SWEOSbash
   }
   bool cSWEOSarg::CheckRanges_P(double Prange[2], double PMIN, double PMAX)
   {
-    if(Prange[0]>PMAX/1e5 || Prange[0]<PMIN/1e5)
+    if(Prange[0]>PMAX || Prange[0]<PMIN)
     {
       cout<<ERROR_COUT<<"The minimum value of pressure specified by -R argument Pmin ="<<Prange[0]<<"bar = "<<Prange[0]*1e5<<" Pa, out of range ["<<PMIN<<", "<<PMAX<<"] Pa"<<endl;
       return false;
     }
-    if(Prange[1]>PMAX/1e5 || Prange[1]<PMIN/1e5)
+    if(Prange[1]>PMAX || Prange[1]<PMIN)
     {
       cout<<ERROR_COUT<<"The minimum value of pressure specified by -R argument Pmax ="<<Prange[1]<<"bar = "<<Prange[1]*1e5<<" Pa, out of range ["<<PMIN<<", "<<PMAX<<"] Pa"<<endl;
       return false;
@@ -1041,9 +1071,9 @@ namespace SWEOSbash
   bool cSWEOSarg::CheckRange_H(double H0, double P0, double X0)
   {
     double HMIN=1e30, HMAX=-1e30;
-    double Trange[2]={SWEOS::TMIN, SWEOS::TMAX};
+    double Trange[2]={H2ONaCl::TMIN, H2ONaCl::TMAX};
     double P,T,X;
-    SWEOS::cH2ONaCl eos;
+    H2ONaCl::cH2ONaCl eos;
     // for (int i = 0; i < 2; i++)
     {
       P=P0;
@@ -1053,7 +1083,7 @@ namespace SWEOSbash
         // for (int k = 0; k < 2; k++)
         {
           X=X0;
-          eos.prop_pTX(P*1e5, T, X);
+          eos.prop_pTX(eos.m_prop, P*1e5, T, X);
           HMIN=(eos.m_prop.H<HMIN ? eos.m_prop.H : HMIN);
           HMAX=(eos.m_prop.H>HMAX ? eos.m_prop.H : HMAX);
         }
@@ -1080,9 +1110,9 @@ namespace SWEOSbash
   bool cSWEOSarg::CheckRanges_H(double Hrange[2], double P0, double X0)
   {
     double HMIN=1e30, HMAX=-1e30;
-    double Trange[2]={SWEOS::TMIN, SWEOS::TMAX};
+    double Trange[2]={H2ONaCl::TMIN, H2ONaCl::TMAX};
     double P,T,X;
-    SWEOS::cH2ONaCl eos;
+    H2ONaCl::cH2ONaCl eos;
     // for (int i = 0; i < 2; i++)
     {
       P=P0;
@@ -1092,7 +1122,7 @@ namespace SWEOSbash
         // for (int k = 0; k < 2; k++)
         {
           X=X0;
-          eos.prop_pTX(P*1e5, T, X);
+          eos.prop_pTX(eos.m_prop, P*1e5, T, X);
           HMIN=(eos.m_prop.H<HMIN ? eos.m_prop.H : HMIN);
           HMAX=(eos.m_prop.H>HMAX ? eos.m_prop.H : HMAX);
         }
@@ -1120,9 +1150,9 @@ namespace SWEOSbash
   bool cSWEOSarg::CheckRanges_H_PX(double HMIN0, double HMAX0, double PXrange[4])
   {
     double HMIN=1e30, HMAX=-1e30;
-    double Trange[2]={SWEOS::TMIN, SWEOS::TMAX};
+    double Trange[2]={H2ONaCl::TMIN, H2ONaCl::TMAX};
     double P,T,X;
-    SWEOS::cH2ONaCl eos;
+    H2ONaCl::cH2ONaCl eos;
     for (int i = 0; i < 2; i++)
     {
       P=PXrange[i];
@@ -1132,7 +1162,7 @@ namespace SWEOSbash
         for (int k = 0; k < 2; k++)
         {
           X=PXrange[k+2];
-          eos.prop_pTX(P*1e5, T, X);
+          eos.prop_pTX(eos.m_prop, P*1e5, T, X);
           HMIN=(eos.m_prop.H<HMIN ? eos.m_prop.H : HMIN);
           HMAX=(eos.m_prop.H>HMAX ? eos.m_prop.H : HMAX);
         }
@@ -1159,9 +1189,9 @@ namespace SWEOSbash
   bool cSWEOSarg::CheckRanges_H_P(double HMIN0, double HMAX0, double Prange[2], double X0)
   {
     double HMIN=1e30, HMAX=-1e30;
-    double Trange[2]={SWEOS::TMIN, SWEOS::TMAX};
+    double Trange[2]={H2ONaCl::TMIN, H2ONaCl::TMAX};
     double P,T,X;
-    SWEOS::cH2ONaCl eos;
+    H2ONaCl::cH2ONaCl eos;
     for (int i = 0; i < 2; i++)
     {
       P=Prange[i];
@@ -1171,7 +1201,7 @@ namespace SWEOSbash
         // for (int k = 0; k < 2; k++)
         {
           X=X0;
-          eos.prop_pTX(P*1e5, T, X);
+          eos.prop_pTX(eos.m_prop, P*1e5, T, X);
           HMIN=(eos.m_prop.H<HMIN ? eos.m_prop.H : HMIN);
           HMAX=(eos.m_prop.H>HMAX ? eos.m_prop.H : HMAX);
         }
@@ -1198,9 +1228,9 @@ namespace SWEOSbash
   bool cSWEOSarg::CheckRanges_H_X(double HMIN0, double HMAX0, double Xrange[2], double P0)
   {
     double HMIN=1e30, HMAX=-1e30;
-    double Trange[2]={SWEOS::TMIN, SWEOS::TMAX};
+    double Trange[2]={H2ONaCl::TMIN, H2ONaCl::TMAX};
     double P,T,X;
-    SWEOS::cH2ONaCl eos;
+    H2ONaCl::cH2ONaCl eos;
     // for (int i = 0; i < 2; i++)
     {
       P=P0;
@@ -1210,7 +1240,7 @@ namespace SWEOSbash
         for (int k = 0; k < 2; k++)
         {
           X=Xrange[k];
-          eos.prop_pTX(P*1e5, T, X);
+          eos.prop_pTX(eos.m_prop, P*1e5, T, X);
           HMIN=(eos.m_prop.H<HMIN ? eos.m_prop.H : HMIN);
           HMAX=(eos.m_prop.H>HMAX ? eos.m_prop.H : HMAX);
         }
@@ -1247,10 +1277,10 @@ namespace SWEOSbash
       res.push_back (s.substr (pos_start));
       return res;
   }
-  SWEOS::PROP_H2ONaCl calculateSinglePoint_PTX(double P, double T_K, double X, bool isCout)
+  H2ONaCl::PROP_H2ONaCl calculateSinglePoint_PTX(double P, double T_K, double X, bool isCout)
   {
-    SWEOS::cH2ONaCl eos;
-    eos.prop_pTX(P, T_K, X);
+    H2ONaCl::cH2ONaCl eos;
+    eos.prop_pTX(eos.m_prop, P, T_K, X);
     if(isCout) 
     {
       eos.setColorPrint(true);
@@ -1258,10 +1288,10 @@ namespace SWEOSbash
     }
     return eos.m_prop;
   }
-  SWEOS::PROP_H2ONaCl calculateSinglePoint_PHX(double P, double H, double X, bool isCout)
+  H2ONaCl::PROP_H2ONaCl calculateSinglePoint_PHX(double P, double H, double X, bool isCout)
   {
-    SWEOS::cH2ONaCl eos;
-    eos.prop_pHX(P, H, X);
+    H2ONaCl::cH2ONaCl eos;
+    eos.prop_pHX(eos.m_prop, P, H, X);
     if(isCout)
     {
       eos.setColorPrint(true);
@@ -1269,7 +1299,7 @@ namespace SWEOSbash
     }
     return eos.m_prop;
   }
-  vector<SWEOS::PROP_H2ONaCl> calculateMultiPoints_PTX_PHX(string valueV, string filePTX, string outFile, string isT_H)
+  vector<H2ONaCl::PROP_H2ONaCl> calculateMultiPoints_PTX_PHX(string valueV, string filePTX, string outFile, string isT_H)
   {
     ifstream fin(filePTX);
     if(!fin)
@@ -1343,14 +1373,14 @@ namespace SWEOSbash
     fin.close();
 
     //calculate
-    SWEOS::cH2ONaCl eos;
-    vector<SWEOS::PROP_H2ONaCl> props;
+    H2ONaCl::cH2ONaCl eos;
+    vector<H2ONaCl::PROP_H2ONaCl> props;
     MultiProgressBar multibar(P.size(),COLOR_BAR_BLUE);
     if(isT_H=="T")
     {
       for(int i=0;i<P.size();i++)
       {
-        eos.prop_pTX(P[i]*1e5, T_H[i]+SWEOS::Kelvin, X[i]);
+        eos.prop_pTX(eos.m_prop, P[i]*1e5, T_H[i]+Kelvin, X[i]);
         props.push_back(eos.m_prop);
         multibar.Update();
       }
@@ -1358,7 +1388,7 @@ namespace SWEOSbash
     {
       for(int i=0;i<P.size();i++)
       {
-        eos.prop_pHX(P[i]*1e5, T_H[i]*1000, X[i]);
+        eos.prop_pHX(eos.m_prop, P[i]*1e5, T_H[i]*1000, X[i]);
         props.push_back(eos.m_prop);
         multibar.Update();
       }
@@ -1368,7 +1398,7 @@ namespace SWEOSbash
 
     return props;
   }
-  bool Write1Dresult(string outFile,vector<double> P, vector<double> X, vector<SWEOS::PROP_H2ONaCl> props)
+  bool Write1Dresult(string outFile,vector<double> P, vector<double> X, vector<H2ONaCl::PROP_H2ONaCl> props)
   {
     string extname;
     vector<string> tmp=string_split(outFile,".");
@@ -1387,10 +1417,10 @@ namespace SWEOSbash
     }
     return true;
   }
-  bool WriteCSV(string outFile,vector<double> P, vector<double> X, vector<SWEOS::PROP_H2ONaCl> props)
+  bool WriteCSV(string outFile,vector<double> P, vector<double> X, vector<H2ONaCl::PROP_H2ONaCl> props)
   {
     ofstream fout(outFile);
-    SWEOS::cH2ONaCl eos;
+    H2ONaCl::cH2ONaCl eos;
     if(fout)
     {
       fout<<"T(C), P(bar), X, Phase Index, Phase Region, "
@@ -1432,7 +1462,7 @@ namespace SWEOSbash
       //     <<endl;
       // for(int i=0;i<P.size();i++)
       // {
-      //   cout<<props[i].T+SWEOS::Kelvin<<", "<<P[i]<<", "<<X[i]<<", "<<props[i].Region<<", "<<eos.m_phaseRegion_name[props[i].Region]<<", "
+      //   cout<<props[i].T+Kelvin<<", "<<P[i]<<", "<<X[i]<<", "<<props[i].Region<<", "<<eos.m_phaseRegion_name[props[i].Region]<<", "
       //       <<props[i].Rho<<", "<<props[i].Rho_l<<", "<<props[i].Rho_v<<", "<<props[i].Rho_h<<", "
       //       <<props[i].H<<", "<<props[i].H_l<<", "<<props[i].H_v<<", "<<props[i].H_h<<", "
       //       <<props[i].S_l<<", "<<props[i].S_v<<", "<<props[i].S_h<<", "

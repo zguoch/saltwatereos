@@ -91,12 +91,12 @@ namespace SWEOSbash
         int m_VariableSelection;
     public:
         bool Parse(int argc, char** argv); //Parse arguments
-        bool CheckRange_T(double T0, double TMIN=SWEOS::TMIN, double TMAX=SWEOS::TMAX);
-        bool CheckRanges_T(double Trange[2], double TMIN=SWEOS::TMIN, double TMAX=SWEOS::TMAX);
-        bool CheckRange_P(double P0, double PMIN=SWEOS::PMIN, double PMAX=SWEOS::PMAX);
-        bool CheckRanges_P(double Prange[2], double PMIN=SWEOS::PMIN, double PMAX=SWEOS::PMAX);
-        bool CheckRange_X(double X0, double XMIN=SWEOS::XMIN, double XMAX=SWEOS::XMAX);
-        bool CheckRanges_X(double Xrange[2], double XMIN=SWEOS::XMIN, double XMAX=SWEOS::XMAX);
+        bool CheckRange_T(double T0, double TMIN=H2ONaCl::TMIN, double TMAX=H2ONaCl::TMAX);
+        bool CheckRanges_T(double Trange[2], double TMIN=H2ONaCl::TMIN, double TMAX=H2ONaCl::TMAX);
+        bool CheckRange_P(double P0, double PMIN=H2ONaCl::PMIN, double PMAX=H2ONaCl::PMAX);
+        bool CheckRanges_P(double Prange[2], double PMIN=H2ONaCl::PMIN, double PMAX=H2ONaCl::PMAX);
+        bool CheckRange_X(double X0, double XMIN=H2ONaCl::XMIN, double XMAX=H2ONaCl::XMAX);
+        bool CheckRanges_X(double Xrange[2], double XMIN=H2ONaCl::XMIN, double XMAX=H2ONaCl::XMAX);
         bool CheckRange_H(double H0, double P0, double X0);//PHX 0D calculation
         bool CheckRanges_H(double Hrange[2], double P0, double X0);//PHX 0D calculation
         bool CheckRanges_H_PX(double HMIN0, double HMAX0, double PXrange[4]);//PHX 3D calculation
@@ -115,13 +115,13 @@ namespace SWEOSbash
     };
     bool isNum(string str);
     vector<string> string_split(string s, string delimiter);
-    SWEOS::PROP_H2ONaCl calculateSinglePoint_PTX(double P, double T_K, double X, bool isCout=true);
-    SWEOS::PROP_H2ONaCl calculateSinglePoint_PHX(double P, double H, double X, bool isCout=true);
+    H2ONaCl::PROP_H2ONaCl calculateSinglePoint_PTX(double P, double T_K, double X, bool isCout=true);
+    H2ONaCl::PROP_H2ONaCl calculateSinglePoint_PHX(double P, double H, double X, bool isCout=true);
     // bool calculateMultiPoints_PHX(string valueV, string filePHX, string outFile);
-    vector<SWEOS::PROP_H2ONaCl> calculateMultiPoints_PTX_PHX(string valueV, string filePTX, string outFile, string isT_H);
-    bool WriteCSV(string outFile,vector<double> P, vector<double> X, vector<SWEOS::PROP_H2ONaCl> props);
-    bool Write1Dresult(string outFile,vector<double> P, vector<double> X, vector<SWEOS::PROP_H2ONaCl> props);
-    bool Write2D3DResult(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<SWEOS::PROP_H2ONaCl> props, 
+    vector<H2ONaCl::PROP_H2ONaCl> calculateMultiPoints_PTX_PHX(string valueV, string filePTX, string outFile, string isT_H);
+    bool WriteCSV(string outFile,vector<double> P, vector<double> X, vector<H2ONaCl::PROP_H2ONaCl> props);
+    bool Write1Dresult(string outFile,vector<double> P, vector<double> X, vector<H2ONaCl::PROP_H2ONaCl> props);
+    bool Write2D3DResult(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, 
                         std::string outFile, std::string xTitle, std::string yTitle, std::string zTitle, bool isWritePy=true);
     static void StartText()
     {
