@@ -33,8 +33,8 @@ namespace H2ONaCl
     {
         PhaseRegion Region;
         double T, P, X_wt, H, Rho, Mu; //temperature(C), P(Pa), X_wt(wt%),bulk enthalpy, bulk density
-        double Rho_l, Rho_v, Rho_h; //density
-        double H_l, H_v, H_h; //enthalpy
+        double Rho_l, Rho_v, Rho_h; //density [kg/m3]
+        double H_l, H_v, H_h; //enthalpy [J/kg]
         double S_l, S_v, S_h; //saturation
         double X_l, X_v; // volume fraction of NaCl in vaper and liquid, it is a composition fraction. H2O + NaCl
         double Mu_l, Mu_v;//viscosity

@@ -309,7 +309,7 @@ namespace SWEOSbash
         for (int k = 0; k < lenT; k++)
         {
           H2ONaCl::cH2ONaCl eos;
-          eos.prop_pTX(props[k+j*lenT],arrP[j]*1e5, arrT[k]+Kelvin, arrX[0]);
+          props[k+j*lenT] = eos.prop_pTX(arrP[j]*1e5, arrT[k]+Kelvin, arrX[0]);
           // props[k+j*lenT]=eos.m_prop;
         }
         #pragma omp critical
@@ -354,7 +354,7 @@ namespace SWEOSbash
         for (int k = 0; k < lenX; k++)
         {
           H2ONaCl::cH2ONaCl eos;
-          eos.prop_pTX(props[k+j*lenX], arrP[j]*1e5, arrT[0]+Kelvin, arrX[k]);
+          props[k+j*lenX] = eos.prop_pTX(arrP[j]*1e5, arrT[0]+Kelvin, arrX[k]);
           // =eos.m_prop;
         }
         #pragma omp critical
@@ -398,7 +398,7 @@ namespace SWEOSbash
         for (int k = 0; k < lenT; k++)
         {
           H2ONaCl::cH2ONaCl eos;
-          eos.prop_pTX(props[k+j*lenT], arrP[0]*1e5, arrT[k]+Kelvin, arrX[j]);
+          props[k+j*lenT] = eos.prop_pTX(arrP[0]*1e5, arrT[k]+Kelvin, arrX[j]);
           // =eos.m_prop;
         }
         #pragma omp critical
@@ -443,7 +443,7 @@ namespace SWEOSbash
         for (int k = 0; k < lenH; k++)
         {
           H2ONaCl::cH2ONaCl eos;
-          eos.prop_pHX(props[k+j*lenH], arrP[j]*1e5, arrH[k]*1000.0, arrX[0]);
+          props[k+j*lenH] = eos.prop_pHX(arrP[j]*1e5, arrH[k]*1000.0, arrX[0]);
           // =eos.m_prop;
         }
         #pragma omp critical
@@ -488,7 +488,7 @@ namespace SWEOSbash
         for (int k = 0; k < lenH; k++)
         {
           H2ONaCl::cH2ONaCl eos;
-          eos.prop_pHX(props[k+j*lenH], arrP[0]*1e5, arrH[k]*1000.0, arrX[j]);
+          props[k+j*lenH] = eos.prop_pHX(arrP[0]*1e5, arrH[k]*1000.0, arrX[j]);
           // =eos.m_prop;
         }
         #pragma omp critical
@@ -633,20 +633,38 @@ namespace SWEOSbash
           for (int k = 0; k < lenT; k++)
           {
             H2ONaCl::cH2ONaCl eos;
-            eos.prop_pTX(props[k+j*lenT+i*lenTX], arrP[i]*1e5, arrT[k]+Kelvin, arrX[j]);
+            props[k+j*lenT+i*lenTX]=eos.prop_pTX(arrP[i]*1e5, arrT[k]+Kelvin, arrX[j]);
           }
         }
         #pragma omp critical
         multiBar.Update();
       }
-      Write2D3DResult(arrT, arrX, arrP, props, m_valueO, "Temperature (°C)", "Salinity", "Pressure (bar)");
+      if(m_valueV=="PXT")
+      {
+        Write2D3DResult(arrP, arrX, arrT, props, m_valueO, "Pressure (bar)", "Salinity", "Temperature (°C)");
+      }else if(m_valueV=="TPX")
+      {
+        Write2D3DResult(arrT, arrP, arrX, props, m_valueO, "Temperature (°C)", "Pressure (bar)", "Salinity");
+      }else if(m_valueV=="TXP")
+      {
+        Write2D3DResult(arrT, arrX, arrP, props, m_valueO, "Temperature (°C)", "Salinity", "Pressure (bar)");
+      }else if(m_valueV=="XPT")
+      {
+        Write2D3DResult(arrX, arrP, arrT, props, m_valueO, "Salinity", "Pressure (bar)", "Temperature (°C)");
+      }else if(m_valueV=="XTP")
+      {
+        Write2D3DResult(arrX, arrT, arrP, props, m_valueO, "Salinity", "Temperature (°C)", "Pressure (bar)");
+      }else
+      {
+        Write2D3DResult(arrP, arrT, arrX, props, m_valueO, "Pressure (bar)", "Temperature (°C)", "Salinity");
+      }
     }else if(m_valueV=="PHX" || m_valueV=="PXH" || m_valueV=="HPX" || m_valueV=="HXP" || m_valueV=="XPH" || m_valueV=="XHP")
     {
       int indP=0, indH=1, indX=2;
       if(m_valueV=="PXH")
       {
         indP=0; indX=1; indH=2;
-      }else if(m_valueV=="TPX")
+      }else if(m_valueV=="HPX")
       {
         indH=0; indP=1; indX=2;
       }else if(m_valueV=="HXP")
@@ -694,7 +712,7 @@ namespace SWEOSbash
           {
             try
             {
-              eos.prop_pHX(props[k+j*lenH+i*lenHX], arrP[i]*1e5, arrH[k]*1000.0, arrX[j]);
+              props[k+j*lenH+i*lenHX]=eos.prop_pHX(arrP[i]*1e5, arrH[k]*1000.0, arrX[j]);
             }
             catch(const std::exception& e)
             {
@@ -721,7 +739,25 @@ namespace SWEOSbash
         #pragma omp critical
         multiBar.Update();
       }
-      Write2D3DResult(arrH, arrX, arrP, props, m_valueO, "Enthalpy (kJ/kg)", "Salinity", "Pressure (bar)");
+      if(m_valueV=="PXH")
+      {
+        Write2D3DResult(arrP, arrX, arrH, props, m_valueO, "Pressure (bar)", "Salinity", "Enthalpy (kJ/kg)");
+      }else if(m_valueV=="HPX")
+      {
+        Write2D3DResult(arrH, arrP, arrX, props, m_valueO, "Enthalpy (kJ/kg)", "Pressure (bar)", "Salinity");
+      }else if(m_valueV=="HXP")
+      {
+        Write2D3DResult(arrH, arrX, arrP, props, m_valueO, "Enthalpy (kJ/kg)", "Salinity", "Pressure (bar)");
+      }else if(m_valueV=="XPH")
+      {
+        Write2D3DResult(arrX, arrP, arrH, props, m_valueO, "Salinity", "Pressure (bar)", "Enthalpy (kJ/kg)");
+      }else if(m_valueV=="XHP")
+      {
+        Write2D3DResult(arrX, arrH, arrP, props, m_valueO, "Salinity", "Enthalpy (kJ/kg)", "Pressure (bar)");
+      }else
+      {
+        Write2D3DResult(arrP, arrH, arrX, props, m_valueO, "Pressure (bar)", "Enthalpy (kJ/kg)", "Salinity");
+      }
     }
     return true;
   }
@@ -776,7 +812,7 @@ namespace SWEOSbash
         {
           arrP.push_back(m_valueP);
           arrX.push_back(m_valueX);
-          eos.prop_pTX(eos.m_prop, arrP[i]*1e5, arrT[i]+Kelvin, arrX[i]);
+          eos.m_prop=eos.prop_pTX(arrP[i]*1e5, arrT[i]+Kelvin, arrX[i]);
           props.push_back(eos.m_prop);
           multibar.Update();
         }
@@ -812,7 +848,7 @@ namespace SWEOSbash
         {
           arrT.push_back(m_valueT);
           arrX.push_back(m_valueX);
-          eos.prop_pTX(eos.m_prop, arrP[i]*1e5, arrT[i]+Kelvin, arrX[i]);
+          eos.m_prop=eos.prop_pTX(arrP[i]*1e5, arrT[i]+Kelvin, arrX[i]);
           props.push_back(eos.m_prop);
           multibar.Update();
         }
@@ -848,7 +884,7 @@ namespace SWEOSbash
         {
           arrT.push_back(m_valueT);
           arrP.push_back(m_valueP);
-          eos.prop_pTX(eos.m_prop, arrP[i]*1e5, arrT[i]+Kelvin, arrX[i]);
+          eos.m_prop=eos.prop_pTX(arrP[i]*1e5, arrT[i]+Kelvin, arrX[i]);
           props.push_back(eos.m_prop);
           multibar.Update();
         }
@@ -885,7 +921,7 @@ namespace SWEOSbash
         {
           arrP.push_back(m_valueP);
           arrX.push_back(m_valueX);
-          eos.prop_pHX(eos.m_prop, arrP[i]*1e5, arrH[i]*1000.0, arrX[i]);
+          eos.m_prop=eos.prop_pHX(arrP[i]*1e5, arrH[i]*1000.0, arrX[i]);
           props.push_back(eos.m_prop);
           multibar.Update();
         }
@@ -1083,7 +1119,7 @@ namespace SWEOSbash
         // for (int k = 0; k < 2; k++)
         {
           X=X0;
-          eos.prop_pTX(eos.m_prop, P*1e5, T, X);
+          eos.m_prop=eos.prop_pTX(P*1e5, T, X);
           HMIN=(eos.m_prop.H<HMIN ? eos.m_prop.H : HMIN);
           HMAX=(eos.m_prop.H>HMAX ? eos.m_prop.H : HMAX);
         }
@@ -1122,7 +1158,7 @@ namespace SWEOSbash
         // for (int k = 0; k < 2; k++)
         {
           X=X0;
-          eos.prop_pTX(eos.m_prop, P*1e5, T, X);
+          eos.m_prop=eos.prop_pTX(P*1e5, T, X);
           HMIN=(eos.m_prop.H<HMIN ? eos.m_prop.H : HMIN);
           HMAX=(eos.m_prop.H>HMAX ? eos.m_prop.H : HMAX);
         }
@@ -1162,7 +1198,7 @@ namespace SWEOSbash
         for (int k = 0; k < 2; k++)
         {
           X=PXrange[k+2];
-          eos.prop_pTX(eos.m_prop, P*1e5, T, X);
+          eos.m_prop=eos.prop_pTX(P*1e5, T, X);
           HMIN=(eos.m_prop.H<HMIN ? eos.m_prop.H : HMIN);
           HMAX=(eos.m_prop.H>HMAX ? eos.m_prop.H : HMAX);
         }
@@ -1201,7 +1237,7 @@ namespace SWEOSbash
         // for (int k = 0; k < 2; k++)
         {
           X=X0;
-          eos.prop_pTX(eos.m_prop, P*1e5, T, X);
+          eos.m_prop=eos.prop_pTX(P*1e5, T, X);
           HMIN=(eos.m_prop.H<HMIN ? eos.m_prop.H : HMIN);
           HMAX=(eos.m_prop.H>HMAX ? eos.m_prop.H : HMAX);
         }
@@ -1240,7 +1276,7 @@ namespace SWEOSbash
         for (int k = 0; k < 2; k++)
         {
           X=Xrange[k];
-          eos.prop_pTX(eos.m_prop, P*1e5, T, X);
+          eos.m_prop=eos.prop_pTX(P*1e5, T, X);
           HMIN=(eos.m_prop.H<HMIN ? eos.m_prop.H : HMIN);
           HMAX=(eos.m_prop.H>HMAX ? eos.m_prop.H : HMAX);
         }
@@ -1280,7 +1316,7 @@ namespace SWEOSbash
   H2ONaCl::PROP_H2ONaCl calculateSinglePoint_PTX(double P, double T_K, double X, bool isCout)
   {
     H2ONaCl::cH2ONaCl eos;
-    eos.prop_pTX(eos.m_prop, P, T_K, X);
+    eos.m_prop=eos.prop_pTX(P, T_K, X);
     if(isCout) 
     {
       eos.setColorPrint(true);
@@ -1291,7 +1327,7 @@ namespace SWEOSbash
   H2ONaCl::PROP_H2ONaCl calculateSinglePoint_PHX(double P, double H, double X, bool isCout)
   {
     H2ONaCl::cH2ONaCl eos;
-    eos.prop_pHX(eos.m_prop, P, H, X);
+    eos.m_prop=eos.prop_pHX(P, H, X);
     if(isCout)
     {
       eos.setColorPrint(true);
@@ -1380,7 +1416,7 @@ namespace SWEOSbash
     {
       for(int i=0;i<P.size();i++)
       {
-        eos.prop_pTX(eos.m_prop, P[i]*1e5, T_H[i]+Kelvin, X[i]);
+        eos.m_prop=eos.prop_pTX(P[i]*1e5, T_H[i]+Kelvin, X[i]);
         props.push_back(eos.m_prop);
         multibar.Update();
       }
@@ -1388,7 +1424,7 @@ namespace SWEOSbash
     {
       for(int i=0;i<P.size();i++)
       {
-        eos.prop_pHX(eos.m_prop, P[i]*1e5, T_H[i]*1000, X[i]);
+        eos.m_prop=eos.prop_pHX(P[i]*1e5, T_H[i]*1000, X[i]);
         props.push_back(eos.m_prop);
         multibar.Update();
       }

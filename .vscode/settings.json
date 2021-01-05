@@ -8,6 +8,9 @@
         "boundary": "OpenFOAM",
         "U": "OpenFOAM",
         "p": "OpenFOAM",
+        "T": "OpenFOAM",
+        "*.pyx": "python",
+        "*.pxd": "python",
         "iosfwd": "cpp",
         "ostream": "cpp",
         "iostream": "cpp",
@@ -103,7 +106,10 @@
         "Fluid.C": "cpp",
         "H2O.C": "cpp",
         "NaClH2O.C": "cpp",
-        "NaCl.C": "cpp"
+        "NaCl.C": "cpp",
+        "valarray": "c",
+        "datastruct_h2onacl.h": "c",
+        "dataStruct_H2ONaCl.H": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled",
     "restructuredtext.linter.disabled": true

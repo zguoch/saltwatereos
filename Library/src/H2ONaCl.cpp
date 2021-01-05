@@ -167,8 +167,9 @@ namespace H2ONaCl
     /**
      * \todo 搞清楚pHX的算法流程并补充完剩下的部分
      */
-    void cH2ONaCl:: prop_pHX(H2ONaCl::PROP_H2ONaCl& prop, double p, double H, double X_wt)
+    H2ONaCl::PROP_H2ONaCl cH2ONaCl:: prop_pHX(double p, double H, double X_wt)
     {
+        H2ONaCl::PROP_H2ONaCl prop;
         init_prop(prop);
         prop.P=p; prop.H=H; prop.X_wt=X_wt;
         double T1, T2;
@@ -176,8 +177,8 @@ namespace H2ONaCl
         guess_T_PhX(p, H, X_wt, T1, T2);
         // cout<<"T1: "<<T1<<" T2: "<<T2<<endl;
         PROP_H2ONaCl prop1, prop2;
-        prop_pTX(prop1, p,T1+Kelvin,X_wt, false); 
-        prop_pTX(prop2, p,T2+Kelvin,X_wt, false); 
+        prop1=prop_pTX(p,T1+Kelvin,X_wt, false); 
+        prop2=prop_pTX(p,T2+Kelvin,X_wt, false); 
         double h1 = prop1.H;
         double h2 = prop2.H;
         // printf("H: %f X_wt: %f T1: %f T2: %f h1: %f h2: %f\n",H,X_wt,T1,T2, h1, h2);
@@ -186,7 +187,7 @@ namespace H2ONaCl
         while(h2 < H)
         {
             T2 = T2 + 1;
-            prop_pTX(prop22, p,T2+Kelvin,X_wt, false);
+            prop22=prop_pTX(p,T2+Kelvin,X_wt, false);
             h2 = prop22.H;
             h_l = prop22.H_l;
             if(h2<H && T2>1000) break;
@@ -201,7 +202,7 @@ namespace H2ONaCl
         if(h1>H)
         {
             T1=0;
-            prop_pTX(prop1, p,T1+Kelvin,X_wt, false); 
+            prop1=prop_pTX(p,T1+Kelvin,X_wt, false); 
             h1=prop1.H;
         }
         if((T2 > 1000 || h1 > H) || (h2 < H && T2 == 1000  && p >= 1.7e7) )
@@ -247,8 +248,7 @@ namespace H2ONaCl
                     T_new_mid = 0; 
                 }
                 // claculate new h
-                PROP_H2ONaCl PROP_new;
-                prop_pTX(PROP_new, p,T_new+Kelvin,X_wt, false);
+                PROP_H2ONaCl PROP_new=prop_pTX(p,T_new+Kelvin,X_wt, false);
                 if (isnan(T_new))
                 {
                     printf("T_new is nan, T1: %f, T2: %f, H: %f, X:%f, h1: %f, h2: %f\n", T1, T2, H, X_wt, h1, h2);
@@ -402,9 +402,10 @@ namespace H2ONaCl
             cout<<"error, prop.T is nan in prop_pHX: "<<prop.T<<endl;
             exit(0);
         }
-
+        // calculate dynamic viscosity
         calcViscosity(prop.Region, p, prop.T, prop.X_l, prop.X_v, prop.Mu_l, prop.Mu_v);
 
+        return prop;
     }
 
     void cH2ONaCl:: calc_halit_liqidus(double Pres, double Temp, double& X_hal_liq, double& T_hm)
@@ -596,10 +597,10 @@ namespace H2ONaCl
         }
     }
 
-    void cH2ONaCl:: prop_pTX(H2ONaCl::PROP_H2ONaCl& prop, double p, double T_K, double X_wt, bool visc_on)
+    H2ONaCl::PROP_H2ONaCl cH2ONaCl::prop_pTX(double p, double T_K, double X_wt, bool visc_on)
     {
+        H2ONaCl::PROP_H2ONaCl prop;
         init_prop(prop);// initialize it first
-        
         prop.P=p; prop.X_wt=X_wt;
         prop.T=T_K-Kelvin;
         //---------------------------------------------------------
@@ -668,7 +669,8 @@ namespace H2ONaCl
         if(prop.Region==ThreePhase_V_L_H) prop.Mu= NAN; 
         // v+l-region X = 0;
         if(prop.Region==TwoPhase_L_V_X0) prop.Mu = NAN; 
-
+        
+        return prop;
     }
 
     double cH2ONaCl:: rho_pTX(double p, double T_K, double X_wt)
@@ -1988,12 +1990,12 @@ namespace H2ONaCl
             double yMIN=min(y);
             double zMAX=max(z);
             double zMIN=min(z);
-            len_x=(xMAX-xMIN);
-            len_y=(yMAX-yMIN);
-            len_z=(zMAX-zMIN);
+            len_x=(xMAX==xMIN ? 1: xMAX-xMIN);
+            len_y=(yMAX==yMIN ? 1: yMAX-yMIN);
+            len_z=(zMAX==zMIN ? 1: zMAX-zMIN);
             double scale_x=1;
-            double scale_y=(len_y==0 ? 1: len_x/len_y);
-            double scale_z=(len_z==0 ? 1 : len_x/len_z);
+            double scale_y=len_x/len_y;
+            double scale_z=len_x/len_z;
             ofstream fout_py(fname_py);
             if(!fout_py)
             {
@@ -2728,7 +2730,7 @@ namespace H2ONaCl
             // for (int k = 0; k < 2; k++)
             {
             X=X0;
-            prop_pTX(prop,P*1e5, T, X);
+            prop=prop_pTX(P*1e5, T, X);
             HMIN=(prop.H<HMIN ? prop.H : HMIN);
             HMAX=(prop.H>HMAX ? prop.H : HMAX);
             }
@@ -2760,7 +2762,7 @@ namespace H2ONaCl
             for (int k = 0; k < 2; k++)
             {
             X=PXrange[k+2];
-            prop_pTX(prop, P*1e5, T, X);
+            prop=prop_pTX(P*1e5, T, X);
             HMIN=(prop.H<HMIN ? prop.H : HMIN);
             HMAX=(prop.H>HMAX ? prop.H : HMAX);
             }
@@ -2800,7 +2802,7 @@ namespace H2ONaCl
             // for (int k = 0; k < 2; k++)
             {
             X=X0;
-            prop_pTX(prop, P*1e5, T, X);
+            prop=prop_pTX(P*1e5, T, X);
             HMIN=(prop.H<HMIN ? prop.H : HMIN);
             HMAX=(prop.H>HMAX ? prop.H : HMAX);
             }
@@ -2840,7 +2842,7 @@ namespace H2ONaCl
                 for (int k = 0; k < 2; k++)
                 {
                 X=Xrange[k];
-                prop_pTX(prop, P*1e5, T, X);
+                prop=prop_pTX(P*1e5, T, X);
                 HMIN=(prop.H<HMIN ? prop.H : HMIN);
                 HMAX=(prop.H>HMAX ? prop.H : HMAX);
                 }

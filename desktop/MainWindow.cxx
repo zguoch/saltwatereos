@@ -77,9 +77,9 @@ MainWindow::MainWindow(QWidget *parent)
     m_IndependentVar3_old=ui->doubleSpinBox_3->value();
 
     // used to set actor to a nice width/height ratio
-    m_actorScale_T=(SWEOS::PMAX-SWEOS::PMIN)/1e5/(SWEOS::TMAX-SWEOS::TMIN);
+    m_actorScale_T=(H2ONaCl::PMAX-H2ONaCl::PMIN)/(H2ONaCl::TMAX-H2ONaCl::TMIN);
     m_actorScale_P=1;
-    m_actorScale_X=(SWEOS::PMAX-SWEOS::PMIN)/1e5/(SWEOS::XMAX-SWEOS::XMIN);
+    m_actorScale_X=(H2ONaCl::PMAX-H2ONaCl::PMIN)/(H2ONaCl::XMAX-H2ONaCl::XMIN);
     m_actorScale[0]=m_actorScale_T;
     m_actorScale[1]=m_actorScale_P;
     m_actorScale[2]=m_actorScale_X;
@@ -344,11 +344,11 @@ void MainWindow::SinglePointCalculation(int index_varsSelection)
     color_value_3=(m_IndependentVar3_old==X ? color_value_3="Black": color_value_3="Green");
     QString name_T_H, name_unit_T_H, name_T_H_display;
     double value_T_H_display;
-    SWEOS::cH2ONaCl eos;
+    H2ONaCl::cH2ONaCl eos;
     switch (index_varsSelection) {
     case 0: //PTX
     {
-        eos.prop_pTX(p, T_H+SWEOS::Kelvin, X);
+        eos.prop_pTX(eos.m_prop,p, T_H+Kelvin, X);
         name_T_H=tr("Temperature");
         name_unit_T_H=UNIT_T;
         name_T_H_display=tr("Bulk enthalpy");
@@ -357,7 +357,7 @@ void MainWindow::SinglePointCalculation(int index_varsSelection)
         break;
     case 1: //PHX
     {
-        eos.prop_pHX(p, T_H*1000, X); //Enthalpy unit in UI is kJ/kg
+        eos.prop_pHX(eos.m_prop,p, T_H*1000, X); //Enthalpy unit in UI is kJ/kg
         name_T_H=tr("Enthalpy");
         name_unit_T_H=tr("kJ/kg");
         name_T_H_display=tr("Temperature");
@@ -638,10 +638,10 @@ void MainWindow::CalculateProps_PTX_PHX(int PTX_PHX, std::vector<double> arrT_H,
         {
             ui->roundProgressBar->setRange(0,arrT_H.size());
             for (size_t i=0;i<arrT_H.size();++i) {
-                SWEOS::cH2ONaCl eos;
-                eos.prop_pTX(arrP[i],arrT_H[i]+SWEOS::Kelvin,arrX[i]);
+                H2ONaCl::cH2ONaCl eos;
+                eos.prop_pTX(eos.m_prop,arrP[i],arrT_H[i]+Kelvin,arrX[i]);
                 table->SetValue(i, 0, arrT_H[i]);
-                table->SetValue(i, 1, arrP[i]/1e5);
+                table->SetValue(i, 1, arrP[i]);
                 table->SetValue(i, 2, arrX[i]);
                 table->SetValue(i, 3, eos.m_prop.Region);
 
@@ -672,10 +672,10 @@ void MainWindow::CalculateProps_PTX_PHX(int PTX_PHX, std::vector<double> arrT_H,
         {
         ui->roundProgressBar->setRange(0,arrT_H.size());
             for (size_t i=0;i<arrT_H.size();++i) {
-                SWEOS::cH2ONaCl eos;
-                eos.prop_pHX(arrP[i],arrT_H[i],arrX[i]); //enthalpy unit in UI is kJ/kg
+                H2ONaCl::cH2ONaCl eos;
+                eos.prop_pHX(eos.m_prop,arrP[i],arrT_H[i],arrX[i]); //enthalpy unit in UI is kJ/kg
                 table->SetValue(i, 0, eos.m_prop.T);
-                table->SetValue(i, 1, arrP[i]/1e5);
+                table->SetValue(i, 1, arrP[i]);
                 table->SetValue(i, 2, arrX[i]);
                 table->SetValue(i, 3, eos.m_prop.Region);
 
@@ -849,7 +849,7 @@ void MainWindow::update1dChart(int index_var, std::string name_prop, std::vector
         // plot region area
         min_allProps=min_allProps-(max_allProps-min_allProps)*0.02;
         max_allProps=max_allProps+(max_allProps-min_allProps)*0.02;
-        SWEOS::cH2ONaCl eos;
+        H2ONaCl::cH2ONaCl eos;
         bool PhaseRegion_present[8]={false, false, false, false,false, false, false, false};
         for (size_t i=1;i<indexInTable_phaseRegion.size();i++)
         {
@@ -1060,8 +1060,8 @@ int MainWindow::Calculate_Diagram2D()
                 for(int i = 0; i < lenT; i++)
                 {
                     int ind_value=i+j*lenT;
-                    SWEOS::cH2ONaCl eos;
-                    eos.prop_pTX(vectorP[j]*1e5,vectorT[i]+SWEOS::Kelvin,X0);
+                    H2ONaCl::cH2ONaCl eos;
+                    eos.prop_pTX(eos.m_prop,vectorP[j]*1e5,vectorT[i]+Kelvin,X0);
                     points->SetPoint(ind_value, vectorT[i],vectorP[j],X0);
                     arrPhaseRegion->SetValue(ind_value,eos.m_prop.Region);
                     arrDensity->SetValue(ind_value,eos.m_prop.Rho);
@@ -1146,8 +1146,8 @@ int MainWindow::Calculate_Diagram2D()
                 for(int i = 0; i < lenX; i++)
                 {
                     int ind_value=i+j*lenX;
-                    SWEOS::cH2ONaCl eos;
-                    eos.prop_pTX(vectorP[j]*1e5,T0+SWEOS::Kelvin,vectorX[i]);
+                    H2ONaCl::cH2ONaCl eos;
+                    eos.prop_pTX(eos.m_prop,vectorP[j]*1e5,T0+Kelvin,vectorX[i]);
                     points->SetPoint(ind_value, vectorX[i],vectorP[j],T0);
                     arrPhaseRegion->SetValue(ind_value,eos.m_prop.Region);
                     arrDensity->SetValue(ind_value,eos.m_prop.Rho);
@@ -1232,8 +1232,8 @@ int MainWindow::Calculate_Diagram2D()
                 for(int i = 0; i < lenT; i++)
                 {
                     int ind_value=i+j*lenT;
-                    SWEOS::cH2ONaCl eos;
-                    eos.prop_pTX(P0*1e5,vectorT[i]+SWEOS::Kelvin,vectorX[j]);
+                    H2ONaCl::cH2ONaCl eos;
+                    eos.prop_pTX(eos.m_prop,P0*1e5,vectorT[i]+Kelvin,vectorX[j]);
                     points->SetPoint(ind_value, vectorT[i],vectorX[j],P0);
                     arrPhaseRegion->SetValue(ind_value,eos.m_prop.Region);
                     arrDensity->SetValue(ind_value,eos.m_prop.Rho);
@@ -1308,7 +1308,7 @@ void MainWindow::ShowProps_2D(int index_prop, std::string xlabel,std::string yla
     // Create a renderer, render window, and interactor
     vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
     renderer->AddActor(gridActor);
-    //    gridActor->SetScale((SWEOS::PMAX-SWEOS::PMIN)/1e5/(SWEOS::TMAX-SWEOS::TMIN),1,(SWEOS::PMAX-SWEOS::PMIN)/1e5/(SWEOS::XMAX-SWEOS::XMIN));
+    //    gridActor->SetScale((H2ONaCl::PMAX-H2ONaCl::PMIN)/(H2ONaCl::TMAX-H2ONaCl::TMIN),1,(H2ONaCl::PMAX-H2ONaCl::PMIN)/(H2ONaCl::XMAX-H2ONaCl::XMIN));
     gridActor->SetScale(scale_actor);
 
     //axis actor
@@ -1344,7 +1344,7 @@ void MainWindow::ShowProps_2D(int index_prop, std::string xlabel,std::string yla
         legendBox->SetYLength(10);
         legendBox->Update();
     //        colors->GetColor("tomato", color);
-        SWEOS::cH2ONaCl eos;
+        H2ONaCl::cH2ONaCl eos;
         for (size_t i=0;i<phaseRegionVector.size();i++) {
             gridMapper->GetLookupTable()->GetColor(phaseRegionVector[i],color);
             legend->SetEntry(i, legendBox->GetOutput(), eos.m_phaseRegion_name[phaseRegionVector[i]].c_str(), color);
@@ -1873,7 +1873,7 @@ void MainWindow::UpdateUI_fixedP(QLabel* label, QDoubleSpinBox* box, double defa
 {
     label->setText(tr("Pressure (bar)"));
     box->setDecimals(2);
-    box->setRange(SWEOS::PMIN/1e5, SWEOS::PMAX/1e5);
+    box->setRange(H2ONaCl::PMIN, H2ONaCl::PMAX);
     box->setSingleStep(1);
     box->setValue(defaultValue);
 }
@@ -1881,7 +1881,7 @@ void MainWindow::UpdateUI_fixedX(QLabel* label, QDoubleSpinBox* box, double defa
 {
     label->setText(tr("Salinity"));
     box->setDecimals(4);
-    box->setRange(SWEOS::XMIN, SWEOS::XMAX);
+    box->setRange(H2ONaCl::XMIN, H2ONaCl::XMAX);
     box->setSingleStep(0.001);
     box->setValue(defaultValue);
 }
@@ -1889,7 +1889,7 @@ void MainWindow::UpdateUI_fixedT(QLabel* label, QDoubleSpinBox* box, double defa
 {
     label->setText(tr("Temperature") + " (" + UNIT_T + ")");
     box->setDecimals(2);
-    box->setRange(SWEOS::TMIN-SWEOS::Kelvin, SWEOS::TMAX-SWEOS::Kelvin);
+    box->setRange(H2ONaCl::TMIN-Kelvin, H2ONaCl::TMAX-Kelvin);
     box->setSingleStep(1);
     box->setValue(defaultValue);
 }
@@ -1910,12 +1910,12 @@ void MainWindow::UpdateUI_X(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
     deltaBox->setValue(0.01);
 
     maxBox->setDecimals(4);
-    maxBox->setRange(SWEOS::XMIN, SWEOS::XMAX);
+    maxBox->setRange(H2ONaCl::XMIN, H2ONaCl::XMAX);
     maxBox->setSingleStep(0.001);
-    maxBox->setValue(SWEOS::XMAX);
+    maxBox->setValue(H2ONaCl::XMAX);
 
     minBox->setDecimals(4);
-    minBox->setRange(SWEOS::XMIN, SWEOS::XMAX);
+    minBox->setRange(H2ONaCl::XMIN, H2ONaCl::XMAX);
     minBox->setSingleStep(0.001);
     minBox->setValue(0.0001);
 }
@@ -1931,27 +1931,27 @@ void MainWindow::UpdateUI_T(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
     deltaBox->setValue(1);
 
     maxBox->setDecimals(2);
-    maxBox->setRange(SWEOS::TMIN-SWEOS::Kelvin, SWEOS::TMAX-SWEOS::Kelvin);
+    maxBox->setRange(H2ONaCl::TMIN-Kelvin, H2ONaCl::TMAX-Kelvin);
     maxBox->setSingleStep(1);
     maxBox->setValue(673);
 
     minBox->setDecimals(2);
-    minBox->setRange(SWEOS::TMIN-SWEOS::Kelvin,SWEOS::TMAX-SWEOS::Kelvin);
+    minBox->setRange(H2ONaCl::TMIN-Kelvin,H2ONaCl::TMAX-Kelvin);
     minBox->setSingleStep(1);
-    minBox->setValue(SWEOS::TMIN-SWEOS::Kelvin);
+    minBox->setValue(H2ONaCl::TMIN-Kelvin);
 }
 void MainWindow::UpdateUI_H(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpinBox* maxBox, QDoubleSpinBox* minBox, double pMinMax[2], double XMinMax[2])
 {
     //calculate maxH and minH
     double hMin=1e30, hMax=-1e30;
-    double TMinMax[2]={SWEOS::TMIN, SWEOS::TMAX};
-    SWEOS::cH2ONaCl eos;
+    double TMinMax[2]={H2ONaCl::TMIN, H2ONaCl::TMAX};
+    H2ONaCl::cH2ONaCl eos;
     for (int i=0;i<2;i++) {
         for(int j=0;j<2;j++)
         {
             for(int k=0;k<2;k++)
             {
-                eos.prop_pTX(pMinMax[i], TMinMax[j], XMinMax[k]);
+                eos.prop_pTX(eos.m_prop,pMinMax[i], TMinMax[j], XMinMax[k]);
                 hMin=(eos.m_prop.H < hMin ? eos.m_prop.H : hMin);
                 hMax=(eos.m_prop.H > hMax ? eos.m_prop.H : hMax);
             }
@@ -1985,14 +1985,14 @@ void MainWindow::UpdateUI_P(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
     deltaBox->setValue(1);
 
     maxBox->setDecimals(2);
-    maxBox->setRange(SWEOS::PMIN/1E5, SWEOS::PMAX/1E5);
+    maxBox->setRange(H2ONaCl::PMIN, H2ONaCl::PMAX);
     maxBox->setSingleStep(1);
     maxBox->setValue(400);
 
     minBox->setDecimals(2);
-    minBox->setRange(SWEOS::PMIN/1E5, SWEOS::PMAX/1E5);
+    minBox->setRange(H2ONaCl::PMIN, H2ONaCl::PMAX);
     minBox->setSingleStep(1);
-    minBox->setValue(SWEOS::PMIN/1E5);
+    minBox->setValue(H2ONaCl::PMIN);
 }
 void MainWindow::update2dUI(QString arg)
 {

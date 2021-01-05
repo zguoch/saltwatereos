@@ -6,7 +6,7 @@ using namespace std;
 using namespace H2ONaCl;
 
 void PhaseRegion_PTX(double P, double T, double X);
-void Prop_PHX(double P, double T_K, double Xwt);
+void Prop_PHX(double P, double H_MJ, double Xwt);
 void PhaseRegion3D_PTX();
 void Figure2_Driesner2007(double T, string filename, double pmax=400e5);
 void Figure2_Driesner2007_log(double T, string filename, double pmax=400e5, double xmin=-11);
@@ -35,12 +35,12 @@ int main()
 
     return 0;
 }
-void Prop_PHX(double P, double T_K, double Xwt)
+void Prop_PHX(double P, double H, double Xwt)
 {
     cout.precision(8);//control cout precision of float
     cH2ONaCl eos;
-    H2ONaCl::PROP_H2ONaCl prop;
-    eos.prop_pHX(eos.m_prop,P,T_K,Xwt);
+    // H2ONaCl::PROP_H2ONaCl prop;
+    eos.m_prop=eos.prop_pHX(P,H,Xwt);
     eos.setColorPrint(true);
     cout<<eos<<endl;
     cout<<"Region: "<<eos.m_phaseRegion_name[eos.m_prop.Region]<<" Xl: "<<eos.m_prop.X_l<<" Xv: "<<eos.m_prop.X_v<<endl;
@@ -69,7 +69,7 @@ void Figure2_Driesner2007_log(double T, string filename,double pmax, double xmin
         for (double P = pmin; P < pmax; P=P+dp)
         {
             cH2ONaCl eos;
-            eos.prop_pTX(eos.m_prop, P,T,X);
+            eos.m_prop=eos.prop_pTX(P,T,X);
             fpout<<T<<", "<<P<<", "<<logX<<", "<<eos.m_prop.Region<<", "
                  <<eos.m_prop.Rho<<", "<<eos.m_prop.H<<", "
                  <<eos.m_prop.Rho_l<<", "<<eos.m_prop.Rho_v<<", "<<eos.m_prop.Rho_h<<", "
@@ -94,7 +94,7 @@ void Figure2_Driesner2007(double T, string filename,double pmax)
         for (double P = pmin; P < pmax; P=P+dp)
         {
             cH2ONaCl eos;
-            eos.prop_pTX(eos.m_prop, P,T,X);
+            eos.m_prop=eos.prop_pTX(P,T,X);
             fpout<<T<<", "<<P<<", "<<X<<", "<<eos.m_prop.Region<<", "
                  <<eos.m_prop.Rho<<", "<<eos.m_prop.H<<", "
                  <<eos.m_prop.Rho_l<<", "<<eos.m_prop.Rho_v<<", "<<eos.m_prop.Rho_h<<", "
@@ -108,7 +108,7 @@ void PhaseRegion_PTX(double P, double T, double X)
 {
     cout.precision(8);//control cout precision of float
     cH2ONaCl eos;
-    eos.prop_pTX(eos.m_prop, P,T,X);
+    eos.m_prop=eos.prop_pTX(P,T,X);
 
     cout<<"Region: "<<eos.m_phaseRegion_name[eos.m_prop.Region]<<" Xl: "<<eos.m_prop.X_l<<" Xv: "<<eos.m_prop.X_v<<endl;
     cout<<"Rho: "<<eos.m_prop.Rho<<" H: "<<eos.m_prop.H<<endl;
@@ -176,7 +176,7 @@ void PhaseRegion3D_PTX()
                 for (size_t k = 0; k < T.size(); k++)
                 {
                     cH2ONaCl eos;
-                    eos.prop_pTX(eos.m_prop, P[j],T[k],X[i]);
+                    eos.m_prop=eos.prop_pTX(P[j],T[k],X[i]);
                     props.push_back(eos.m_prop);
                     // cout<<eos.m_phaseRegion_name[eos.m_prop.Region]<<" Xl: "<<eos.m_prop.X_l<<" Xv: "<<eos.m_prop.X_v<<endl;
                     // fpout<<eos.m_prop.Region<<" ";
