@@ -4,3 +4,4 @@
 !readme.md
 !setup.py
 !*.pyd
+!.gitattributes 
