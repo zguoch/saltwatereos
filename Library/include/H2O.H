@@ -6,9 +6,11 @@
 #include <cmath>
 #include <vector>
 using namespace std;
-// #include "Fluid.H"
+
 // ============= Constants ====================
+#ifndef Kelvin
 #define Kelvin 273.15
+#endif
 // ============================================
 namespace H2O
 {

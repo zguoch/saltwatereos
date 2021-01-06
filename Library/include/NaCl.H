@@ -6,8 +6,11 @@
 #include<cmath>
 #include<vector>
 using namespace std;
-#include "Fluid.H"
-
+// ============= Constants ====================
+#ifndef Kelvin
+#define Kelvin 273.15
+#endif
+// ============================================
 namespace NaCl
 {
     // ============= Constants of NaCl =======================================
@@ -22,7 +25,7 @@ namespace NaCl
      * This implementation is based published references \cite Driesner2007Part1, \cite Driesner2007Part2 and \cite Klyukin2020. 
      * 
      */
-    class cNaCl : public Fluid::cFluid
+    class cNaCl 
     {
     private:
         /* data */
