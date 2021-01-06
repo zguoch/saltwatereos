@@ -25,8 +25,8 @@ sec_year=86400*365
 cm2inch=1 #0.393701
 dpi=600
 
-import H2ONaCl
-import H2O
+from pyswEOS import H2ONaCl
+from pyswEOS import H2O
 # water=H2O.cH2O()
 # sw=H2ONaCl.cH2ONaCl()
 fmt_figs=['pdf']

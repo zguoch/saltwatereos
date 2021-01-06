@@ -1,5 +1,5 @@
-import H2ONaCl
-import H2O
+from pyswEOS import H2ONaCl
+from pyswEOS import H2O
 water=H2O.cH2O()
 sw=H2ONaCl.cH2ONaCl()
 # 1. function

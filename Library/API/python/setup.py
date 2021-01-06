@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pyswEOS',
-    version='0.0.2',
+    version='0.0.3',
     author='Zhikui Guo',
     author_email='zguo@geomar.de',
     url='https://www.scibyte.cn',
