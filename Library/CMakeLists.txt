@@ -50,7 +50,7 @@ endif()
 INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/include )
 FILE(GLOB SC_FILES "${PROJECT_SOURCE_DIR}/src/PROST/*.c" "${PROJECT_SOURCE_DIR}/src/PROST/*.h" "${PROJECT_SOURCE_DIR}/src/*.H" "${PROJECT_SOURCE_DIR}/src/*.cpp")
 
-add_library (${PROJECT_NAME} SHARED  ${SC_FILES} )
+add_library (${PROJECT_NAME}  ${SC_FILES} )
 # add_library(water STATIC src/H2O.cpp)
 target_link_libraries(${PROJECT_NAME})
 install (TARGETS ${PROJECT_NAME} DESTINATION ${PROJECT_SOURCE_DIR}/lib)

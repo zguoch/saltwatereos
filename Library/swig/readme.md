@@ -16,6 +16,8 @@ The compiler can be Microsoft Visual Studio (e.g. 2017 community). The python ve
 Because the environment variable or cmake package variable is not clear on windows system, just use the CMake GUI version to configure the project, the related path of swig, python and TCL can be set following the GUI steps.
 **Note** that if the python is 64bit, the project has to be configured as **x64** and **release** type.
 
+> Probably CMake can not find `python38_d.lib` or `python38_d.lib`, which is the debug version of python library. It doesn't matter, just compile release version!
+
 # JavaScript 
 
 The latest version of nodejs (>v8) seems doesn't support swig, at least can not correctly build. Therefore, we have to use the lower version of node. The version 8 works!
