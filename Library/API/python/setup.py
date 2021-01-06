@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pyswEOS',
-    version='0.0.3',
+    version='0.0.7',
     author='Zhikui Guo',
     author_email='zguo@geomar.de',
     url='https://www.scibyte.cn',
@@ -17,6 +17,7 @@ setup(
         'argparse',
         'colored'
         ],
+    include_package_data=True,
     entry_points={
         'console_scripts': []
     },

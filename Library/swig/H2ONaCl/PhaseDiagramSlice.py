@@ -8,11 +8,6 @@
 import sys
 import argparse
 import os
-from colored import fg, bg, attr
-C_GREEN = fg('green')
-C_RED = fg('red')
-C_BLUE = fg('blue')
-C_DEFAULT = attr('reset')
 #===============================================================
 import numpy as np 
 import matplotlib as mpl

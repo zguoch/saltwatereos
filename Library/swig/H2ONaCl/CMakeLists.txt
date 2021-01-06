@@ -29,7 +29,7 @@ if(Build_API_MultiLanguage)
         SOURCES ${specie}.i ${API_SRC})
         SWIG_LINK_LIBRARIES(${specie} ${PYTHON_LIBRARIES})
         # install
-        set(INSTALL_PYTHON_API_PYTHON ${PROJECT_SOURCE_DIR}/API/python/py${PROJECT_NAME})
+        set(INSTALL_PYTHON_API_PYTHON ${PROJECT_SOURCE_DIR}/API/python/pyswEOS)
         install(TARGETS ${specie} DESTINATION ${INSTALL_PYTHON_API_PYTHON})
         file(GLOB files_install
             "${CMAKE_CURRENT_SOURCE_DIR}/*.py"

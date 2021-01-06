@@ -1,4 +1,4 @@
 
 rm -rf dist
-python setup.py sdist
-twine upload dist/* --verbose
+python setup.py sdist bdist_wheel
+twine upload dist/*.whl --verbose

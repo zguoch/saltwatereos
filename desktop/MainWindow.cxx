@@ -348,7 +348,7 @@ void MainWindow::SinglePointCalculation(int index_varsSelection)
     switch (index_varsSelection) {
     case 0: //PTX
     {
-        eos.prop_pTX(eos.m_prop,p, T_H+Kelvin, X);
+        eos.m_prop=eos.prop_pTX(p, T_H+Kelvin, X);
         name_T_H=tr("Temperature");
         name_unit_T_H=UNIT_T;
         name_T_H_display=tr("Bulk enthalpy");
@@ -357,7 +357,7 @@ void MainWindow::SinglePointCalculation(int index_varsSelection)
         break;
     case 1: //PHX
     {
-        eos.prop_pHX(eos.m_prop,p, T_H*1000, X); //Enthalpy unit in UI is kJ/kg
+        eos.m_prop=eos.prop_pHX(p, T_H*1000, X); //Enthalpy unit in UI is kJ/kg
         name_T_H=tr("Enthalpy");
         name_unit_T_H=tr("kJ/kg");
         name_T_H_display=tr("Temperature");
@@ -639,7 +639,7 @@ void MainWindow::CalculateProps_PTX_PHX(int PTX_PHX, std::vector<double> arrT_H,
             ui->roundProgressBar->setRange(0,arrT_H.size());
             for (size_t i=0;i<arrT_H.size();++i) {
                 H2ONaCl::cH2ONaCl eos;
-                eos.prop_pTX(eos.m_prop,arrP[i],arrT_H[i]+Kelvin,arrX[i]);
+                eos.m_prop=eos.prop_pTX(arrP[i],arrT_H[i]+Kelvin,arrX[i]);
                 table->SetValue(i, 0, arrT_H[i]);
                 table->SetValue(i, 1, arrP[i]);
                 table->SetValue(i, 2, arrX[i]);
@@ -673,7 +673,7 @@ void MainWindow::CalculateProps_PTX_PHX(int PTX_PHX, std::vector<double> arrT_H,
         ui->roundProgressBar->setRange(0,arrT_H.size());
             for (size_t i=0;i<arrT_H.size();++i) {
                 H2ONaCl::cH2ONaCl eos;
-                eos.prop_pHX(eos.m_prop,arrP[i],arrT_H[i],arrX[i]); //enthalpy unit in UI is kJ/kg
+                eos.m_prop=eos.prop_pHX(arrP[i],arrT_H[i],arrX[i]); //enthalpy unit in UI is kJ/kg
                 table->SetValue(i, 0, eos.m_prop.T);
                 table->SetValue(i, 1, arrP[i]);
                 table->SetValue(i, 2, arrX[i]);
@@ -1061,7 +1061,7 @@ int MainWindow::Calculate_Diagram2D()
                 {
                     int ind_value=i+j*lenT;
                     H2ONaCl::cH2ONaCl eos;
-                    eos.prop_pTX(eos.m_prop,vectorP[j]*1e5,vectorT[i]+Kelvin,X0);
+                    eos.m_prop=eos.prop_pTX(vectorP[j]*1e5,vectorT[i]+Kelvin,X0);
                     points->SetPoint(ind_value, vectorT[i],vectorP[j],X0);
                     arrPhaseRegion->SetValue(ind_value,eos.m_prop.Region);
                     arrDensity->SetValue(ind_value,eos.m_prop.Rho);
@@ -1147,7 +1147,7 @@ int MainWindow::Calculate_Diagram2D()
                 {
                     int ind_value=i+j*lenX;
                     H2ONaCl::cH2ONaCl eos;
-                    eos.prop_pTX(eos.m_prop,vectorP[j]*1e5,T0+Kelvin,vectorX[i]);
+                    eos.m_prop=eos.prop_pTX(vectorP[j]*1e5,T0+Kelvin,vectorX[i]);
                     points->SetPoint(ind_value, vectorX[i],vectorP[j],T0);
                     arrPhaseRegion->SetValue(ind_value,eos.m_prop.Region);
                     arrDensity->SetValue(ind_value,eos.m_prop.Rho);
@@ -1233,7 +1233,7 @@ int MainWindow::Calculate_Diagram2D()
                 {
                     int ind_value=i+j*lenT;
                     H2ONaCl::cH2ONaCl eos;
-                    eos.prop_pTX(eos.m_prop,P0*1e5,vectorT[i]+Kelvin,vectorX[j]);
+                    eos.m_prop=eos.prop_pTX(P0*1e5,vectorT[i]+Kelvin,vectorX[j]);
                     points->SetPoint(ind_value, vectorT[i],vectorX[j],P0);
                     arrPhaseRegion->SetValue(ind_value,eos.m_prop.Region);
                     arrDensity->SetValue(ind_value,eos.m_prop.Rho);
@@ -1951,7 +1951,7 @@ void MainWindow::UpdateUI_H(QLabel* label, QDoubleSpinBox* deltaBox, QDoubleSpin
         {
             for(int k=0;k<2;k++)
             {
-                eos.prop_pTX(eos.m_prop,pMinMax[i], TMinMax[j], XMinMax[k]);
+                eos.m_prop=eos.prop_pTX(pMinMax[i], TMinMax[j], XMinMax[k]);
                 hMin=(eos.m_prop.H < hMin ? eos.m_prop.H : hMin);
                 hMax=(eos.m_prop.H > hMax ? eos.m_prop.H : hMax);
             }
