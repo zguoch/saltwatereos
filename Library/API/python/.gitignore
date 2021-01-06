@@ -3,3 +3,4 @@
 !.gitignore
 !readme.md
 !setup.py
+!*.pyd
