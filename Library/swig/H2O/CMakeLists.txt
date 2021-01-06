@@ -27,9 +27,13 @@ if(Build_API_MultiLanguage)
         SOURCES ${specie}.i ${API_SRC})
         SWIG_LINK_LIBRARIES(${specie} ${PYTHON_LIBRARIES})
         # install
-        install(TARGETS ${specie} DESTINATION ${PROJECT_SOURCE_DIR}/API/python)
-        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${specie}.py DESTINATION ${PROJECT_SOURCE_DIR}/API/python)
-        install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/test_${specie}.py DESTINATION ${PROJECT_SOURCE_DIR}/API/python)
+        set(INSTALL_PYTHON_API_PYTHON ${PROJECT_SOURCE_DIR}/API/python/py${PROJECT_NAME})
+        install(TARGETS ${specie} DESTINATION ${INSTALL_PYTHON_API_PYTHON})
+        file(GLOB files_install
+            "${CMAKE_CURRENT_SOURCE_DIR}/*.py"
+        )
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${specie}.py DESTINATION ${INSTALL_PYTHON_API_PYTHON})
+        install(FILES ${files_install} DESTINATION ${INSTALL_PYTHON_API_PYTHON})
     endif(Build_API_Python)
     # ------ 2. tcl ------------------
     option(Build_API_tcl "whether build API for tcl" ON)

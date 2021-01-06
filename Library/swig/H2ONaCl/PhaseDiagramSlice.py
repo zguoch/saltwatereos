@@ -7,7 +7,6 @@
 
 import sys
 import argparse
-import sys
 import os
 from colored import fg, bg, attr
 C_GREEN = fg('green')
