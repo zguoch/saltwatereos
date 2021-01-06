@@ -12,6 +12,9 @@ using namespace std;
 // if H2ONaCl class is called by swift on ios platform, we change to use PROST to calculate water properties
 // if on desktop platform, please comment this line
 #include "stdfunc.H"
+// solve roots of general polynomial
+// This code comes from https://www.codeproject.com/Articles/674149/A-Real-Polynomial-Class-with-Root-Finder
+#include "Polynomial.h"
 // #include "Fluid.H"
 #include "H2O.H"
 #include "NaCl.H"
@@ -143,7 +146,12 @@ namespace H2ONaCl
          * 
          */
         void P_X_Critical(double T, double& P_crit, double& X_crit);
-
+        /**
+         * @brief Calculate critical T given P
+         * 
+         * @param P pressure [bar]
+         */
+        double T_Critical(double P);
         /**
          * @brief Calculate critical curve of \f$H_2O-NaCl \f$ system in the whole valid region, and then write as to file in format of VTK or dat.
          * 
@@ -165,6 +173,7 @@ namespace H2ONaCl
          * @return double Salinity [Mole fraction of NaCl]
          */
         double X_HaliteLiquidus(double T, double P);
+        std::vector<double> X_HaliteLiquidus(std::vector<double> T, std::vector<double> P);
         /**
          * @brief Write halite liquidus surface as vtk file format
          * 
@@ -194,6 +203,13 @@ namespace H2ONaCl
          */
         double P_VaporLiquidHaliteCoexist(double T);
         /**
+         * @brief Solve temperature of vapor-liquid-halite coexist boundary when given P
+         * 
+         * @param P Pressure [bar]
+         * @return double Temperature [\f$ ^{\circ}\text{C} \f$]
+         */
+        std::vector<double> T_VaporLiquidHaliteCoexist(double P);
+        /**
          * @brief Write vapor+Liquid+Halite coexist surface
          * 
          * @param Tmin [C]
@@ -210,6 +226,7 @@ namespace H2ONaCl
          * @return double Salinity [Mole fraction of NaCl]
          */
         double X_VaporLiquidCoexistSurface_LiquidBranch(double T, double P);
+        std::vector<double> X_VaporLiquidCoexistSurface_LiquidBranch(std::vector<double> T, std::vector<double> P);
         /**
          * @brief Salinity on vapor branch of Vapor + Liquid coexist surface. See equation (13-17) and Table 8 of reference \cite Driesner2007Part1.
          * 
@@ -218,6 +235,7 @@ namespace H2ONaCl
          * @return double Salinity [Mole fraction of NaCl]
          */
         double X_VaporLiquidCoexistSurface_VaporBranch(double T, double P);
+        std::vector<double> X_VaporLiquidCoexistSurface_VaporBranch(std::vector<double> T, std::vector<double> P);
 
         void writeVaporLiquidCoexistSurface(string filename="VaporLiquid", double Tmin=TMIN_C, double Tmax=TMAX_C, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nT=100, int nP=100); 
 
@@ -259,6 +277,14 @@ namespace H2ONaCl
         inline double Mol2Wt(double X_mol)
         {
             return NaCl::MolarMass * X_mol / (NaCl::MolarMass * X_mol + (1 - X_mol) * H2O::MolarMass);
+        };
+        inline std::vector<double> Mol2Wt(std::vector<double> X_mol){
+            std::vector<double> x_wt;
+            for (size_t i = 0; i < X_mol.size(); i++)
+            {
+                x_wt.push_back(Mol2Wt(X_mol[i]));
+            }
+            return x_wt;
         };
         /**
          * @brief Only used in #V_extrapol

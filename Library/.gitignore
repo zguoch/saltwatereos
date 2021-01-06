@@ -1,3 +1,5 @@
 build
 src/H2ONaCl
 API/
+gsl-2.6/src/build
+gsl-2.6/gsl

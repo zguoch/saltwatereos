@@ -1,5 +1,5 @@
 #include<iostream>
-
+#include "Polynomial.h"
 using namespace std;
 
 #include"H2ONaCl.H"
@@ -10,10 +10,63 @@ void Prop_PHX(double P, double H_MJ, double Xwt);
 void PhaseRegion3D_PTX();
 void Figure2_Driesner2007(double T, string filename, double pmax=400e5);
 void Figure2_Driesner2007_log(double T, string filename, double pmax=400e5, double xmin=-11);
+void test_root_poly(double P)
+{
+    const int N = 10;
+    double f[11] = {0.00464, 5E-07, 16.9078, -269.148, 7632.04, -49563.6, 233119.0, -513556.0, 549708.0, -284628.0, NaCl::P_Triple};
+    double P_VLH = 0;
+    for (size_t i = 0; i < 10; i++) //calculate P_VLH (eq. 10) and f[10] simultaneously
+    {
+        f[10] -= f[i];
+    }
+
+    Polynomial polynomial;
+    int degree = 10;
+    std::vector<double> coefficient_vector;
+    coefficient_vector.resize(degree + 1);
+    double * coefficient_vector_ptr = &coefficient_vector[0];
+    for (size_t i = 0; i < degree+1; i++)
+    {
+        coefficient_vector_ptr[i]=f[i];
+    }
+    coefficient_vector_ptr[0]=coefficient_vector_ptr[0]-P;
+    polynomial.SetCoefficients(coefficient_vector_ptr, degree);
+
+    std::vector<double> real_vector;
+    std::vector<double> imag_vector;
+
+    // int degree = polynomial.Degree();
+
+    real_vector.resize(degree);
+    imag_vector.resize(degree);
+
+    double * real_vector_ptr = &real_vector[0];
+    double * imag_vector_ptr = &imag_vector[0];
+
+    int root_count= 0;
+
+    if (polynomial.FindRoots(real_vector_ptr,
+                                imag_vector_ptr,
+                                &root_count) == PolynomialRootFinder::SUCCESS)
+    {
+        int i = 0;
+
+        for (i = 0; i < root_count; ++i)
+        {
+            if(imag_vector_ptr[i]==0)
+            std::cout << "Root " << i << " = " << real_vector_ptr[i]*NaCl::T_Triple << " + i " << imag_vector_ptr[i] << std::endl;
+        }
+    }
+    else
+    {
+        std::cout << "Failed to find all roots." << std::endl;
+    }
+}
 int main()
 {
+    // test_root_poly(350);
     // 1. one point calculation
-    PhaseRegion_PTX(31600000,100+273.15,0.3);
+    // PhaseRegion_PTX(31600000,100+273.15,0.3);
     // Prop_PHX(500e5, 3e6, 0.03);
 
     // 2. 3D P-T-X calculation

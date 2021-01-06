@@ -109,7 +109,8 @@
         "NaCl.C": "cpp",
         "valarray": "c",
         "datastruct_h2onacl.h": "c",
-        "dataStruct_H2ONaCl.H": "cpp"
+        "dataStruct_H2ONaCl.H": "cpp",
+        "forward_list": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled",
     "restructuredtext.linter.disabled": true

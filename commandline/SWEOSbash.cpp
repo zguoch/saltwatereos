@@ -628,36 +628,18 @@ namespace SWEOSbash
       #pragma omp parallel for shared(arrT, arrP, arrX, props, lenT, lenTX)
       for (int i = 0; i < lenP; i++)
       {
-        for (int j = 0; j < lenX; j++)
+        for (int j = 0; j < lenT; j++)
         {
-          for (int k = 0; k < lenT; k++)
+          for (int k = 0; k < lenX; k++)
           {
             H2ONaCl::cH2ONaCl eos;
-            props[k+j*lenT+i*lenTX]=eos.prop_pTX(arrP[i]*1e5, arrT[k]+Kelvin, arrX[j]);
+            props[k+j*lenX+i*lenTX]=eos.prop_pTX(arrP[i]*1e5, arrT[j]+Kelvin, arrX[k]);
           }
         }
         #pragma omp critical
         multiBar.Update();
       }
-      if(m_valueV=="PXT")
-      {
-        Write2D3DResult(arrP, arrX, arrT, props, m_valueO, "Pressure (bar)", "Salinity", "Temperature (°C)");
-      }else if(m_valueV=="TPX")
-      {
-        Write2D3DResult(arrT, arrP, arrX, props, m_valueO, "Temperature (°C)", "Pressure (bar)", "Salinity");
-      }else if(m_valueV=="TXP")
-      {
-        Write2D3DResult(arrT, arrX, arrP, props, m_valueO, "Temperature (°C)", "Salinity", "Pressure (bar)");
-      }else if(m_valueV=="XPT")
-      {
-        Write2D3DResult(arrX, arrP, arrT, props, m_valueO, "Salinity", "Pressure (bar)", "Temperature (°C)");
-      }else if(m_valueV=="XTP")
-      {
-        Write2D3DResult(arrX, arrT, arrP, props, m_valueO, "Salinity", "Temperature (°C)", "Pressure (bar)");
-      }else
-      {
-        Write2D3DResult(arrP, arrT, arrX, props, m_valueO, "Pressure (bar)", "Temperature (°C)", "Salinity");
-      }
+      Write2D3DResult(arrX, arrT, arrP, props, m_valueO, "Salinity", "Temperature (°C)", "Pressure (bar)");
     }else if(m_valueV=="PHX" || m_valueV=="PXH" || m_valueV=="HPX" || m_valueV=="HXP" || m_valueV=="XPH" || m_valueV=="XHP")
     {
       int indP=0, indH=1, indX=2;
@@ -706,13 +688,13 @@ namespace SWEOSbash
       #pragma omp parallel for shared(arrH, arrP, arrX, lenH, lenHX, eos)
       for (int i = 0; i < lenP; i++)
       {
-        for (int j = 0; j < lenX; j++)
+        for (int j = 0; j < lenH; j++)
         {
-          for (int k = 0; k < lenH; k++)
+          for (int k = 0; k < lenX; k++)
           {
             try
             {
-              props[k+j*lenH+i*lenHX]=eos.prop_pHX(arrP[i]*1e5, arrH[k]*1000.0, arrX[j]);
+              props[k+j*lenX+i*lenHX]=eos.prop_pHX(arrP[i]*1e5, arrH[j]*1000.0, arrX[k]);
             }
             catch(const std::exception& e)
             {
@@ -739,25 +721,7 @@ namespace SWEOSbash
         #pragma omp critical
         multiBar.Update();
       }
-      if(m_valueV=="PXH")
-      {
-        Write2D3DResult(arrP, arrX, arrH, props, m_valueO, "Pressure (bar)", "Salinity", "Enthalpy (kJ/kg)");
-      }else if(m_valueV=="HPX")
-      {
-        Write2D3DResult(arrH, arrP, arrX, props, m_valueO, "Enthalpy (kJ/kg)", "Pressure (bar)", "Salinity");
-      }else if(m_valueV=="HXP")
-      {
-        Write2D3DResult(arrH, arrX, arrP, props, m_valueO, "Enthalpy (kJ/kg)", "Salinity", "Pressure (bar)");
-      }else if(m_valueV=="XPH")
-      {
-        Write2D3DResult(arrX, arrP, arrH, props, m_valueO, "Salinity", "Pressure (bar)", "Enthalpy (kJ/kg)");
-      }else if(m_valueV=="XHP")
-      {
-        Write2D3DResult(arrX, arrH, arrP, props, m_valueO, "Salinity", "Enthalpy (kJ/kg)", "Pressure (bar)");
-      }else
-      {
-        Write2D3DResult(arrP, arrH, arrX, props, m_valueO, "Pressure (bar)", "Enthalpy (kJ/kg)", "Salinity");
-      }
+      Write2D3DResult(arrX, arrH, arrP, props, m_valueO, "Salinity", "Enthalpy (kJ/kg)", "Pressure (bar)");
     }
     return true;
   }

@@ -672,7 +672,7 @@ namespace H2ONaCl
         
         return prop;
     }
-
+    
     double cH2ONaCl:: rho_pTX(double p, double T_K, double X_wt)
     {
         H2ONaCl::PROP_H2ONaCl prop;
@@ -2950,6 +2950,13 @@ namespace H2ONaCl
             }
         }
     }
+    double cH2ONaCl::T_Critical(double P)
+    {
+        double temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8;
+        double T_crit=0;
+        fluidProp_crit_P( P*1e5 , 1e-10, T_crit, temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8);
+        return T_crit;
+    };
     /**
      * The liqudius is fitted with the equation 
      * 
@@ -2989,6 +2996,15 @@ namespace H2ONaCl
         if(X_Liquids>1)X_Liquids=1; //ensure X_Liquids in range of [0,1]
         return X_Liquids;
     }
+    std::vector<double> cH2ONaCl::X_HaliteLiquidus(std::vector<double> T, std::vector<double> P)
+    {
+        std::vector<double> X;
+        for (size_t i = 0; i < T.size(); i++)
+        {
+            X.push_back(X_HaliteLiquidus(T[i],P[i]));
+        }
+        return X;
+    };
     /**
      * The correlations for distribution coefficient \f$ K \f$ used to calculate the halite-saturated vapor composition is defined as (eq. 9 of ref. \cite Driesner2007Part1),
      * \f{equation}
@@ -3095,6 +3111,51 @@ namespace H2ONaCl
         
         return P_VLH;
     }
+    std::vector<double> cH2ONaCl::T_VaporLiquidHaliteCoexist(double P)
+    {
+        // Table 6 of Driesner and Heinrich(2007)
+        // P = f0 + f1*x + f2*x^2 + ... + f10*x^{10} ==>
+        // f(x)=f0 - P + f1*x + f2*x^2 + ... + f10*x^{10} = 0, where x=T/T_{triple, NaCl}
+        const int degree = 10;
+        double f[11] = {0.00464, 5E-07, 16.9078, -269.148, 7632.04, -49563.6, 233119.0, -513556.0, 549708.0, -284628.0, NaCl::P_Triple};
+        for (size_t i = 0; i < 10; i++) 
+        {
+            f[10] -= f[i];
+        }
+        Polynomial polynomial;
+        std::vector<double> coefficient_vector;
+        coefficient_vector.resize(degree + 1);
+        double * coefficient_vector_ptr = &coefficient_vector[0];
+        for (size_t i = 0; i < degree+1; i++)
+        {
+            coefficient_vector_ptr[i]=f[i];
+        }
+        coefficient_vector_ptr[0]=coefficient_vector_ptr[0]-P;
+        polynomial.SetCoefficients(coefficient_vector_ptr, degree);
+
+        std::vector<double> real_vector;
+        std::vector<double> imag_vector;
+        real_vector.resize(degree);
+        imag_vector.resize(degree);
+        double * real_vector_ptr = &real_vector[0];
+        double * imag_vector_ptr = &imag_vector[0];
+        int root_count= 0;
+        std::vector<double> roots_T;
+        if (polynomial.FindRoots(real_vector_ptr,imag_vector_ptr,&root_count) == PolynomialRootFinder::SUCCESS)
+        {
+            for (int i = 0; i < root_count; ++i)
+            {
+                if(imag_vector_ptr[i]==0)
+                {
+                    double root_T = real_vector_ptr[i]*NaCl::T_Triple;
+                    if(root_T>=H2ONaCl::TMIN_C && root_T<=H2ONaCl::TMAX_C)
+                    roots_T.push_back(root_T);
+                }
+            }
+        }
+        
+        return roots_T;
+    }
     /**
      * \f{equation}
      * X_{NaCl}^{VL, liq} = X_{crit} + g_0 \sqrt{P_{crit} - P} + g_1 (P_{crit} - P) +g_2(P_{crit} - P)^2
@@ -3140,6 +3201,15 @@ namespace H2ONaCl
         }
 
         return X_VL_LiquidBranch;
+    }
+    std::vector<double> cH2ONaCl::X_VaporLiquidCoexistSurface_LiquidBranch(std::vector<double> T, std::vector<double> P)
+    {
+        std::vector<double> X;
+        for (size_t i = 0; i < T.size(); i++)
+        {
+            X.push_back(X_VaporLiquidCoexistSurface_LiquidBranch(T[i],P[i]));
+        }
+        return X;
     }
     /**
      * See also #X_VaporLiquidCoexistSurface_LiquidBranch and #X_VaporHaliteCoexist
@@ -3196,6 +3266,15 @@ namespace H2ONaCl
             X_VL_VaporBranch = X_HaliteLiquidus(T,P)/X_VL_LiquidBranch * X_VL_VaporBranch;
         }
         return X_VL_VaporBranch;
+    }
+    std::vector<double> cH2ONaCl::X_VaporLiquidCoexistSurface_VaporBranch(std::vector<double> T, std::vector<double> P)
+    {
+        std::vector<double> X;
+        for (size_t i = 0; i < T.size(); i++)
+        {
+            X.push_back(X_VaporLiquidCoexistSurface_VaporBranch(T[i],P[i]));
+        }
+        return X;
     }
     /**
      * \image html Driesner2007_Fig2.png "Molar volume of brine" width=25%.
