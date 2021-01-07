@@ -8,7 +8,7 @@ namespace std {
    %template(StringVector) vector<string>;
    %template(ConstCharVector) vector<const char*>;
 }
-// ========================================================================
+// ============================================================
 %inline %{
 using namespace std;
 %}

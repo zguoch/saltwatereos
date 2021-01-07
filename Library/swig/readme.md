@@ -70,3 +70,5 @@ rm -rf build
 node-gyp configure build
 # node-gyp configure build 
 ```
+
+**注意！！！！** Javascript 似乎不支持std::vector和结构体变量，比如在调用prop_pTX()的时候会出现运行时错误，后面有需要的时候再解决吧！
