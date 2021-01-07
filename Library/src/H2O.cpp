@@ -150,6 +150,27 @@ namespace H2O
         P_boil = exp((T_Critic + Kelvin) / T_K * (a[0] * T_inv + a[1] * pow(T_inv,1.5) + a[2] * pow(T_inv, 3.0) + a[3] * pow(T_inv, 3.5) + a[4] * pow(T_inv,4.0) + a[5] * pow(T_inv ,7.5))) * P_Critic;
         return P_boil;
     }
+    double cH2O::T_Boiling(double P)
+    {
+        if(P>P_Critic/10)return NAN;
+
+        double T0 = TMAX, P0 = 0, P1 = 0, dPdT=0, dT=1E-5;
+        double T_boiling = (T_Critic - TMIN)/2.0;
+        double tol = 1E-4;
+        int iter = 0;
+        while (fabs(T_boiling-T0)/T_boiling > tol)
+        {
+            T0 = T_boiling;
+            P_Boiling(T0); // f(x0)
+            P_Boiling(T0 + dT);
+            dPdT = (P1-P0)/dT;              //f`(x0)
+            T_boiling = T0 - (P0-P)/dPdT;
+            // printf("%d: P=%.2f, P0=%.2f, T0=%.2f, P1=%.0f, dPdT=%.2f, Tnew = %.2f, tol=%.4f\n",iter, P, P0, T0, P1, dPdT, T, fabs(T-T0)/T);
+            iter ++;
+            if(iter>100)break;
+        }
+        return T_boiling;
+    }
     /**
      * \f{equation}
      * \frac{\rho_{Liquid, sat}}{\rho_c} = 1 + b_1\theta^{1/3} + b_2\theta^{2/3} + b_3\theta^{5/3} + b_4\theta^{16/3} + b_5\theta^{43/3} + b_6\theta^{110/3}

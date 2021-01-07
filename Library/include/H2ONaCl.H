@@ -149,9 +149,12 @@ namespace H2ONaCl
         /**
          * @brief Calculate critical T given P
          * 
-         * @param P pressure [bar]
+         * @param P Input pressure, [bar]
+         * @param T_crit Output critical temperature, [\f$ ^{\circ}\text{C} \f$]
+         * @param X_crit Output critical salinity, [Mole fraction of NaCl]
+         * @return double 
          */
-        double T_Critical(double P);
+        void T_X_Critical(double P, double& T_crit, double& X_crit);
         /**
          * @brief Calculate critical curve of \f$H_2O-NaCl \f$ system in the whole valid region, and then write as to file in format of VTK or dat.
          * 

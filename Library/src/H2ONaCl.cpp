@@ -2950,12 +2950,23 @@ namespace H2ONaCl
             }
         }
     }
-    double cH2ONaCl::T_Critical(double P)
+    void cH2ONaCl:: T_X_Critical(double P, double& T_crit, double& X_crit)
     {
-        double temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8;
-        double T_crit=0;
-        fluidProp_crit_P( P*1e5 , 1e-10, T_crit, temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8);
-        return T_crit;
+        double T0 = TMAX_C, P0 = 0, P1 = 0, X_tmp = 0, dPdT=0, dT=1E-5;
+        T_crit = H2O::T_Critic;
+        double tol = 1E-4;
+        int iter = 0;
+        while (fabs(T_crit-T0)/T_crit > tol)
+        {
+            T0 = T_crit;
+            P_X_Critical(T0, P0, X_crit); // f(x0)
+            P_X_Critical(T0 + dT, P1, X_tmp);
+            dPdT = (P1-P0)/dT;              //f`(x0)
+            T_crit = T0 - (P0-P)/dPdT;
+            // printf("%d: P=%.2f, P0=%.2f, T0=%.2f, P1=%.0f, dPdT=%.2f, Tnew = %.2f, tol=%.4f\n",iter, P, P0, T0, P1, dPdT, T, fabs(T-T0)/T);
+            iter ++;
+            if(iter>100)break;
+        }
     };
     /**
      * The liqudius is fitted with the equation 

@@ -106,6 +106,7 @@ namespace H2O
          * @return double Pressure [bar]
          */
         double P_Boiling(double T);
+        double T_Boiling(double P);
         /**
          * @brief Saturated liquid density. See equation (2.6) of reference \cite wagner2002iapws. 
          * 

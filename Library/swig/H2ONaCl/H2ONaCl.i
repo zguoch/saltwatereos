@@ -8,12 +8,13 @@ namespace std {
    %template(StringVector) vector<string>;
    %template(ConstCharVector) vector<const char*>;
 }
-// ============================================================
+// ========================================================================
 %inline %{
 using namespace std;
 %}
 %include "typemaps.i"
 %apply double *OUTPUT { double& P_crit, double& X_crit }; //multi return, use typemaps.i and something like this
+%apply double *OUTPUT { double& T_crit, double& X_crit };
 %{
     // #define SWIG_FILE_WITH_INIT
     #include "H2ONaCl.H"
@@ -190,7 +191,7 @@ namespace H2ONaCl
          * 
          */
         void P_X_Critical(double T, double& P_crit, double& X_crit);
-        double T_Critical(double P);
+        void T_X_Critical(double P, double& T_crit, double& X_crit);
         /**
          * @brief Calculate critical curve of \f$H_2O-NaCl \f$ system in the whole valid region, and then write as to file in format of VTK or dat.
          * 
