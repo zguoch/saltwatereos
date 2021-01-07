@@ -1,12 +1,14 @@
 %module H2ONaCl
 %include std_string.i
 %include std_vector.i
+// ===== This is required for python API but js seems doesn't need it========
 namespace std {
    %template(IntVector) vector<int>;
    %template(DoubleVector) vector<double>;
    %template(StringVector) vector<string>;
    %template(ConstCharVector) vector<const char*>;
 }
+// ========================================================================
 %inline %{
 using namespace std;
 %}

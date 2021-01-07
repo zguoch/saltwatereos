@@ -11,7 +11,7 @@ if(Build_API_MultiLanguage)
     SET_SOURCE_FILES_PROPERTIES(${specie}.i PROPERTIES CPLUSPLUS ON)
     SET_SOURCE_FILES_PROPERTIES(${specie}.i PROPERTIES SWIG_FLAGS "-includeall")
     # set ( CMAKE_C_FLAGS "-flat_namespace") # important
-    # set (CMAKE_CXX_FLAGS "-flat_namespace") # important
+    set (CMAKE_CXX_FLAGS "-flat_namespace") # important
     # ------ 1. python ------------------
     option(Build_API_Python "whether build API for Python" ON)
     if(Build_API_Python)
@@ -32,6 +32,7 @@ if(Build_API_MultiLanguage)
         file(GLOB files_install
             "${CMAKE_CURRENT_SOURCE_DIR}/*.py"
         )
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${specie}.py DESTINATION ${INSTALL_PYTHON_API_PYTHON})
         install(FILES ${files_install} DESTINATION ${INSTALL_PYTHON_API_PYTHON})
     endif(Build_API_Python)
     # ------ 2. tcl ------------------
