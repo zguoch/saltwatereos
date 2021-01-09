@@ -64,6 +64,7 @@ namespace H2ONaCl
         m_phaseRegion_name[ThreePhase_V_L_H]="Vapour + Liquid + Halite";
         m_phaseRegion_name[TwoPhase_V_L_L]="Vapour + Liquid on the liquid side";
         m_phaseRegion_name[TwoPhase_V_L_V]="Vapour + Liquid on the vapour side";
+        m_phaseRegion_name[UnknownPhaseRegion]="Unknown phase region";
 
         // m_phaseRegion_name[SinglePhase_L]="0";
         // m_phaseRegion_name[TwoPhase_L_V_X0]="1.5";
@@ -607,6 +608,7 @@ namespace H2ONaCl
         double T=T_K-Kelvin,Xl_all,Xv_all;
         // 1. 
         prop.Region=findRegion(T, p, Xwt2Xmol(X_wt), Xl_all,Xv_all);
+        // printf("prop_pTX(p=%.2f bar, T=%E C, X=%E wt)->findRegion: %s\n",p/1E5, T, X_wt, m_phaseRegion_name[prop.Region].c_str());
         // 2. calculate rho
         // still problematic at high T & low P
         double V_l_out, V_v_out, T_star_l_out, T_star_v_out, n1_v_out, n2_v_out;
@@ -615,7 +617,7 @@ namespace H2ONaCl
         // 3. calculate enthalpy
         calcEnthalpy(prop.Region, T, p, Xl_all, Xv_all, 
                             prop.H_l, prop.H_v, prop.H_h);
-        
+        // printf("prop_pTX->calcEnthalpy(MJ/kg): H_l=%.2f, H_v=%.2f, H_h=%.2f, %s\n",prop.H_l,prop.H_v, prop.H_h, m_phaseRegion_name[prop.Region].c_str());
         // 4. 
         double Xw_l = Xl_all * NaCl::MolarMass / (Xl_all * NaCl::MolarMass + (1-Xl_all) * H2O::MolarMass);
         double Xw_v = Xv_all * NaCl::MolarMass / (Xv_all * NaCl::MolarMass + (1-Xv_all) * H2O::MolarMass);
@@ -648,7 +650,9 @@ namespace H2ONaCl
         if(prop.Region==TwoPhase_L_H) prop.S_l= 1 - prop.S_h;
         prop.Rho = prop.S_l*prop.Rho_l + prop.S_v*prop.Rho_v + prop.S_h *prop.Rho_h ;
         prop.H = (prop.S_l*prop.Rho_l*prop.H_l + prop.S_v*prop.Rho_v*prop.H_v + prop.S_h * prop.Rho_h * prop.H_h)/prop.Rho;
-        // v+l+h-region
+        // printf("prop_pTX: Rho=%.2f, Rho_l=%.2f, Rho_v=%.2f, Rho_h=%.2f\n",prop.Rho,prop.Rho_l, prop.Rho_v, prop.Rho_h);
+        // printf("prop_pTX: S_l=%.2f, S_v=%.2f, S_h=%.2f\n",prop.S_l, prop.S_v, prop.S_h);
+        // v+l+h-region: //TODO: why ????
         if(prop.Region==ThreePhase_V_L_H) prop.S_l= NAN; 
         if(prop.Region==ThreePhase_V_L_H) prop.S_v= NAN; 
         if(prop.Region==ThreePhase_V_L_H) prop.S_h= NAN; 
@@ -867,7 +871,7 @@ namespace H2ONaCl
                 + cn3[2]*pow((T-500),(11+3 -12));
         }else
         {
-            cout<<"Never happens in cH2ONaCl:: findRegion->P_crit, T: "<<T<<endl;
+            cout<<"Fatal error in cH2ONaCl:: findRegion->P_crit, T: "<<T<<endl;
         }
         // cout<<"T: "<<T<<" P_crit: "<<P_crit<<" P_crit_h20: "<<P_crit_h20<<endl;exit(0);
         // X_crit
@@ -901,7 +905,7 @@ namespace H2ONaCl
             logP_subboil = log10(P_trip_salt) + b_boil*(1/(T_trip_salt+273.15) - 1/(T+273.15));
         }else
         {
-            cout<<"Never happens in cH2ONaCl:: findRegion->logP_subboil, T: "<<T<<endl;
+            cout<<"Fatal error in cH2ONaCl:: findRegion->logP_subboil, T: "<<T<<endl;
         }
         double PNacl = pow(10,(logP_subboil)); // halite vapor pressure
         // cout<<"logP_subboil: "<<logP_subboil<<" PNacl: "<<PNacl<<endl;exit(0);
@@ -1603,7 +1607,7 @@ namespace H2ONaCl
             P = 0.6 * v_prop.p + 0.4 * l_prop.p; //sic
         }else
         {
-            cout<<"Never happens in cH2ONaCl:: fluidProp_crit_T"<<endl;
+            cout<<"Fatal error in cH2ONaCl:: fluidProp_crit_T"<<endl;
         }
         
     }
@@ -3122,6 +3126,104 @@ namespace H2ONaCl
         
         return P_VLH;
     }
+    void cH2ONaCl::Pmax_VaporLiquidHaliteCoexist(double& T, double& P)
+    {
+        // Table 6 of Driesner and Heinrich(2007)
+        double f[11] = {0.00464, 5E-07, 16.9078, -269.148, 7632.04, -49563.6, 233119.0, -513556.0, 549708.0, -284628.0, NaCl::P_Triple};
+        for (size_t i = 0; i < 10; i++) //calculate P_VLH (eq. 10) and f[10] simultaneously
+        {
+            f[10] -= f[i];
+        }
+        // find root
+        const int degree = 9;
+        Polynomial polynomial;
+        std::vector<double> coefficient_vector;
+        coefficient_vector.resize(degree + 1);
+        double * coefficient_vector_ptr = &coefficient_vector[0];
+        for (size_t i = 0; i < degree+1; i++)
+        {
+            coefficient_vector_ptr[i]=(i+1)*f[i+1];
+        }
+        polynomial.SetCoefficients(coefficient_vector_ptr, degree);
+
+        std::vector<double> real_vector;
+        std::vector<double> imag_vector;
+        real_vector.resize(degree);
+        imag_vector.resize(degree);
+        double * real_vector_ptr = &real_vector[0];
+        double * imag_vector_ptr = &imag_vector[0];
+        int root_count= 0;
+        if (polynomial.FindRoots(real_vector_ptr,imag_vector_ptr,&root_count) == PolynomialRootFinder::SUCCESS)
+        {
+            for (int i = 0; i < root_count; ++i)
+            {
+                if(imag_vector_ptr[i]==0)
+                {
+                    double root_T = real_vector_ptr[i]*NaCl::T_Triple;
+                    if(root_T>H2ONaCl::TMIN_C && root_T<=NaCl::T_Triple)
+                    T=root_T;
+                }
+            }
+        }
+        P = P_VaporLiquidHaliteCoexist(T);
+    }
+    std::vector<double> cH2ONaCl::HX_VaporLiquidHaliteCoexist(double P)
+    {
+        std::vector<double> HminHmaxXminXmax;
+        double Hmin, Hmax, Xmin, Xmax;
+        if(P>389.0 || P<H2ONaCl::PMIN)
+        {
+            return HminHmaxXminXmax;
+        }
+        // calculate T1, T2 of intersection of const P and VLH boundary surface
+        vector<double> T1T2 = T_VaporLiquidHaliteCoexist(P);
+        if(T1T2.size()!=2)
+        {
+            return HminHmaxXminXmax;
+        }
+        double dH=1E4;
+        double Tmin = min(T1T2) -1, Tmax=max(T1T2) + 1; // prop_pTX doesn't support LVH region properties, so avoid this case at this moment, fix it later!
+        double P_Pa = P*1E5;
+        // 1. for Tmin point, find the exact H and X
+        Xmin = Mol2Wt(X_HaliteLiquidus(Tmin, P)); // mol fraction to mass fraction
+        m_prop = prop_pTX(P_Pa, Tmin+Kelvin, Xmin);
+        //now the Hmin is calculated from PTX, it is close to the exact H
+        Hmin = max(m_prop.H - 0.5E6, 0.1E6); // move down e.g. 0.2E6, and then move up and check phase changes
+        // for this point, from low H to high H, phase changes from L or LH to LVH
+        m_prop = prop_pHX(P_Pa, Hmin, Xmin);
+        int iter = 0;
+        while (m_prop.Region!=ThreePhase_V_L_H) //find exact Hmin in PHX space
+        {
+            Hmin += dH;
+            m_prop = prop_pHX(P_Pa, Hmin, Xmin);
+            // cout<<iter<<" Hmin: "<<Hmin<<" Xmin: "<<Xmin<<m_phaseRegion_name[m_prop.Region]<<endl;
+            iter++;
+            if(iter>100)return HminHmaxXminXmax;
+        }
+        // 2. for Tmax point, find the exact H and X
+        double dX = 0.01;
+        Xmax = min(Mol2Wt(X_HaliteLiquidus(Tmax, P)), 1-1E-5);
+        m_prop = prop_pTX(P_Pa, Tmax+Kelvin, Xmax);
+        Hmax = m_prop.H + 0.5E6; // move down e.g. 0.2E6, and then move up and check phase changes
+        // for this point, from low H to high H, phase changes from L or LH to LVH
+        m_prop = prop_pHX(P_Pa, Hmax, Xmax);
+        iter = 0;
+        while (m_prop.Region!=ThreePhase_V_L_H) //find exact Hmin in PHX space
+        {
+            Hmax -= dH;
+            m_prop = prop_pHX(P_Pa, Hmax, Xmax);
+            // cout<<iter<<" Hmax: "<<Hmax<<" Xmax: "<<Xmax<<" "<<m_phaseRegion_name[m_prop.Region]<<endl;
+            iter++;
+            if(iter>100)return HminHmaxXminXmax;
+        }
+
+        HminHmaxXminXmax.push_back(Hmin);
+        HminHmaxXminXmax.push_back(Hmax);
+        HminHmaxXminXmax.push_back(Xmin);
+        HminHmaxXminXmax.push_back(Xmax);
+        
+        return HminHmaxXminXmax;
+    }
     std::vector<double> cH2ONaCl::T_VaporLiquidHaliteCoexist(double P)
     {
         // Table 6 of Driesner and Heinrich(2007)
@@ -3548,7 +3650,7 @@ namespace H2ONaCl
             break;
         }
     }
-    void cH2ONaCl::writeVTK_Triangle_Strip(string filename, vector<vector<double> > X, vector<vector<double> > Y, vector<vector<double> > Z)
+    void cH2ONaCl::writeVTK_Triangle_Strip(string filename, vector<vector<double> > X, vector<vector<double> > Y, vector<vector<double> > Z, double scale_X, double scale_Y, double scale_Z)
     {
         ofstream fpout(filename);
         if(!fpout)
@@ -3584,7 +3686,7 @@ namespace H2ONaCl
             {
                 for (size_t j = 0; j < X[i].size(); j++)
                 {
-                    fpout<<"          "<<X[i][j]<<" "<<Y[i][j]<<" "<<Z[i][j]<<endl;
+                    fpout<<"          "<<X[i][j]*scale_X<<" "<<Y[i][j]*scale_Y<<" "<<Z[i][j]*scale_Z<<endl;
                 }
             }
         fpout<<"        </DataArray>"<<endl;
@@ -3627,6 +3729,128 @@ namespace H2ONaCl
         fpout<<"</VTKFile>"<<endl;
 
         fpout.close();
+    }
+    void cH2ONaCl::writeVTK_Quads(string filename, vector<vector<double> > X, vector<vector<double> > Y, vector<vector<double> > Z, double scale_X, double scale_Y, double scale_Z, bool includeTwoEndsPolygon)
+    {
+        ofstream fpout(filename);
+        if(!fpout)
+        {
+            cout<<"ERROR: Can not open file: "<<filename<<endl;
+            exit(0);
+        }
+        int nPoly = X[0].size();
+        int nLayers = X.size()-1;
+        int nQuads = nPoly*nLayers;
+        int np = X.size()*X[0].size();
+        int ncell=nQuads + (includeTwoEndsPolygon==true ? 2: 0); // plus two ends or not
+        //  write VTK head
+        fpout<<"<VTKFile type=\"UnstructuredGrid\" version=\"1.0\" byte_order=\"LittleEndian\" header_type=\"UInt64\">"<<endl;
+        fpout<<"  <UnstructuredGrid>"<<endl;
+        fpout<<"    <Piece NumberOfPoints=\""<<np<<"\" NumberOfCells=\""<<ncell<<"\">"<<endl;
+        fpout<<"      <PointData>"<<endl;
+        fpout<<"      </PointData>"<<endl;
+        fpout<<"      <CellData>"<<endl;
+        fpout<<"      </CellData>"<<endl;
+        fpout<<"      <Points>"<<endl;
+        fpout<<"        <DataArray type=\"Float32\" Name=\"Points\" NumberOfComponents=\"3\" format=\"ascii\">"<<endl;
+            for (size_t i = 0; i < X.size(); i++)
+            {
+                for (size_t j = 0; j < X[i].size(); j++)
+                {
+                    // std::setprecision(9)
+                    fpout<<"          "<<X[i][j]*scale_X<<" "<<Y[i][j]*scale_Y<<" "<<Z[i][j]*scale_Z<<endl;
+                }
+            }
+        fpout<<"        </DataArray>"<<endl;
+        fpout<<"      </Points>"<<endl;
+        fpout<<"      <Cells>"<<endl;
+        fpout<<"        <DataArray type=\"Int64\" Name=\"connectivity\" format=\"ascii\">"<<endl;
+            vector<int> vec_offset;
+            int offset = 0;
+            for (size_t i = 0; i < nLayers; i++)
+            {
+                if (X[i].size()!=nPoly)
+                {
+                    printf("Error in writeVTK_Quads-> the %d layer polygon has %d nodes, but the first layer has %d nodes. This function requires node number of polygons at each layer must be the same.\n", (int)i, (int)X[i].size(), nPoly);
+                    exit(0);
+                }
+                // each edge constructs a quad
+                for (size_t j = 0; j < nPoly; j++)
+                {
+                    int index0 = j+i*X[i].size();
+                    int index1=index0+1;
+                    if(j==(nPoly-1))index1=i*X[i].size(); //the last node connect to the first node
+                    fpout<<"          "<<index0<<" "<<index1<<" "<<index0+nPoly<<" "<<index1+nPoly<<endl;
+                    offset += 4;
+                    vec_offset.push_back(offset);
+                }
+            }
+            if (includeTwoEndsPolygon) //include two ends polygon
+            {
+                for (size_t n = 0; n < 2; n++)
+                {
+                    fpout<<"          ";
+                    for (size_t i = 0; i < nPoly; i++)
+                    {
+                        fpout<<i+n*nLayers*nPoly<<" ";
+                    }
+                    fpout<<endl;
+                    offset += nPoly;
+                    vec_offset.push_back(offset);
+                }
+            }
+        fpout<<"        </DataArray>"<<endl;
+        fpout<<"        <DataArray type=\"Int64\" Name=\"offsets\" format=\"ascii\">"<<endl;
+        fpout<<"          ";
+        for (size_t i = 0; i < vec_offset.size(); i++)
+        {
+            fpout<<vec_offset[i]<<" ";
+        }
+        fpout<<endl;
+        fpout<<"        </DataArray>"<<endl;
+        fpout<<"        <DataArray type=\"UInt8\" Name=\"types\" format=\"ascii\">"<<endl;
+        fpout<<"          ";
+        // quads
+        for (size_t i = 0; i < nQuads; i++)
+        {
+            fpout<<6<<" "; //VTK_QUAD = 9 VTK_TRIANGLE_STRIP = 6
+        }
+        if (includeTwoEndsPolygon)
+        {
+            fpout<<7<<" "<<7<<" "; //VTK_POLYGON = 7
+        }
+        
+        fpout<<endl;
+        fpout<<"        </DataArray>"<<endl;
+        fpout<<"      </Cells>"<<endl;
+        fpout<<"    </Piece>"<<endl;
+        fpout<<"  </UnstructuredGrid>"<<endl;
+        fpout<<"</VTKFile>"<<endl;
+        fpout.close();
+
+        // // write gmsh geo file
+        // string filename_gmsh=filename+".geo";
+        // FILE* fp_gmsh=fopen(filename_gmsh.c_str(),"w");
+        // fprintf(fp_gmsh,"SetFactory(\"OpenCASCADE\");\n");
+        // fprintf(fp_gmsh,"lc=1;\n");
+        // int index_point = 0, index_surface=0;
+        // for (size_t i = 0; i < X.size(); i++)
+        // {
+        //     fprintf(fp_gmsh,"Point(%d) = {%f, %f, %f, lc};\n",index_point, X[i][0]*scale_X, Y[i][0]*scale_Y, Z[i][0]*scale_Z);
+        //     index_point++;
+        //     for (size_t j = 1; j < X[i].size(); j++)
+        //     {
+        //         fprintf(fp_gmsh,"Point(%d) = {%f, %f, %f, lc};\n",index_point, X[i][j]*scale_X, Y[i][j]*scale_Y, Z[i][j]*scale_Z);
+        //         fprintf(fp_gmsh,"Line(%d) = {%d, %d};\n",index_point,index_point-1, index_point);
+
+        //         index_point++;
+        //     }
+        //     fprintf(fp_gmsh,"Line(%d) = {%d, %zu};\n",index_point,index_point-1,index_point-X[i].size());
+        //     fprintf(fp_gmsh,"Curve Loop(%zu) = {%zu:%d};\n",i,index_point-X[i].size()+1,index_point);
+        //     index_surface++;
+        // }
+        // fprintf(fp_gmsh,"vol=newv;ThruSections(vol) = {%d:%d};\n",0,index_surface-1);
+        // fclose(fp_gmsh);
     }
     void cH2ONaCl::writeHaliteLiquidusSurface(string filename,double Tmin, double Tmax, double Pmax, fmtOutPutFile fmt, int nT, int nP)
     {
@@ -3794,91 +4018,108 @@ namespace H2ONaCl
     PhaseRegion cH2ONaCl::findPhaseRegion(const double T, const double P, const double X, double& Xl_all, double& Xv_all)
     {
         return findRegion(T, P*1E5, X, Xl_all, Xv_all);
+    }
+    void cH2ONaCl::writeSurface_VLH_VH_XHP(double scale_X, double scale_H, double scale_P, string outpath, H2ONaCl::fmtOutPutFile fmt, int nP)
+    {
+        double Pmin = PMIN; // bar
+        double Pmax, T_tmp_Pmax; //bar, C
+        Pmax_VaporLiquidHaliteCoexist(T_tmp_Pmax, Pmax);
+        double dP = (Pmax - Pmin)/(nP-1);
+        int nT=100;
+        std::vector<std::vector<double> > vec2P, vec2H_part1, vec2X_part1, vec2H_part2, vec2X_part2, vec2X_VH, vec2H_VH, vec2P_VH;
+        std::vector<std::vector<double> > vec2P_LH, vec2H_LH_part1, vec2X_LH_part1, vec2H_LH_part2, vec2X_LH_part2;
+        double P0;
+        for (size_t i = 0; i < nP; i++)
+        {
+            P0 = Pmin+dP*i;
+            std::vector<double> HminHmaxXminXmax = HX_VaporLiquidHaliteCoexist(P0);
+            if (HminHmaxXminXmax.size()==4)
+            {
+                std::vector<double> vecP(3, P0), vecX_part1(3), vecX_part2(3), vecH_part1(3), vecH_part2(3), vecX_VH(4), vecP_VH(4, P0), vecH_VH(4);
+                std::vector<double> vecP_LH_part1(nT,P0), vecH_LH_part1(nT), vecX_LH_part1(nT);
+                std::vector<double> vecP_LH_part2(nT,P0), vecH_LH_part2(nT), vecX_LH_part2(nT);
+                // for P=P0, the VLH region in salinity-enthalpy space is a triangle
+                // part 1
+                m_prop = prop_pHX(P0*1E5, HminHmaxXminXmax[0], HminHmaxXminXmax[2]);
+                vecH_part1[0] = m_prop.H_v;
+                vecH_part1[1] = m_prop.H_l;
+                vecH_part1[2] = m_prop.H_h;
+                vecX_part1[0] = 0;
+                vecX_part1[1] = HminHmaxXminXmax[2];
+                vecX_part1[2] = 1.0;
+                // V+H
+                vecX_VH[0] = 0; vecX_VH[1] = 1;
+                vecH_VH[0] = m_prop.H_v; vecH_VH[1] = m_prop.H_h;
+                // L+H
+                double dT = (m_prop.T -1 - TMIN_C)/(nT-1);
+                for (size_t k = 0; k < nT; k++)
+                {
+                    double T_LH = TMIN_C + k*dT;
+                    double X_LH=Mol2Wt(X_HaliteLiquidus(T_LH, P0));
+                    m_prop = prop_pTX(P0*1E5, T_LH+Kelvin, X_LH);
+                    vecH_LH_part1[k]=m_prop.H;
+                    vecX_LH_part1[k]=X_LH;
+                }
+                vec2X_LH_part1.push_back(vecX_LH_part1);
+                vec2H_LH_part1.push_back(vecH_LH_part1);
+                vec2P_LH.push_back(vecP_LH_part1);
 
-    //     PhaseRegion region_ind=SinglePhase_L;
-    //     double P_crit = 0, X_crit = 0;
-    //     //1. calculate critical pressure and salinity given T in deg.C
-    //     P_X_Critical(T, P_crit, X_crit); 
-    //     // 2. Halite vapor pressure
-    //     double P_NaCl_vapor = m_NaCl.P_Vapor(T);
-    //     // 3. paressure of v+l+h surface
-    //     double P_vlh = P_VaporLiquidHaliteCoexist(T);
-    //     // 4. salinity of liquid at the V+L+H surface, so the pressure is P_vlh
-    //     double Xl_vlh = X_HaliteLiquidus(T, P_vlh);
-    //     double X_lh = X_HaliteLiquidus(T,P);
-    //     // 5. salinity of vapor at V+H surface, the valid T and P should in V+H region
-    //     double Xv_vh = X_VaporHaliteCoexist(T, P);
-    //     // 6. salinity of liquid and vapor at V+L surface
-    //     double Xl_vl = X_VaporLiquidCoexistSurface_LiquidBranch(T, P);
-    //     double Xv_vl = X_VaporLiquidCoexistSurface_VaporBranch(T, P);
-    //     // calculate phase regions
-    //     double tol_P_LVH = 1e-6; 
-    //     double P_crit_s = P_crit;
-    //     if(P_crit_s<H2O::P_Critic)P_crit_s=H2O::P_Critic;
-    //     double temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8;
-    //     double T_crit=0;
-    //     // TODO: this should be a member function of water, move it to H2O class later!!!
-    //     fluidProp_crit_P( P*1e5 , 1e-10, T_crit, temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8);
-        
-    //     double Xv = Xv_vl;
-    //     if(P<(P_vlh+tol_P_LVH))Xv = Xv_vh;
-    //     if(P>=P_crit)Xv = 0;
-    //     double Xl = Xl_vl;
-    //     if(P>=P_crit)Xl = 0;
-    //     if(P<=(P_vlh-tol_P_LVH))Xl = 0;
-    //     // Xv, Xl, P_crit_s, T_crit, P_NaCl_vapor, NaCl::T_Triple, X_crit, P_vlh
-    //     // printf("Xv: %f\nXl: %f\nP_crit_s: %f\nT_crit: %f\nP_NaCl_vapor: %f\nNaCl::T_Triple: %f\nX_crit: %f\nP_vlh: %f\n",
-    //     //         Xv, Xl, P_crit_s, T_crit, P_NaCl_vapor, NaCl::T_Triple, X_crit, P_vlh);
-    //     // TODO: plot a flow chart of this check process
-    //     if(X<Xv && P<=(P_crit_s) && T>=(T_crit) )region_ind  = SinglePhase_V;   // V  & Temp>=(T_crit)
-    //     if(P<P_NaCl_vapor && T>NaCl::T_Triple)region_ind = SinglePhase_V;   // V: below NaCl vapor pressure (for all NaCl values)
-    //     if( X == 0 && P <= H2O::P_Critic && T<(T_crit+1e-9) && T>(T_crit-1e-9))region_ind = TwoPhase_L_V_X0;
-    //     if(X>0 && X>=Xv && T<=NaCl::T_Triple && P<=(P_vlh-tol_P_LVH) )region_ind   = TwoPhase_V_H;   // V+H & V+H-surface
-    //     if(X>0 && X>=Xv && T<=NaCl::T_Triple && P<(P_vlh+tol_P_LVH) && P>(P_vlh-tol_P_LVH) )region_ind   = ThreePhase_V_L_H;
-    //     if(X>0 && X<=Xl && X>=Xv && X>=X_crit && P>=(P_vlh+tol_P_LVH)  && P<=P_crit_s)region_ind  = TwoPhase_V_L_L;  
-    //     if(X>0 && X>=Xv && X<X_crit && P>=(P_vlh+tol_P_LVH) && P<=P_crit_s)region_ind           = TwoPhase_V_L_V;  
-    //     if(X>=X_lh &&  T<=m_NaCl.T_Melting(P) && P>=(P_vlh+tol_P_LVH))region_ind = TwoPhase_L_H;  // L+H & L+H-surface
-    //     switch (region_ind)
-    //     {
-    //     case SinglePhase_L:
-    //         Xl_all=X;
-    //         break;
-    //     case TwoPhase_L_H:
-    //         Xl_all=X_lh;
-    //         break;
-    //     case ThreePhase_V_L_H:
-    //         Xl_all=Xl;
-    //         break;
-    //     case TwoPhase_V_L_L:
-    //         Xl_all=Xl;
-    //         break;
-    //     case TwoPhase_V_L_V:
-    //         Xl_all=Xl;
-    //         break;
-    //     default:
-    //         break;
-    //     }
+                // part 2
+                m_prop = prop_pHX(P0*1E5, HminHmaxXminXmax[1], HminHmaxXminXmax[3]);
+                vecH_part2[0] = m_prop.H_v;
+                vecH_part2[1] = m_prop.H_l;
+                vecH_part2[2] = m_prop.H_h;
+                vecX_part2[0] = 0;
+                vecX_part2[1] = HminHmaxXminXmax[3];
+                vecX_part2[2] = 1.0;
+                // V+H region
+                vecX_VH[2] = 1; vecX_VH[3] = 0;
+                vecH_VH[2] = m_prop.H_h; vecH_VH[3] = m_prop.H_v;
 
-    //     switch (region_ind)
-    //     {
-    //     case SinglePhase_V:
-    //         Xv_all=X;
-    //         break;
-    //     case TwoPhase_V_H:
-    //         Xv_all=Xv;
-    //         break;
-    //     case ThreePhase_V_L_H:
-    //         Xv_all=Xv;
-    //         break;
-    //     case TwoPhase_V_L_L:
-    //         Xv_all=Xv;
-    //         break;
-    //     case TwoPhase_V_L_V:
-    //         Xv_all=Xv;
-    //         break;
-    //     default:
-    //         break;
-    //     }
-    //     return region_ind;
+                // L+H
+                double T_VLH2 = m_prop.T;
+                dT = (TMAX_C - T_VLH2)/(nT-1);
+                for (size_t k = 0; k < nT; k++)
+                {
+                    double T_LH = T_VLH2 +1 + k*dT;
+                    double X_LH=Mol2Wt(X_HaliteLiquidus(T_LH, P0));
+                    m_prop = prop_pTX(P0*1E5, T_LH+Kelvin, X_LH);
+                    // printf("T=%.2f P=%.2f X=%.2f H=%.2f, T2=%.2f\n", T_LH, P0, X_LH, m_prop.H,T_VLH2);
+                    vecH_LH_part2[k]=m_prop.H;
+                    vecX_LH_part2[k]=X_LH;
+                }
+                vec2X_LH_part2.push_back(vecX_LH_part2);
+                vec2H_LH_part2.push_back(vecH_LH_part2);
+                // =======
+                vec2P.push_back(vecP);
+
+                vec2X_part1.push_back(vecX_part1);
+                vec2H_part1.push_back(vecH_part1);
+
+                vec2X_part2.push_back(vecX_part2);
+                vec2H_part2.push_back(vecH_part2);
+
+                vec2P_VH.push_back(vecP_VH);
+                vec2X_VH.push_back(vecX_VH);
+                vec2H_VH.push_back(vecH_VH);
+            }
+        }
+        cout<<"write to vtk files"<<endl;
+        // 2. Write
+        switch (fmt)
+        {
+        case fmt_vtk:
+            {
+                writeVTK_Quads(outpath+"/VLH_lowH.vtu", vec2X_part1, vec2H_part1, vec2P, scale_X, scale_H, scale_P);
+                writeVTK_Quads(outpath+"/VLH_highH.vtu", vec2X_part2, vec2H_part2, vec2P, scale_X, scale_H, scale_P);
+                writeVTK_Quads(outpath+"/VH.vtu", vec2X_VH, vec2H_VH, vec2P_VH, scale_X, scale_H, scale_P);
+                writeVTK_Quads(outpath+"/LH_lowH.vtu", vec2X_LH_part1, vec2H_LH_part1, vec2P_LH, scale_X, scale_H, scale_P);
+                writeVTK_Quads(outpath+"/LH_highH.vtu", vec2X_LH_part2, vec2H_LH_part2, vec2P_LH, scale_X, scale_H, scale_P);
+            }
+            break;
+
+        default:
+            break;
+        }
     }
 }

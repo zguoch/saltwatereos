@@ -675,6 +675,11 @@ void test_NaClH2O_props_p0hx(double P0_bar)
   sw.prop_pHX(P0_bar*1E5, 1E6, 0.2);
   cout<<sw.m_prop.T<<endl;
 }
+void test_writeVLH_surface_XHP()
+{
+  H2ONaCl::cH2ONaCl sw;
+  sw.writeSurface_VLH_VH_XHP();
+}
 int main( int argc, char** argv )
 {
   std::cout<<"开始测试计算"<<std::endl;
@@ -702,7 +707,8 @@ int main( int argc, char** argv )
   // test_VaporLiquidHaliteCoexistCurves();
   // test_VaporLiquidCoexistSurface();
   // test_findPhaseRegion_TPX(500, 400, 40);
-  test_NaClH2O_props_p0hx(300);
+  // test_NaClH2O_props_p0hx(300);
+  test_writeVLH_surface_XHP();
 
   std::cout<<"测试计算完毕"<<std::endl;
 }

@@ -15,6 +15,7 @@ using namespace std;
 %include "typemaps.i"
 %apply double *OUTPUT { double& P_crit, double& X_crit }; //multi return, use typemaps.i and something like this
 %apply double *OUTPUT { double& T_crit, double& X_crit };
+%apply double *OUTPUT { double& T, double& P };
 %{
     // #define SWIG_FILE_WITH_INIT
     #include "H2ONaCl.H"
@@ -242,6 +243,8 @@ namespace H2ONaCl
          * @return double Pressure [bar]
          */
         double P_VaporLiquidHaliteCoexist(double T);
+        std::vector<double> HX_VaporLiquidHaliteCoexist(double P);
+        void Pmax_VaporLiquidHaliteCoexist(double& T, double& P);
         std::vector<double> T_VaporLiquidHaliteCoexist(double P);
         /**
          * @brief Write vapor+Liquid+Halite coexist surface
