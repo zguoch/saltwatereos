@@ -1,17 +1,3 @@
-{# Import the theme's layout. #}
-{% extends "!layout.html" %}
-
-{% block menu %}
-    {{ super() }}
-
-    {% if menu_links %}
-        <p class="caption">
-            <span class="caption-text">Getting help</span>
-        </p>
-        <ul>
-            {% for text, link in menu_links %}
-                <li class="toctree-l1"><a href="{{ link }}">{{ text }}</a></li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-{% endblock %}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e0991e5e04deb0b7985c51b993b5579024b816fcc0ce710c5530a30df5d84226
+size 433
