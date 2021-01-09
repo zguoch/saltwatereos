@@ -31,8 +31,8 @@ using namespace std;
 namespace H2ONaCl
 {
     // ============= Constants of H2O-NaCl =======================================
-    double const PMIN = 1; /**< Minimum valid pressure of H2O, [bar]. */ 
-    double const PMAX = 2200; /**< Maximum valid pressure of H2O, [bar]. */ 
+    double const PMIN = 10; /**< Minimum valid pressure of H2O, [bar]. */ 
+    double const PMAX = 2100; /**< Maximum valid pressure of H2O, [bar]. */ 
     double const TMIN = 274.15; /**< Minimum valid pressure of H2O, [K].  */ //TODO： 最后统一为C
     double const TMAX = 1273.15; /**< Maximum valid pressure of H2O, [K]. */ //TODO: 最后统一为C
     double const TMIN_K = 274.15; /**< Minimum valid pressure of H2O, [K].  */ 
@@ -345,7 +345,7 @@ namespace H2ONaCl
          * @param fmt file format of the output file, default is vtk format
          * @param nP data points in P axis
          */
-        void writeSurface_VLH_VH_XHP(double scale_X=1, double scale_H=1.0/HMAX, double scale_P=1.0/PMAX, string outpath="./", H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nP=200);
+        void writePhaseSurface_XHP(double scale_X=1, double scale_H=1.0/HMAX, double scale_P=1.0/1000, string outpath="./", H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nP=500);
     private:
         inline double Xwt2Xmol(double X){return (X/NaCl::MolarMass)/(X/NaCl::MolarMass+(1-X)/H2O::MolarMass);};
         void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);

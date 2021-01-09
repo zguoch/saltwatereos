@@ -678,7 +678,7 @@ void test_NaClH2O_props_p0hx(double P0_bar)
 void test_writeVLH_surface_XHP()
 {
   H2ONaCl::cH2ONaCl sw;
-  sw.writeSurface_VLH_VH_XHP();
+  sw.writePhaseSurface_XHP(1, 1.0/H2ONaCl::HMAX, 1.0/H2ONaCl::PMAX, "PhaseBoundary_PHX");
 }
 int main( int argc, char** argv )
 {

@@ -89,14 +89,15 @@ namespace H2ONaCl
     // ============= Constants of H2O-NaCl =======================================
     double const PMIN = 1; /**< Minimum valid pressure of H2O, [bar]. */ 
     double const PMAX = 2200; /**< Maximum valid pressure of H2O, [bar]. */ 
-    double const TMIN = 273.15; /**< Minimum valid pressure of H2O, [K].  */ //TODO： 最后统一为C
+    double const TMIN = 274.15; /**< Minimum valid pressure of H2O, [K].  */ //TODO： 最后统一为C
     double const TMAX = 1273.15; /**< Maximum valid pressure of H2O, [K]. */ //TODO: 最后统一为C
-    double const TMIN_K = 273.15; /**< Minimum valid pressure of H2O, [K].  */ 
+    double const TMIN_K = 274.15; /**< Minimum valid pressure of H2O, [K].  */ 
     double const TMAX_K = 1273.15; /**< Maximum valid pressure of H2O, [K]. */ 
-    double const TMIN_C = 0; /**< Minimum valid pressure of H2O, [C].  */ 
+    double const TMIN_C = 1; /**< Minimum valid pressure of H2O, [C].  */ 
     double const TMAX_C = 1000; /**< Maximum valid pressure of H2O, [C]. */ 
     double const XMIN = 0;  /**< Minimum valid salinity, [mol fraction].  */ 
     double const XMAX = 1;  /**< Maximum valid salinity, [mol fraction].  */ 
+    double const HMAX = 6E6; /**< Approximately maximum valid enthalpy, [J/kg]. It may be used to normize vtk output file data*/
     // ===========================================================================
 
     /**
@@ -148,6 +149,15 @@ namespace H2ONaCl
         H2ONaCl::MAP_PHASE_REGION m_phaseRegion_name;
         H2ONaCl::PROP_H2ONaCl m_prop;
         inline string getPhaseRegionName(PhaseRegion regionID){return m_phaseRegion_name[regionID];};
+        /**
+         * @brief Calculate thermal dynamic properties of NaCl-H2O system.
+         * 
+         * @param p pressure [Pa]
+         * @param T_K Temperature [K]
+         * @param X_wt Salinity [mass fraction, [0,1]]
+         * @param visc_on Calculate viscosity or not, default is true.
+         * @return H2ONaCl::PROP_H2ONaCl 
+         */
         H2ONaCl::PROP_H2ONaCl prop_pTX(double p, double T_K, double X_wt, bool visc_on=true);
         /**
          * @brief Calculate thermal dynamic properties of NaCl-H2O system.
@@ -164,6 +174,7 @@ namespace H2ONaCl
         //X:[0,1]; T: deg. C; P: bar
         void writeProps2VTK(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, std::string fname, bool isWritePy=true, std::string xTitle="x", std::string yTitle="y", std::string zTitle="z");
         void writeProps2xyz(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, std::string fname, std::string xTitle="x", std::string yTitle="y", std::string zTitle="z", string delimiter=" ");
+        friend ostream & operator<<(ostream & out,  cH2ONaCl & A);
         void setColorPrint(bool colorPrint){m_colorPrint=colorPrint;}
         string checkTemperatureRange(double temperature_C);
         string checkPressureRange(double pressure_bar);
@@ -192,6 +203,14 @@ namespace H2ONaCl
          * 
          */
         void P_X_Critical(double T, double& P_crit, double& X_crit);
+        /**
+         * @brief Calculate critical T given P
+         * 
+         * @param P Input pressure, [bar]
+         * @param T_crit Output critical temperature, [\f$ ^{\circ}\text{C} \f$]
+         * @param X_crit Output critical salinity, [Mole fraction of NaCl]
+         * @return double 
+         */
         void T_X_Critical(double P, double& T_crit, double& X_crit);
         /**
          * @brief Calculate critical curve of \f$H_2O-NaCl \f$ system in the whole valid region, and then write as to file in format of VTK or dat.
@@ -243,8 +262,29 @@ namespace H2ONaCl
          * @return double Pressure [bar]
          */
         double P_VaporLiquidHaliteCoexist(double T);
+        /**
+         * @brief Get halite and salinity of V+L+H boundary surface.
+         * 
+         * Of course this is only valid for pressure in range of [H2ONaCl::PMIN, H2ONaCl::cH2ONaCl::Pmax_VaporLiquidHaliteCoexist (~390.147 bar)]
+         * 
+         * @param P Pressure [bar]
+         * @return  std::vector<double> [Hmin, Hmax, Xmin(wt), Xmax(wt)] with four components, or empty for invalid P
+         */
         std::vector<double> HX_VaporLiquidHaliteCoexist(double P);
+        /**
+         * @brief Get maximum pressure and corresponding temperature of V+L+H surface
+         * 
+         * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
+         * @param P Pressure [bar]
+         * @return  
+         */
         void Pmax_VaporLiquidHaliteCoexist(double& T, double& P);
+        /**
+         * @brief Solve temperature of vapor-liquid-halite coexist boundary when given P
+         * 
+         * @param P Pressure [bar]
+         * @return double Temperature [\f$ ^{\circ}\text{C} \f$]
+         */
         std::vector<double> T_VaporLiquidHaliteCoexist(double P);
         /**
          * @brief Write vapor+Liquid+Halite coexist surface
@@ -254,7 +294,6 @@ namespace H2ONaCl
          * @param dT [C]
          */
         void writeVaporLiquidHaliteCoexistSurface(string filename="VaporLiquidHalite", double Tmin=TMIN_C, double Tmax=NaCl::T_Triple, double dT=1, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk);
-        
         /**
          * @brief Salinity on liquid branch of Vapor + Liquid coexist surface. See equation (11) and Table 7 of reference \cite Driesner2007Part1.
          * 
@@ -273,7 +312,7 @@ namespace H2ONaCl
          */
         double X_VaporLiquidCoexistSurface_VaporBranch(double T, double P);
         std::vector<double> X_VaporLiquidCoexistSurface_VaporBranch(std::vector<double> T, std::vector<double> P);
-        
+
         void writeVaporLiquidCoexistSurface(string filename="VaporLiquid", double Tmin=TMIN_C, double Tmax=TMAX_C, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nT=100, int nP=100); 
 
         /**
@@ -352,6 +391,17 @@ namespace H2ONaCl
          * @return PhaseRegion 
          */
         PhaseRegion findPhaseRegion(const double T, const double P, const double X_wt, double& Xl_all, double& Xv_all);
+        /**
+         * @brief Write VLH phase boundary surface in PHX space to VTU file
+         * 
+         * @param scale_X scale of X, default is 1
+         * @param scale_H scale of H, default is 1.0/H2ONaCl::cH2ONaCl::HMAX
+         * @param scale_P scale of P, default is 1.0/H2ONaCl::cH2ONaCl::PMAX
+         * @param filename output vtu filename, default is "VLH.vtu"
+         * @param fmt file format of the output file, default is vtk format
+         * @param nP data points in P axis
+         */
+        void writePhaseSurface_XHP(double scale_X=1, double scale_H=1.0/HMAX, double scale_P=1.0/PMAX, string outpath="./", H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nP=200);
     private:
         inline double Xwt2Xmol(double X){return (X/NaCl::MolarMass)/(X/NaCl::MolarMass+(1-X)/H2O::MolarMass);};
         void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);
@@ -368,6 +418,8 @@ namespace H2ONaCl
         template <typename T> T sum_array1d(T* a, int n);
         template <typename T> T max(std::vector<T> data);
         template <typename T> T min(std::vector<T> data);
+        template <typename T> T min(T a, T b){return (a>b ? b : a);};
+        template <typename T> T max(T a, T b){return (a<b ? b : a);};
     private:
         /**
          * @brief Write array of X,Y,Z to VTU (Serial vtkUnstructuredGrid) file as a 3D line.
@@ -379,6 +431,19 @@ namespace H2ONaCl
          * @return void 
          */
         void writeVTK_PolyLine(string filename,vector<double> X, vector<double> Y, vector<double> Z);
-        void writeVTK_Triangle_Strip(string filename, vector<vector<double> > X, vector<vector<double> > Y, vector<vector<double> > Z);
+        void writeVTK_Triangle_Strip(string filename, vector<vector<double> > X, vector<vector<double> > Y, vector<vector<double> > Z, double scale_X=1.0, double scale_Y=1.0, double scale_Z=1.0);
+        /**
+         * @brief (X[i,:], Y[i,:], Z[i,:]) describe a polygon plane. ([X[i:i+1,j], X[i:i+1, j+1]]) construct a VTK_QUAD in the normal direction of polygon plane.
+         * 
+         * @param filename 
+         * @param X N X M 2D array, M is the node number of each polygon, N is layers number.
+         * @param Y N X M 2D array
+         * @param Z N X M 2D array
+         * @param scale_X Scale factor in X direction, default is 1.0
+         * @param scale_Y Scale factor in Y direction, default is 1.0
+         * @param scale_Z Scale factor in Z direction, default is 1.0
+         * @param includeTwoEndsPolygon whether include polygon on two ends, default is true
+         */
+        void writeVTK_Quads(string filename, vector<vector<double> > X, vector<vector<double> > Y, vector<vector<double> > Z, double scale_X=1.0, double scale_Y=1.0, double scale_Z=1.0, bool includeTwoEndsPolygon=true);
     };
 }

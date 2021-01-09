@@ -4019,77 +4019,200 @@ namespace H2ONaCl
     {
         return findRegion(T, P*1E5, X, Xl_all, Xv_all);
     }
-    void cH2ONaCl::writeSurface_VLH_VH_XHP(double scale_X, double scale_H, double scale_P, string outpath, H2ONaCl::fmtOutPutFile fmt, int nP)
+    void cH2ONaCl::writePhaseSurface_XHP(double scale_X, double scale_H, double scale_P, string outpath, H2ONaCl::fmtOutPutFile fmt, int nP)
     {
         double Pmin = PMIN; // bar
-        double Pmax, T_tmp_Pmax; //bar, C
-        Pmax_VaporLiquidHaliteCoexist(T_tmp_Pmax, Pmax);
+        double Pmax=1000; //PMAX;
+        
         double dP = (Pmax - Pmin)/(nP-1);
         int nT=100;
+        // for case of P < Pmax_VLH 
         std::vector<std::vector<double> > vec2P, vec2H_part1, vec2X_part1, vec2H_part2, vec2X_part2, vec2X_VH, vec2H_VH, vec2P_VH;
-        std::vector<std::vector<double> > vec2P_LH, vec2H_LH_part1, vec2X_LH_part1, vec2H_LH_part2, vec2X_LH_part2;
-        double P0;
+        std::vector<std::vector<double> > vec2P_LH_part1, vec2P_LH_part2, vec2H_LH_part1, vec2X_LH_part1, vec2H_LH_part2, vec2X_LH_part2;
+        std::vector<std::vector<double> > vec2P_VL_part1, vec2H_VL_part1, vec2X_VL_part1, vec2P_VL_part2, vec2H_VL_part2, vec2X_VL_part2;
+        std::vector<std::vector<double> > vec2P_L_part1, vec2H_L_part1, vec2X_L_part1;
+        std::vector<std::vector<double> > vec2P_L_part2, vec2H_L_part2, vec2X_L_part2;
+        // for case of P > Pmax_VLH 
+        std::vector<std::vector<double> > vec2P_LH_highP, vec2H_LH_highP, vec2X_LH_highP;
+        std::vector<std::vector<double> > vec2P_VL_highP, vec2H_VL_highP, vec2X_VL_highP;
+        std::vector<std::vector<double> > vec2P_L, vec2H_L, vec2X_L;
+        double P0, P0_Pa;
         for (size_t i = 0; i < nP; i++)
         {
             P0 = Pmin+dP*i;
+            P0_Pa = P0*1E5;
             std::vector<double> HminHmaxXminXmax = HX_VaporLiquidHaliteCoexist(P0);
             if (HminHmaxXminXmax.size()==4)
             {
                 std::vector<double> vecP(3, P0), vecX_part1(3), vecX_part2(3), vecH_part1(3), vecH_part2(3), vecX_VH(4), vecP_VH(4, P0), vecH_VH(4);
-                std::vector<double> vecP_LH_part1(nT,P0), vecH_LH_part1(nT), vecX_LH_part1(nT);
-                std::vector<double> vecP_LH_part2(nT,P0), vecH_LH_part2(nT), vecX_LH_part2(nT);
+                std::vector<double> vecP_LH_part1(nT+2,P0), vecH_LH_part1(nT+2), vecX_LH_part1(nT+2);
+                std::vector<double> vecP_LH_part2(nT+1,P0), vecH_LH_part2(nT+1), vecX_LH_part2(nT+1);
                 // for P=P0, the VLH region in salinity-enthalpy space is a triangle
                 // part 1
-                m_prop = prop_pHX(P0*1E5, HminHmaxXminXmax[0], HminHmaxXminXmax[2]);
-                vecH_part1[0] = m_prop.H_v;
-                vecH_part1[1] = m_prop.H_l;
-                vecH_part1[2] = m_prop.H_h;
+                H2ONaCl::PROP_H2ONaCl prop1 = prop_pHX(P0_Pa, HminHmaxXminXmax[0], HminHmaxXminXmax[2]);
+                vecH_part1[0] = prop1.H_v;
+                vecH_part1[1] = prop1.H_l;
+                vecH_part1[2] = prop1.H_h;
                 vecX_part1[0] = 0;
                 vecX_part1[1] = HminHmaxXminXmax[2];
                 vecX_part1[2] = 1.0;
                 // V+H
                 vecX_VH[0] = 0; vecX_VH[1] = 1;
-                vecH_VH[0] = m_prop.H_v; vecH_VH[1] = m_prop.H_h;
+                vecH_VH[0] = prop1.H_v; vecH_VH[1] = prop1.H_h;
                 // L+H
-                double dT = (m_prop.T -1 - TMIN_C)/(nT-1);
+                double dT = (prop1.T -1 - TMIN_C)/(nT-1);
                 for (size_t k = 0; k < nT; k++)
                 {
                     double T_LH = TMIN_C + k*dT;
                     double X_LH=Mol2Wt(X_HaliteLiquidus(T_LH, P0));
-                    m_prop = prop_pTX(P0*1E5, T_LH+Kelvin, X_LH);
+                    m_prop = prop_pTX(P0_Pa, T_LH+Kelvin, X_LH);
                     vecH_LH_part1[k]=m_prop.H;
                     vecX_LH_part1[k]=X_LH;
                 }
+                vecH_LH_part1[nT]=prop1.H_h; vecX_LH_part1[nT]=1.0; //corner 1
+                m_prop = prop_pTX(P0_Pa, TMIN_K, 1.0);
+                vecH_LH_part1[nT+1]=m_prop.H; vecX_LH_part1[nT+1]=1.0; //corner 2
                 vec2X_LH_part1.push_back(vecX_LH_part1);
                 vec2H_LH_part1.push_back(vecH_LH_part1);
-                vec2P_LH.push_back(vecP_LH_part1);
+                vec2P_LH_part1.push_back(vecP_LH_part1);
+                // VL
+                double T_crit = 0, X_crit = 0;
+                T_X_Critical(P0, T_crit, X_crit); //Critical point
+                T_crit+=1E-5; //avoid critical point
+                // -------- refine close to critical point -----------
+                int nT_refine = (int)(nT/3.0*2);
+                int nT_normal = nT - nT_refine;
+                double Tmax_VL = prop1.T - 1;
+                double deltaT_refine = (Tmax_VL - T_crit)*0.03;
+                double T_crit_bigger = T_crit + deltaT_refine; 
+                double dT_refine = deltaT_refine/(nT_refine - 1);
+                double dT_normal = (Tmax_VL - T_crit_bigger)/(nT_normal - 1);
+                std::vector<double> vecT(nT);
+                for (size_t k = 0; k < nT_refine; k++)
+                {
+                    vecT[k] = T_crit + k*dT_refine;
+                }
+                for (size_t k = 0; k < nT_normal; k++)
+                {
+                    vecT[k+nT_refine] = T_crit_bigger + k*dT_normal;
+                }
+                // --------------
+                std::vector<double> vecP_VL_part1(nT*2,P0), vecH_VL_part1(nT*2), vecX_VL_part1(nT*2);
+                dT = (prop1.T -1 - T_crit)/(nT - 1); //Avoid too closing to VLH point
+                H2ONaCl::PROP_H2ONaCl prop_VL_L, prop_VL_V;
+                double X_VL_L, X_VL_V, T_VL_L, T_VL_V;
+                for (size_t k = 0; k < nT; k++)
+                {
+                    T_VL_L = vecT[k]; //T_crit + dT*k;
+                    T_VL_V = vecT[k];
+                    // Liquid branch
+                    X_VL_L = Mol2Wt(X_VaporLiquidCoexistSurface_LiquidBranch(T_VL_L,P0));
+                    X_VL_L = ((X_VL_L<=0 || isnan(X_VL_L)) ? 1E-8 : X_VL_L);
+                    prop_VL_L = prop_pTX(P0_Pa, T_VL_L + Kelvin, X_VL_L);
+                    vecH_VL_part1[nT + k] = prop_VL_L.H;
+                    vecX_VL_part1[nT + k] = X_VL_L;
+                    // printf("T=%.2f P=%.2f X=%.2f H=%.2f\n", T_VL, P0, X_VL_L, prop_VL_L.H);
+                    // vapor branch
+                    X_VL_V = Mol2Wt(X_VaporLiquidCoexistSurface_VaporBranch(T_VL_V,P0));
+                    X_VL_V = ((X_VL_V<=0 || isnan(X_VL_V)) ? 1E-8 : X_VL_V);
+                    prop_VL_V = prop_pTX(P0_Pa, T_VL_V + Kelvin, X_VL_V);
+                    vecH_VL_part1[nT - k - 1] = prop_VL_V.H;
+                    vecX_VL_part1[nT - k - 1] = X_VL_V;
+                }
+                vec2P_VL_part1.push_back(vecP_VL_part1);
+                vec2H_VL_part1.push_back(vecH_VL_part1);
+                vec2X_VL_part1.push_back(vecX_VL_part1);
+                // Single phase liquid
+                std::vector<double> vecH_L_part1, vecX_L_part1;
+                for (size_t k = 0; k < vecH_VL_part1.size(); k++)
+                {
+                    vecH_L_part1.push_back(vecH_VL_part1[k]);
+                    vecX_L_part1.push_back(vecX_VL_part1[k]);
+                }
+                for (int k = vecH_LH_part1.size()-3; k > -1; k--)
+                {
+                    vecH_L_part1.push_back(vecH_LH_part1[k]);
+                    vecX_L_part1.push_back(vecX_LH_part1[k]);
+                }
+                m_prop = prop_pTX(P0_Pa, TMIN_K, XMIN+1E-5);
+                vecH_L_part1.push_back(m_prop.H);
+                vecX_L_part1.push_back(0);
+
+                vector<double> vecP_L_part1(vecH_L_part1.size(), P0);
+                vec2H_L_part1.push_back(vecH_L_part1);
+                vec2X_L_part1.push_back(vecX_L_part1);
+                vec2P_L_part1.push_back(vecP_L_part1);
 
                 // part 2
-                m_prop = prop_pHX(P0*1E5, HminHmaxXminXmax[1], HminHmaxXminXmax[3]);
-                vecH_part2[0] = m_prop.H_v;
-                vecH_part2[1] = m_prop.H_l;
-                vecH_part2[2] = m_prop.H_h;
+                H2ONaCl::PROP_H2ONaCl prop2 = prop_pHX(P0_Pa, HminHmaxXminXmax[1], HminHmaxXminXmax[3]);
+                vecH_part2[0] = prop2.H_v;
+                vecH_part2[1] = prop2.H_l;
+                vecH_part2[2] = prop2.H_h;
                 vecX_part2[0] = 0;
                 vecX_part2[1] = HminHmaxXminXmax[3];
                 vecX_part2[2] = 1.0;
                 // V+H region
                 vecX_VH[2] = 1; vecX_VH[3] = 0;
-                vecH_VH[2] = m_prop.H_h; vecH_VH[3] = m_prop.H_v;
+                vecH_VH[2] = prop2.H_h; vecH_VH[3] = prop2.H_v;
 
                 // L+H
-                double T_VLH2 = m_prop.T;
-                dT = (TMAX_C - T_VLH2)/(nT-1);
+                double T_VLH2 = prop2.T;
+                dT = (NaCl::T_Triple - T_VLH2)/(nT-1);
                 for (size_t k = 0; k < nT; k++)
                 {
                     double T_LH = T_VLH2 +1 + k*dT;
                     double X_LH=Mol2Wt(X_HaliteLiquidus(T_LH, P0));
-                    m_prop = prop_pTX(P0*1E5, T_LH+Kelvin, X_LH);
+                    m_prop = prop_pTX(P0_Pa, T_LH+Kelvin, X_LH);
                     // printf("T=%.2f P=%.2f X=%.2f H=%.2f, T2=%.2f\n", T_LH, P0, X_LH, m_prop.H,T_VLH2);
                     vecH_LH_part2[k]=m_prop.H;
                     vecX_LH_part2[k]=X_LH;
                 }
+                vecH_LH_part2[nT]=prop2.H_h; vecX_LH_part2[nT]=1.0; //corner 1
                 vec2X_LH_part2.push_back(vecX_LH_part2);
                 vec2H_LH_part2.push_back(vecH_LH_part2);
+                vec2P_LH_part2.push_back(vecP_LH_part2);
+                // V+L
+                // calculate maximum H and corresponding X according to maximum T
+                H2ONaCl::PROP_H2ONaCl prop_XminTmax = prop_pTX(P0_Pa, TMAX_K, XMIN+1E-8);
+                std::vector<double> vecP_VL_part2(nT+2,P0), vecH_VL_part2(nT+2), vecX_VL_part2(nT+2);
+                dT = (TMAX_C - prop2.T)/(nT - 1); 
+                vecH_VL_part2[0] = prop2.H_v;
+                vecX_VL_part2[0] = 0;
+                for (size_t k = 0; k < nT; k++)
+                {
+                    T_VL_L = prop2.T + dT*k;
+                    // Liquid branch
+                    X_VL_L = Mol2Wt(X_VaporLiquidCoexistSurface_LiquidBranch(T_VL_L,P0));
+                    // X_VL_L = ((X_VL_L<=0 || isnan(X_VL_L)) ? 1E-8 : X_VL_L);
+                    prop_VL_L = prop_pTX(P0_Pa, T_VL_L + Kelvin, X_VL_L);
+                    vecH_VL_part2[k+1] = prop_VL_L.H;
+                    vecX_VL_part2[k+1] = X_VL_L;
+                }
+                vecH_VL_part2[nT+1] = prop_XminTmax.H;
+                vecX_VL_part2[nT+1] = 0;
+                vec2P_VL_part2.push_back(vecP_VL_part2);
+                vec2H_VL_part2.push_back(vecH_VL_part2);
+                vec2X_VL_part2.push_back(vecX_VL_part2);
+                // Single phase liquid
+                std::vector<double> vecH_L_part2, vecX_L_part2;
+                for (size_t k = 1; k < vecH_VL_part2.size()-1; k++)
+                {
+                    vecH_L_part2.push_back(vecH_VL_part2[k]);
+                    vecX_L_part2.push_back(vecX_VL_part2[k]);
+                }
+                m_prop = prop_pTX(P0_Pa, TMAX_K, XMAX-1E-5);
+                vecH_L_part2.push_back(m_prop.H);
+                vecX_L_part2.push_back(1);
+                for (int k = (vecH_LH_part2.size()-2); k > -1; k--)
+                {
+                    vecH_L_part2.push_back(vecH_LH_part2[k]);
+                    vecX_L_part2.push_back(vecX_LH_part2[k]);
+                }
+                vector<double> vecP_L_part2(vecH_L_part2.size(), P0);
+                vec2H_L_part2.push_back(vecH_L_part2);
+                vec2X_L_part2.push_back(vecX_L_part2);
+                vec2P_L_part2.push_back(vecP_L_part2);
+
                 // =======
                 vec2P.push_back(vecP);
 
@@ -4103,6 +4226,89 @@ namespace H2ONaCl
                 vec2X_VH.push_back(vecX_VH);
                 vec2H_VH.push_back(vecH_VH);
             }
+            else
+            {
+                // L+H
+                vector<double> vecH_LH(nT+1), vecX_LH(nT+1), vecP_LH(nT+1, P0);
+                double dT = (NaCl::T_Triple - TMIN_C)/(nT-1);
+                for (size_t k = 0; k < nT; k++)
+                {
+                    double T_LH = TMIN_C + k*dT;
+                    double X_LH=Mol2Wt(X_HaliteLiquidus(T_LH, P0));
+                    m_prop = prop_pTX(P0_Pa, T_LH+Kelvin, X_LH);
+                    vecH_LH[k]=m_prop.H;
+                    vecX_LH[k]=X_LH;
+                }
+                m_prop = prop_pTX(P0_Pa, TMIN_K, XMAX);
+                vecH_LH[nT]=m_prop.H;   vecX_LH[nT]=XMAX;
+                vec2H_LH_highP.push_back(vecH_LH);
+                vec2X_LH_highP.push_back(vecX_LH);
+                vec2P_LH_highP.push_back(vecP_LH);
+                // VL
+                double T_crit = 0, X_crit = 0;
+                T_X_Critical(P0, T_crit, X_crit); //Critical point
+                T_crit+=1E-5;
+                std::vector<double> vecP_VL_highP(nT*2,P0), vecH_VL_highP(nT*2), vecX_VL_highP(nT*2);
+                int nT_refine = (int)(nT/3.0*2);
+                int nT_normal = nT - nT_refine;
+                double deltaT_refine = (TMAX_C - T_crit)*0.1;
+                double T_crit_bigger = T_crit + deltaT_refine; 
+                double dT_refine = deltaT_refine/(nT_refine - 1);
+                double dT_normal = (TMAX_C - T_crit_bigger)/(nT_normal - 1);
+                std::vector<double> vecT(nT);
+                for (size_t k = 0; k < nT_refine; k++)
+                {
+                    vecT[k] = T_crit + k*dT_refine;
+                }
+                for (size_t k = 0; k < nT_normal; k++)
+                {
+                    vecT[k+nT_refine] = T_crit_bigger + k*dT_normal;
+                }
+                H2ONaCl::PROP_H2ONaCl prop_VL_L, prop_VL_V;
+                double X_VL_L, X_VL_V, T_VL;
+                for (size_t k = 0; k < nT; k++)
+                {
+                    T_VL = vecT[k];
+                    // Liquid branch
+                    X_VL_L = Mol2Wt(X_VaporLiquidCoexistSurface_LiquidBranch(T_VL,P0));
+                    prop_VL_L = prop_pTX(P0_Pa, T_VL + Kelvin, X_VL_L);
+                    vecH_VL_highP[nT + k] = prop_VL_L.H;
+                    vecX_VL_highP[nT + k] = X_VL_L;
+                    // vapor branch
+                    X_VL_V = Mol2Wt(X_VaporLiquidCoexistSurface_VaporBranch(T_VL,P0));
+                    X_VL_V = ((X_VL_V<=0 || isnan(X_VL_V)) ? 1E-8 : X_VL_V);
+                    prop_VL_V = prop_pTX(P0_Pa, T_VL + Kelvin, X_VL_V);
+                    vecH_VL_highP[nT - k -1] = prop_VL_V.H;
+                    vecX_VL_highP[nT - k -1] = X_VL_V;
+                }
+                vec2P_VL_highP.push_back(vecP_VL_highP);
+                vec2H_VL_highP.push_back(vecH_VL_highP);
+                vec2X_VL_highP.push_back(vecX_VL_highP);
+                // Single phase liquid
+                std::vector<double> vecH_L, vecX_L;
+                for (size_t k = 0; k < vecP_VL_highP.size(); k++)
+                {
+                    vecH_L.push_back(vecH_VL_highP[k]);
+                    vecX_L.push_back(vecX_VL_highP[k]);
+                }
+                m_prop = prop_pTX(P0_Pa, TMAX_K, XMAX-1E-5);
+                vecH_L.push_back(m_prop.H);
+                vecX_L.push_back(1);
+                for (int k = vecH_LH.size()-2; k > -1; k--)
+                {
+                    vecH_L.push_back(vecH_LH[k]);
+                    vecX_L.push_back(vecX_LH[k]);
+                }
+                m_prop = prop_pTX(P0_Pa, TMIN_K, XMIN+1E-5);
+                vecH_L.push_back(m_prop.H);
+                vecX_L.push_back(0);
+
+                vector<double> vecP_L(vecH_L.size(), P0);
+                vec2H_L.push_back(vecH_L);
+                vec2X_L.push_back(vecX_L);
+                vec2P_L.push_back(vecP_L);
+            }
+            
         }
         cout<<"write to vtk files"<<endl;
         // 2. Write
@@ -4113,8 +4319,16 @@ namespace H2ONaCl
                 writeVTK_Quads(outpath+"/VLH_lowH.vtu", vec2X_part1, vec2H_part1, vec2P, scale_X, scale_H, scale_P);
                 writeVTK_Quads(outpath+"/VLH_highH.vtu", vec2X_part2, vec2H_part2, vec2P, scale_X, scale_H, scale_P);
                 writeVTK_Quads(outpath+"/VH.vtu", vec2X_VH, vec2H_VH, vec2P_VH, scale_X, scale_H, scale_P);
-                writeVTK_Quads(outpath+"/LH_lowH.vtu", vec2X_LH_part1, vec2H_LH_part1, vec2P_LH, scale_X, scale_H, scale_P);
-                writeVTK_Quads(outpath+"/LH_highH.vtu", vec2X_LH_part2, vec2H_LH_part2, vec2P_LH, scale_X, scale_H, scale_P);
+                writeVTK_Quads(outpath+"/LH_lowH.vtu", vec2X_LH_part1, vec2H_LH_part1, vec2P_LH_part1, scale_X, scale_H, scale_P);
+                writeVTK_Quads(outpath+"/LH_highH.vtu", vec2X_LH_part2, vec2H_LH_part2, vec2P_LH_part2, scale_X, scale_H, scale_P);
+                writeVTK_Quads(outpath+"/VL_lowH.vtu", vec2X_VL_part1, vec2H_VL_part1, vec2P_VL_part1, scale_X, scale_H, scale_P);
+                writeVTK_Quads(outpath+"/VL_highH.vtu", vec2X_VL_part2, vec2H_VL_part2, vec2P_VL_part2, scale_X, scale_H, scale_P);
+                // for case of P>Pmax_VLH
+                writeVTK_Quads(outpath+"/LH_highP.vtu", vec2X_LH_highP, vec2H_LH_highP, vec2P_LH_highP, scale_X, scale_H, scale_P);
+                writeVTK_Quads(outpath+"/VL_highP.vtu", vec2X_VL_highP, vec2H_VL_highP, vec2P_VL_highP, scale_X, scale_H, scale_P);
+                writeVTK_Quads(outpath+"/L_highP.vtu", vec2X_L, vec2H_L, vec2P_L, scale_X, scale_H, scale_P, false);
+                writeVTK_Quads(outpath+"/L_lowH.vtu", vec2X_L_part1, vec2H_L_part1, vec2P_L_part1, scale_X, scale_H, scale_P, false);
+                writeVTK_Quads(outpath+"/L_highH.vtu", vec2X_L_part2, vec2H_L_part2, vec2P_L_part2, scale_X, scale_H, scale_P, false);
             }
             break;
 
