@@ -502,8 +502,8 @@ def main(argv):
     # argc=len(argv)
     # usage(argv)
     # exit(0)
-    # XT_P0()
-    makeAnimation_heatingSaltWater(figpath='animation')
+    XT_P0()
+    # makeAnimation_heatingSaltWater(figpath='animation')
     
 
 if __name__ == '__main__':
