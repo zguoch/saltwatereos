@@ -14,6 +14,8 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.ticker import MultipleLocator
+import matplotlib.patches as mpatches
+from matplotlib.collections import PatchCollection
 # config font
 mpl.rcParams['font.family'] = 'Arial'
 mpl.rcParams['font.size'] = 12
@@ -274,7 +276,7 @@ def XT_P0_logLinearScale(P0=150, X0=0.2, H0=1.0E6, Xmin=0.5E-4, Xmax=0.999999, T
     ax_H_log.set_yticks([])
     ax_H_log.axvspan(0,1,fc='lightgray',alpha=0.4,zorder=10)
     # ax_H_log.text(0.5,0.01, 'Log scale',ha='center',va='bottom',color='b', transform=ax_H_log.transAxes)
-    ax_H_log.text(0.5,0.1, 'H=%.2f MJ/kg'%(H0/1E6),ha='center',va='bottom',color='k',fontweight='bold', transform=ax_H_log.transAxes,zorder=10)
+    ax_H_log.text(0.01,0.06, 'H=%.2f MJ/kg'%(H0/1E6),ha='left',va='bottom',color='k',fontweight='bold', transform=ax_H_log.transAxes,zorder=10)
     ax_H_log.xaxis.set_major_locator(mpl.ticker.LogLocator(base=10.0, subs=(1.0,),numticks=20))
     ax_H_log.xaxis.set_minor_locator(mpl.ticker.LogLocator(base=10.0, subs=(0.2,0.4,0.6,0.8),numticks=20))
     ax_H_log.tick_params(axis='x',which='both', colors='blue')
@@ -405,9 +407,16 @@ def XT_P0_logLinearScale(P0=150, X0=0.2, H0=1.0E6, Xmin=0.5E-4, Xmax=0.999999, T
     ax_H.legend(ncol=2)
     # plot phase state with H0, and bulk composition
     prop0=sw.prop_pHX(P0*1E5, H0, X0)
+    rhom=prop0.S_l*prop0.Rho_l + prop0.S_v*prop0.Rho_v + prop0.S_h*prop0.Rho_h
+    X_f = (prop0.S_l*prop0.Rho_l*prop0.X_l + prop0.S_v*prop0.Rho_v*prop0.X_v)/rhom
+    X_s = (prop0.S_h*prop0.Rho_h)/rhom
+    Xm = X_f + X_s
     if(savefig==True):
         print('H=%.3f MJ/kg, X=%.1f wt%%NaCl, P=%.1f bar:\n  T=%.1f C\n  H_l=%.3f MJ/kg, H_v=%.3f MJ/kg, H_h=%.3f MJ/kg\n  X_l=%.1f, X_v=%.2E\n  S_l=%.1f, S_v=%.1f, S_h=%.1f'%(H0/1E6, X0*100, P0, prop0.T, prop0.H_l/1E6, prop0.H_v/1E6, prop0.H_h/1E6, prop0.X_l*100, prop0.X_v*100, prop0.S_l*100, prop0.S_v*100, prop0.S_h*100))
+        Xm=(prop0.S_l*prop0.Rho_l*prop0.X_l + prop0.S_v*prop0.Rho_v*prop0.X_v + prop0.S_h*prop0.Rho_h)/rhom
+        print('  Bulk density: %.2f\n  Bulk salinity: %.2f\n  Fluid salinity: %.2f'%(rhom, X_f + X_s, X_f))
     # plot in X-H space
+    c_l,c_v,c_h,c_f='r','b','k','c'
     ms_base=15
     ms_l=ms_base*prop0.S_l
     if(ms_l<ms_base/4):
@@ -415,18 +424,72 @@ def XT_P0_logLinearScale(P0=150, X0=0.2, H0=1.0E6, Xmin=0.5E-4, Xmax=0.999999, T
     ms_v=10*prop0.S_v
     if(ms_v<ms_base/4):
         ms_v=ms_base/4
+    ec_l,ec_v,fc_l,fc_v=c_v, c_l,c_l,c_v
+    if((prop0.S_l<1E-6) & (prop0.S_h>1E-6)):  #V+H
+        ec_v=c_h
+    if((prop0.S_h>1E-6) & (prop0.S_v>1E-6) & (prop0.S_l>1E-6)): #V+L+H
+        ms_l=ms_base*prop0.S_h*100
+        ms_v=ms_l
+        fc_l,fc_v,ec_l,ec_v=c_h,c_h,c_l,c_v
     if(prop0.X_l<=X_max_log):
-        ax_H_log.plot(prop0.X_l, prop0.H_l,'o',mfc='r',mec='c',markersize=ms_l, zorder=10,alpha=1)
+        ax_H_log.plot(prop0.X_l, prop0.H_l,'o',mfc=fc_l,mec=ec_l,markersize=ms_l, zorder=10,alpha=1)
     else:
-        ax_H.plot(prop0.X_l, prop0.H_l,'o',mfc='r',mec='c',markersize=ms_l, zorder=10,alpha=1)
+        ax_H.plot(prop0.X_l, prop0.H_l,'o',mfc=fc_l,mec=ec_l,markersize=ms_l, zorder=10,alpha=1)
     if(prop0.X_v>=X_max_log):
-        ax_H.plot(prop0.X_v, prop0.H_v,'o',mfc='b',mec='y', markersize=ms_v, zorder=10,alpha=1)
+        ax_H.plot(prop0.X_v, prop0.H_v,'o',mfc=fc_v,mec=ec_v, markersize=ms_v, zorder=10,alpha=1)
     else:
-        ax_H_log.plot(prop0.X_v, prop0.H_v,'o',mfc='b',mec='y', markersize=ms_v, zorder=10,alpha=1)
+        ax_H_log.plot(prop0.X_v, prop0.H_v,'o',mfc=fc_v,mec=ec_v, markersize=ms_v, zorder=10,alpha=1)
+    # plot phase state and saturation
+    w_rect,h_rect,x0,y0=0.8,0.04,0.01,0.12
+    ax_H_log.text(x0, y0+h_rect*1.1,'Phase saturation (%)\n',ha='left',va='bottom',color='gray',fontweight='normal',fontsize=10, transform=ax_H_log.transAxes,zorder=10)
+    if(prop0.S_l>1E-6):
+        ax_H_log.text(x0, y0+h_rect*1.1,'Liquid',ha='left',va='bottom',color=c_l,fontweight='bold',fontsize=10, transform=ax_H_log.transAxes,zorder=10)
+    if(prop0.S_v>1E-6):
+        ax_H_log.text(x0+0.3, y0+h_rect*1.1,'Vapor',ha='left',va='bottom',color=c_v,fontweight='bold',fontsize=10, transform=ax_H_log.transAxes,zorder=10)
+    if(prop0.S_h>1E-6):
+        ax_H_log.text(x0+0.6, y0+h_rect*1.1,'Halite',ha='left',va='bottom',color=c_h,fontweight='bold',fontsize=10, transform=ax_H_log.transAxes,zorder=10)
+    # phase saturation
+    x0_tmp,w_tmp=x0,w_rect*prop0.S_l
+    rect_l = mpatches.Rectangle((x0_tmp, y0),w_tmp,h_rect,fc='r', ec="None",transform=ax_H_log.transAxes,zorder=zorder_p)
+    ax_H_log.add_patch(rect_l)
+    if(prop0.S_l>0.15):
+        ax_H_log.text(x0_tmp+w_tmp/2, y0+h_rect/2,'%.0f%%'%(prop0.S_l*100),ha='center',va='center',color='w',fontweight='bold',fontsize=10, transform=ax_H_log.transAxes,zorder=10)
+    x0_tmp,w_tmp=x0_tmp+w_tmp,w_rect*prop0.S_v
+    rect_v = mpatches.Rectangle((x0_tmp, y0),w_tmp,h_rect,fc='b', ec="None",transform=ax_H_log.transAxes,zorder=zorder_p)
+    ax_H_log.add_patch(rect_v)
+    if(prop0.S_v>0.15):
+        ax_H_log.text(x0_tmp+w_tmp/2, y0+h_rect/2,'%.0f%%'%(prop0.S_v*100),ha='center',va='center',color='w',fontweight='bold',fontsize=10, transform=ax_H_log.transAxes,zorder=10)
+    x0_tmp,w_tmp=x0_tmp+w_tmp,w_rect*prop0.S_h
+    rect_h = mpatches.Rectangle((x0_tmp, y0),w_tmp,h_rect,fc='k', ec="None",transform=ax_H_log.transAxes,zorder=zorder_p)
+    ax_H_log.add_patch(rect_h)
+    if(prop0.S_h>0.15):
+        ax_H_log.text(x0_tmp+w_tmp/2, y0+h_rect/2,'%.0f%%'%(prop0.S_h*100),ha='center',va='center',color='w',fontweight='bold',fontsize=10, transform=ax_H_log.transAxes,zorder=10)
+    # salinity
+    w_rect,h_rect,x0,y0=0.8,0.05,0.01,0.25
+    ax_H_log.text(x0, y0+h_rect*1.1,'Bulk composition (wt.% NaCl)\n',ha='left',va='bottom',color='gray',fontweight='normal',fontsize=10, transform=ax_H_log.transAxes,zorder=10)
+    ax_H_log.text(x0, y0+h_rect*1.1,'Fluid',ha='left',va='bottom',color=c_f,fontweight='bold',fontsize=10, transform=ax_H_log.transAxes,zorder=10)
+    if(prop0.S_h>1E-6):
+        ax_H_log.text(x0+w_rect, y0+h_rect*1.1,'Solid (100% NaCl)',ha='right',va='bottom',color=c_h,fontweight='bold',fontsize=10, transform=ax_H_log.transAxes,zorder=10)
+    
+    x0_tmp,w_tmp=x0,w_rect*(X_f/Xm)
+    rect_f = mpatches.Rectangle((x0_tmp, y0),w_tmp,h_rect,fc=c_f, ec="None",transform=ax_H_log.transAxes,zorder=zorder_p)
+    ax_H_log.add_patch(rect_f)
+    if((X_f/Xm)>0.15):
+        ax_H_log.text(x0_tmp+w_tmp/2, y0+h_rect/2,'%.0f%%'%(X_f*100),ha='center',va='center',color='w',fontweight='bold',fontsize=10, transform=ax_H_log.transAxes,zorder=10)
+    x0_tmp,w_tmp=x0_tmp+w_tmp,w_rect*(X_s/Xm)
+    rect_s = mpatches.Rectangle((x0_tmp, y0),w_tmp,h_rect,fc=c_h, ec="None",transform=ax_H_log.transAxes,zorder=zorder_p)
+    ax_H_log.add_patch(rect_s)
+    # if((X_s/Xm)>0.15):
+    #     ax_H_log.text(x0_tmp+w_tmp/2, y0+h_rect/2,'%.0f%%'%(X_s*100),ha='center',va='center',color='w',fontweight='bold',fontsize=10, transform=ax_H_log.transAxes,zorder=10)
+    
+    # x0_tmp,w_tmp=x0_tmp+w_tmp,w_rect*prop0.S_h
+    # rect_h = mpatches.Rectangle((x0_tmp, y0),w_tmp,h_rect,fc='k', ec="None",transform=ax_H_log.transAxes)
+    # ax_H_log.add_patch(rect_h)
+
     # plot in X-T space
-    ax_T.plot(prop0.X_l, prop0.T,'o',mfc='r',mec='c',markersize=ms_l, zorder=10,alpha=1)
+    ax_T.plot(prop0.X_l, prop0.T,'o',mfc=fc_l,mec=ec_l,markersize=ms_l, zorder=10,alpha=1)
     if(prop0.X_v>=Xmin):
-        ax_T.plot(prop0.X_v, prop0.T,'o',mfc='b',mec='y', markersize=ms_v, zorder=10,clip_on=False,alpha=1)
+        ax_T.plot(prop0.X_v, prop0.T,'o',mfc=fc_v,mec=ec_v, markersize=ms_v, zorder=10,clip_on=False,alpha=1)
     ax_T.text(0.02,0.1, 'T=%.0f $^{\circ}$C'%(prop0.T),ha='left',va='bottom',color='k',fontweight='bold', transform=ax_T.transAxes)
     # axis
     ax_H.xaxis.set_major_locator(MultipleLocator(0.2))
@@ -471,12 +534,21 @@ def XT_P0_logLinearScale(P0=150, X0=0.2, H0=1.0E6, Xmin=0.5E-4, Xmax=0.999999, T
 # Heat a fluid with initial composition(bulk salinity) by increasing bulk enthalpy,
 # visualize the phase change path
 def makeAnimation_heatingSaltWater(P0=250,fmt='png',dpi=400,figpath='.',X_max_log=0.1):
-    H=np.arange(0.1,4.0,0.01)*1E6
+    H=np.arange(0.1,2.31,0.02)*1E6  # L -> L+V
+    H_lvh=np.arange(2.31,2.45,0.005)*1E6 # LVH
+    H=np.append(H, H_lvh)
+    H_vh=np.arange(2.45,3.19,0.01)*1E6 # VH
+    H=np.append(H, H_vh)
+    H_lvh=np.arange(3.19, 3.24,0.01)*1E6 # LVH
+    H=np.append(H, H_lvh)
+    H_vl=np.arange(3.24,3.49,0.01)*1E6 # LV
+    H=np.append(H, H_vl)
+    
     H_l, H_v, X_l, X_v,T_l,T_v=[],[],[],[],[],[]
 
     for i in range(0,len(H)):
         H0=H[i]
-        ax_T, ax_H, ax_H_log, figname,prop=XT_P0_logLinearScale(P0=P0,X0=0.032,H0=H0,savefig=False,X_max_log=X_max_log)
+        ax_T, ax_H, ax_H_log, figname,prop=XT_P0_logLinearScale(P0=P0,X0=0.2,H0=H0,savefig=False,X_max_log=X_max_log)
         if(prop.X_l>=1E-6):
             X_l.append(prop.X_l)
             H_l.append(prop.H_l)
@@ -497,7 +569,7 @@ def makeAnimation_heatingSaltWater(P0=250,fmt='png',dpi=400,figpath='.',X_max_lo
         ax_T.plot(X_l,T_l,'.',color='r',zorder=11, clip_on=False,alpha=1,ms=3)
         plt.savefig('%s/%04d.%s'%(figpath,i,fmt),dpi=dpi)
         print('Progress: %d/%d'%(i, len(H)))
-    # XT_P0_logLinearScale(P0=P0,H0=2.65*1E6)
+    # XT_P0_logLinearScale(P0=P0,H0=3.22*1E6)
 def main(argv):
     # argc=len(argv)
     # usage(argv)
