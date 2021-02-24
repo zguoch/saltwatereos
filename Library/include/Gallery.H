@@ -5,6 +5,13 @@
  * 
     <table style="width:100%">
         <tr>
+            <td class="Gallery"><a href=#> <img src="PhaseDiagram_XTP.jpg" width=300px> </a> </td>
+            <td class="Gallery"><a href=#> <img src="PhaseDiagram_XHP.jpg" width=300px> </a> </td>
+            <td class="Gallery">\link H2ONaCl::cH2ONaCl::P_X_Critical \image html PhaseDiagram_XT_P0_200bar.svg "Phase diagram with constant pressure." width=300px. \endlink</td>
+            <td class="Gallery">\link H2ONaCl::cH2ONaCl::P_X_Critical \image html PhaseDiagram_XT_P0_300bar.svg "Phase diagram with constant pressure." width=300px. \endlink</td>
+            <td class="Gallery">\link H2ONaCl::cH2ONaCl::P_X_Critical \image html PhaseDiagram_XT_P0_500bar.svg "Phase diagram with constant pressure." width=300px. \endlink</td>
+        </tr>
+        <tr>
             <td class="Gallery"><a href=vtk_js/index.html?fileURL=phaseDiagram_NaClH2O.vtkjs> <img src="PhaseDiagram_NaCl_H2O_3D.png" width=300px> </a> </td>
             <td class="Gallery">\link H2ONaCl::cH2ONaCl::P_X_Critical \image html HaliteCriticalCurves.jpg "Critical pressure and composition." width=300px. \endlink</td>
             <td class="Gallery">\link H2ONaCl::cH2ONaCl::X_HaliteLiquidus \image html HaliteLiquidus.jpg "Liquid composition for the halite liquidus." width=300px. \endlink</td>
