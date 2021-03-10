@@ -10,7 +10,9 @@ jobs:
       # checkout source code
       - uses: actions/checkout@v2
       - name: install dependence
-        run: brew install tcl-tk
+        run: |
+          brew install tcl-tk
+          brew install swig
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
@@ -26,11 +28,11 @@ jobs:
           cmake ..
           make install
           cd ../..
-          mkdir libs_ubuntu
-          cp -rf Library/lib libs_ubuntu/
-          cp -rf Library/API libs_ubuntu/
-          cp -rf Library/include libs_ubuntu/
+          mkdir libs_OSX
+          cp -rf Library/lib libs_OSX/
+          cp -rf Library/API libs_OSX/
+          cp -rf Library/include libs_OSX/
       - uses: actions/upload-artifact@v2
         with:
-          name: libs_ubuntu.zip
-          path: libs_ubuntu
+          name: libs_OSX
+          path: libs_OSX/lib

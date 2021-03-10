@@ -15,6 +15,7 @@ jobs:
         run: |
           cmake --version
           g++ --version
+          which tclsh
       - name: compile library
         run: |
           mkdir Library/build
@@ -22,11 +23,11 @@ jobs:
           cmake ..
           make install
           cd ../..
-          mkdir libs_OSX
-          cp -rf Library/lib libs_OSX/
-          cp -rf Library/API libs_OSX/
-          cp -rf Library/include libs_OSX/
+          mkdir libs_ubuntu
+          cp -rf Library/lib libs_ubuntu/
+          cp -rf Library/API libs_ubuntu/
+          cp -rf Library/include libs_ubuntu/
       - uses: actions/upload-artifact@v2
         with:
-          name: libs_OSX.zip
-          path: libs_OSX
+          name: libs_ubuntu.zip
+          path: libs_ubuntu
