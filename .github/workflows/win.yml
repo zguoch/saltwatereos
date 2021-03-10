@@ -1,0 +1,49 @@
+name: Windows
+on: 
+  push:
+    branches: master
+jobs:
+  buildApp:
+    name: library
+    runs-on: windows-latest
+    steps:
+      # checkout source code
+      - uses: actions/checkout@v2
+      # - name: install dependence
+      #   run: |
+      #     sudo apt-get update -y
+      #     sudo apt-get install -y tcl-dev
+      # - name: Set up Python 3.9
+      #   uses: actions/setup-python@v2
+      #   with:
+      #     python-version: 3.9
+      # - name: info
+      #   run: |
+      #     cmake --version
+      #     g++ --version
+      #     which tclsh
+      #     which python
+      - name: compile library
+        run: |
+          mkdir Library/build
+          cd Library/build
+          cmake -DBuild_API_MultiLanguage=OFF ..
+      #     make install
+      #     cd ../..
+      # - name: build command line app
+      #   run: |
+      #     mkdir -p commandline/build
+      #     cd commandline/build
+      #     cmake ..
+      #     make 
+      # - name: package
+      #   run: |
+      #     mkdir libs_ubuntu
+      #     cp -rf Library/lib libs_ubuntu/
+      #     cp -rf Library/API libs_ubuntu/
+      #     cp -rf Library/include libs_ubuntu/
+      #     cp commandline/build/swEOS libs_ubuntu/
+      # - uses: actions/upload-artifact@v2
+      #   with:
+      #     name: libs_ubuntu.zip
+      #     path: libs_ubuntu
