@@ -44,6 +44,12 @@ jobs:
           target: 'desktop'
           dir: '${{ github.workspace }}/QT/'
           install-deps: 'true'
+      - name: build desktop app
+        run: |
+          mkdir -p desktop/build
+          cd desktop/build
+          cmake ..
+          make install
       - name: package
         run: |
           mkdir libs_OSX
