@@ -25,7 +25,12 @@ jobs:
           cd Library/build
           cmake ..
           make install
+          cd ../..
+          mkdir libs_ubuntu
+          cp -rf Library/lib libs_ubuntu/
+          cp -rf Library/API libs_ubuntu/
+          cp -rf Library/include libs_ubuntu/
       - uses: actions/upload-artifact@v2
         with:
-          name: libs.zip
-          path: Library/lib
+          name: libs_ubuntu.zip
+          path: libs_ubuntu

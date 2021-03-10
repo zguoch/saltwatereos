@@ -13,7 +13,7 @@ if(Build_API_MultiLanguage)
     # set ( CMAKE_C_FLAGS "-flat_namespace") # important
     # set (CMAKE_CXX_FLAGS "-flat_namespace") # important
     # ------ 1. python ------------------
-    option(Build_API_Python "whether build API for Python" OFF)
+    option(Build_API_Python "whether build API for Python" ON)
     if(Build_API_Python)
         FIND_PACKAGE(PythonLibs)  
         if(PYTHONLIBS_FOUND)

@@ -21,7 +21,12 @@ jobs:
           cd Library/build
           cmake ..
           make install
+          cd ../..
+          mkdir libs_OSX
+          cp -rf Library/lib libs_OSX/
+          cp -rf Library/API libs_OSX/
+          cp -rf Library/include libs_OSX/
       - uses: actions/upload-artifact@v2
         with:
-          name: libs.zip
-          path: Library/lib
+          name: libs_OSX.zip
+          path: libs_OSX
