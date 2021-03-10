@@ -4,8 +4,11 @@ on:
     branches: master
 env:
   # Path to the solution file relative to the root of the project.
-  SOLUTION_FILE_PATH_LIB: Library\build
-  SOLUTION_FILE_PATH_CMD: commandline\build
+  SOLUTION_FILE_PATH: Library\build
+
+  # Configuration type to build.
+  # You can convert this to a build matrix if you need coverage of multiple configuration types.
+  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
 jobs:
   buildApp:
@@ -16,9 +19,10 @@ jobs:
       - uses: actions/checkout@v2
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1
+
       - name: Restore NuGet packages
         working-directory: ${{env.GITHUB_WORKSPACE}}
-        run: nuget restore ${{env.SOLUTION_FILE_PATH_LIB}}
+        run: nuget restore ${{env.SOLUTION_FILE_PATH}}
       - name: cmake library
         run: |
           mkdir Library/build
@@ -27,26 +31,25 @@ jobs:
       - name: msbuild library
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run: |
-          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH_LIB}}\eosH2ONaCl.sln
+          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}\eosH2ONaCl.sln
           mkdir Library\lib
-          cp ${{env.SOLUTION_FILE_PATH_LIB}}\Release\*.lib Library\lib
-      - name: Restore NuGet packages
-        working-directory: ${{env.GITHUB_WORKSPACE}}
-        run: nuget restore ${{env.SOLUTION_FILE_PATH_CMD}}
-      - name: cmake command line app
-        run: |
-          mkdir -p commandline/build
-          cd commandline/build
-          cmake ..
-      - name: msbuild cmd app
-        working-directory: ${{env.GITHUB_WORKSPACE}}
-        run: |
-          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH_CMD}}\SaltWaterEOS.sln
+          cp ${{env.SOLUTION_FILE_PATH}}\Release\*.lib Library\lib
+      # - name: cmake command line app
+      #   run: |
+      #     mkdir -p commandline/build
+      #     cd commandline/build
+      #     cmake ..
+      # - name: msbuild library
+      #   working-directory: ${{env.GITHUB_WORKSPACE}}
+      #   run: |
+      #     dir D:\a\saltwatereos\saltwatereos\Library\build
+      #     echo ${{env.BUILD_CONFIGURATION}}
+      #     echo ${{env.SOLUTION_FILE_PATH}}
+      #     msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}\..\..\commandline\build\SaltWaterEOS.sln
       - name: package
         run: |
           mkdir swEOS_windows
-          cp ${{env.SOLUTION_FILE_PATH_LIB}}\Release\*.lib swEOS_windows\
-          cp ${{env.SOLUTION_FILE_PATH_CMD}}\Release\*.exe swEOS_windows\
+          cp ${{env.SOLUTION_FILE_PATH}}\Release\*.lib swEOS_windows\
       - uses: actions/upload-artifact@v2
         with:
           name: swEOS_windows.zip
