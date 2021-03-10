@@ -4,11 +4,8 @@ on:
     branches: master
 env:
   # Path to the solution file relative to the root of the project.
-  SOLUTION_FILE_PATH: Library\build
-
-  # Configuration type to build.
-  # You can convert this to a build matrix if you need coverage of multiple configuration types.
-  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+  SOLUTION_FILE_PATH_LIB: Library\build
+  SOLUTION_FILE_PATH_CMD: commandline\build
   BUILD_CONFIGURATION: Release
 jobs:
   buildApp:
@@ -17,26 +14,11 @@ jobs:
     steps:
       # checkout source code
       - uses: actions/checkout@v2
-      # - name: install dependence
-      #   run: |
-      #     sudo apt-get update -y
-      #     sudo apt-get install -y tcl-dev
-      # - name: Set up Python 3.9
-      #   uses: actions/setup-python@v2
-      #   with:
-      #     python-version: 3.9
-      # - name: info
-      #   run: |
-      #     cmake --version
-      #     g++ --version
-      #     which tclsh
-      #     which python
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1
-
       - name: Restore NuGet packages
         working-directory: ${{env.GITHUB_WORKSPACE}}
-        run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+        run: nuget restore ${{env.SOLUTION_FILE_PATH_LIB}}
       - name: cmake library
         run: |
           mkdir Library/build
@@ -44,37 +26,27 @@ jobs:
           cmake -DBuild_API_MultiLanguage=OFF ..
       - name: msbuild library
         working-directory: ${{env.GITHUB_WORKSPACE}}
-        # Add additional options to the MSBuild command line here (like platform or verbosity level).
-        # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
         run: |
-          dir D:\a\saltwatereos\saltwatereos\Library\build
-          echo ${{env.BUILD_CONFIGURATION}}
-          echo ${{env.SOLUTION_FILE_PATH}}
-          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}\eosH2ONaCl.sln
-          dir ${{env.SOLUTION_FILE_PATH}}
-          dir D:\a\saltwatereos\saltwatereos\Library
-          dir ${{env.SOLUTION_FILE_PATH}}\Release
-          dir ${{env.SOLUTION_FILE_PATH}}\x64\Release
+          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH_LIB}}\eosH2ONaCl.sln
           mkdir Library\lib
-          cp ${{env.SOLUTION_FILE_PATH}}\Release\*.lib Library\lib
+          cp ${{env.SOLUTION_FILE_PATH_LIB}}\Release\*.lib Library\lib
+      - name: Restore NuGet packages
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: nuget restore ${{env.SOLUTION_FILE_PATH_CMD}}
       - name: cmake command line app
         run: |
           mkdir -p commandline/build
           cd commandline/build
           cmake ..
-      - name: msbuild library
+      - name: msbuild cmd app
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run: |
-          dir D:\a\saltwatereos\saltwatereos\Library\build
-          echo ${{env.BUILD_CONFIGURATION}}
-          echo ${{env.SOLUTION_FILE_PATH}}
-          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}\..\..\commandline\build\SaltWaterEOS.sln
-          
+          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH_CMD}}\SaltWaterEOS.sln
       - name: package
         run: |
           mkdir swEOS_windows
-          cp ${{env.SOLUTION_FILE_PATH}}\Release\*.lib swEOS_windows\
-          cp ${{env.SOLUTION_FILE_PATH}}\Release\..\..\commandline\build\Release\*.exe swEOS_windows\
+          cp ${{env.SOLUTION_FILE_PATH_LIB}}\Release\*.lib swEOS_windows\
+          cp ${{env.SOLUTION_FILE_PATH_CMD}}\Release\..\..\commandline\build\Release\*.exe swEOS_windows\
       - uses: actions/upload-artifact@v2
         with:
           name: swEOS_windows.zip
