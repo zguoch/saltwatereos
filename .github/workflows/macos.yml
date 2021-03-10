@@ -35,6 +35,7 @@ jobs:
           cmake ..
           make 
       - name: package
+        run: |
           mkdir libs_OSX
           cp -rf Library/lib libs_OSX/
           cp -rf Library/API libs_OSX/

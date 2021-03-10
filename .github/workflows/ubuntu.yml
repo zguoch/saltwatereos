@@ -25,6 +25,14 @@ jobs:
           cmake -DBuild_API_tcl=OFF ..
           make install
           cd ../..
+      - name: build command line app
+        run: |
+          mkdir -p commandline/build
+          cd commandline/build
+          cmake ..
+          make 
+      - name: package
+        run: |
           mkdir libs_ubuntu
           cp -rf Library/lib libs_ubuntu/
           cp -rf Library/API libs_ubuntu/
