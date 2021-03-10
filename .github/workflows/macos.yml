@@ -39,17 +39,15 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
-          version: '5.9.9'
+          version: '5.15.2'
           host: 'mac'
           target: 'desktop'
           dir: '${{ github.workspace }}/QT/'
           install-deps: 'true'
       - name: build desktop app
         run: |
-          mkdir -p desktop/build
-          cd desktop/build
-          cmake ..
-          make install
+          ls ${{ github.workspace }}/QT/QT
+
       - name: package
         run: |
           mkdir libs_OSX
