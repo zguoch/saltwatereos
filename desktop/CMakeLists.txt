@@ -38,7 +38,7 @@ if(OPENMP_FOUND)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
-include_directories(/usr/local/Cellar/libomp/10.0.0/include)
+include_directories(/usr/local/Cellar/libomp/11.0.0/include /usr/local/Cellar/libomp/11.1.0/include)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -47,9 +47,6 @@ set(MACOSX_BUNDLE_ICON_FILE logo.icns)
 set(myApp_ICON ${CMAKE_CURRENT_SOURCE_DIR}/Icons/logo.icns)
 set_source_files_properties(${myApp_ICON} PROPERTIES 
     MACOSX_PACKAGE_LOCATION "Resources")
-
-
-
 
 find_package(VTK COMPONENTS
   vtkCommonCore
