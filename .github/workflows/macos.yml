@@ -28,10 +28,18 @@ jobs:
           cmake ..
           make install
           cd ../..
+      - name: build command line app
+        run: |
+          mkdir -p commandline/build
+          cd commandline/build
+          cmake ..
+          make 
+      - name: package
           mkdir libs_OSX
           cp -rf Library/lib libs_OSX/
           cp -rf Library/API libs_OSX/
           cp -rf Library/include libs_OSX/
+          cp commandline/build/swEOS libs_OSX/
       - uses: actions/upload-artifact@v2
         with:
           name: libs_OSX.zip

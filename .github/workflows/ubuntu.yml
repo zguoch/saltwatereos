@@ -22,7 +22,7 @@ jobs:
         run: |
           mkdir Library/build
           cd Library/build
-          cmake ..
+          cmake -DBuild_API_tcl=OFF ..
           make install
           cd ../..
           mkdir libs_ubuntu
