@@ -1,11 +1,11 @@
-name: MacOS
+name: Ubuntu
 on: 
   push:
     branches: master
 jobs:
   buildApp:
     name: library
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       # checkout source code
       - uses: actions/checkout@v2
