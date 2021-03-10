@@ -49,8 +49,8 @@ jobs:
         # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
         run: |
           dir D:/a/saltwatereos/saltwatereos/Library/build
-          echo MSBuild
-          msbuild -version
+          echo ${{env.BUILD_CONFIGURATION}}
+          echo ${{env.SOLUTION_FILE_PATH}}
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
       #     make install
       #     cd ../..
