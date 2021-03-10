@@ -46,7 +46,7 @@ jobs:
         run: |
           mkdir swEOS_windows
           cp ${{env.SOLUTION_FILE_PATH_LIB}}\Release\*.lib swEOS_windows\
-          cp ${{env.SOLUTION_FILE_PATH_CMD}}\Release\..\..\commandline\build\Release\*.exe swEOS_windows\
+          cp ${{env.SOLUTION_FILE_PATH_CMD}}\Release\*.exe swEOS_windows\
       - uses: actions/upload-artifact@v2
         with:
           name: swEOS_windows.zip
