@@ -1,0 +1,25 @@
+name: MacOS
+on: 
+  push:
+    branches: master
+jobs:
+  buildApp:
+    name: library
+    runs-on: ubuntu-latest
+    steps:
+      # checkout source code
+      - uses: actions/checkout@v2
+      - name: info
+        run: |
+          cmake --version
+          g++ --version
+      - name: compile library
+        run: |
+          mkdir Library/build
+          cd Library/build
+          cmake ..
+          make install
+      - uses: actions/upload-artifact@v2
+        with:
+          name: libs.zip
+          path: Library/lib

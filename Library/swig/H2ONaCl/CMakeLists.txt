@@ -1,6 +1,6 @@
 
 # ================== whether build wrapper for other language, e.g. python, tcl =====================
-option(Build_API_MultiLanguage "whether build API for other langulages" ON)
+option(Build_API_MultiLanguage "whether build API for other langulages" OFF)
 set(specie "H2ONaCl")
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/PROST)
 file(GLOB PROST_SRC "${PROJECT_SOURCE_DIR}/src/PROST/*.c")
