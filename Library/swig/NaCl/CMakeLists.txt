@@ -1,6 +1,6 @@
 
 # ================== whether build wrapper for other language, e.g. python, tcl =====================
-option(Build_API_MultiLanguage "whether build API for other langulages" OFF)
+option(Build_API_MultiLanguage "whether build API for other langulages" ON)
 set(specie "NaCl")
 file(GLOB API_SRC "${PROJECT_SOURCE_DIR}/src/${specie}.cpp" "${PROJECT_SOURCE_DIR}/src/Fluid.cpp")
 
@@ -13,7 +13,7 @@ if(Build_API_MultiLanguage)
     # set ( CMAKE_C_FLAGS "-flat_namespace") # important
     # set (CMAKE_CXX_FLAGS "-flat_namespace") # important
     # ------ 1. python ------------------
-    option(Build_API_Python "whether build API for Python" ON)
+    option(Build_API_Python "whether build API for Python" OFF)
     if(Build_API_Python)
         FIND_PACKAGE(PythonLibs)  
         if(PYTHONLIBS_FOUND)

@@ -9,6 +9,8 @@ jobs:
     steps:
       # checkout source code
       - uses: actions/checkout@v2
+      - name: install dependence
+        run: sudo apt-get install tcl
       - name: info
         run: |
           cmake --version
