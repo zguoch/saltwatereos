@@ -47,7 +47,10 @@ jobs:
       - name: build desktop app
         run: |
           ls ${{ github.workspace }}/QT/QT
-
+          mkdir -p desktop/build
+          cd desktop/build
+          cmake ..
+          make install
       - name: package
         run: |
           mkdir libs_OSX
