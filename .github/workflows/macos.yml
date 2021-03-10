@@ -14,6 +14,7 @@ jobs:
           brew install tcl-tk
           brew install swig
           brew install libomp
+          brew install vtk
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
