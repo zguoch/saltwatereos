@@ -47,6 +47,8 @@ jobs:
           mkdir swEOS_windows
           cp ${{env.SOLUTION_FILE_PATH}}\Release\*.lib swEOS_windows\
           cp ${{env.SOLUTION_FILE_PATH}}\..\..\commandline\build\Release\*.exe swEOS_windows\
+      - name: test cmd app
+        ${{env.SOLUTION_FILE_PATH}}\..\..\commandline\build\SaltWaterEOS.exe -h
       - uses: actions/upload-artifact@v2
         with:
           name: swEOS_windows.zip
