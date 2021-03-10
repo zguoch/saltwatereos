@@ -35,8 +35,6 @@ jobs:
           cd commandline/build
           cmake ..
           make 
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v2
       - name: install vtk
           run: brew install vtk
       - name: package
