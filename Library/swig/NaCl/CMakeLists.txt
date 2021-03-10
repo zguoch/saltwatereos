@@ -1,6 +1,6 @@
 
 # ================== whether build wrapper for other language, e.g. python, tcl =====================
-option(Build_API_MultiLanguage "whether build API for other langulages" OFF)
+option(Build_API_MultiLanguage "whether build API for other langulages" ON)
 set(specie "NaCl")
 file(GLOB API_SRC "${PROJECT_SOURCE_DIR}/src/${specie}.cpp" "${PROJECT_SOURCE_DIR}/src/Fluid.cpp")
 
