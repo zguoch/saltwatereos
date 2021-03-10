@@ -55,5 +55,14 @@ jobs:
           dir ${{env.SOLUTION_FILE_PATH}}
           dir D:\a\saltwatereos\saltwatereos\Library
           dir ${{env.SOLUTION_FILE_PATH}}\Release
-          dir ${{env.SOLUTION_FILE_PATH}}\x64
+          dir ${{env.SOLUTION_FILE_PATH}}\x64\Release
+      - name: package
+        run: |
+          mkdir swEOS_windows
+          cp ${{env.SOLUTION_FILE_PATH}}\Release\*.lib swEOS_windows\
+          cp ${{env.SOLUTION_FILE_PATH}}\Release\*.exe swEOS_windows\
+      - uses: actions/upload-artifact@v2
+        with:
+          name: swEOS_windows.zip
+          path: swEOS_windows
       
