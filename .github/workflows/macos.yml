@@ -35,8 +35,9 @@ jobs:
           cd commandline/build
           cmake ..
           make 
-      - name: install vtk
-          run: brew install vtk
+      - name: install_vtk
+          run: |
+            brew install vtk
       - name: package
         run: |
           mkdir libs_OSX
