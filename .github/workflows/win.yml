@@ -17,20 +17,6 @@ jobs:
     steps:
       # checkout source code
       - uses: actions/checkout@v2
-      # - name: install dependence
-      #   run: |
-      #     sudo apt-get update -y
-      #     sudo apt-get install -y tcl-dev
-      # - name: Set up Python 3.9
-      #   uses: actions/setup-python@v2
-      #   with:
-      #     python-version: 3.9
-      # - name: info
-      #   run: |
-      #     cmake --version
-      #     g++ --version
-      #     which tclsh
-      #     which python
       - name: compile library
         run: |
           mkdir Library/build
@@ -38,24 +24,20 @@ jobs:
           cmake -DBuild_API_MultiLanguage=OFF ..
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1
-
       - name: Restore NuGet packages
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run: nuget restore ${{env.SOLUTION_FILE_PATH}}
-
       - name: Build
         working-directory: ${{env.GITHUB_WORKSPACE}}
-        # Add additional options to the MSBuild command line here (like platform or verbosity level).
-        # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
         run: |
-          dir D:\a\saltwatereos\saltwatereos\Library\build
-          echo ${{env.BUILD_CONFIGURATION}}
-          echo ${{env.SOLUTION_FILE_PATH}}
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}\eosH2ONaCl.sln
-          dir ${{env.SOLUTION_FILE_PATH}}
-          dir D:\a\saltwatereos\saltwatereos\Library
-          dir ${{env.SOLUTION_FILE_PATH}}\Release
-          dir ${{env.SOLUTION_FILE_PATH}}\x64\Release
+          mkdir ${{env.SOLUTION_FILE_PATH}}\..\lib
+          cp ${{env.SOLUTION_FILE_PATH}}\Release\*.lib ${{env.SOLUTION_FILE_PATH}}\..\lib\
+      - name: cmake cmd app
+        run: |
+          mkdir ${{env.SOLUTION_FILE_PATH}}\..\..\commandline\build
+          cd ${{env.SOLUTION_FILE_PATH}}\..\..\commandline\build
+          cmake ..
       - name: package
         run: |
           mkdir swEOS_windows
