@@ -34,5 +34,5 @@ jobs:
           cp -rf Library/include libs_OSX/
       - uses: actions/upload-artifact@v2
         with:
-          name: libs_OSX
-          path: libs_OSX/lib
+          name: libs_OSX.zip
+          path: libs_OSX
