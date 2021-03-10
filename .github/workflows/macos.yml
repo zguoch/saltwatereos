@@ -13,7 +13,6 @@ jobs:
         run: |
           cmake --version
           g++ --version
-          swig --version
       - name: compile library
         run: |
           mkdir Library/build
