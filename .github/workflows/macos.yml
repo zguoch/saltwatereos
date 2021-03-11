@@ -51,11 +51,11 @@ jobs:
           cmake -DQt5_DIR=${QT_DIR}/lib/cmake/Qt5 -DVTK_DIR=/usr/local/Cellar/vtk@8.2/8.2.0_3/lib/cmake/vtk-8.2 ..
           make 
           ${QT_DIR}/bin/macdeployqt swEOS.app
-          echo ${MACOS_CERTIFICATE} | base64 --decode > certificate.p12
+          cat ${MACOS_CERTIFICATE} | base64 --decode > certificate.p12
           security create-keychain -p ${TMP_PWD} signApp.keychain 
           security default-keychain -s signApp.keychain
           security unlock-keychain -p ${TMP_PWD} signApp.keychain
-          security import certificate.p12 -k signApp.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
+          security import certificate.p12 -k signApp.keychain -P ${MACOS_CERTIFICATE_PWD} -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k ${TMP_PWD} signApp.keychain
           codesign --deep -fs "Developer ID Application: ${APPLEDEVELOPERID_APP}" --options=runtime --timestamp swEOS.app
           hdiutil create -srcfolder swEOS.app swEOS.dmg
