@@ -1,7 +1,7 @@
 name: MacOS_test
 on: 
   push:
-    branches: main
+    branches: master
 jobs:
   buildApp:
     name: library
@@ -15,15 +15,12 @@ jobs:
     steps:
       - name: install dependence
         run: |
-          echo ${MACOS_CERTIFICATE}
           echo ${MACOS_CERTIFICATE} | base64 --decode > certificate.p12
           security create-keychain -p ${TMP_PWD} build.keychain 
           security default-keychain -s build.keychain
           security unlock-keychain -p ${TMP_PWD} build.keychain
-          security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
+          security import certificate.p12 -k build.keychain -P ${MACOS_CERTIFICATE_PWD} -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k ${TMP_PWD} build.keychain
-          echo ${QT_DIR}
-          echo ${APPLEDEVELOPERID_APP}
       # debug workflow through ssh
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3

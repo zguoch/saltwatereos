@@ -85,9 +85,9 @@ include_directories(
 
 # Set your files and resources here
 # qroundprogressbar.cpp
-set( Srcs main.cxx  MainWindow.cxx  Meter.cpp)
+set( Srcs main.cxx  MainWindow.cxx qroundprogressbar.cpp  Meter.cpp)
 # qroundprogressbar.h
-set( Hdrs MainWindow.h  Meter.h)
+set( Hdrs MainWindow.h qroundprogressbar.h  Meter.h)
 
 set( MOC_Hdrs ui_MainWindow.h )
 
