@@ -42,23 +42,23 @@ MainWindow::MainWindow(QWidget *parent)
     connect(watcher_, &QFutureWatcher<int>::finished,this, &MainWindow::busy_job_finished);
 
     //round progress bar
-    ui->roundProgressBar->setVisible(false);
-//    ui->roundProgressBar->setFormat("%v");
-    ui->roundProgressBar->setDecimals(0);
+    //ui->roundProgressBar->setVisible(false);
+//    //ui->roundProgressBar->setFormat("%v");
+    //ui->roundProgressBar->setDecimals(0);
     QPalette pal = palette();
     // set background
     pal.setColor(QPalette::Background, Qt::white);
     pal.setColor(QPalette::Text, Qt::blue);
     pal.setBrush(QPalette::AlternateBase, Qt::white);
-    ui->roundProgressBar->setAutoFillBackground(true);
-    ui->roundProgressBar->setPalette(pal);
+    //ui->roundProgressBar->setAutoFillBackground(true);
+    //ui->roundProgressBar->setPalette(pal);
     QGradientStops gradientPoints;
     gradientPoints << QGradientStop(0, Qt::green) << QGradientStop(0.5, Qt::yellow) << QGradientStop(1, Qt::red);
     // and set it
-    ui->roundProgressBar->setDataColors(gradientPoints);
-    ui->roundProgressBar->setRange(0,100);
-    ui->roundProgressBar->setValue(0);
-    ui->roundProgressBar->setNullPosition(QRoundProgressBar::PositionBottom);
+    //ui->roundProgressBar->setDataColors(gradientPoints);
+    //ui->roundProgressBar->setRange(0,100);
+    //ui->roundProgressBar->setValue(0);
+    // //ui->roundProgressBar->setNullPosition(QRoundProgressBar::PositionBottom);
     
     ui->toolBar->setFixedHeight(36);
     ui->toolBar->setIconSize(QSize(36, 36));
@@ -636,7 +636,7 @@ void MainWindow::CalculateProps_PTX_PHX(int PTX_PHX, std::vector<double> arrT_H,
     switch (PTX_PHX) {
         case USING_PTX: //PTX
         {
-            ui->roundProgressBar->setRange(0,arrT_H.size());
+            //ui->roundProgressBar->setRange(0,arrT_H.size());
             for (size_t i=0;i<arrT_H.size();++i) {
                 H2ONaCl::cH2ONaCl eos;
                 eos.m_prop=eos.prop_pTX(arrP[i],arrT_H[i]+Kelvin,arrX[i]);
@@ -664,13 +664,13 @@ void MainWindow::CalculateProps_PTX_PHX(int PTX_PHX, std::vector<double> arrT_H,
 
                 table->SetValue(i, 17, eos.m_prop.X_l);
                 table->SetValue(i, 18, eos.m_prop.X_v);
-                ui->roundProgressBar->setValue((int)i);
+                //ui->roundProgressBar->setValue((int)i);
             }
         }
         break;
         case USING_PHX:
         {
-        ui->roundProgressBar->setRange(0,arrT_H.size());
+        //ui->roundProgressBar->setRange(0,arrT_H.size());
             for (size_t i=0;i<arrT_H.size();++i) {
                 H2ONaCl::cH2ONaCl eos;
                 eos.m_prop=eos.prop_pHX(arrP[i],arrT_H[i],arrX[i]); //enthalpy unit in UI is kJ/kg
@@ -698,7 +698,7 @@ void MainWindow::CalculateProps_PTX_PHX(int PTX_PHX, std::vector<double> arrT_H,
 
                 table->SetValue(i, 17, eos.m_prop.X_l);
                 table->SetValue(i, 18, eos.m_prop.X_v);
-                ui->roundProgressBar->setValue((int)i);
+                //ui->roundProgressBar->setValue((int)i);
             }
         }
         break;
@@ -789,13 +789,13 @@ int MainWindow::testjob()
         // cout<<i<<std::endl;;
         while(t.elapsed()<1000);
         ind++;
-        ui->roundProgressBar->setValue(ind);
+        //ui->roundProgressBar->setValue(ind);
     }
     return 1;
 }
 void MainWindow::on_vtkCameraControl_reset_triggered()
 {
-//    ui->roundProgressBar->setVisible(true);
+//    //ui->roundProgressBar->setVisible(true);
 //    auto future = QtConcurrent::run(this, &MainWindow::testjob);
 //    watcher_->setFuture(future);
 }
@@ -1049,7 +1049,7 @@ int MainWindow::Calculate_Diagram2D()
             arrX_l->SetNumberOfValues(num_Points);
             arrX_v->SetNumberOfValues(num_Points);
             //calculate
-            ui->roundProgressBar->setRange(0,vectorP.size());
+            //ui->roundProgressBar->setRange(0,vectorP.size());
             int progress=0;
             omp_set_num_threads(m_threadNumOMP);
             int lenP = (int)(vectorP.size());
@@ -1081,8 +1081,8 @@ int MainWindow::Calculate_Diagram2D()
                     arrX_v->SetValue(ind_value,eos.m_prop.X_v);
                 }
                 progress++;
-                #pragma omp critical
-                ui->roundProgressBar->setValue(progress);
+                // #pragma omp critical
+                //ui->roundProgressBar->setValue(progress);
             }
             // Specify the dimensions of the grid
             m_structuredGrid->SetDimensions(vectorT.size(),vectorP.size(),1);
@@ -1135,7 +1135,7 @@ int MainWindow::Calculate_Diagram2D()
             arrX_l->SetNumberOfValues(num_Points);
             arrX_v->SetNumberOfValues(num_Points);
             //calculate
-            ui->roundProgressBar->setRange(0,vectorP.size());
+            //ui->roundProgressBar->setRange(0,vectorP.size());
             int progress=0;
             omp_set_num_threads(m_threadNumOMP);
             int lenP = (int)(vectorP.size());
@@ -1167,8 +1167,8 @@ int MainWindow::Calculate_Diagram2D()
                     arrX_v->SetValue(ind_value,eos.m_prop.X_v);
                 }
                 progress++;
-                #pragma omp critical
-                ui->roundProgressBar->setValue(progress);
+                // #pragma omp critical
+                //ui->roundProgressBar->setValue(progress);
             }
             // Specify the dimensions of the grid
             m_structuredGrid->SetDimensions(vectorX.size(),vectorP.size(),1);
@@ -1221,7 +1221,7 @@ int MainWindow::Calculate_Diagram2D()
             arrX_l->SetNumberOfValues(num_Points);
             arrX_v->SetNumberOfValues(num_Points);
             //calculate
-            ui->roundProgressBar->setRange(0,vectorX.size());
+            //ui->roundProgressBar->setRange(0,vectorX.size());
             int progress=0;
             omp_set_num_threads(m_threadNumOMP);
             int lenX = (int)(vectorX.size());
@@ -1253,8 +1253,8 @@ int MainWindow::Calculate_Diagram2D()
                     arrX_v->SetValue(ind_value,eos.m_prop.X_v);
                 }
                 progress++;
-                #pragma omp critical
-                ui->roundProgressBar->setValue(progress);
+                // #pragma omp critical
+                //ui->roundProgressBar->setValue(progress);
             }
             // Specify the dimensions of the grid
             m_structuredGrid->SetDimensions(vectorT.size(),vectorX.size(),1);
@@ -1406,14 +1406,14 @@ void MainWindow::busy_job()
     switch (m_dimension) {
         case 1:
         {
-            ui->roundProgressBar->setVisible(true);
+            //ui->roundProgressBar->setVisible(true);
             auto future = QtConcurrent::run(this, &MainWindow::Calculate_Diagram1D);
             watcher_->setFuture(future);
         }
         break;
         case 2:
         {
-            ui->roundProgressBar->setVisible(true);
+            //ui->roundProgressBar->setVisible(true);
             auto future = QtConcurrent::run(this, &MainWindow::Calculate_Diagram2D);
             watcher_->setFuture(future);
         }
@@ -1449,7 +1449,7 @@ void MainWindow::busy_job_finished()
         break;
 
     }
-    ui->roundProgressBar->setVisible(false); //calculation finished, hide progressbar
+    //ui->roundProgressBar->setVisible(false); //calculation finished, hide progressbar
 }
 void MainWindow::on_pushButton_clicked()
 {
@@ -1656,14 +1656,14 @@ void MainWindow::updateUILayout(bool show_secondVariable, bool show_thirdVariabl
             // button of calculation
             QRect geometry3=ui->pushButton->geometry();
             ui->pushButton->setGeometry(ui->groupBox_chartOptions->geometry().x()+ui->groupBox_chartOptions->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
-            ui->roundProgressBar->setGeometry(ui->groupBox_chartOptions->geometry().x()+ui->groupBox_chartOptions->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
+            //ui->roundProgressBar->setGeometry(ui->groupBox_chartOptions->geometry().x()+ui->groupBox_chartOptions->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
         }else
         {
             // chart options
             ui->groupBox_chartOptions->setVisible(false);
             QRect geometry3=ui->pushButton->geometry();
             ui->pushButton->setGeometry(ui->groupBox_fixed_Var->geometry().x()+ui->groupBox_fixed_Var->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
-            ui->roundProgressBar->setGeometry(ui->groupBox_fixed_Var->geometry().x()+ui->groupBox_fixed_Var->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
+            //ui->roundProgressBar->setGeometry(ui->groupBox_fixed_Var->geometry().x()+ui->groupBox_fixed_Var->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
         }
     }else
     {
@@ -1676,7 +1676,7 @@ void MainWindow::updateUILayout(bool show_secondVariable, bool show_thirdVariabl
             // button of calculation
             QRect geometry3=ui->pushButton->geometry();
             ui->pushButton->setGeometry(ui->groupBox_chartOptions->geometry().x()+ui->groupBox_chartOptions->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
-            ui->roundProgressBar->setGeometry(ui->groupBox_chartOptions->geometry().x()+ui->groupBox_chartOptions->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
+            //ui->roundProgressBar->setGeometry(ui->groupBox_chartOptions->geometry().x()+ui->groupBox_chartOptions->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
         }else
         {
             // chart options
@@ -1684,7 +1684,7 @@ void MainWindow::updateUILayout(bool show_secondVariable, bool show_thirdVariabl
             // button of calculation
             QRect geometry3=ui->pushButton->geometry();
             ui->pushButton->setGeometry(ui->groupBox_Variables->geometry().x()+ui->groupBox_Variables->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
-            ui->roundProgressBar->setGeometry(ui->groupBox_Variables->geometry().x()+ui->groupBox_Variables->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
+            //ui->roundProgressBar->setGeometry(ui->groupBox_Variables->geometry().x()+ui->groupBox_Variables->geometry().width()+10, geometry3.y(),geometry3.width(),geometry3.height());
         }
     }
 

@@ -1,7 +1,7 @@
 name: MacOS
 on: 
   push:
-    branches: master
+    branches: main
 jobs:
   buildApp:
     name: library
@@ -14,7 +14,7 @@ jobs:
           brew install tcl-tk
           brew install swig
           brew install libomp
-          brew install vtk
+          brew install vtk@8.2
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:

@@ -65,15 +65,17 @@ find_package(VTK COMPONENTS
   vtkViewsContext2D
   vtkIOLegacy
 )
+message("VTK version: " "${VTK_VERSION}")
+message("VTK QT version: " "${VTK_QT_VERSION}")
 include(${VTK_USE_FILE})
-
+if("${VTK_QT_VERSION}" STREQUAL "")
+  message(FATAL_ERROR "VTK was not built with Qt")
+endif()
 # add H2ONaCl source and library 
 include_directories(../Library/include ../commandline)
 link_directories("../Library/lib" "/usr/local/lib" "${Qt5_DIR}/lib")
 
-if("${VTK_QT_VERSION}" STREQUAL "")
-  message(FATAL_ERROR "VTK was not built with Qt")
-endif()
+
 
 # Use the include path and library for Qt that is used by VTK.
 include_directories(
@@ -82,10 +84,10 @@ include_directories(
 )
 
 # Set your files and resources here
-
-set( Srcs main.cxx  MainWindow.cxx qroundprogressbar.cpp Meter.cpp)
-
-set( Hdrs MainWindow.h qroundprogressbar.h Meter.h)
+# qroundprogressbar.cpp
+set( Srcs main.cxx  MainWindow.cxx  Meter.cpp)
+# qroundprogressbar.h
+set( Hdrs MainWindow.h  Meter.h)
 
 set( MOC_Hdrs ui_MainWindow.h )
 
