@@ -1,7 +1,7 @@
 name: MacOS
 on: 
   push:
-    branches: main
+    branches: master
 jobs:
   buildApp:
     name: library
@@ -44,13 +44,13 @@ jobs:
           target: 'desktop'
           dir: '${{ github.workspace }}/QT/'
           install-deps: 'true'
-      - name: build desktop app
-        run: |
-          ls ${{ github.workspace }}/QT/QT
-          mkdir -p desktop/build
-          cd desktop/build
-          cmake ..
-          make install
+      # - name: build desktop app
+      #   run: |
+      #     ls ${{ github.workspace }}/QT/QT
+      #     mkdir -p desktop/build
+      #     cd desktop/build
+      #     cmake ..
+      #     make install
       - name: package
         run: |
           mkdir libs_OSX
@@ -62,3 +62,7 @@ jobs:
         with:
           name: libs_OSX.zip
           path: libs_OSX
+      # debug workflow through ssh
+      - uses: actions/checkout@v2
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
