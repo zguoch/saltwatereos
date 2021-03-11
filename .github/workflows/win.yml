@@ -1,7 +1,7 @@
 name: Windows
 on: 
   push:
-    branches: master
+    branches: main
 env:
   # Path to the solution file relative to the root of the project.
   SOLUTION_FILE_PATH: Library\build

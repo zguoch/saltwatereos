@@ -69,7 +69,7 @@ include(${VTK_USE_FILE})
 
 # add H2ONaCl source and library 
 include_directories(../Library/include ../commandline)
-link_directories("../Library/lib" "/usr/local/lib" "/Users/zguo/Qt/5.9.9/clang_64/lib" "/Users/runner/work/saltwatereos/saltwatereos/QT/Qt/5.15.2/clang_64/lib")
+link_directories("../Library/lib" "/usr/local/lib" "${Qt5_DIR}/lib")
 
 if("${VTK_QT_VERSION}" STREQUAL "")
   message(FATAL_ERROR "VTK was not built with Qt")
