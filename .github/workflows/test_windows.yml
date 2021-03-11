@@ -1,7 +1,7 @@
 name: Windows_test
 on: 
   push:
-    branches: master
+    branches: main
 jobs:
   buildApp:
     name: library

@@ -1,7 +1,7 @@
 name: MacOS_test
 on: 
   push:
-    branches: master
+    branches: main
 jobs:
   buildApp:
     name: library
@@ -19,7 +19,7 @@ jobs:
           security create-keychain -p ${TMP_PWD} build.keychain 
           security default-keychain -s build.keychain
           security unlock-keychain -p ${TMP_PWD} build.keychain
-          security import certificate.p12 -k build.keychain -P 199010292116gzk -T /usr/bin/codesign
+          security import certificate.p12 -k build.keychain -P ${MACOS_CERTIFICATE_PWD} -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k ${TMP_PWD} build.keychain
       # debug workflow through ssh
       - name: Setup tmate session
