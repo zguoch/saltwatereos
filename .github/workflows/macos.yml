@@ -60,7 +60,7 @@ jobs:
           cp -rf Library/API libs_OSX/
           cp -rf Library/include libs_OSX/
           cp commandline/build/swEOS libs_OSX/
-          cp desktop/*.dmg libs_OSX/
+          cp desktop/build/*.dmg libs_OSX/
       - uses: actions/upload-artifact@v2
         with:
           name: libs_OSX.zip
