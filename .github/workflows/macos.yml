@@ -6,6 +6,9 @@ jobs:
   buildApp:
     name: library
     runs-on: macos-latest
+    env:
+      APPLEDEVELOPERID_APP: ${{ secrets.APPLEDEVELOPERID_APP }}
+      QT_DIR: /usr/local/Cellar/qt@5/5.15.2
     steps:
       # checkout source code
       - uses: actions/checkout@v2
@@ -38,23 +41,14 @@ jobs:
           cd commandline/build
           cmake ..
           make 
-      # - name: Install Qt
-      #   uses: jurplel/install-qt-action@v2
-      #   with:
-      #     version: '5.15.2'
-      #     host: 'mac'
-      #     target: 'desktop'
-      #     dir: '${{ github.workspace }}/QT/'
-      #     install-deps: 'true'
       - name: build desktop app
         run: |
           mkdir -p desktop/build
           cd desktop/build
-          cmake -DQt5_DIR=/usr/local/Cellar/qt@5/5.15.2/lib/cmake/Qt5 -DVTK_DIR=/usr/local/Cellar/vtk@8.2/8.2.0_3/lib/cmake/vtk-8.2 ..
+          cmake -DQt5_DIR=${QT_DIR}/lib/cmake/Qt5 -DVTK_DIR=/usr/local/Cellar/vtk@8.2/8.2.0_3/lib/cmake/vtk-8.2 ..
           make 
-          /usr/local/Cellar/qt@5/5.15.2/bin/macdeployqt swEOS.app
-          echo "Developer ID Application: ${{ secrets.APPLEDEVELOPERID_APP }}" 
-          codesign --deep -fs "Developer ID Application: ${{ secrets.APPLEDEVELOPERID_APP }}" --options=runtime --timestamp swEOS.app
+          ${QT_DIR}/bin/macdeployqt swEOS.app
+          codesign --deep -fs "Developer ID Application: ${APPLEDEVELOPERID_APP}" --options=runtime --timestamp swEOS.app
           hdiutil create -srcfolder swEOS.app swEOS.dmg
       - name: package
         run: |
