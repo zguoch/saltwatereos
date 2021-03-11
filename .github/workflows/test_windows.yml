@@ -1,0 +1,13 @@
+name: Windows_test
+on: 
+  push:
+    branches: master
+jobs:
+  buildApp:
+    name: library
+    runs-on: windows-latest
+    steps:
+      # debug workflow through ssh
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+      

@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent)
     //ui->roundProgressBar->setDataColors(gradientPoints);
     //ui->roundProgressBar->setRange(0,100);
     //ui->roundProgressBar->setValue(0);
-    // //ui->roundProgressBar->setNullPosition(QRoundProgressBar::PositionBottom);
+    //ui->roundProgressBar->setNullPosition(QRoundProgressBar::PositionBottom);
     
     ui->toolBar->setFixedHeight(36);
     ui->toolBar->setIconSize(QSize(36, 36));
@@ -310,7 +310,7 @@ void MainWindow::on_pushButton_2_clicked()
                 QString str_line="";
                 for (int j=0;j<m_vtkTable->GetNumberOfColumns();j++) {
                     QString str;
-                    str.sprintf("%30s, ",m_vtkTable->GetColumn(j)->GetName());
+                    str.asprintf("%30s, ",m_vtkTable->GetColumn(j)->GetName());
                     str_line+=str;
                 }
                 ui->textEdit->append(str_line);
@@ -318,7 +318,7 @@ void MainWindow::on_pushButton_2_clicked()
                     QString str_line="";
                     for (int j=0;j<m_vtkTable->GetNumberOfColumns();j++) {
                         QString str;
-                        str.sprintf("%30.2f, ",m_vtkTable->GetValue(i,j).ToDouble());
+                        str.asprintf("%30.2f, ",m_vtkTable->GetValue(i,j).ToDouble());
 //                        str_line+=QString::number(m_vtkTable->GetValue(i,j).ToDouble(), 'f', 2)+", ";
                         str_line+=str;
                     }
@@ -785,7 +785,7 @@ int MainWindow::testjob()
         t.start();
 
 
-        #pragma omp critical
+        //#pragma omp critical
         // cout<<i<<std::endl;;
         while(t.elapsed()<1000);
         ind++;
@@ -1081,7 +1081,7 @@ int MainWindow::Calculate_Diagram2D()
                     arrX_v->SetValue(ind_value,eos.m_prop.X_v);
                 }
                 progress++;
-                // #pragma omp critical
+                //#pragma omp critical
                 //ui->roundProgressBar->setValue(progress);
             }
             // Specify the dimensions of the grid
@@ -1167,7 +1167,7 @@ int MainWindow::Calculate_Diagram2D()
                     arrX_v->SetValue(ind_value,eos.m_prop.X_v);
                 }
                 progress++;
-                // #pragma omp critical
+                //#pragma omp critical
                 //ui->roundProgressBar->setValue(progress);
             }
             // Specify the dimensions of the grid
@@ -1253,7 +1253,7 @@ int MainWindow::Calculate_Diagram2D()
                     arrX_v->SetValue(ind_value,eos.m_prop.X_v);
                 }
                 progress++;
-                // #pragma omp critical
+                //#pragma omp critical
                 //ui->roundProgressBar->setValue(progress);
             }
             // Specify the dimensions of the grid
