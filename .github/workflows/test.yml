@@ -7,11 +7,19 @@ jobs:
     name: library
     runs-on: macos-latest
     env:
+      MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+      MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+      TMP_PWD: hydrothermalfoam
       APPLEDEVELOPERID_APP: ${{ secrets.APPLEDEVELOPERID_APP }}
       QT_DIR: /usr/local/Cellar/qt@5/5.15.2
     steps:
       - name: install dependence
         run: |
+          echo $MACOS_CERTIFICATE | base64 —decode > certificate.p12
+          security create-keychain -p ${TMP_PWD} build.keychain security default-keychain -s build.keychain
+          security unlock-keychain -p ${TMP_PWD} build.keychain
+          security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k ${TMP_PWD} build.keychain
           echo ${QT_DIR}
           echo ${APPLEDEVELOPERID_APP}
       
