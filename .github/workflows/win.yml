@@ -22,6 +22,7 @@ jobs:
           mkdir Library/build
           cd Library/build
           cmake -DBuild_API_MultiLanguage=OFF ..
+          # cmake -DBuild_API_MultiLanguage=OFF .. -G "MinGW Makefiles"
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1
       - name: Restore NuGet packages
@@ -53,4 +54,5 @@ jobs:
         with:
           name: swEOS_windows.zip
           path: swEOS_windows
+      
       
