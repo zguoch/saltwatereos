@@ -73,7 +73,7 @@ if("${VTK_QT_VERSION}" STREQUAL "")
 endif()
 # add H2ONaCl source and library 
 include_directories(../Library/include ../commandline)
-link_directories("../Library/lib" "/usr/local/lib" "${Qt5_DIR}/lib")
+link_directories("../Library/lib" "/usr/local/lib" "${Qt5_DIR}/../../../lib")
 
 
 

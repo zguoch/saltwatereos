@@ -2,7 +2,7 @@ macdeployqt build/swEOS.app -dmg
 
 
 # 1. sign app
-# codesign --deep -fs "Developer ID Application: Zhikui GUO (xxxxx)" --options=runtime --timestamp swEOS.app
+# codesign --deep -fs "Developer ID Application: Zhikui GUO (AFCJBNSQCL)" --options=runtime --timestamp swEOS.app
 
 # # 2. check sign
 # codesign -vvv --deep --strict swEOS.app

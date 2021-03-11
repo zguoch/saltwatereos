@@ -52,7 +52,10 @@ jobs:
           cd desktop/build
           cmake -DQt5_DIR=/usr/local/Cellar/qt@5/5.15.2/lib/cmake/Qt5 -DVTK_DIR=/usr/local/Cellar/vtk@8.2/8.2.0_3/lib/cmake/vtk-8.2 ..
           make 
-          /usr/local/Cellar/qt@5/5.15.2/bin/macdeployqt swEOS.app -dmg
+          /usr/local/Cellar/qt@5/5.15.2/bin/macdeployqt swEOS.app
+          echo "Developer ID Application: ${{ secrets.APPLEDEVELOPERID_APP }}" 
+          codesign --deep -fs "Developer ID Application: ${{ secrets.APPLEDEVELOPERID_APP }}" --options=runtime --timestamp swEOS.app
+          hdiutil create -srcfolder swEOS.app swEOS.dmg
       - name: package
         run: |
           mkdir libs_OSX
@@ -66,6 +69,6 @@ jobs:
           name: libs_OSX.zip
           path: libs_OSX
       # debug workflow through ssh
-      - uses: actions/checkout@v2
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      # - uses: actions/checkout@v2
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
