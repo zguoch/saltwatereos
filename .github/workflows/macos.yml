@@ -1,7 +1,7 @@
 name: MacOS
 on: 
   push:
-    branches: main
+    branches: master
 jobs:
   buildApp:
     name: library
@@ -15,6 +15,8 @@ jobs:
           brew install swig
           brew install libomp
           brew install vtk@8.2
+          export LDFLAGS="-L/usr/local/opt/vtk@8.2/lib"
+          export CPPFLAGS="-I/usr/local/opt/vtk@8.2/include"
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
@@ -36,21 +38,21 @@ jobs:
           cd commandline/build
           cmake ..
           make 
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v2
-        with:
-          version: '5.15.2'
-          host: 'mac'
-          target: 'desktop'
-          dir: '${{ github.workspace }}/QT/'
-          install-deps: 'true'
-      # - name: build desktop app
-      #   run: |
-      #     ls ${{ github.workspace }}/QT/QT
-      #     mkdir -p desktop/build
-      #     cd desktop/build
-      #     cmake ..
-      #     make install
+      # - name: Install Qt
+      #   uses: jurplel/install-qt-action@v2
+      #   with:
+      #     version: '5.15.2'
+      #     host: 'mac'
+      #     target: 'desktop'
+      #     dir: '${{ github.workspace }}/QT/'
+      #     install-deps: 'true'
+      - name: build desktop app
+        run: |
+          mkdir -p desktop/build
+          cd desktop/build
+          cmake -DQt5_DIR=/usr/local/Cellar/qt@5/5.15.2/lib/cmake/Qt5 -DVTK_DIR=/usr/local/Cellar/vtk@8.2/8.2.0_3/lib/cmake/vtk-8.2 ..
+          make 
+          /usr/local/Cellar/qt@5/5.15.2/bin/macdeployqt swEOS.app -dmg
       - name: package
         run: |
           mkdir libs_OSX
@@ -58,6 +60,7 @@ jobs:
           cp -rf Library/API libs_OSX/
           cp -rf Library/include libs_OSX/
           cp commandline/build/swEOS libs_OSX/
+          cp desktop/*.dmg libs_OSX/
       - uses: actions/upload-artifact@v2
         with:
           name: libs_OSX.zip
