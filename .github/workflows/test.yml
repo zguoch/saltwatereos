@@ -1,0 +1,17 @@
+name: MacOS
+on: 
+  push:
+    branches: master
+jobs:
+  buildApp:
+    name: library
+    runs-on: macos-latest
+    env:
+      APPLEDEVELOPERID_APP: ${{ secrets.APPLEDEVELOPERID_APP }}
+      QT_DIR: /usr/local/Cellar/qt@5/5.15.2
+    steps:
+      - name: install dependence
+        run: |
+          echo ${QT_DIR}
+          echo ${APPLEDEVELOPERID_APP}
+      
