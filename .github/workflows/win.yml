@@ -41,11 +41,11 @@ jobs:
           mkdir Library/build
           cd Library/build
           cmake -DSWIG_EXECUTABLE=D:/a/saltwatereos/saltwatereos/independence_swEOS/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=C:/hostedtoolcache/windows/Python/3.8.7/x64/include -DPYTHON_LIBRARY=C:/hostedtoolcache/windows/Python/3.8.7/x64/libs/python38.lib -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=Release -G "MinGW Makefiles" ..
-      - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@v1
-      - name: Restore NuGet packages
-        working-directory: ${{env.GITHUB_WORKSPACE}}
-        run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+      # - name: Add MSBuild to PATH
+      #   uses: microsoft/setup-msbuild@v1
+      # - name: Restore NuGet packages
+      #   working-directory: ${{env.GITHUB_WORKSPACE}}
+      #   run: nuget restore ${{env.SOLUTION_FILE_PATH}}
       - name: Build
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run: |
