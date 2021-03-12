@@ -29,6 +29,13 @@ jobs:
       #     host: 'windows'
       #     target: 'desktop'
       #     dir: '${{ github.workspace }}/QT/'
+      # use mingw shell env
+      - uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: >-
+            base-devel
+            git
       - name: install dependence
         run: |
           svn checkout https://github.com/swig/swig/trunk swig
