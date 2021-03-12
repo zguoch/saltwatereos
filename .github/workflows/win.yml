@@ -32,8 +32,9 @@ jobs:
       - name: install dependence
         run: |
           svn checkout https://github.com/swig/swig/trunk swig
-      #     ./autogen.sh
-      #     ./configure --prefix=/usr/local/swig --without-pcre
+          cd swig
+          ./autogen.sh
+          ./configure --prefix=/usr/local/swig --without-pcre
       #     make
       #     make install
       #     cd D:/a/saltwatereos/saltwatereos
