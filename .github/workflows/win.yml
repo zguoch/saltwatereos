@@ -51,9 +51,9 @@ jobs:
         run: |
           # msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} D:\a\saltwatereos\saltwatereos\Library\build\eosH2ONaCl.sln
           mingw32-make.exe install
-          mkdir D:/a/saltwatereos/saltwatereos/Library/API/python/pyswEOS
-          cp D:/a/saltwatereos/saltwatereos/Library/build/swig/H2O/H2O.py D:/a/saltwatereos/saltwatereos/Library/API/python/pyswEOS
-          cp D:/a/saltwatereos/saltwatereos/Library/build/swig/H2O/Release/*H2O* D:/a/saltwatereos/saltwatereos/Library/API/python/pyswEOS
+          # mkdir D:/a/saltwatereos/saltwatereos/Library/API/python/pyswEOS
+          # cp D:/a/saltwatereos/saltwatereos/Library/build/swig/H2O/H2O.py D:/a/saltwatereos/saltwatereos/Library/API/python/pyswEOS
+          # cp D:/a/saltwatereos/saltwatereos/Library/build/swig/H2O/Release/*H2O* D:/a/saltwatereos/saltwatereos/Library/API/python/pyswEOS
       # - name: build command line app
       #   run: |
       #     mkdir -p commandline/build
