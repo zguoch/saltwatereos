@@ -36,7 +36,7 @@ jobs:
         run: |
           mkdir Library/build
           cd Library/build
-          cmake -DSWIG_EXECUTABLE=${{env.GITHUB_WORKSPACE}}/independence_swEOS/swigwin-4.0.2/bin/swig.exe -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR_PLATFORM=x64 ..
+          cmake -DSWIG_EXECUTABLE=../../independence_swEOS/swigwin-4.0.2/swig.exe -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR_PLATFORM=x64 ..
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1
 
