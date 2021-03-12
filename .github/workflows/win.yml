@@ -54,7 +54,7 @@ jobs:
           cp swig/NaCl/Release/*NaCl* ../API/python/pyswEOS
           cp swig/H2ONaCl/H2ONaCl.py ../API/python/pyswEOS
           cp swig/H2ONaCl/Release/*H2ONaCl* ../API/python/pyswEOS
-          mkdir Library/lib
+          mkdir ../lib
           cp Release/*.lib ../lib/
 
       # build swEOS cmd app
