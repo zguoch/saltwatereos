@@ -40,7 +40,7 @@ jobs:
         run: |
           mkdir Library/build
           cd Library/build
-          cmake -DSWIG_EXECUTABLE=D:/a/saltwatereos/saltwatereos/independence_swEOS/swigwin-4.0.2/swig.exe -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR_PLATFORM=x64 ..
+          cmake -DSWIG_EXECUTABLE=D:/a/saltwatereos/saltwatereos/independence_swEOS/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=C:/hostedtoolcache/windows/Python/3.8.7/x64/include -DPYTHON_LIBRARY=C:/hostedtoolcache/windows/Python/3.8.7/x64/libs/python38.lib -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR_PLATFORM=x64 ..
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1
       - name: Restore NuGet packages
@@ -50,9 +50,9 @@ jobs:
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run: |
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} D:\a\saltwatereos\saltwatereos\Library\build\eosH2ONaCl.sln
-          # mkdir ../API/python/pyswEOS
-          # cp ./swig/H2O/H2O.py ../API/python/pyswEOS
-          # cp swig/H2O/*H2O* ../API/python/pyswEOS
+          mkdir D:/a/saltwatereos/saltwatereos/Library/API/python/pyswEOS
+          cp D:/a/saltwatereos/saltwatereos/Library/build/swig/H2O/H2O.py D:/a/saltwatereos/saltwatereos/Library/API/python/pyswEOS
+          cp D:/a/saltwatereos/saltwatereos/Library/build/swig/H2O/*H2O* D:/a/saltwatereos/saltwatereos/Library/API/python/pyswEOS
       # - name: build command line app
       #   run: |
       #     mkdir -p commandline/build
