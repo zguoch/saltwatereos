@@ -17,14 +17,17 @@ jobs:
     steps:
       # checkout source code
       - uses: actions/checkout@v2
-      # - name: install dependence
-      #   run: |
-      #     sudo apt-get update -y
-      #     sudo apt-get install -y tcl-dev
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: '5.15.2'
+          host: 'windows'
+          target: 'desktop'
+          dir: '${{ github.workspace }}/QT/'
       - name: install dependence
         run: |
           git clone https://github.com/zguoch/independence_swEOS.git
@@ -63,6 +66,8 @@ jobs:
       #     cp -rf Library/API libs_ubuntu/
       #     cp -rf Library/include libs_ubuntu/
       #     cp commandline/build/swEOS libs_ubuntu/
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
       # - uses: actions/upload-artifact@v2
       #   with:
       #     name: libs_ubuntu.zip
