@@ -17,11 +17,11 @@ jobs:
     steps:
       # checkout source code
       - uses: actions/checkout@v2
-      - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@v1
-      - name: Restore NuGet packages
-        working-directory: ${{env.GITHUB_WORKSPACE}}
-        run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+      # - name: Add MSBuild to PATH
+      #   uses: microsoft/setup-msbuild@v1
+      # - name: Restore NuGet packages
+      #   working-directory: ${{env.GITHUB_WORKSPACE}}
+      #   run: nuget restore ${{env.SOLUTION_FILE_PATH}}
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
