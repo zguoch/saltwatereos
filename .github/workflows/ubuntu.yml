@@ -19,11 +19,11 @@ jobs:
           target: 'desktop'
           dir: '${{ github.workspace }}/QT/'
       
-      # # install some useful packages 
-      # - name: install dependence
-      #   run: |
-      #     sudo apt-get update -y
-      #     sudo apt-get install -y tcl-dev
+      # install some useful packages 
+      - name: install dependence
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y tcl-dev
 
       # set python env
       - name: Set up Python 3.8

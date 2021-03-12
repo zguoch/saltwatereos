@@ -32,7 +32,7 @@ jobs:
 
       # install dependencies, e.g. VTK, swig
       - name: install dependencies
-        working-directory: ${HOME}
+        working-directory: ${{ env.GITHUB_WORKSPACE }}
         run: |
           git clone https://github.com/zguoch/dependencies_swEOS.git
           cd dependencies_swEOS
@@ -41,9 +41,10 @@ jobs:
 
       # build swEOS library
       - name: compile library
-        working-directory: ${HOME}
+        working-directory: ${{ env.GITHUB_WORKSPACE }}
         run: |
           echo "工作目录: " ${{env.GITHUB_WORKSPACE}}
+          echo "github目录：" ${{ github.workspace }}
           mkdir Library/build
           cd Library/build
           cmake -DSWIG_EXECUTABLE=${HOME}/dependencies_swEOS/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=${{env.PYTHON_PATH}}/include -DPYTHON_LIBRARY=${{env.PYTHON_PATH}}/libs/python38.lib -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} .
@@ -60,7 +61,7 @@ jobs:
 
       # build swEOS cmd app
       - name: build cmd app
-        working-directory: ${HOME}
+        working-directory: ${{ env.GITHUB_WORKSPACE }}
         run: |
           mkdir commandline\build
           cd commandline\build
@@ -69,7 +70,7 @@ jobs:
       
       # build desktop app
       - name: build desktop app
-        working-directory: ${HOME}
+        working-directory: ${{ env.GITHUB_WORKSPACE }}
         run: |
           mkdir desktop/build
           cd desktop/build
@@ -80,7 +81,7 @@ jobs:
 
       # package
       - name: package
-        working-directory: ${HOME}
+        working-directory: ${{ env.GITHUB_WORKSPACE }}
         run: |
           mkdir swEOS_windows
           cp -r Library/lib swEOS_windows/
