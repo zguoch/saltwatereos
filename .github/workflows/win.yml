@@ -76,7 +76,7 @@ jobs:
           cp ${{env.SOLUTION_FILE_PATH}}\Release\*.lib swEOS_windows\
           cp ${{env.SOLUTION_FILE_PATH}}\..\..\commandline\build\Release\*.exe swEOS_windows\swEOS_cmd.exe
           cp -r ${{env.SOLUTION_FILE_PATH}}\..\API swEOS_windows\
-          # cp ${{env.SOLUTION_FILE_PATH}}\..\..\desktop\build\*.exe swEOS_windows\
+          cp ${{env.SOLUTION_FILE_PATH}}\..\..\desktop\build\Release\*.exe swEOS_windows\
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
       - uses: actions/upload-artifact@v2
