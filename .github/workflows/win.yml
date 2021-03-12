@@ -25,11 +25,18 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
+      - name: install dependence
+        run: |
+          git clone https://github.com/zguoch/independence_swEOS.git
+          cd independence_swEOS
+          unzip swigwin-4.0.2.zip
+          unzip VTK8.2.zip
+          cd ..
       - name: compile library
         run: |
           mkdir Library/build
           cd Library/build
-          cmake -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR_PLATFORM=x64 ..
+          cmake -DSWIG_EXECUTABLE=${{env.GITHUB_WORKSPACE}}/independence_swEOS/swigwin-4.0.2/bin/swig.exe -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR_PLATFORM=x64 ..
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1
 

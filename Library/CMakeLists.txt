@@ -29,20 +29,20 @@ add_subdirectory(swig/H2O)
 add_subdirectory(swig/NaCl)
 add_subdirectory(swig/H2ONaCl)
 
-# add Executable target
-add_executable(example main.cpp)
+# # add Executable target
+# add_executable(example main.cpp)
 
-# freesteam package
-option(USE_FreeSteam "whether use freesteam library" OFF)
-if (USE_FreeSteam)
-    # add freesteam library path
-    link_directories("/usr/local/lib")
-    # example target link library
-    target_link_libraries(example ${PROJECT_NAME} freesteam)
-else (USE_FreeSteam)
-    # example target link library
-    target_link_libraries(example ${PROJECT_NAME})
-endif()
+# # freesteam package
+# option(USE_FreeSteam "whether use freesteam library" OFF)
+# if (USE_FreeSteam)
+#     # add freesteam library path
+#     link_directories("/usr/local/lib")
+#     # example target link library
+#     target_link_libraries(example ${PROJECT_NAME} freesteam)
+# else (USE_FreeSteam)
+#     # example target link library
+#     target_link_libraries(example ${PROJECT_NAME})
+# endif()
 
 # target_include_directories(water PUBLIC include)
 
