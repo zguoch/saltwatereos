@@ -42,6 +42,7 @@ jobs:
         run: |
           svn checkout https://github.com/swig/swig/trunk swig
           cd swig
+          echo "当前shell"
           echo $SHELL
           ./autogen.sh
           ./configure --prefix=/usr/local/swig --without-pcre
