@@ -15,7 +15,7 @@ jobs:
         uses: jurplel/install-qt-action@v2
         with:
           version: '5.15.2'
-          host: 'windows'
+          host: 'ubuntu'
           target: 'desktop'
           dir: '${{ github.workspace }}/QT/'
       
