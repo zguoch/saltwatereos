@@ -14,6 +14,9 @@ jobs:
   buildApp:
     name: library
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
     steps:
       # checkout source code
       - uses: actions/checkout@v2
@@ -36,6 +39,7 @@ jobs:
           install: >-
             base-devel
             git
+          msystem: MINGW64
       - name: install dependence
         run: |
           svn checkout https://github.com/swig/swig/trunk swig
