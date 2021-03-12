@@ -36,23 +36,24 @@ jobs:
         run: |
           mkdir Library/build
           cd Library/build
-          cmake -DSWIG_EXECUTABLE=../../independence_swEOS/swigwin-4.0.2/swig.exe -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR_PLATFORM=x64 ..
-      - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@v1
+      #     cmake -DSWIG_EXECUTABLE=../../independence_swEOS/swigwin-4.0.2/swig.exe -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR_PLATFORM=x64 ..
+      # - name: Add MSBuild to PATH
+      #   uses: microsoft/setup-msbuild@v1
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+      # - name: Restore NuGet packages
+      #   working-directory: ${{env.GITHUB_WORKSPACE}}
+      #   run: nuget restore ${{env.SOLUTION_FILE_PATH}}
 
-      - name: Restore NuGet packages
-        working-directory: ${{env.GITHUB_WORKSPACE}}
-        run: nuget restore ${{env.SOLUTION_FILE_PATH}}
-
-      - name: Build
-        working-directory: ${{env.GITHUB_WORKSPACE}}
-        # Add additional options to the MSBuild command line here (like platform or verbosity level).
-        # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
-        run: |
-          dir D:/a/saltwatereos/saltwatereos/Library/build
-          echo ${{env.BUILD_CONFIGURATION}}
-          echo ${{env.SOLUTION_FILE_PATH}}
-          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} D:\a\saltwatereos\saltwatereos\Library\build\eosH2ONaCl.sln
+      # - name: Build
+      #   working-directory: ${{env.GITHUB_WORKSPACE}}
+      #   # Add additional options to the MSBuild command line here (like platform or verbosity level).
+      #   # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
+      #   run: |
+      #     dir D:/a/saltwatereos/saltwatereos/Library/build
+      #     echo ${{env.BUILD_CONFIGURATION}}
+      #     echo ${{env.SOLUTION_FILE_PATH}}
+      #     msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} D:\a\saltwatereos\saltwatereos\Library\build\eosH2ONaCl.sln
       #     make install
       #     cd ../..
       # - name: build command line app
