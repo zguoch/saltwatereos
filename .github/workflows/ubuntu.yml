@@ -1,7 +1,7 @@
 name: Ubuntu
 on: 
   push:
-    branches: main
+    branches: master
 jobs:
   buildApp:
     name: library
@@ -9,41 +9,66 @@ jobs:
     steps:
       # checkout source code
       - uses: actions/checkout@v2
-      - name: install dependence
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y tcl-dev
-      - name: Set up Python 3.9
+      
+      # install QT5
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: '5.15.2'
+          host: 'windows'
+          target: 'desktop'
+          dir: '${{ github.workspace }}/QT/'
+      
+      # # install some useful packages 
+      # - name: install dependence
+      #   run: |
+      #     sudo apt-get update -y
+      #     sudo apt-get install -y tcl-dev
+
+      # set python env
+      - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
-          python-version: 3.9
+          python-version: 3.8
       - name: info
         run: |
           cmake --version
           g++ --version
           which tclsh
           which python
-      - name: compile library
+      
+      # cmake library
+      - name: build swEOS library
         run: |
           mkdir Library/build
           cd Library/build
           cmake -DBuild_API_tcl=OFF ..
           make install
           cd ../..
-      - name: build command line app
+      
+      # build cmd app
+      - name: build swEOS cmd app
         run: |
           mkdir -p commandline/build
           cd commandline/build
           cmake ..
           make 
+
+      # package
       - name: package
         run: |
-          mkdir libs_ubuntu
-          cp -rf Library/lib libs_ubuntu/
-          cp -rf Library/API libs_ubuntu/
-          cp -rf Library/include libs_ubuntu/
-          cp commandline/build/swEOS libs_ubuntu/
+          mkdir swEOS_ubuntu
+          cp -rf Library/lib swEOS_ubuntu/
+          cp -rf Library/API swEOS_ubuntu/
+          cp -rf Library/include swEOS_ubuntu/
+          cp commandline/build/swEOS swEOS_ubuntu/
+      
+      # debug workflow
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
+      # upload artifacts
       - uses: actions/upload-artifact@v2
         with:
-          name: libs_ubuntu.zip
-          path: libs_ubuntu
+          name: swEOS_ubuntu.zip
+          path: swEOS_ubuntu

@@ -6,6 +6,8 @@ env:
   # Path to the solution file relative to the root of the project.
   SOLUTION_FILE_PATH: Library/build
   BUILD_CONFIGURATION: Release
+  BUILD_PLATFORM: x64
+  PYTHON_PATH: C:/hostedtoolcache/windows/Python/3.8.7/x64
 jobs:
   buildApp:
     name: library
@@ -13,10 +15,12 @@ jobs:
     steps:
       # checkout source code
       - uses: actions/checkout@v2
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
+
+      # config msbuild
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1
+
+      # install Qt5
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
@@ -24,59 +28,68 @@ jobs:
           host: 'windows'
           target: 'desktop'
           dir: '${{ github.workspace }}/QT/'
-      - name: install dependence
+
+      # install dependencies, e.g. VTK, swig
+      - name: install dependencies
+        working-directory: ${{env.GITHUB_WORKSPACE}}
         run: |
           git clone https://github.com/zguoch/dependencies_swEOS.git
           cd dependencies_swEOS
           unzip -qq swigwin-4.0.2.zip
           unzip -qq VTK8.2.zip
-          pwd
-          cd ..
+
+      # build swEOS library
       - name: compile library
+        working-directory: ${{env.GITHUB_WORKSPACE}}
         run: |
           mkdir Library/build
           cd Library/build
-          cmake -DSWIG_EXECUTABLE=D:/a/saltwatereos/saltwatereos/dependencies_swEOS/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=C:/hostedtoolcache/windows/Python/3.8.7/x64/include -DPYTHON_LIBRARY=C:/hostedtoolcache/windows/Python/3.8.7/x64/libs/python38.lib -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR_PLATFORM=x64 ..
-      - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@v1
-      # - name: Restore NuGet packages
-      #   working-directory: ${{env.GITHUB_WORKSPACE}}
-      #   run: nuget restore ${{env.SOLUTION_FILE_PATH}}
-      - name: Build
-        working-directory: ${{env.GITHUB_WORKSPACE}}
-        run: |
-          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} Library/build/eosH2ONaCl.sln
-          mkdir Library/API/python/pyswEOS
-          cp Library/build/swig/H2O/H2O.py Library/API/python/pyswEOS
-          cp Library/build/swig/H2O/Release/*H2O* Library/API/python/pyswEOS
+          cmake -DSWIG_EXECUTABLE=${{env.GITHUB_WORKSPACE}}/dependencies_swEOS/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=${{env.PYTHON_PATH}}/include -DPYTHON_LIBRARY=${{env.PYTHON_PATH}}/libs/python38.lib -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} .
+          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} eosH2ONaCl.sln
+          mkdir ../API/python/pyswEOS
+          cp swig/H2O/H2O.py ../API/python/pyswEOS
+          cp swig/H2O/Release/*H2O* ../API/python/pyswEOS
+          cp swig/NaCl/NaCl.py ../API/python/pyswEOS
+          cp swig/NaCl/Release/*NaCl* ../API/python/pyswEOS
+          cp swig/H2ONaCl/H2ONaCl.py ../API/python/pyswEOS
+          cp swig/H2ONaCl/Release/*H2ONaCl* ../API/python/pyswEOS
           mkdir Library/lib
-          cp Library/build/Release/*.lib Library/lib/
-      - name: cmake cmd app
-        run: |
-          mkdir ${{env.SOLUTION_FILE_PATH}}\..\..\commandline\build
-          cd ${{env.SOLUTION_FILE_PATH}}\..\..\commandline\build
-          cmake ..
-      - name: Build cmd app
+          cp Release/*.lib ../lib/
+
+      # build swEOS cmd app
+      - name: build cmd app
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run: |
-          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}\..\..\commandline\build\SaltWaterEOS.sln
-      - name: cmake desktop app
+          mkdir commandline\build
+          cd commandline\build
+          cmake ..
+          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} SaltWaterEOS.sln
+      
+      # build desktop app
+      - name: build desktop app
+        working-directory: ${{env.GITHUB_WORKSPACE}}
         run: |
           mkdir desktop/build
           cd desktop/build
-          cmake -DCMAKE_GENERATOR_PLATFORM=x64 -DVTK_DIR=D:/a/saltwatereos/saltwatereos/dependencies_swEOS/VTK8.2/lib/cmake/vtk-8.2 ..
-          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} D:/a/saltwatereos/saltwatereos/desktop/build/SaltWaterEOS.sln
+          cmake -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} -DVTK_DIR=${{env.GITHUB_WORKSPACE}}/dependencies_swEOS/VTK8.2/lib/cmake/vtk-8.2 ..
+          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} SaltWaterEOS.sln
           ../../QT/Qt/5.15.2/msvc2019_64/bin/windeployqt.exe Release/swEOS.exe
-          cp D:/a/saltwatereos/saltwatereos/dependencies_swEOS/VTK8.2/bin/*.dll Release
+          cp ${{env.GITHUB_WORKSPACE}}/dependencies_swEOS/VTK8.2/bin/*.dll Release
+
+      # package
       - name: package
+        working-directory: ${{env.GITHUB_WORKSPACE}}
         run: |
           mkdir swEOS_windows
-          cp ${{env.SOLUTION_FILE_PATH}}\Release\*.lib swEOS_windows\
-          cp ${{env.SOLUTION_FILE_PATH}}\..\..\commandline\build\Release\*.exe swEOS_windows\swEOS_cmd.exe
-          cp -r ${{env.SOLUTION_FILE_PATH}}\..\API swEOS_windows\
-          cp -r ${{env.SOLUTION_FILE_PATH}}\..\..\desktop\build\Release swEOS_windows\
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+          cp -r Library/lib swEOS_windows/
+          cp -r Library/API swEOS_windows/
+          cp -r Library/include swEOS_windows/
+          cp commandline\build\Release\*.exe swEOS_windows\swEOS_cmd.exe
+          cp -r desktop\build\Release swEOS_windows\
+      
+      # debug workflow
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
       - uses: actions/upload-artifact@v2
         with:
           name: swEOS_windows.zip
