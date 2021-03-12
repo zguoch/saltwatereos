@@ -29,7 +29,7 @@ jobs:
         run: |
           mkdir Library/build
           cd Library/build
-          cmake -DBuild_API_tcl=OFF ..
+          cmake -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR_PLATFORM=x64 ..
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1
 
