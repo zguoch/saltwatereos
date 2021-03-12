@@ -38,16 +38,14 @@ jobs:
           cd dependencies_swEOS
           unzip -qq swigwin-4.0.2.zip
           unzip -qq VTK8.2.zip
-
       # build swEOS library
-      - name: compile library
+      - name: build library
         working-directory: ${{ env.GITHUB_WORKSPACE }}
         run: |
-          echo "工作目录: " ${{env.GITHUB_WORKSPACE}}
-          echo "github目录：" ${{ github.workspace }}
+          cd ${{env.HOME}}
           mkdir Library/build
           cd Library/build
-          cmake -DSWIG_EXECUTABLE=${HOME}/dependencies_swEOS/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=${{env.PYTHON_PATH}}/include -DPYTHON_LIBRARY=${{env.PYTHON_PATH}}/libs/python38.lib -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
+          cmake -DSWIG_EXECUTABLE=${{env.HOME}}/dependencies_swEOS/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=${{env.PYTHON_PATH}}/include -DPYTHON_LIBRARY=${{env.PYTHON_PATH}}/libs/python38.lib -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} eosH2ONaCl.sln
           mkdir ../API/python/pyswEOS
           cp swig/H2O/H2O.py ../API/python/pyswEOS
@@ -63,6 +61,7 @@ jobs:
       - name: build cmd app
         working-directory: ${{ env.GITHUB_WORKSPACE }}
         run: |
+          cd ${{env.HOME}}
           mkdir commandline\build
           cd commandline\build
           cmake ..
@@ -72,6 +71,7 @@ jobs:
       - name: build desktop app
         working-directory: ${{ env.GITHUB_WORKSPACE }}
         run: |
+          cd ${{env.HOME}}
           mkdir desktop/build
           cd desktop/build
           cmake -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} -DVTK_DIR=${HOME}/dependencies_swEOS/VTK8.2/lib/cmake/vtk-8.2 ..
@@ -83,6 +83,7 @@ jobs:
       - name: package
         working-directory: ${{ env.GITHUB_WORKSPACE }}
         run: |
+          cd ${{env.HOME}}
           mkdir swEOS_windows
           cp -r Library/lib swEOS_windows/
           cp -r Library/API swEOS_windows/
