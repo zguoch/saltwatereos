@@ -1,7 +1,9 @@
 name: Windows
 on: 
   push:
-    branches: main
+    branches: master
+    tags:
+      - 'V*'
 env:
   # Path to the solution file relative to the root of the project.
   SOLUTION_FILE_PATH: Library/build
@@ -98,3 +100,14 @@ jobs:
         with:
           name: swEOS_windows.zip
           path: swEOS_windows
+    
+      # tag 上传Release
+      - name: uploadRelease
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: swEOS_windows
+          asset_name: swEOS_windows
+          tag: ${{ github.ref }}
+          overwrite: true

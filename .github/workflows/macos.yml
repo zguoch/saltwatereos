@@ -1,7 +1,9 @@
 name: MacOS
 on: 
   push:
-    branches: main
+    branches: master
+    tags:
+      - 'V*'
 jobs:
   buildApp:
     name: library
@@ -64,17 +66,28 @@ jobs:
           # 第二种方案：只对其中一个app进行开放：sudo xattr -r -d com.apple.quarantine /XXX/XXX.app/
       - name: package
         run: |
-          mkdir libs_OSX
-          cp -rf Library/lib libs_OSX/
-          cp -rf Library/API libs_OSX/
-          cp -rf Library/include libs_OSX/
-          cp commandline/build/swEOS libs_OSX/
-          cp desktop/build/*.dmg libs_OSX/
+          mkdir swEOS_OSX
+          cp -rf Library/lib swEOS_OSX/
+          cp -rf Library/API swEOS_OSX/
+          cp -rf Library/include swEOS_OSX/
+          cp commandline/build/swEOS swEOS_OSX/
+          cp desktop/build/*.dmg swEOS_OSX/
       - uses: actions/upload-artifact@v2
         with:
-          name: libs_OSX.zip
-          path: libs_OSX
+          name: swEOS_OSX.zip
+          path: swEOS_OSX
       # debug workflow through ssh
       # - uses: actions/checkout@v2
       # - name: Setup tmate session
       #   uses: mxschmitt/action-tmate@v3
+
+      # tag 上传Release
+      - name: uploadRelease
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: swEOS_OSX
+          asset_name: swEOS_OSX
+          tag: ${{ github.ref }}
+          overwrite: true
