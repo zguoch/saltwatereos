@@ -68,7 +68,7 @@ jobs:
         run: |
           mkdir desktop/build
           cd desktop/build
-          cmake -DCMAKE_GENERATOR_PLATFORM=x64 -DVTK_DIR=D:/a/saltwatereos/saltwatereos/independence_swEOS/VTK8.2/lib/cmake/vtk-8.2
+          cmake -DCMAKE_GENERATOR_PLATFORM=x64 -DVTK_DIR=D:/a/saltwatereos/saltwatereos/independence_swEOS/VTK8.2/lib/cmake/vtk-8.2 ..
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}\..\..\desktop\build\SaltWaterEOS.sln
       - name: package
         run: |
