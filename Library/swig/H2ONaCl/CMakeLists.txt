@@ -12,8 +12,10 @@ if(Build_API_MultiLanguage)
     include_directories("${PROJECT_SOURCE_DIR}/include")
     SET_SOURCE_FILES_PROPERTIES(${specie}.i PROPERTIES CPLUSPLUS ON)
     SET_SOURCE_FILES_PROPERTIES(${specie}.i PROPERTIES SWIG_FLAGS "-includeall")
-    # set ( CMAKE_C_FLAGS "-flat_namespace") # important
-    # set (CMAKE_CXX_FLAGS "-flat_namespace") # important
+    if (APPLE)
+        # set ( CMAKE_C_FLAGS "-flat_namespace") # important
+        set (CMAKE_CXX_FLAGS "-flat_namespace") # important
+    endif()
     # ------ 1. python ------------------
     option(Build_API_Python "whether build API for Python" ON)
     if(Build_API_Python)
