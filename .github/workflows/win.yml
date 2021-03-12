@@ -50,9 +50,9 @@ jobs:
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run: |
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} D:\a\saltwatereos\saltwatereos\Library\build\eosH2ONaCl.sln
-          mkdir ../API/python/pyswEOS
-          cp ./swig/H2O/H2O.py ../API/python/pyswEOS
-          cp swig/H2O/*H2O* ../API/python/pyswEOS
+          # mkdir ../API/python/pyswEOS
+          # cp ./swig/H2O/H2O.py ../API/python/pyswEOS
+          # cp swig/H2O/*H2O* ../API/python/pyswEOS
       # - name: build command line app
       #   run: |
       #     mkdir -p commandline/build
