@@ -35,9 +35,9 @@ jobs:
           cd swig
           ./autogen.sh
           ./configure --prefix=/usr/local/swig --without-pcre
-      #     make
-      #     make install
-      #     cd D:/a/saltwatereos/saltwatereos
+          make
+          make install
+          cd D:/a/saltwatereos/saltwatereos
       # - name: compile library
       #   run: |
       #     mkdir Library/build
