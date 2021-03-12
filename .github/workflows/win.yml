@@ -40,9 +40,11 @@ jobs:
             base-devel
             git
           msystem: MINGW64
-      - name: install dependence
+      - name: checkout swig source code
         run: |
           svn checkout https://github.com/swig/swig/trunk swig
+      - name: install dependence
+        run: |
           cd swig
           ./autogen.sh
           ./configure --prefix=/usr/local/swig --without-pcre
