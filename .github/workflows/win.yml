@@ -31,9 +31,7 @@ jobs:
       #     dir: '${{ github.workspace }}/QT/'
       - name: install dependence
         run: |
-          cd ~
           svn checkout https://github.com/swig/swig/trunk swig
-          cd swig
       #     ./autogen.sh
       #     ./configure --prefix=/usr/local/swig --without-pcre
       #     make
