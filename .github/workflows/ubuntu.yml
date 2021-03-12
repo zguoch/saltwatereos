@@ -1,7 +1,9 @@
 name: Ubuntu
 on: 
   push:
-    branches: main
+    branches: master
+env:
+  HOME: /home/runner/work/saltwatereos/saltwatereos
 jobs:
   buildApp:
     name: library
@@ -24,6 +26,13 @@ jobs:
         run: |
           sudo apt-get update -y
           sudo apt-get install -y tcl-dev
+          sudo snap install cqtdeployer
+      # install dependencies, e.g. VTK, swig
+      - name: install dependencies
+        run: |
+          git clone https://github.com/zguoch/dependencies_swEOS.git
+          cd dependencies_swEOS/ubuntu
+          unzip -qq VTK8.2.zip
 
       # set python env
       - name: Set up Python 3.8
@@ -53,16 +62,29 @@ jobs:
           cd commandline/build
           cmake ..
           make 
-
+          chmod 755 swEOS
+      # build desktop app
+      - name: build desktop app
+        run: |
+          cd ${{env.HOME}}
+          mkdir desktop/build
+          cd desktop/build
+          cmake -DVTK_DIR=${{env.HOME}}/dependencies_swEOS/ubuntu/VTK8.2/lib/cmake/vtk-8.2 ..
+          make 
+          cqtdeployer -bin swEOS -qmake ${Qt5_DIR}/bin/qmake -targetDir  Release
+          cp ${{env.HOME}}/dependencies_swEOS/ubuntu/VTK8.2/lib/*.so.1 Release/lib
+          chmod 755 Release/swEOS.sh
+          chmod 755 Release/bin/swEOS
       # package
       - name: package
         run: |
+          cd ${{env.HOME}}
           mkdir swEOS_ubuntu
           cp -rf Library/lib swEOS_ubuntu/
           cp -rf Library/API swEOS_ubuntu/
           cp -rf Library/include swEOS_ubuntu/
-          cp commandline/build/swEOS swEOS_ubuntu/
-      
+          cp commandline/build/swEOS swEOS_ubuntu/swEOS_cmd
+          cp -rf desktop/build/Release swEOS_ubuntu/
       # debug workflow
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3

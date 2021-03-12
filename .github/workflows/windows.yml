@@ -35,7 +35,7 @@ jobs:
         working-directory: ${{ env.GITHUB_WORKSPACE }}
         run: |
           git clone https://github.com/zguoch/dependencies_swEOS.git
-          cd dependencies_swEOS
+          cd dependencies_swEOS/windows
           unzip -qq swigwin-4.0.2.zip
           unzip -qq VTK8.2.zip
       # build swEOS library
@@ -45,7 +45,7 @@ jobs:
           cd ${{env.HOME}}
           mkdir Library/build
           cd Library/build
-          cmake -DSWIG_EXECUTABLE=${{env.HOME}}/dependencies_swEOS/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=${{env.PYTHON_PATH}}/include -DPYTHON_LIBRARY=${{env.PYTHON_PATH}}/libs/python38.lib -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
+          cmake -DSWIG_EXECUTABLE=${{env.HOME}}/dependencies_swEOS/windows/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=${{env.PYTHON_PATH}}/include -DPYTHON_LIBRARY=${{env.PYTHON_PATH}}/libs/python38.lib -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} eosH2ONaCl.sln
           mkdir ../API/python/pyswEOS
           cp swig/H2O/H2O.py ../API/python/pyswEOS
@@ -74,10 +74,10 @@ jobs:
           cd ${{env.HOME}}
           mkdir desktop/build
           cd desktop/build
-          cmake -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} -DVTK_DIR=${{env.HOME}}/dependencies_swEOS/VTK8.2/lib/cmake/vtk-8.2 ..
+          cmake -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} -DVTK_DIR=${{env.HOME}}/dependencies_swEOS/windows/VTK8.2/lib/cmake/vtk-8.2 ..
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} SaltWaterEOS.sln
           ../../QT/Qt/5.15.2/msvc2019_64/bin/windeployqt.exe Release/swEOS.exe
-          cp ${{env.HOME}}/dependencies_swEOS/VTK8.2/bin/*.dll Release
+          cp ${{env.HOME}}/dependencies_swEOS/windows/VTK8.2/bin/*.dll Release
 
       # package
       - name: package
