@@ -8,6 +8,7 @@ env:
   BUILD_CONFIGURATION: Release
   BUILD_PLATFORM: x64
   PYTHON_PATH: C:/hostedtoolcache/windows/Python/3.8.7/x64
+  HOME: D:/a/saltwatereos/saltwatereos
 jobs:
   buildApp:
     name: library
@@ -31,7 +32,7 @@ jobs:
 
       # install dependencies, e.g. VTK, swig
       - name: install dependencies
-        working-directory: ${{env.GITHUB_WORKSPACE}}
+        working-directory: ${HOME}
         run: |
           git clone https://github.com/zguoch/dependencies_swEOS.git
           cd dependencies_swEOS
@@ -40,11 +41,12 @@ jobs:
 
       # build swEOS library
       - name: compile library
-        working-directory: ${{env.GITHUB_WORKSPACE}}
+        working-directory: ${HOME}
         run: |
+          echo "工作目录: " ${{env.GITHUB_WORKSPACE}}
           mkdir Library/build
           cd Library/build
-          cmake -DSWIG_EXECUTABLE=${{env.GITHUB_WORKSPACE}}/dependencies_swEOS/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=${{env.PYTHON_PATH}}/include -DPYTHON_LIBRARY=${{env.PYTHON_PATH}}/libs/python38.lib -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} .
+          cmake -DSWIG_EXECUTABLE=${HOME}/dependencies_swEOS/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=${{env.PYTHON_PATH}}/include -DPYTHON_LIBRARY=${{env.PYTHON_PATH}}/libs/python38.lib -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} .
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} eosH2ONaCl.sln
           mkdir ../API/python/pyswEOS
           cp swig/H2O/H2O.py ../API/python/pyswEOS
@@ -58,7 +60,7 @@ jobs:
 
       # build swEOS cmd app
       - name: build cmd app
-        working-directory: ${{env.GITHUB_WORKSPACE}}
+        working-directory: ${HOME}
         run: |
           mkdir commandline\build
           cd commandline\build
@@ -67,18 +69,18 @@ jobs:
       
       # build desktop app
       - name: build desktop app
-        working-directory: ${{env.GITHUB_WORKSPACE}}
+        working-directory: ${HOME}
         run: |
           mkdir desktop/build
           cd desktop/build
-          cmake -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} -DVTK_DIR=${{env.GITHUB_WORKSPACE}}/dependencies_swEOS/VTK8.2/lib/cmake/vtk-8.2 ..
+          cmake -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} -DVTK_DIR=${HOME}/dependencies_swEOS/VTK8.2/lib/cmake/vtk-8.2 ..
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} SaltWaterEOS.sln
           ../../QT/Qt/5.15.2/msvc2019_64/bin/windeployqt.exe Release/swEOS.exe
-          cp ${{env.GITHUB_WORKSPACE}}/dependencies_swEOS/VTK8.2/bin/*.dll Release
+          cp ${HOME}/dependencies_swEOS/VTK8.2/bin/*.dll Release
 
       # package
       - name: package
-        working-directory: ${{env.GITHUB_WORKSPACE}}
+        working-directory: ${HOME}
         run: |
           mkdir swEOS_windows
           cp -r Library/lib swEOS_windows/
