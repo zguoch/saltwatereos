@@ -65,11 +65,11 @@ jobs:
         run: |
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}\..\..\commandline\build\SaltWaterEOS.sln
       - name: cmake desktop app
-          run: |
-            mkdir desktop/build
-            cd desktop/build
-            cmake -DCMAKE_GENERATOR_PLATFORM=x64 -DVTK_DIR=D:/a/saltwatereos/saltwatereos/independence_swEOS/VTK8.2/lib/cmake/vtk-8.2
-            msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}\..\..\commandline\build\SaltWaterEOS.sln
+        run: |
+          mkdir desktop/build
+          cd desktop/build
+          cmake -DCMAKE_GENERATOR_PLATFORM=x64 -DVTK_DIR=D:/a/saltwatereos/saltwatereos/independence_swEOS/VTK8.2/lib/cmake/vtk-8.2
+          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}\..\..\commandline\build\SaltWaterEOS.sln
       - name: package
         run: |
           mkdir swEOS_windows
