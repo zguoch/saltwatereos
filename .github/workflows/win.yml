@@ -16,7 +16,7 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        shell: bash
+        shell: msys2 {0}
     steps:
       # checkout source code
       - uses: actions/checkout@v2
@@ -33,27 +33,16 @@ jobs:
       #     target: 'desktop'
       #     dir: '${{ github.workspace }}/QT/'
       # use mingw shell env
-      # - uses: msys2/setup-msys2@v2
-      #   with:
-      #     update: true
-      #     install: >-
-      #       base-devel
-      #       git
-      #     msystem: MINGW64
-      - name: Install MSYS2
-        run: choco install msys2
-      - name: Build and (hopefully) install package
-        run: C:\tools\msys64\usr\bin\bash -lc "./msys2-mingw/run.sh -b"
-        env:
-          HOME: ${{ runner.workspace }}/myrepo
-          MINGW_INSTALLS: ${{ matrix.task.installs }}
-          CI: true
-      - name: checkout swig source code
-        run: |
-          svn checkout https://github.com/swig/swig/trunk swig
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: git mingw-w64-x86_64-toolchain
       - name: install dependence
         run: |
+          svn checkout https://github.com/swig/swig/trunk swig
           cd swig
+          echo $SHELL
           ./autogen.sh
           ./configure --prefix=/usr/local/swig --without-pcre
           make
