@@ -85,9 +85,10 @@ jobs:
           cp -rf Library/include swEOS_ubuntu/
           cp commandline/build/swEOS swEOS_ubuntu/swEOS_cmd
           cp -rf desktop/build/Release swEOS_ubuntu/
-      # debug workflow
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+
+      # # debug workflow
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
 
       # upload artifacts
       - uses: actions/upload-artifact@v2
