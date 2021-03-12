@@ -17,32 +17,52 @@ jobs:
     steps:
       # checkout source code
       - uses: actions/checkout@v2
-      - name: compile library
-        run: |
-          mkdir Library/build
-          cd Library/build
-          cmake -DBuild_API_MultiLanguage=OFF ..
-          # cmake -DBuild_API_MultiLanguage=OFF .. -G "MinGW Makefiles"
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1
       - name: Restore NuGet packages
         working-directory: ${{env.GITHUB_WORKSPACE}}
         run: nuget restore ${{env.SOLUTION_FILE_PATH}}
-      - name: Build
-        working-directory: ${{env.GITHUB_WORKSPACE}}
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: '5.15.2'
+          host: 'windows'
+          target: 'desktop'
+          dir: '${{ github.workspace }}/QT/'
+      - name: install dependence
         run: |
-          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}\eosH2ONaCl.sln
-          mkdir ${{env.SOLUTION_FILE_PATH}}\..\lib
-          cp ${{env.SOLUTION_FILE_PATH}}\Release\*.lib ${{env.SOLUTION_FILE_PATH}}\..\lib\
+          cd ~
+          svn checkout https://github.com/swig/swig/trunk swig
+          cd swig
+          ./autogen.sh
+          ./configure --prefix=/usr/local/swig --without-pcre
+          make
+          make install
+          cd D:/a/saltwatereos/saltwatereos
+      - name: compile library
+        run: |
+          mkdir Library/build
+          cd Library/build
+          # cmake -DBuild_API_MultiLanguage=OFF ..
+          cmake -DSWIG_EXECUTABLE=/usr/local/swig/bin/swig.exe -DBuild_API_tcl=OFF -G "MinGW Makefiles" ..
+          # cmake -DBuild_API_MultiLanguage=OFF .. -G "MinGW Makefiles"
+          mingw32-make.exe install
+      # - name: Build
+      #   working-directory: ${{env.GITHUB_WORKSPACE}}
+      #   run: |
+      #     msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}\eosH2ONaCl.sln
+      #     mkdir ${{env.SOLUTION_FILE_PATH}}\..\lib
+      #     cp ${{env.SOLUTION_FILE_PATH}}\Release\*.lib ${{env.SOLUTION_FILE_PATH}}\..\lib\
       - name: cmake cmd app
         run: |
           mkdir ${{env.SOLUTION_FILE_PATH}}\..\..\commandline\build
           cd ${{env.SOLUTION_FILE_PATH}}\..\..\commandline\build
-          cmake ..
-      - name: Build cmd app
-        working-directory: ${{env.GITHUB_WORKSPACE}}
-        run: |
-          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}\..\..\commandline\build\SaltWaterEOS.sln
+          cmake -G "MinGW Makefiles" ..
+          mingw32-make.exe
+      # - name: Build cmd app
+      #   working-directory: ${{env.GITHUB_WORKSPACE}}
+      #   run: |
+      #     # msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}\..\..\commandline\build\SaltWaterEOS.sln
       # debug workflow through ssh
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
