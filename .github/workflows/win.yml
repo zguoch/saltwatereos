@@ -16,7 +16,7 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        shell: msys2 {0}
+        shell: bash
     steps:
       # checkout source code
       - uses: actions/checkout@v2
