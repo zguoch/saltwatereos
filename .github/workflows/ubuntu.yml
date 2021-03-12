@@ -1,7 +1,9 @@
 name: Ubuntu
 on: 
   push:
-    branches: master
+    # branches: master
+    tags:
+      - 'V*'
 env:
   HOME: /home/runner/work/saltwatereos/saltwatereos
 jobs:
@@ -95,3 +97,14 @@ jobs:
         with:
           name: swEOS_ubuntu.zip
           path: swEOS_ubuntu
+      # tag 上传Release
+      - name: uploadRelease
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: swEOS_ubuntu/swEOS
+          asset_name: swEOS_ubuntu_${{ github.ref }}
+          tag: ${{ github.ref }}
+          overwrite: true
+
