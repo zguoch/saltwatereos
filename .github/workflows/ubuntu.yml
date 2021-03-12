@@ -1,7 +1,7 @@
 name: Ubuntu
 on: 
   push:
-    branches: master
+    # branches: master
     tags:
       - 'V*'
 env:
@@ -65,6 +65,7 @@ jobs:
           cmake ..
           make 
           chmod 755 swEOS
+          
       # build desktop app
       - name: build desktop app
         run: |
@@ -87,7 +88,7 @@ jobs:
           cp -rf Library/include swEOS_ubuntu/
           cp commandline/build/swEOS swEOS_ubuntu/swEOS_cmd
           cp -rf desktop/build/Release swEOS_ubuntu/
-
+          zip -r swEOS_ubuntu.zip swEOS_ubuntu
       # # debug workflow
       # - name: Setup tmate session
       #   uses: mxschmitt/action-tmate@v3
@@ -103,8 +104,8 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: swEOS_ubuntu
-          asset_name: swEOS_ubuntu
+          file: swEOS_ubuntu.zip
+          asset_name: swEOS_ubuntu_${{ github.ref }}
           tag: ${{ github.ref }}
           overwrite: true
 

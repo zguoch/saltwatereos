@@ -1,9 +1,9 @@
 name: MacOS
 on: 
   push:
-    branches: master
-    tags:
-      - 'V*'
+    branches: main
+    # tags:
+    #   - 'V*'
 jobs:
   buildApp:
     name: library
