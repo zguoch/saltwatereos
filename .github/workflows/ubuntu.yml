@@ -103,7 +103,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: swEOS_ubuntu/swEOS
+          file: swEOS_ubuntu/swEOS_cmd
           asset_name: swEOS_ubuntu_${{ github.ref }}
           tag: ${{ github.ref }}
           overwrite: true

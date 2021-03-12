@@ -1,7 +1,4 @@
 
-
-
-
 Continuous Integration Status:
 ------------------------
 
