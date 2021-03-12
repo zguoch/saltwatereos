@@ -29,33 +29,27 @@ jobs:
         run: |
           git clone https://github.com/zguoch/independence_swEOS.git
           cd independence_swEOS
-          unzip swigwin-4.0.2.zip
-          unzip VTK8.2.zip
+          unzip -qq swigwin-4.0.2.zip
+          unzip -qq VTK8.2.zip
+          pwd
           cd ..
       - name: compile library
         run: |
           mkdir Library/build
           cd Library/build
           cmake -DSWIG_EXECUTABLE=D:/a/saltwatereos/saltwatereos/independence_swEOS/swigwin-4.0.2/swig.exe -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR_PLATFORM=x64 ..
-      # - name: Add MSBuild to PATH
-      #   uses: microsoft/setup-msbuild@v1
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-      # - name: Restore NuGet packages
-      #   working-directory: ${{env.GITHUB_WORKSPACE}}
-      #   run: nuget restore ${{env.SOLUTION_FILE_PATH}}
-
-      # - name: Build
-      #   working-directory: ${{env.GITHUB_WORKSPACE}}
-      #   # Add additional options to the MSBuild command line here (like platform or verbosity level).
-      #   # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
-      #   run: |
-      #     dir D:/a/saltwatereos/saltwatereos/Library/build
-      #     echo ${{env.BUILD_CONFIGURATION}}
-      #     echo ${{env.SOLUTION_FILE_PATH}}
-      #     msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} D:\a\saltwatereos\saltwatereos\Library\build\eosH2ONaCl.sln
-      #     make install
-      #     cd ../..
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1
+      - name: Restore NuGet packages
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+      - name: Build
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: |
+          dir D:/a/saltwatereos/saltwatereos/Library/build
+          echo ${{env.BUILD_CONFIGURATION}}
+          echo ${{env.SOLUTION_FILE_PATH}}
+          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} D:\a\saltwatereos\saltwatereos\Library\build\eosH2ONaCl.sln
       # - name: build command line app
       #   run: |
       #     mkdir -p commandline/build
