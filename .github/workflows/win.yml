@@ -22,18 +22,18 @@ jobs:
       # - name: Restore NuGet packages
       #   working-directory: ${{env.GITHUB_WORKSPACE}}
       #   run: nuget restore ${{env.SOLUTION_FILE_PATH}}
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v2
-        with:
-          version: '5.15.2'
-          host: 'windows'
-          target: 'desktop'
-          dir: '${{ github.workspace }}/QT/'
-      # - name: install dependence
-      #   run: |
-      #     cd ~
-      #     svn checkout https://github.com/swig/swig/trunk swig
-      #     cd swig
+      # - name: Install Qt
+      #   uses: jurplel/install-qt-action@v2
+      #   with:
+      #     version: '5.15.2'
+      #     host: 'windows'
+      #     target: 'desktop'
+      #     dir: '${{ github.workspace }}/QT/'
+      - name: install dependence
+        run: |
+          cd ~
+          svn checkout https://github.com/swig/swig/trunk swig
+          cd swig
       #     ./autogen.sh
       #     ./configure --prefix=/usr/local/swig --without-pcre
       #     make
