@@ -14,9 +14,9 @@ pages:
   - mv doxygen/html public/doxygen
   # sphinx manual
   # to use sphinxcontrib-bibtex, the sphinx version must be 1.6.7 or lower
-  - pip install sphinx==1.6.7
-  - pip install sphinxcontrib-bibtex
-  - pip install sphinx-intl sphinx_inline_tabs 
+  - pip3 install sphinx==1.6.7
+  - pip3 install sphinxcontrib-bibtex
+  - pip3 install sphinx-intl sphinx_inline_tabs 
   - sphinx-intl build # generate translation .mo files
   - sphinx-build -b html manual/sphinx/source public/manual/en
   - sphinx-build -b html manual/sphinx/source public/manual/zh -Dlanguage=zh

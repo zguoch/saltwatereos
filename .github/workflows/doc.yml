@@ -17,7 +17,23 @@ jobs:
 
       - name: Install tools
         run: |
-          pip install sphinx
+          pip3 install sphinx
+          pip3 install sphinxcontrib-bibtex
+          pip3 install sphinx-intl sphinx_inline_tabs 
+          # brew install doxygen
+          # brew install graphviz
+          brew install --cask mactex-no-gui
+          eval "$(/usr/libexec/path_helper)"
+          cd manual/sphinx
+          make html
+          make latex
+          cd build/latex/zh && make && cd ../../../
+          cd build/latex/en && make && cd ../../../
+          cd cd ../../
+          cp -rf ../manual/sphinx/build/html/* public
+          mkdir -p pdfs/zh && mkdir -p pdfs/en
+          cp manual/sphinx/build/latex/en/*.pdf public/pdfs/en
+          cp manual/sphinx/build/latex/zh/*.pdf public/pdfs/zh
       - name: Generate sphinx and doxygen pages
         run: |
           mkdir public
@@ -27,11 +43,11 @@ jobs:
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
 
-      - name: Deploy to GitHub Pages
-        if: success()
-        uses: crazy-max/ghaction-github-pages@v2
-        with:
-          target_branch: gh-pages
-          build_dir: public
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Deploy to GitHub Pages
+      #   if: success()
+      #   uses: crazy-max/ghaction-github-pages@v2
+      #   with:
+      #     target_branch: gh-pages
+      #     build_dir: public
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
