@@ -82,11 +82,11 @@ jobs:
           cp -rf Library/include swEOS_OSX/
           cp commandline/build/swEOS swEOS_OSX/
           cp desktop/build/*.dmg swEOS_OSX/
-          zip -r swEOS_OSX_${SHORT_SHA}.zip swEOS_OSX
+          zip -r swEOS_OSX.zip swEOS_OSX
       - uses: actions/upload-artifact@v2
         with:
-          name: swEOS_OSX.zip
-          path: swEOS_OSX_${{ env.SHORT_SHA }}.zip
+          name: swEOS_OSX_${{ env.SHORT_SHA }}.zip
+          path: swEOS_OSX.zip
       # debug workflow through ssh
       # - uses: actions/checkout@v2
       # - name: Setup tmate session
@@ -98,7 +98,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: swEOS_OSX_${{ env.SHORT_SHA }}.zip
+          file: swEOS_OSX.zip
           asset_name: swEOS_OSX_${{env.GIT_TAG}}.zip
           tag: ${{ github.ref }}
           overwrite: true

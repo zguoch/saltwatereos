@@ -95,7 +95,7 @@ jobs:
           cp -rf Library/include swEOS_ubuntu/
           cp commandline/build/swEOS swEOS_ubuntu/swEOS_cmd
           cp -rf desktop/build/Release swEOS_ubuntu/
-          zip -r swEOS_ubuntu_${SHORT_SHA}.zip swEOS_ubuntu
+          zip -r swEOS_ubuntu.zip swEOS_ubuntu
       # # debug workflow
       # - name: Setup tmate session
       #   uses: mxschmitt/action-tmate@v3
@@ -103,8 +103,8 @@ jobs:
       # upload artifacts
       - uses: actions/upload-artifact@v2
         with:
-          name: swEOS_ubuntu.zip
-          path: swEOS_ubuntu_${{env.SHORT_SHA}}.zip
+          name: swEOS_ubuntu_${{env.SHORT_SHA}}.zip
+          path: swEOS_ubuntu.zip
 
       # tag 上传Release
       - name: uploadRelease
@@ -112,7 +112,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: swEOS_ubuntu_${{env.SHORT_SHA}}.zip
+          file: swEOS_ubuntu.zip
           asset_name: swEOS_ubuntu_${{env.GIT_TAG}}.zip
           tag: ${{ github.ref }}
           overwrite: true

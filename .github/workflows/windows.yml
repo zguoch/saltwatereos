@@ -19,19 +19,6 @@ jobs:
       # checkout source code
       - uses: actions/checkout@v2
 
-      # get short SHA of commit 
-      - name: Add SHORT_SHA env property with commit short sha
-        run: |
-          echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          echo "GIT_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
-      - name: info 
-        run: |
-          cmake --version
-          g++ --version
-          echo ${{ github.ref }}
-          echo "commit id short" ${SHORT_SHA}
-          echo "github tag: " ${GIT_TAG}
-
       # config msbuild
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1
@@ -53,6 +40,18 @@ jobs:
           cd dependencies_swEOS/windows
           unzip -qq swigwin-4.0.2.zip
           unzip -qq VTK8.2.zip
+
+      # get short SHA of commit 
+      - name: Add SHORT_SHA env property with commit short sha
+        run: |
+          echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      - name: info 
+        run: |
+          cmake --version
+          g++ --version
+          echo ${{ github.ref }}
+          echo "commit id short" ${SHORT_SHA}
+
       # build swEOS library
       - name: build library
         working-directory: ${{ env.GITHUB_WORKSPACE }}
@@ -105,23 +104,26 @@ jobs:
           cp -r Library/include swEOS_windows/
           cp commandline\build\Release\*.exe swEOS_windows\swEOS_cmd.exe
           cp -r desktop\build\Release swEOS_windows\
-          7z a -tzip swEOS_windows_${SHORT_SHA} ./swEOS_windows/*
+          7z a -tzip swEOS_windows ./swEOS_windows/*
           
       # debug workflow
       # - name: Setup tmate session
       #   uses: mxschmitt/action-tmate@v3
       - uses: actions/upload-artifact@v2
         with:
-          name: swEOS_windows.zip
-          path: swEOS_windows_${{env.SHORT_SHA}}.zip
+          name: swEOS_windows_${{env.SHORT_SHA}}.zip
+          path: swEOS_windows.zip
     
       # tag 上传Release
       - name: uploadRelease
         if: startsWith(github.event.ref, 'refs/tags/')
+        run: |
+          echo "GIT_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+          echo "GIT_TAG=$(git describe --tags --abbrev=0)"
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: swEOS_windows_${{env.SHORT_SHA}}.zip
+          file: swEOS_windows.zip
           asset_name: swEOS_windows_${{env.GIT_TAG}}.zip
           tag: ${{ github.ref }}
           overwrite: true
