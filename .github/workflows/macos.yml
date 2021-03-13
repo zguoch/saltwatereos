@@ -29,12 +29,19 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
+      
+      # get short SHA of commit 
+      - name: Add SHORT_SHA env property with commit short sha
+        run: echo "SHORT_SHA=`echo ${{ github.sha }} | cut -c1-8`" >> $GITHUB_ENV
+
       - name: info 
         run: |
           cmake --version
           g++ --version
           echo ${{ github.ref }}
-          
+          echo ${{ github.sha }}
+          echo ${SHORT_SHA}
+
       - name: compile library
         run: |
           mkdir Library/build
@@ -78,7 +85,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: swEOS_OSX.zip
-          path: swEOS_OSX
+          path: swEOS_OSX.zip
       # debug workflow through ssh
       # - uses: actions/checkout@v2
       # - name: Setup tmate session

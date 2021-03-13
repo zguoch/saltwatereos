@@ -1,9 +1,9 @@
 name: Ubuntu
 on: 
   push:
-    branches: master
-    # tags:
-    #   - 'V*'
+    branches: main
+    tags:
+      - 'V*'
 env:
   HOME: /home/runner/work/saltwatereos/saltwatereos
 jobs:
@@ -98,7 +98,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: swEOS_ubuntu.zip
-          path: swEOS_ubuntu
+          path: swEOS_ubuntu.zip
 
       # tag 上传Release
       - name: uploadRelease
