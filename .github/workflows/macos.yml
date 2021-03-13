@@ -41,6 +41,7 @@ jobs:
           echo ${{ github.ref }}
           echo ${{ github.sha }}
           echo ${SHORT_SHA}
+          echo "提交代码： " ${GITHUB_SHA::8}
 
       - name: compile library
         run: |
