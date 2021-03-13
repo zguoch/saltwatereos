@@ -33,16 +33,14 @@ jobs:
       # get short SHA of commit 
       - name: Add SHORT_SHA env property with commit short sha
         run: |
-          echo "SHORT_SHA=${GITHUB_SHA::8}" >> $GITHUB_ENV
-          echo "GIT_TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "GIT_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
       - name: info 
         run: |
           cmake --version
           g++ --version
           echo ${{ github.ref }}
           echo "commit id short" ${SHORT_SHA}
-          echo "commit id: " ${GITHUB_SHA::8}
-          echo "tag name: " ${GITHUB_REF##*/}
           echo "github tag: " ${GIT_TAG}
 
       - name: compile library
@@ -84,7 +82,7 @@ jobs:
           cp -rf Library/include swEOS_OSX/
           cp commandline/build/swEOS swEOS_OSX/
           cp desktop/build/*.dmg swEOS_OSX/
-          zip -r swEOS_OSX_${GITHUB_SHA::8}.zip swEOS_OSX
+          zip -r swEOS_OSX_${SHORT_SHA}.zip swEOS_OSX
       - uses: actions/upload-artifact@v2
         with:
           name: swEOS_OSX.zip
@@ -100,7 +98,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: swEOS_OSX.zip
+          file: swEOS_OSX_${{ env.SHORT_SHA }}.zip
           asset_name: swEOS_OSX_${{env.GIT_TAG}}.zip
           tag: ${{ github.ref }}
           overwrite: true

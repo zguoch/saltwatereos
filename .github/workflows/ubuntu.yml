@@ -45,16 +45,14 @@ jobs:
       # get short SHA of commit 
       - name: Add SHORT_SHA env property with commit short sha
         run: |
-          echo "SHORT_SHA=${GITHUB_SHA::8}" >> $GITHUB_ENV
-          echo "GIT_TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "GIT_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
       - name: info 
         run: |
           cmake --version
           g++ --version
           echo ${{ github.ref }}
           echo "commit id short" ${SHORT_SHA}
-          echo "commit id: " ${GITHUB_SHA::8}
-          echo "tag name: " ${GITHUB_REF##*/}
           echo "github tag: " ${GIT_TAG}
       
       # cmake library
@@ -114,7 +112,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: swEOS_ubuntu.zip
+          file: swEOS_ubuntu_${{env.SHORT_SHA}}.zip
           asset_name: swEOS_ubuntu_${{env.GIT_TAG}}.zip
           tag: ${{ github.ref }}
           overwrite: true
