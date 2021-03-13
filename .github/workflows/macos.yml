@@ -33,13 +33,14 @@ jobs:
       # get short SHA of commit 
       - name: Add SHORT_SHA env property with commit short sha
         run: |
-          # echo "SHORT_SHA=`echo ${{ github.sha }} | cut -c1-8`" >> $GITHUB_ENV
-          echo "GIT_TAG=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
+          echo "SHORT_SHA=${GITHUB_SHA::8}" >> $GITHUB_ENV
+          echo "GIT_TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
       - name: info 
         run: |
           cmake --version
           g++ --version
           echo ${{ github.ref }}
+          echo "commit id short" ${SHORT_SHA}
           echo "commit id: " ${GITHUB_SHA::8}
           echo "tag name: " ${GITHUB_REF##*/}
           echo "github tag: " ${GIT_TAG}
@@ -87,7 +88,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: swEOS_OSX.zip
-          path: swEOS_OSX_${GITHUB_SHA::8}.zip
+          path: swEOS_OSX_${{ env.SHORT_SHA }}.zip
       # debug workflow through ssh
       # - uses: actions/checkout@v2
       # - name: Setup tmate session
@@ -100,6 +101,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: swEOS_OSX.zip
-          asset_name: swEOS_OSX_${GIT_TAG}.zip
+          asset_name: swEOS_OSX_${{env.GIT_TAG}}.zip
           tag: ${{ github.ref }}
           overwrite: true

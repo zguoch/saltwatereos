@@ -41,13 +41,21 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
-      - name: info
+      
+      # get short SHA of commit 
+      - name: Add SHORT_SHA env property with commit short sha
+        run: |
+          echo "SHORT_SHA=${GITHUB_SHA::8}" >> $GITHUB_ENV
+          echo "GIT_TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
+      - name: info 
         run: |
           cmake --version
           g++ --version
-          which tclsh
           echo ${{ github.ref }}
-          which python
+          echo "commit id short" ${SHORT_SHA}
+          echo "commit id: " ${GITHUB_SHA::8}
+          echo "tag name: " ${GITHUB_REF##*/}
+          echo "github tag: " ${GIT_TAG}
       
       # cmake library
       - name: build swEOS library
@@ -89,7 +97,7 @@ jobs:
           cp -rf Library/include swEOS_ubuntu/
           cp commandline/build/swEOS swEOS_ubuntu/swEOS_cmd
           cp -rf desktop/build/Release swEOS_ubuntu/
-          zip -r swEOS_ubuntu_${GITHUB_SHA::8}.zip swEOS_ubuntu
+          zip -r swEOS_ubuntu_${SHORT_SHA}.zip swEOS_ubuntu
       # # debug workflow
       # - name: Setup tmate session
       #   uses: mxschmitt/action-tmate@v3
@@ -98,7 +106,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: swEOS_ubuntu.zip
-          path: swEOS_ubuntu_${GITHUB_SHA::8}.zip
+          path: swEOS_ubuntu_${{env.SHORT_SHA}}.zip
 
       # tag 上传Release
       - name: uploadRelease
@@ -107,6 +115,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: swEOS_ubuntu.zip
-          asset_name: swEOS_ubuntu_${GIT_TAG}.zip
+          asset_name: swEOS_ubuntu_${{env.GIT_TAG}}.zip
           tag: ${{ github.ref }}
           overwrite: true
