@@ -21,6 +21,7 @@ sys.path.append(os.path.abspath('_extensions'))
 # -- Project information -----------------------------------------------------
 
 project = 'SaltWater EOS'
+latex_name='SaltWaterEOS'
 copyright = "Zhikui Guo, Lars Ruepke"
 author = 'Zhikui Guo'
 
@@ -168,7 +169,6 @@ imgmath_dvipng_args = ['-gamma', '1.5', '-bg', 'Transparent']
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_name='SaltWaterEOS'
 latex_documents = [
     (master_doc, latex_name+'.tex', '\\textcolor{EOS_green}{S}alt \\textcolor{EOS_green}{W}ater \\textcolor{EOS_green}{E}quation \\textcolor{EOS_green}{o}f \\textcolor{EOS_green}{S}tate Manual',
      'Zhikui Guo, Lars Rüpke', 'manual'),
