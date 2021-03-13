@@ -1,7 +1,7 @@
 name: Ubuntu
 on: 
   push:
-    branches: main
+    branches: master
     tags:
       - 'V*'
 env:
@@ -89,7 +89,7 @@ jobs:
           cp -rf Library/include swEOS_ubuntu/
           cp commandline/build/swEOS swEOS_ubuntu/swEOS_cmd
           cp -rf desktop/build/Release swEOS_ubuntu/
-          zip -r swEOS_ubuntu.zip swEOS_ubuntu
+          zip -r swEOS_ubuntu_${GITHUB_SHA::8}.zip swEOS_ubuntu
       # # debug workflow
       # - name: Setup tmate session
       #   uses: mxschmitt/action-tmate@v3
@@ -98,15 +98,15 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: swEOS_ubuntu.zip
-          path: swEOS_ubuntu.zip
+          path: swEOS_ubuntu_${GITHUB_SHA::8}.zip
 
       # tag 上传Release
       - name: uploadRelease
-        # if: startsWith(github.event.ref, 'refs/tags/')
+        if: startsWith(github.event.ref, 'refs/tags/')
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: swEOS_ubuntu.zip
-          asset_name: swEOS_ubuntu_${{ github.ref }}.zip
+          asset_name: swEOS_ubuntu_${GIT_TAG}.zip
           tag: ${{ github.ref }}
           overwrite: true
