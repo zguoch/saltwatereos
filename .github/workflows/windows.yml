@@ -115,11 +115,13 @@ jobs:
           path: swEOS_windows.zip
     
       # tag 上传Release
-      - name: uploadRelease
+      - name: get tag name
         if: startsWith(github.event.ref, 'refs/tags/')
         run: |
           echo "GIT_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
           echo "GIT_TAG=$(git describe --tags --abbrev=0)"
+      - name: uploadRelease
+        if: startsWith(github.event.ref, 'refs/tags/')
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
