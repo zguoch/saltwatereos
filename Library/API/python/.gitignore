@@ -2,6 +2,6 @@
 !*.sh
 !.gitignore
 !readme.md
-!setup.py
+!setup*.py
 !.gitattributes 
 !pyH2ONaCl
