@@ -20,23 +20,23 @@ jobs:
           pip3 install sphinx
           pip3 install sphinxcontrib-bibtex
           pip3 install sphinx-intl sphinx_inline_tabs 
-          # brew install doxygen
-          # brew install graphviz
-          brew install --cask mactex-no-gui
-          eval "$(/usr/libexec/path_helper)"
-          cd manual/sphinx
-          make html
-          make latex
-          cd build/latex/zh && make && cd ../../../
-          cd build/latex/en && make && cd ../../../
-          cd cd ../../
-          cp -rf ../manual/sphinx/build/html/* public
-          mkdir -p pdfs/zh && mkdir -p pdfs/en
-          cp manual/sphinx/build/latex/en/*.pdf public/pdfs/en
-          cp manual/sphinx/build/latex/zh/*.pdf public/pdfs/zh
+          # # brew install doxygen
+          # # brew install graphviz
+          # brew install --cask mactex-no-gui
+          # eval "$(/usr/libexec/path_helper)"
+          
       - name: Generate sphinx and doxygen pages
         run: |
-          mkdir public
+          cd manual/sphinx
+          make html
+          # make latex
+          # cd build/latex/zh && make && cd ../../../
+          # cd build/latex/en && make && cd ../../../
+          # cd cd ../../
+          # cp -rf manual/sphinx/build/html/* public
+          # mkdir -p pdfs/zh && mkdir -p pdfs/en
+          # cp manual/sphinx/build/latex/en/*.pdf public/pdfs/en
+          # cp manual/sphinx/build/latex/zh/*.pdf public/pdfs/zh
           
       - name: install oh my zsh
         run: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
