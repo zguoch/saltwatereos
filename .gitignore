@@ -9,3 +9,4 @@ doxygen/xml
 doxygen/latex
 latex/
 readme.html
+*.pyc

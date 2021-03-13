@@ -1,3 +1,63 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e0991e5e04deb0b7985c51b993b5579024b816fcc0ce710c5530a30df5d84226
-size 433
+{# Import the theme's layout. #}
+{% extends "!layout.html" %}
+
+{% block menu %}
+    {{ super() }}
+
+    {% if menu_links %}
+        <p class="caption">
+            <span class="caption-text">Getting help</span>
+        </p>
+        <ul>
+            {% for text, link in menu_links %}
+                <li class="toctree-l1"><a href="{{ link }}">{{ text }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
+
+{#
+
+    This template exists as a way to implement a version menu without changing what
+    the theme normally renders the menu on local builds and on builds on Read the
+    Docs. This is for local testing purposes only.
+    
+    #}
+    
+    {% block footer %}
+      {% if not READTHEDOCS %}
+        <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+          <span class="rst-current-version" data-toggle="rst-current-version">
+            <span class="fa fa-book"> {{ project }} Manual</span>
+            v: latest
+            <span class="fa fa-caret-down"></span>
+          </span>
+          <div class="rst-other-versions">
+            <dl>
+              <dt>{{ _('English version') }}</dt>
+              {% if pdf_versions %}
+                {% for version, link in pdf_versions %}
+                <dd><a href="{{ link }}/{{ latex_main }}_en.pdf">{{ version }}</a></dd>
+                {% endfor %}
+              {% else %}
+                <dd><a href="#">latest</a></dd>
+                <dd><a href="#">1.0</a></dd>
+                <dd><a href="#">1.1</a></dd>
+              {% endif %}
+            </dl>
+            <dl>
+              <dt>{{ _('中文版本') }}</dt>
+              {% if pdf_versions %}
+                {% for version, link in pdf_versions %}
+                <dd><a href="{{ link }}/{{ latex_main }}_en.pdf">{{ version }}</a></dd>
+                {% endfor %}
+              {% else %}
+                <dd><a href="#">最新版</a></dd>
+                <dd><a href="#">1.0</a></dd>
+                <dd><a href="#">1.1</a></dd>
+              {% endif %}
+            </dl>
+          </div>
+        </div>
+      {% endif %}
+    {% endblock %}

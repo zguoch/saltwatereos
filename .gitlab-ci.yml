@@ -1,31 +1,59 @@
-image: python:3.7-alpine
-
-before_script:
-- apk update
-- apk add doxygen
-## Uncomment the following line if you use graphviz dot graphs
-- apk add graphviz
-
-pages:
+buildPages:
+  image: python:3.7-alpine
+  stage: .pre
+  before_script:
+    - apk update
+    - apk add doxygen
+    ## Uncomment the following line if you use graphviz dot graphs
+    - apk add graphviz
   script:
-  # doxygen documentation
-  - doxygen Doxyfile
-  - mkdir public
-  - mv doxygen/html public/doxygen
+  # # doxygen documentation
+  # - doxygen Doxyfile
+  # - mv doxygen/html/ public/
   # sphinx manual
   # to use sphinxcontrib-bibtex, the sphinx version must be 1.6.7 or lower
-  - pip3 install sphinx==1.6.7
-  - pip3 install sphinxcontrib-bibtex
-  - pip3 install sphinx-intl sphinx_inline_tabs 
-  - sphinx-intl build # generate translation .mo files
-  - sphinx-build -b html manual/sphinx/source public/manual/en
-  - sphinx-build -b html manual/sphinx/source public/manual/zh -Dlanguage=zh
-  - cp manual/sphinx/index.html public/manual # the default entrance
-  - sed 's/en\/index.html/manual\/en\/index.html/g' manual/sphinx/index.html | sed 's/zh\/index.html/manual\/zh\/index.html/g' >public/index.html # main entrance
-  # - sphinx-build -b html manual/sphinx/source public/manual
+    - pip install sphinx==1.6.7
+    - pip install sphinxcontrib-bibtex sphinx_inline_tabs sphinx_sitemap
+    - sphinx-intl build
+    - sphinx-build -b html manual/sphinx/source public/manual/en
+    - sphinx-build -b html manual/sphinx/source public/manual/zh -Dlanguage=zh
+    - sphinx-build -b latex manual/sphinx/source manual/sphinx/build/latex
+    - sphinx-build -b latex manual/sphinx/source manual/sphinx/build/latex/zh -Dlanguage=zh
+    - cp manual/sphinx/index.html public/manual # the default entrance
+    - sed 's/en\/index.html/manual\/en\/index.html/g' manual/sphinx/index.html | sed 's/zh\/index.html/manual\/zh\/index.html/g' >public/index.html # main entrance
+    # - sphinx-build -b html manual/sphinx/source public/manual
   artifacts:
     paths:
     - public
   only:
-  - master
+    - master
 
+latex:
+  image: laurenss/texlive-full
+  stage: build
+  script:
+    - cd manual/sphinx/build/latex/en && make
+    - cd ../zh && make
+    - cd ../../../../../
+    - cp manual/sphinx/build/latex/en/SaltWaterEOS.pdf public/SaltWaterEOS_en.pdf
+    - cp manual/sphinx/build/latex/zh/SaltWaterEOS.pdf public/SaltWaterEOS_zh.pdf
+  dependencies:
+    - buildPages
+  artifacts:
+    paths:
+    - public
+  when: on_success
+  only:
+    - master
+
+pages:
+  image: python:3.7-alpine
+  script:
+    - mkdir public/downloads && cp public/*.pdf public/downloads/
+  dependencies:
+    - latex
+  artifacts:
+    paths:
+    - public
+  only:
+    - master

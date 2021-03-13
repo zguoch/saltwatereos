@@ -110,7 +110,20 @@ html_context = {
             '<i class="fa fa-github fa-fw"></i> Source Code',
             "https://gitlab.com/hydrothermal-openfoam/saltwatereos",
         ),
-    ]
+    ],
+    'project':project,
+    'downloads_url':'hydrothermal-openfoam.gitlab.io/saltwatereos/manual/downloads',
+    'latex_main':  latex_name, 
+    'pdf_versions': [
+        (
+            'latest',
+            'hydrothermal-openfoam.gitlab.io/saltwatereos/manual/downloads'
+        ),
+        (
+            '2.0',
+            '#'
+        ),
+        ]
 }
 
 # favicon of the docs
@@ -155,8 +168,9 @@ imgmath_dvipng_args = ['-gamma', '1.5', '-bg', 'Transparent']
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
+latex_name='SaltWaterEOS'
 latex_documents = [
-    (master_doc, 'SaltWaterEOS.tex', '\\textcolor{EOS_green}{S}alt \\textcolor{EOS_green}{W}ater \\textcolor{EOS_green}{E}quation \\textcolor{EOS_green}{o}f \\textcolor{EOS_green}{S}tate Manual',
+    (master_doc, latex_name+'.tex', '\\textcolor{EOS_green}{S}alt \\textcolor{EOS_green}{W}ater \\textcolor{EOS_green}{E}quation \\textcolor{EOS_green}{o}f \\textcolor{EOS_green}{S}tate Manual',
      'Zhikui Guo, Lars Rüpke', 'manual'),
 ]
 
