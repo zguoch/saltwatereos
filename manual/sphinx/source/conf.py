@@ -118,7 +118,7 @@ html_context = {
     'pdf_versions': [
         (
             'latest',
-            'hydrothermal-openfoam.gitlab.io/saltwatereos/manual/downloads'
+            'https://hydrothermal-openfoam.gitlab.io/saltwatereos/downloads'
         ),
         (
             '2.0',
