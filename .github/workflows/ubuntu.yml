@@ -46,6 +46,7 @@ jobs:
           cmake --version
           g++ --version
           which tclsh
+          echo ${{ github.ref }}
           which python
       
       # cmake library
@@ -98,13 +99,14 @@ jobs:
         with:
           name: swEOS_ubuntu.zip
           path: swEOS_ubuntu
-      # # tag 上传Release
-      # - name: uploadRelease
-      #   # if: startsWith(github.event.ref, 'refs/tags/')
-      #   uses: svenstaro/upload-release-action@v2
-      #   with:
-      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #     file: swEOS_ubuntu.zip
-      #     asset_name: swEOS_ubuntu_${{ github.ref }}.zip
-      #     tag: ${{ github.ref }}
-      #     overwrite: true
+
+      # tag 上传Release
+      - name: uploadRelease
+        # if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: swEOS_ubuntu.zip
+          asset_name: swEOS_ubuntu_${{ github.ref }}.zip
+          tag: ${{ github.ref }}
+          overwrite: true
