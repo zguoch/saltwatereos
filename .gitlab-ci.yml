@@ -18,8 +18,8 @@ buildPages:
     - sphinx-intl build
     - sphinx-build -b html manual/sphinx/source public/manual/en
     - sphinx-build -b html manual/sphinx/source public/manual/zh -Dlanguage=zh
-    - sphinx-build -b latex manual/sphinx/source manual/sphinx/build/latex
-    - sphinx-build -b latex manual/sphinx/source manual/sphinx/build/latex/zh -Dlanguage=zh
+    - sphinx-build -b latex manual/sphinx/source public/latex/en
+    - sphinx-build -b latex manual/sphinx/source public/latex/zh -Dlanguage=zh
     - cp manual/sphinx/index.html public/manual # the default entrance
     - sed 's/en\/index.html/manual\/en\/index.html/g' manual/sphinx/index.html | sed 's/zh\/index.html/manual\/zh\/index.html/g' >public/index.html # main entrance
     # - sphinx-build -b html manual/sphinx/source public/manual
@@ -33,11 +33,8 @@ latex:
   image: laurenss/texlive-full
   stage: build
   script:
-    - cd manual/sphinx/build/latex/en && make
+    - cd public/latex/en && make
     - cd ../zh && make
-    - cd ../../../../../
-    - cp manual/sphinx/build/latex/en/SaltWaterEOS.pdf public/SaltWaterEOS_en.pdf
-    - cp manual/sphinx/build/latex/zh/SaltWaterEOS.pdf public/SaltWaterEOS_zh.pdf
   dependencies:
     - buildPages
   artifacts:
@@ -50,7 +47,10 @@ latex:
 pages:
   image: python:3.7-alpine
   script:
-    - mkdir public/downloads && cp public/*.pdf public/downloads/
+    - mkdir public/downloads
+    - cp public/latex/en/SaltWaterEOS.pdf public/downloads/SaltWaterEOS_en.pdf
+    - cp public/latex/zh/SaltWaterEOS.pdf public/downloads/SaltWaterEOS_zh.pdf
+    - rm -rf public/latex
   dependencies:
     - latex
   artifacts:
