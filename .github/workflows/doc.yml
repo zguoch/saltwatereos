@@ -10,13 +10,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2.3.4
-      - name: Gen dummy page
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install tools
+        run: |
+          pip install sphinx
+      - name: Generate sphinx and doxygen pages
         run: |
           mkdir public
           
+      - name: install oh my zsh
+        run: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
-        
+
       - name: Deploy to GitHub Pages
         if: success()
         uses: crazy-max/ghaction-github-pages@v2
