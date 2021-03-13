@@ -1,7 +1,7 @@
 name: Windows
 on: 
   push:
-    # branches: master
+    branches: master
     tags:
       - 'V*'
 env:
@@ -92,7 +92,7 @@ jobs:
           cp -r Library/include swEOS_windows/
           cp commandline\build\Release\*.exe swEOS_windows\swEOS_cmd.exe
           cp -r desktop\build\Release swEOS_windows\
-          zip -r swEOS_windows.zip swEOS_windows
+          tar.exe -x -r swEOS_windows.zip swEOS_windows
       # debug workflow
       # - name: Setup tmate session
       #   uses: mxschmitt/action-tmate@v3
