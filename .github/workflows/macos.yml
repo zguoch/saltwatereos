@@ -84,11 +84,11 @@ jobs:
 
       # tag 上传Release
       - name: uploadRelease
-        if: startsWith(github.event.ref, 'refs/tags/')
+        # if: startsWith(github.event.ref, 'refs/tags/')
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: swEOS_OSX.zip
-          asset_name: swEOS_OSX_${{ github.ref }}
+          asset_name: swEOS_OSX_${{ github.ref }}.zip
           tag: ${{ github.ref }}
           overwrite: true

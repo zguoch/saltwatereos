@@ -1,9 +1,9 @@
 name: Windows
 on: 
   push:
-    branches: main
-    # tags:
-    #   - 'V*'
+    # branches: master
+    tags:
+      - 'V*'
 env:
   # Path to the solution file relative to the root of the project.
   SOLUTION_FILE_PATH: Library/build
@@ -92,7 +92,7 @@ jobs:
           cp -r Library/include swEOS_windows/
           cp commandline\build\Release\*.exe swEOS_windows\swEOS_cmd.exe
           cp -r desktop\build\Release swEOS_windows\
-      
+          zip -r swEOS_windows.zip swEOS_windows
       # debug workflow
       # - name: Setup tmate session
       #   uses: mxschmitt/action-tmate@v3
@@ -103,11 +103,11 @@ jobs:
     
       # tag 上传Release
       - name: uploadRelease
-        if: startsWith(github.event.ref, 'refs/tags/')
+        # if: startsWith(github.event.ref, 'refs/tags/')
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: swEOS_windows
-          asset_name: swEOS_windows
+          file: swEOS_windows.zip
+          asset_name: swEOS_windows_${{ github.ref }}.zip
           tag: ${{ github.ref }}
           overwrite: true
