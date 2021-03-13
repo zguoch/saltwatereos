@@ -1,2 +1,0 @@
-*.html filter=lfs diff=lfs merge=lfs -text
-*.glance filter=lfs diff=lfs merge=lfs -text
