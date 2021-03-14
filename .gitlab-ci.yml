@@ -8,15 +8,15 @@ buildPages:
     - apk add graphviz
     - apk add hugo
   script:
-  # # doxygen documentation
-  # - doxygen Doxyfile
-  # - mv doxygen/html/ public/
-
   # hogo home pages
     - cd manual/home
     - hugo
     - cd ../..
     - cp -rf manual/home/public/ .
+
+  # doxygen documentation
+    - doxygen Doxyfile
+    - cp -rf doxygen/html/* public/doxygen
 
   # sphinx manual
   # to use sphinxcontrib-bibtex, the sphinx version must be 1.6.7 or lower
@@ -37,30 +37,30 @@ buildPages:
   only:
     - master
 
-# latex:
-#   image: laurenss/texlive-full
-#   stage: build
-#   script:
-#     - cd public/latex/en && make
-#     - cd ../zh && make
-#   dependencies:
-#     - buildPages
-#   artifacts:
-#     paths:
-#     - public
-#   when: on_success
-#   only:
-#     - master
+latex:
+  image: laurenss/texlive-full
+  stage: build
+  script:
+    - cd public/latex/en && make
+    - cd ../zh && make
+  dependencies:
+    - buildPages
+  artifacts:
+    paths:
+    - public
+  when: on_success
+  only:
+    - master
 
 pages:
   image: python:3.7-alpine
   script:
     - mkdir public/downloads
-    # - cp public/latex/en/SaltWaterEOS.pdf public/downloads/SaltWaterEOS_en.pdf
-    # - cp public/latex/zh/SaltWaterEOS.pdf public/downloads/SaltWaterEOS_zh.pdf
-    # - rm -rf public/latex
-  # dependencies:
-  #   - latex
+    - cp public/latex/en/SaltWaterEOS.pdf public/downloads/SaltWaterEOS_en.pdf
+    - cp public/latex/zh/SaltWaterEOS.pdf public/downloads/SaltWaterEOS_zh.pdf
+    - rm -rf public/latex
+  dependencies:
+    - latex
   artifacts:
     paths:
     - public
