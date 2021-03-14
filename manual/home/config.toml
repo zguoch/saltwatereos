@@ -139,7 +139,7 @@ weight = 6
 # banner
 [Languages.en.params.banner]
 title = "Welcome to swEOS Package"
-subtitle = "Salt-Water Equation of State (swEOS): H2ONaCl"
+subtitle = "Salt-Water Equation of State (swEOS): H2O-NaCl"
 bg_image = "images/banner_en.jpg"
 placeholder = "Have a question? Try to ask here or enter terms"
 
@@ -253,19 +253,19 @@ hasChildren = true
   [[Languages.zh.menu.main]]
   parent = "文档"
   name = "在线文档"
-  url = "manual"
+  url = "../manual/zh"
   weight = 1
 
   [[Languages.zh.menu.main]]
   parent = "文档"
   name = "PDF文档"
-  url = "downloads/SaltWaterEOS_zh.pdf"
+  url = "../downloads/SaltWaterEOS_zh.pdf"
   weight = 2
 
   [[Languages.zh.menu.main]]
   parent = "文档"
   name = "源代码文档"
-  url = "doxygen"
+  url = "../doxygen"
   weight = 3
 
 # navigation
@@ -282,7 +282,7 @@ weight = 6
 # banner
 [Languages.zh.params.banner]
 title = "欢迎访问 swEOS 程序包"
-subtitle = "Salt-Water Equation of State简称swEOS"
+subtitle = "Salt-Water(H2O-NaCl) Equation of State简称swEOS"
 bg_image = "images/banner_zh.jpg"
 placeholder = "有什么想知道的，搜一把试试"
 

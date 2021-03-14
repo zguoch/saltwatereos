@@ -82,13 +82,13 @@ release = '1.0'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-#
+html_baseurl='www.scibyte.cn'
 html_theme = 'rtd'
 html_theme_path = ["_themes"]
 html_theme_options = {
     'sticky_navigation': False,
     'includehidden': False,
-    'logo_only' : True,
+    'logo_only' : False,
     'sticky_navigation': True,
     'titles_only': True,
     'display_version': False,
@@ -99,6 +99,10 @@ html_theme_options = {
 
 html_context = {
     "menu_links": [
+        (
+            '<i class="fa fa-home fa-fw"></i> Home',
+            "https://hydrothermal-openfoam.gitlab.io/saltwatereos/",
+        ),
         (
             '<i class="fa fa-book fa-fw"></i> License',
             "xxx",

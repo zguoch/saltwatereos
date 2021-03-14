@@ -6,3 +6,7 @@ logo: "images/skills.png"
 description: "源代码、变量和函数参数的说明"
 type : "docs"
 ---
+
+<script type="text/javascript">
+  window.open("../../doxygen/index.html", "_self");
+</script>

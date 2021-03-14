@@ -9,7 +9,4 @@ type : "apps"
 
 **Note** that **the apple developer account is expired**, so the **swEOS** app could not be available on the **App Store** any more. I am trying to fix this as soon as possible.
 
-<video width=40% autoplay muted controls loop>
-    <source src="../images/sweos_ios.mp4" type="video/mp4">
-    Your browser does not support HTML video.
-</video>
+<img src="../images/sweos_ios.gif" alt="swEOS iOS app " width="40%">
