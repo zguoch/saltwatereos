@@ -1,0 +1,11 @@
+- id: apps_title
+  translation: Download Apps by platform
+
+- id: api_title
+  translation: Application Interface for programming languages
+
+- id: docs_title
+  translation: Manual and Documentations
+  
+- id: send
+  translation: Send

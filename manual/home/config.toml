@@ -1,0 +1,315 @@
+################################# Default configuration ###################
+# provide your domain here
+baseURL = "https://hydrothermal-openfoam.gitlab.io/saltwatereos/"
+################################# Default configuration ###################
+# theme
+theme = "dot"
+# site title
+title = "swEOS"
+# disable language
+disableLanguages = []
+# google analytics
+googleAnalytics = "" # paste your analytics ID here. Ex: UA-123-45
+
+# unsafe html
+[markup.goldmark.renderer]
+unsafe= true
+
+############################# Default Parameters ##########################
+[params]
+# logo is for all page
+logo = "images/swEOS.png"
+# logo white is for homepage logo, you can use colorful logo too...
+logo_white = ""
+# when logo is empty, it will shown your site title
+
+# customize color
+primary_color = "#02007e"
+body_color = "#f9f9f9"
+text_color = "#636363"
+text_color_dark = "#242738"
+white_color = "#ffffff"
+light_color = "#f8f9fa"
+# customize css: under static directory. 但是路径不要写为: static/css/mystyle.css
+css="css/mystyle.css" 
+# font family
+font_family = "lato" # Choose font family from : https://fonts.google.com/
+
+# contact form action
+contact_form_action = "https://formspree.io/xnqgqakz" # contact form works with : https://formspree.io
+# 微信公众号二维码
+QR_weixingongzhong="images/weixingongzhong.svg"
+################################ 英文版 ######################
+[Languages.en]
+languageName = "English"
+languageCode = "en-us"
+weight = 1
+home = "Home"
+copyright = "The swEOS packages are copyright © [Zhikui Guo](https://www.scibyte.cn/) 2019-2020."
+
+# Dropdown menu
+[[Languages.en.menu.main]]
+weight = 2
+name = "apps"
+hasChildren = true
+
+  [[Languages.en.menu.main]]
+  parent = "apps"
+  name = "Mac"
+  url = "Mac"
+  weight = 1
+
+  [[Languages.en.menu.main]]
+  parent = "apps"
+  name = "Linux"
+  url = "Linux"
+  weight = 2
+
+  [[Languages.en.menu.main]]
+  parent = "apps"
+  name = "Windows"
+  url = "Windows"
+  weight = 3
+
+# Dropdown menu
+[[Languages.en.menu.main]]
+weight = 3
+name = "api"
+hasChildren = true
+
+  [[Languages.en.menu.main]]
+  parent = "api"
+  name = "Python"
+  url = ""
+  weight = 1
+
+  [[Languages.en.menu.main]]
+  parent = "api"
+  name = "Ttl"
+  url = ""
+  weight = 2
+
+  [[Languages.en.menu.main]]
+  parent = "api"
+  name = "JS"
+  url = ""
+  weight = 3
+
+# Dropdown menu
+[[Languages.en.menu.main]]
+weight = 4
+name = "docs"
+hasChildren = true
+
+  [[Languages.en.menu.main]]
+  parent = "docs"
+  name = "Online manual"
+  url = "research"
+  weight = 1
+
+  [[Languages.en.menu.main]]
+  parent = "docs"
+  name = "PDF manual"
+  url = "https://hydrothermal-openfoam.gitlab.io/saltwatereos/downloads/SaltWaterEOS_en.pdf"
+  weight = 2
+
+  [[Languages.en.menu.main]]
+  parent = "docs"
+  name = "Source code doc"
+  url = "products"
+  weight = 3
+
+# navigation
+[[Languages.en.menu.main]]
+name = "Faq"
+url = "faq"
+weight = 5
+
+[[Languages.en.menu.main]]
+name = "contact"
+url = "contact"
+weight = 6
+
+# banner
+[Languages.en.params.banner]
+title = "Welcome to swEOS Package"
+subtitle = "Salt-Water Equation of State (swEOS): H2ONaCl"
+bg_image = "images/banner.jpg"
+placeholder = "Have a question? Try to ask here or enter terms"
+
+# social links 
+
+[[Languages.en.params.social]]
+fa="fab fa-gitlab"
+fa_title="GitLab" #以tooltip形式显示
+link = "https://gitlab.com/hydrothermal-openfoam/saltwatereos"
+  
+[[Languages.en.params.social]]
+fa="fab fa-github"
+fa_title="GitHub" #以tooltip形式显示
+link = "https://github.com/zguoch/saltwatereos"
+
+# [[Languages.en.params.social]]
+# fa="fab fa-docker"
+# fa_title="Docker Hub" #以tooltip形式显示
+# link = "https://hub.docker.com/u/zguo"
+
+# [[Languages.en.params.social]]
+# fa="fab fa-youtube"
+# fa_title="YouTube" #以tooltip形式显示
+# link = "https://www.youtube.com/channel/UCbCsPjLfMnkdMGFH6oYhLbg/"
+
+[[Languages.en.params.social]]
+fa="fab fa-orcid"
+fa_title="ORCID" #以tooltip形式显示
+link = "https://orcid.org/0000-0002-0604-0455"
+
+# call to action
+[Languages.en.params.cta]
+enable = true
+title = "Didn't find an answer to your question?"
+content = "Please dont's hesitate to give me a feedback through GitLab issue tracker"
+# call to action button
+[Languages.en.params.cta.button]
+enable = true
+label = "Post a issue"
+link = "https://gitlab.com/hydrothermal-openfoam/saltwatereos/-/issues"
+
+
+################################### 中文版 ######################
+[Languages.zh]
+languageName = "简体中文"
+languageCode = "zh-cn"
+weight = 1
+home = "主页"
+copyright = "swEOS 版权所有 © [郭志馗](https://www.scibyte.cn/) 2019 - 2020."
+
+# Dropdown menu
+[[Languages.zh.menu.main]]
+weight = 2
+name = "应用程序"
+hasChildren = true
+
+  [[Languages.zh.menu.main]]
+  parent = "应用程序"
+  name = "Mac"
+  url = "Mac"
+  weight = 1
+
+  [[Languages.zh.menu.main]]
+  parent = "应用程序"
+  name = "Linux"
+  url = "Linux"
+  weight = 2
+
+  [[Languages.zh.menu.main]]
+  parent = "应用程序"
+  name = "Windows"
+  url = "Windows"
+  weight = 3
+
+# Dropdown menu
+[[Languages.zh.menu.main]]
+weight = 3
+name = "程序接口"
+hasChildren = true
+
+  [[Languages.zh.menu.main]]
+  parent = "程序接口"
+  name = "Python"
+  url = ""
+  weight = 1
+
+  [[Languages.zh.menu.main]]
+  parent = "程序接口"
+  name = "Ttl"
+  url = ""
+  weight = 2
+
+  [[Languages.zh.menu.main]]
+  parent = "程序接口"
+  name = "JS"
+  url = ""
+  weight = 3
+
+# Dropdown menu
+[[Languages.zh.menu.main]]
+weight = 4
+name = "文档"
+hasChildren = true
+
+  [[Languages.zh.menu.main]]
+  parent = "文档"
+  name = "在线文档"
+  url = "research"
+  weight = 1
+
+  [[Languages.zh.menu.main]]
+  parent = "文档"
+  name = "PDF文档"
+  url = "https://www.scibyte.cn/blog/zh/blog.html"
+  weight = 2
+
+  [[Languages.zh.menu.main]]
+  parent = "文档"
+  name = "源代码文档"
+  url = "https://www.scibyte.cn/blog/zh/blog.html"
+  weight = 3
+
+# navigation
+[[Languages.zh.menu.main]]
+name = "常见问题"
+url = "faq"
+weight = 5
+
+[[Languages.zh.menu.main]]
+name = "联系方式"
+url = "contact"
+weight = 6
+
+# banner
+[Languages.zh.params.banner]
+title = "欢迎访问 swEOS 程序包"
+subtitle = "Salt-Water Equation of State简称swEOS"
+bg_image = "images/banner.jpg"
+placeholder = "有什么想知道的，搜一把试试"
+
+# social links 
+[[Languages.zh.params.social]]
+fa="fab fa-weixin"
+fa_title="微信公众号" #以tooltip形式显示
+link = "contact"
+
+[[Languages.zh.params.social]]
+fa="fab fa-gitlab"
+fa_title="GitLab" #以tooltip形式显示
+link = "https://gitlab.com/hydrothermal-openfoam/saltwatereos"
+  
+[[Languages.zh.params.social]]
+fa="fab fa-github"
+fa_title="GitHub" #以tooltip形式显示
+link = "https://github.com/zguoch/saltwatereos"
+
+
+# [[Languages.zh.params.social]]
+# fa="fab fa-zhihu"
+# fa_title="知乎" #以tooltip形式显示
+# link = "https://www.zhihu.com/people/jiu-tian-xue-zhe"
+
+[[Languages.zh.params.social]]
+fa="fab fa-orcid"
+fa_title="orcid" #以tooltip形式显示
+link = "https://orcid.org/0000-0002-0604-0455"
+
+
+# call to action
+[Languages.zh.params.cta]
+enable = true
+title = "程序中有BUG？"
+content = "请通过GitLab的Issue Tracker功能向我反馈，记得描述尽可能的详细"
+
+# call to action button
+[Languages.zh.params.cta.button]
+enable = true
+label = "反馈bug"
+link = "https://gitlab.com/hydrothermal-openfoam/saltwatereos/-/issues"

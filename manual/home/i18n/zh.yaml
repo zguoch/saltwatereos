@@ -1,0 +1,11 @@
+- id: apps_title
+  translation: 根据操作系统下载应用
+
+- id: api_title
+  translation: 其它编程语言的程序接口
+
+- id: docs_title
+  translation: 说明文档
+
+- id: send
+  translation: Send

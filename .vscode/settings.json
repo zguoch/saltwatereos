@@ -113,5 +113,6 @@
         "forward_list": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled",
-    "restructuredtext.linter.disabled": true
+    "restructuredtext.linter.disabled": true,
+    "restructuredtext.confPath": ""
 }

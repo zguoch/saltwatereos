@@ -6,10 +6,19 @@ buildPages:
     - apk add doxygen
     ## Uncomment the following line if you use graphviz dot graphs
     - apk add graphviz
+    - apk add hugo
   script:
   # # doxygen documentation
   # - doxygen Doxyfile
   # - mv doxygen/html/ public/
+
+  # hogo home pages
+  # main page
+  - cd manual/home
+  - hugo
+  - cd ../..
+  - cp -rf manual/home/public/ .
+
   # sphinx manual
   # to use sphinxcontrib-bibtex, the sphinx version must be 1.6.7 or lower
     - pip install sphinx==1.6.7
