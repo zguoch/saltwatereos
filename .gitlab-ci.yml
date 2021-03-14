@@ -13,11 +13,10 @@ buildPages:
   # - mv doxygen/html/ public/
 
   # hogo home pages
-  # main page
-  - cd manual/home
-  - hugo
-  - cd ../..
-  - cp -rf manual/home/public/ .
+    - cd manual/home
+    - hugo
+    - cd ../..
+    - cp -rf manual/home/public/ .
 
   # sphinx manual
   # to use sphinxcontrib-bibtex, the sphinx version must be 1.6.7 or lower
