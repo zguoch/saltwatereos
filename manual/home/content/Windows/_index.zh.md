@@ -3,7 +3,7 @@ title: "Windows"
 date: 2018-12-28T11:02:05+06:00
 icon: "ti-credit-card"
 logo: "images/windows.svg"
-description: "行业软件、论文写作、编程经验"
+description: "桌面应用程序、纯终端命令程序、C++动态库"
 type : "apps"
 ---
 
@@ -29,3 +29,5 @@ type : "apps"
         <p class="mb-0">Win 10</p>
     </div>
 </div>
+
+![软件截图](../../images/sweos_windows_en.png)

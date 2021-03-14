@@ -3,7 +3,7 @@ title: "Mac OS"
 date: 2018-12-29T11:02:05+06:00
 icon: "ti-pie-chart"
 logo: "images/mac.svg"
-description: "研究兴趣、研究项目、最新进展、行业动态"
+description: "桌面应用程序、纯终端命令程序、C++动态库"
 type : "apps"
 ---
 
@@ -29,3 +29,5 @@ type : "apps"
         <p class="mb-0">Catalina</p>
     </div>
 </div>
+
+![软件截图](../../images/sweos_mac_zh.png)

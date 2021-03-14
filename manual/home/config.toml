@@ -85,15 +85,21 @@ hasChildren = true
 
   [[Languages.en.menu.main]]
   parent = "api"
-  name = "Ttl"
-  url = ""
+  name = "Tcl"
+  url = "tcl"
   weight = 2
 
   [[Languages.en.menu.main]]
   parent = "api"
-  name = "JS"
-  url = ""
+  name = "Matlab"
+  url = "matlab"
   weight = 3
+
+  [[Languages.en.menu.main]]
+  parent = "api"
+  name = "JS"
+  url = "js"
+  weight = 4
 
 # Dropdown menu
 [[Languages.en.menu.main]]
@@ -223,14 +229,20 @@ hasChildren = true
   [[Languages.zh.menu.main]]
   parent = "程序接口"
   name = "Ttl"
-  url = ""
+  url = "tcl"
   weight = 2
 
   [[Languages.zh.menu.main]]
   parent = "程序接口"
-  name = "JS"
-  url = ""
+  name = "Matlab"
+  url = "matlab"
   weight = 3
+
+  [[Languages.zh.menu.main]]
+  parent = "程序接口"
+  name = "JS"
+  url = "js"
+  weight = 4
 
 # Dropdown menu
 [[Languages.zh.menu.main]]

@@ -3,7 +3,7 @@ title: "Mac OS"
 date: 2018-12-29T11:02:05+06:00
 icon: "ti-panel"
 logo: "images/mac.svg"
-description: "Research interest, recent projects and publications"
+description: "Desktop app, command line app, c++ library"
 type : "apps"
 ---
 
@@ -29,3 +29,5 @@ type : "apps"
         <p class="mb-0">Catalina</p>
     </div>
 </div>
+
+![App snapshot](../images/sweos_mac_en.png)
