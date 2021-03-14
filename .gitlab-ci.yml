@@ -4,6 +4,7 @@ buildPages:
   before_script:
     - apk update
     - apk add doxygen
+    - apk add perl
     ## Uncomment the following line if you use graphviz dot graphs
     - apk add graphviz
     - apk add hugo
