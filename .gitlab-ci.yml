@@ -54,13 +54,13 @@ buildPages:
 
 pages:
   image: python:3.7-alpine
-  # script:
-  #   - mkdir public/downloads
-  #   - cp public/latex/en/SaltWaterEOS.pdf public/downloads/SaltWaterEOS_en.pdf
-  #   - cp public/latex/zh/SaltWaterEOS.pdf public/downloads/SaltWaterEOS_zh.pdf
-  #   - rm -rf public/latex
-  # dependencies:
-  #   - latex
+  script:
+    - mkdir public/downloads
+    # - cp public/latex/en/SaltWaterEOS.pdf public/downloads/SaltWaterEOS_en.pdf
+    # - cp public/latex/zh/SaltWaterEOS.pdf public/downloads/SaltWaterEOS_zh.pdf
+    # - rm -rf public/latex
+  dependencies:
+    - latex
   artifacts:
     paths:
     - public
