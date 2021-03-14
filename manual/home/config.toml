@@ -134,7 +134,7 @@ weight = 6
 [Languages.en.params.banner]
 title = "Welcome to swEOS Package"
 subtitle = "Salt-Water Equation of State (swEOS): H2ONaCl"
-bg_image = "images/banner.jpg"
+bg_image = "images/vent.svg"
 placeholder = "Have a question? Try to ask here or enter terms"
 
 # social links 

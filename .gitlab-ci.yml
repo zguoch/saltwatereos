@@ -29,7 +29,7 @@ buildPages:
     - sphinx-build -b latex manual/sphinx/source public/latex/en
     - sphinx-build -b latex manual/sphinx/source public/latex/zh -Dlanguage=zh
     - cp manual/sphinx/index.html public/manual # the default entrance
-    - sed 's/en\/index.html/manual\/en\/index.html/g' manual/sphinx/index.html | sed 's/zh\/index.html/manual\/zh\/index.html/g' >public/index.html # main entrance
+    # - sed 's/en\/index.html/manual\/en\/index.html/g' manual/sphinx/index.html | sed 's/zh\/index.html/manual\/zh\/index.html/g' >public/index.html # main entrance
     # - sphinx-build -b html manual/sphinx/source public/manual
   artifacts:
     paths:
@@ -37,30 +37,30 @@ buildPages:
   only:
     - master
 
-latex:
-  image: laurenss/texlive-full
-  stage: build
-  script:
-    - cd public/latex/en && make
-    - cd ../zh && make
-  dependencies:
-    - buildPages
-  artifacts:
-    paths:
-    - public
-  when: on_success
-  only:
-    - master
+# latex:
+#   image: laurenss/texlive-full
+#   stage: build
+#   script:
+#     - cd public/latex/en && make
+#     - cd ../zh && make
+#   dependencies:
+#     - buildPages
+#   artifacts:
+#     paths:
+#     - public
+#   when: on_success
+#   only:
+#     - master
 
 pages:
   image: python:3.7-alpine
-  script:
-    - mkdir public/downloads
-    - cp public/latex/en/SaltWaterEOS.pdf public/downloads/SaltWaterEOS_en.pdf
-    - cp public/latex/zh/SaltWaterEOS.pdf public/downloads/SaltWaterEOS_zh.pdf
-    - rm -rf public/latex
-  dependencies:
-    - latex
+  # script:
+  #   - mkdir public/downloads
+  #   - cp public/latex/en/SaltWaterEOS.pdf public/downloads/SaltWaterEOS_en.pdf
+  #   - cp public/latex/zh/SaltWaterEOS.pdf public/downloads/SaltWaterEOS_zh.pdf
+  #   - rm -rf public/latex
+  # dependencies:
+  #   - latex
   artifacts:
     paths:
     - public
