@@ -89,7 +89,7 @@ jobs:
           mkdir desktop/build
           cd desktop/build
           cmake -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} -DVTK_DIR=${{env.HOME}}/dependencies_swEOS/windows/VTK8.2/lib/cmake/vtk-8.2 ..
-          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} SaltWaterEOS.sln
+          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} swEOS.sln
           ../../QT/Qt/5.15.2/msvc2019_64/bin/windeployqt.exe Release/swEOS.exe
           cp ${{env.HOME}}/dependencies_swEOS/windows/VTK8.2/bin/*.dll Release
 

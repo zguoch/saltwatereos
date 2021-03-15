@@ -2262,7 +2262,7 @@ void MainWindow::on_actionChinese_triggered()
     {
         m_zhTranslator = new QTranslator(this);
         QString path = QApplication::applicationDirPath();
-        QString file_zhTranslator=path+"/../Resources/languages/zh_CN.qm";
+        QString file_zhTranslator=path+"/../Resources/translations/zh_CN.qm";
         if(!m_zhTranslator->load(file_zhTranslator))
         {
             QMessageBox msgBox;

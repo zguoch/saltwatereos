@@ -140,7 +140,11 @@ if (FreeSteam)
     set(LIBFreeSteam "freesteam")
 endif()
 # set icon
-set(myApp_ICON ${CMAKE_CURRENT_SOURCE_DIR}/Icons/logo.icns)
+if(APPLE)
+  set(myApp_ICON ${CMAKE_CURRENT_SOURCE_DIR}/Icons/logo.icns)
+else()
+  set(myApp_ICON ${CMAKE_CURRENT_SOURCE_DIR}/icon.rc)
+endif()
 
 find_package(VTK COMPONENTS
   vtkCommonCore
@@ -203,7 +207,8 @@ qt5_wrap_ui(UI_Srcs ${UIs})
 qt5_add_resources(QRC_Srcs ${QRCs} )
 
 #languages
-set(TS_FILES languages/zh_CN.ts)
+set(translation_zh "zh_CN")
+set(TS_FILES languages/${translation_zh}.ts)
 qt5_add_translation(QON_QM_FILES ${TS_FILES})
 
 source_group("Resources" FILES
@@ -311,8 +316,16 @@ install (TARGETS ${PROGRAM_NAME} DESTINATION ${SWEOS_BIN})
 # install(FILES ${Hdrs_bash} DESTINATION ${SWEOS_INC})
 install(FILES ${HDRS_SWEOS_Library} DESTINATION ${SWEOS_INC})
 install(FILES ${SWEOS_LIB_FILE} DESTINATION ${SWEOS_LIB})
-install(FILES ${PROJECT_SOURCE_DIR}/../LICENSE DESTINATION .)
-
+set( LICENSE_FILE ${PROJECT_SOURCE_DIR}/../LICENSE)
+set( WELCOME_FILE ${PROJECT_SOURCE_DIR}/../readme.md)
+install(FILES ${LICENSE_FILE} DESTINATION .)
+if(WIN32)
+  # install language translations
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${translation_zh}.qm DESTINATION ./Resources/translations)
+  # install vtk libs
+  FILE(GLOB VTK_LIBS "${VTK_DIR}/../../../bin/*.dll")
+  install (FILES ${VTK_LIBS} DESTINATION ${SWEOS_BIN})
+endif()
 # install API
 # 0. c++
 FILE(GLOB SWEOS_API_cpp "${PROJECT_SOURCE_DIR}/../test/c++/*.*")
@@ -355,10 +368,24 @@ set(CPACK_SOURCE_IGNORE_FILES "${CMAKE_CURRENT_BINARY_DIR}" )
 if (WIN32)
     if (USE_WIX_TOOLSET)
         set(CPACK_GENERATOR "WIX") # this need WiX Tooset installed and a path to candle.exe
+    elseif(USE_7Z_CPACK)
+    set(CPACK_GENERATOR "7Z")
     else ()
         set(CPACK_GENERATOR "NSIS") # this needs NSIS installed, and available
     endif ()
     set(CPACK_SOURCE_GENERATOR "ZIP")
+    # set icon
+    set(CPACK_NSIS_DISPLAY_NAME  "${PROGRAM_NAME}")
+    set(CPACK_NSIS_CONTACT "zguo@geomar.de")
+    set(CPACK_PACKAGE_EXECUTABLES "${PROGRAM_NAME}" "swEOS")
+    set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${PROGRAM_NAME}-${SWEOS_VERSION}")
+    set(CPACK_NSIS_MENU_LINKS "https://www.scibyte.cn" "Homepage for ${PROGRAM_NAME}")
+    set(CPACK_NSIS_URL_INFO_ABOUT "https://www.scibyte.cn")
+    set(CPACK_NSIS_HELP_LINK "https://www.scibyte.cn")
+    set(CPACK_NSIS_MUI_ICON "${PROJECT_SOURCE_DIR}/icon.ico")
+    # set(CPACK_NSIS_MUI_HEADERIMAGE "${PROJECT_SOURCE_DIR}/../manual/home/static/images/sweos_mac.jpg")
+    set(CPACK_NSIS_WELCOME_TITLE "swEOS: salt-water (H2O-NaCl) EOS")
+    set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
 elseif ( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
     set(CPACK_GENERATOR "DragNDrop")
     set(CPACK_BUNDLE_APPLE_CERT_APP "Developer ID Application: Zhikui GUO (AFCJBNSQCL)")
@@ -385,6 +412,7 @@ message(STATUS " * Build type: " ${CMAKE_BUILD_TYPE})
 message(STATUS " * Qt version: " ${SWEOS_QT_VERSION})
 message(STATUS " * Qt5_DIR: " ${Qt5_DIR})
 message(STATUS " * VTK version: " ${SWEOS_VTK_VERSION})
+message(STATUS " * VTK_DIR: " ${VTK_DIR})
 message(STATUS " * C compiler: " ${CMAKE_C_COMPILER})
 message(STATUS " * C++ compiler: " ${CMAKE_CXX_COMPILER})
 message(STATUS " * Install prefix: " ${CMAKE_INSTALL_PREFIX})
