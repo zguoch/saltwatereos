@@ -9,7 +9,7 @@
 
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
-
+#include "swEOSVersion.h"
 // Constructor
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -32,7 +32,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    // set version in status bar
+    statusBar()->showMessage(tr("swEOS version: ")+SWEOS_VERSION);
     //three meters
     init_Meters();
     updateMeters();

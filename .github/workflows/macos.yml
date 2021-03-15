@@ -1,7 +1,7 @@
 name: MacOS
 on: 
   push:
-    branches: main
+    branches: master
     tags:
       - 'V*'
 jobs:
