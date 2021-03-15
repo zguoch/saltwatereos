@@ -87,7 +87,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: swEOS_OSX_${{ env.SHORT_SHA }}.zip
-          path: swEOS-git-MacOSX.dmg
+          path: desktop/build/swEOS-git-MacOSX.dmg
       # debug workflow through ssh
       # - uses: actions/checkout@v2
       # - name: Setup tmate session
