@@ -52,9 +52,9 @@ jobs:
           g++ --version
           echo ${{ github.ref }}
           echo "commit id short" ${SHORT_SHA}
-      # debug workflow
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      # # debug workflow
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
 
       # build swEOS library
       - name: build library
