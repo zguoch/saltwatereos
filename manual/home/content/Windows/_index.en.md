@@ -3,7 +3,7 @@ title: "Windows"
 date: 2018-12-28T11:02:05+06:00
 icon: "ti-credit-card"
 logo: "images/windows.svg"
-description: "Professional softwares, scientific writting, programing skills"
+description: "Desktop app, command line app, c++ library"
 type : "apps"
 ---
 
@@ -29,3 +29,5 @@ type : "apps"
         <p class="mb-0">Win 10</p>
     </div>
 </div>
+
+![App snapshot](../images/sweos_windows_en.png)

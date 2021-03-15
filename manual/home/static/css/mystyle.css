@@ -28,8 +28,13 @@
 
 /* 简书 */
 .fa-book {
-    background: rgb(133, 233, 133);
-    color: rgb(240, 135, 135);
+    background: white;
+    color: orange;
+}
+
+.fa-book-open {
+    background: white;
+    color: orange;
 }
 
 .fa-zhihu {
@@ -92,7 +97,7 @@
 .tooltip {
     position: relative;
     display: inline-block;
-    border-bottom: 1px dotted black;
+    border-bottom: 1px dotted green;
   }
   
   .tooltip .tooltiptext {
@@ -127,3 +132,4 @@
     visibility: visible;
     opacity: 1;
   }
+  

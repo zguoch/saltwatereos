@@ -1,0 +1,69 @@
+buildPages:
+  image: python:3.7-alpine
+  stage: .pre
+  before_script:
+    - apk update
+    - apk add doxygen
+    - apk add perl
+    ## Uncomment the following line if you use graphviz dot graphs
+    - apk add graphviz
+    - apk add hugo
+  script:
+  # hogo home pages
+    - cd manual/home
+    - hugo
+    - cd ../..
+    - cp -rf manual/home/public/ .
+
+  # doxygen documentation
+    - doxygen Doxyfile
+    - cp -rf doxygen/html/* public/doxygen
+
+  # sphinx manual
+  # to use sphinxcontrib-bibtex, the sphinx version must be 1.6.7 or lower
+    - pip install sphinx==1.6.7
+    - pip install sphinxcontrib-bibtex sphinx_inline_tabs sphinx_sitemap
+    - pip install sphinx-intl
+    - sphinx-intl build
+    - sphinx-build -b html manual/sphinx/source public/manual/en
+    - sphinx-build -b html manual/sphinx/source public/manual/zh -Dlanguage=zh
+    - sphinx-build -b latex manual/sphinx/source public/latex/en
+    - sphinx-build -b latex manual/sphinx/source public/latex/zh -Dlanguage=zh
+    - cp manual/sphinx/index.html public/manual # the default entrance
+    # - sed 's/en\/index.html/manual\/en\/index.html/g' manual/sphinx/index.html | sed 's/zh\/index.html/manual\/zh\/index.html/g' >public/index.html # main entrance
+    # - sphinx-build -b html manual/sphinx/source public/manual
+  artifacts:
+    paths:
+    - public
+  only:
+    - master
+
+latex:
+  image: laurenss/texlive-full
+  stage: build
+  script:
+    - cd public/latex/en && make
+    - cd ../zh && make
+  dependencies:
+    - buildPages
+  artifacts:
+    paths:
+    - public
+  when: on_success
+  only:
+    - master
+
+pages:
+  image: python:3.7-alpine
+  script:
+    - mkdir public/downloads
+    - cp public/latex/en/SaltWaterEOS.pdf public/downloads/SaltWaterEOS_en.pdf
+    - cp public/latex/zh/SaltWaterEOS.pdf public/downloads/SaltWaterEOS_zh.pdf
+    - rm -rf public/latex
+  dependencies:
+    - latex
+  artifacts:
+    paths:
+    - public
+  only:
+    - master

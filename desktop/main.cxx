@@ -13,6 +13,7 @@
 
 #include "QVTKOpenGLWidget.h"
 #include "MainWindow.h"
+#include "swEOSVersion.h"
 #include "SWEOSbash.h"
 // #include "touchbar.h"
 

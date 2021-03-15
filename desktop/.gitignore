@@ -4,3 +4,5 @@ test/
 Icons/paraview/
 sign.sh
 install
+swEOSVersion.h
+swEOSConfig.h

@@ -56,19 +56,19 @@ hasChildren = true
   [[Languages.en.menu.main]]
   parent = "apps"
   name = "Mac"
-  url = "Mac"
+  url = "mac"
   weight = 1
 
   [[Languages.en.menu.main]]
   parent = "apps"
   name = "Linux"
-  url = "Linux"
+  url = "linux"
   weight = 2
 
   [[Languages.en.menu.main]]
   parent = "apps"
   name = "Windows"
-  url = "Windows"
+  url = "windows"
   weight = 3
 
 # Dropdown menu
@@ -80,20 +80,26 @@ hasChildren = true
   [[Languages.en.menu.main]]
   parent = "api"
   name = "Python"
-  url = ""
+  url = "https://pypi.org/project/pyswEOS/"
   weight = 1
 
   [[Languages.en.menu.main]]
   parent = "api"
-  name = "Ttl"
-  url = ""
+  name = "Tcl"
+  url = "tcl"
   weight = 2
 
   [[Languages.en.menu.main]]
   parent = "api"
-  name = "JS"
-  url = ""
+  name = "Matlab"
+  url = "matlab"
   weight = 3
+
+  [[Languages.en.menu.main]]
+  parent = "api"
+  name = "JS"
+  url = "js"
+  weight = 4
 
 # Dropdown menu
 [[Languages.en.menu.main]]
@@ -104,19 +110,19 @@ hasChildren = true
   [[Languages.en.menu.main]]
   parent = "docs"
   name = "Online manual"
-  url = "research"
+  url = "manual"
   weight = 1
 
   [[Languages.en.menu.main]]
   parent = "docs"
   name = "PDF manual"
-  url = "https://hydrothermal-openfoam.gitlab.io/saltwatereos/downloads/SaltWaterEOS_en.pdf"
+  url = "downloads/SaltWaterEOS_en.pdf"
   weight = 2
 
   [[Languages.en.menu.main]]
   parent = "docs"
   name = "Source code doc"
-  url = "products"
+  url = "doxygen"
   weight = 3
 
 # navigation
@@ -133,26 +139,26 @@ weight = 6
 # banner
 [Languages.en.params.banner]
 title = "Welcome to swEOS Package"
-subtitle = "Salt-Water Equation of State (swEOS): H2ONaCl"
-bg_image = "images/banner.jpg"
+subtitle = "Salt-Water Equation of State (swEOS): H2O-NaCl"
+bg_image = "images/banner_en.jpg"
 placeholder = "Have a question? Try to ask here or enter terms"
 
 # social links 
 
 [[Languages.en.params.social]]
+fa="fas fa-book-open"
+fa_title="Manual documentation" #以tooltip形式显示
+link = "manual"
+
+[[Languages.en.params.social]]
 fa="fab fa-gitlab"
-fa_title="GitLab" #以tooltip形式显示
+fa_title="GitLab repository" #以tooltip形式显示
 link = "https://gitlab.com/hydrothermal-openfoam/saltwatereos"
   
 [[Languages.en.params.social]]
 fa="fab fa-github"
-fa_title="GitHub" #以tooltip形式显示
+fa_title="GitHub repository" #以tooltip形式显示
 link = "https://github.com/zguoch/saltwatereos"
-
-# [[Languages.en.params.social]]
-# fa="fab fa-docker"
-# fa_title="Docker Hub" #以tooltip形式显示
-# link = "https://hub.docker.com/u/zguo"
 
 # [[Languages.en.params.social]]
 # fa="fab fa-youtube"
@@ -193,19 +199,19 @@ hasChildren = true
   [[Languages.zh.menu.main]]
   parent = "应用程序"
   name = "Mac"
-  url = "Mac"
+  url = "mac"
   weight = 1
 
   [[Languages.zh.menu.main]]
   parent = "应用程序"
   name = "Linux"
-  url = "Linux"
+  url = "linux"
   weight = 2
 
   [[Languages.zh.menu.main]]
   parent = "应用程序"
   name = "Windows"
-  url = "Windows"
+  url = "windows"
   weight = 3
 
 # Dropdown menu
@@ -217,20 +223,26 @@ hasChildren = true
   [[Languages.zh.menu.main]]
   parent = "程序接口"
   name = "Python"
-  url = ""
+  url = "https://pypi.org/project/pyswEOS/"
   weight = 1
 
   [[Languages.zh.menu.main]]
   parent = "程序接口"
   name = "Ttl"
-  url = ""
+  url = "tcl"
   weight = 2
 
   [[Languages.zh.menu.main]]
   parent = "程序接口"
-  name = "JS"
-  url = ""
+  name = "Matlab"
+  url = "matlab"
   weight = 3
+
+  [[Languages.zh.menu.main]]
+  parent = "程序接口"
+  name = "JS"
+  url = "js"
+  weight = 4
 
 # Dropdown menu
 [[Languages.zh.menu.main]]
@@ -241,19 +253,19 @@ hasChildren = true
   [[Languages.zh.menu.main]]
   parent = "文档"
   name = "在线文档"
-  url = "research"
+  url = "../manual/zh"
   weight = 1
 
   [[Languages.zh.menu.main]]
   parent = "文档"
   name = "PDF文档"
-  url = "https://www.scibyte.cn/blog/zh/blog.html"
+  url = "../downloads/SaltWaterEOS_zh.pdf"
   weight = 2
 
   [[Languages.zh.menu.main]]
   parent = "文档"
   name = "源代码文档"
-  url = "https://www.scibyte.cn/blog/zh/blog.html"
+  url = "../doxygen"
   weight = 3
 
 # navigation
@@ -270,36 +282,41 @@ weight = 6
 # banner
 [Languages.zh.params.banner]
 title = "欢迎访问 swEOS 程序包"
-subtitle = "Salt-Water Equation of State简称swEOS"
-bg_image = "images/banner.jpg"
+subtitle = "Salt-Water(H2O-NaCl) Equation of State简称swEOS"
+bg_image = "images/banner_zh.jpg"
 placeholder = "有什么想知道的，搜一把试试"
 
 # social links 
+
+[[Languages.zh.params.social]]
+fa="fas fa-book-open"
+fa_title="Manual documentation" #以tooltip形式显示
+link = "manual"
+
+[[Languages.zh.params.social]]
+fa="fab fa-gitlab"
+fa_title="GitLab repository" #以tooltip形式显示
+link = "https://gitlab.com/hydrothermal-openfoam/saltwatereos"
+  
+[[Languages.zh.params.social]]
+fa="fab fa-github"
+fa_title="GitHub repository" #以tooltip形式显示
+link = "https://github.com/zguoch/saltwatereos"
+
+[[Languages.zh.params.social]]
+fa="fab fa-orcid"
+fa_title="orcid" #以tooltip形式显示
+link = "https://orcid.org/0000-0002-0604-0455"
+
 [[Languages.zh.params.social]]
 fa="fab fa-weixin"
 fa_title="微信公众号" #以tooltip形式显示
 link = "contact"
 
 [[Languages.zh.params.social]]
-fa="fab fa-gitlab"
-fa_title="GitLab" #以tooltip形式显示
-link = "https://gitlab.com/hydrothermal-openfoam/saltwatereos"
-  
-[[Languages.zh.params.social]]
-fa="fab fa-github"
-fa_title="GitHub" #以tooltip形式显示
-link = "https://github.com/zguoch/saltwatereos"
-
-
-# [[Languages.zh.params.social]]
-# fa="fab fa-zhihu"
-# fa_title="知乎" #以tooltip形式显示
-# link = "https://www.zhihu.com/people/jiu-tian-xue-zhe"
-
-[[Languages.zh.params.social]]
-fa="fab fa-orcid"
-fa_title="orcid" #以tooltip形式显示
-link = "https://orcid.org/0000-0002-0604-0455"
+fa="fab fa-zhihu"
+fa_title="知乎" #以tooltip形式显示
+link = "https://www.zhihu.com/people/jiu-tian-xue-zhe"
 
 
 # call to action

@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # 1. set path of SWEOS library, which can be downloaded from https://github.com/zguoch/saltwatereos/releases according to your OS
-set(SWEOS_DIR "" CACHE FILEPATH "Main path of SWEOS library")
+set(SWEOS_DIR "../../" CACHE FILEPATH "Main path of SWEOS library")
 if(EXISTS ${SWEOS_DIR})
   message(STATUS "SWEOS head files found: " ${SWEOS_DIR}/include)  
   message(STATUS "SWEOS libraries found: " ${SWEOS_DIR}/lib/libeosH2ONaCl.a )   
