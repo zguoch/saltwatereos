@@ -319,11 +319,16 @@ install(FILES ${SWEOS_LIB_FILE} DESTINATION ${SWEOS_LIB})
 set( LICENSE_FILE ${PROJECT_SOURCE_DIR}/../LICENSE)
 set( WELCOME_FILE ${PROJECT_SOURCE_DIR}/../readme.md)
 install(FILES ${LICENSE_FILE} DESTINATION .)
-if(WIN32)
+if(APPLE)
+else()
   # install language translations
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${translation_zh}.qm DESTINATION ./Resources/translations)
-  # install vtk libs
-  FILE(GLOB VTK_LIBS "${VTK_DIR}/../../../bin/*.dll")
+  if(WIN32)
+    # install vtk libs
+    FILE(GLOB VTK_LIBS "${VTK_DIR}/../../../bin/*.dll")
+  else()
+    FILE(GLOB VTK_LIBS "${VTK_DIR}/../../*vtk*.*")
+  endif()
   install (FILES ${VTK_LIBS} DESTINATION ${SWEOS_BIN})
 endif()
 # install API
@@ -331,7 +336,7 @@ endif()
 FILE(GLOB SWEOS_API_cpp "${PROJECT_SOURCE_DIR}/../test/c++/*.*")
 install(FILES ${SWEOS_API_cpp} DESTINATION "API/c++/")
 # 1. python
-FILE(GLOB SWEOS_API_Python "${PROJECT_SOURCE_DIR}/../Library/API/python/pyswEOS/*")
+FILE(GLOB SWEOS_API_Python "${PROJECT_SOURCE_DIR}/../Library/API/python/pyswEOS/*.*")
 install(FILES ${SWEOS_API_Python} DESTINATION "API/python/")
 # 2. tcl
 FILE(GLOB SWEOS_API_tcl "${PROJECT_SOURCE_DIR}/../Library/API/tcl/*")
