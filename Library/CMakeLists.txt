@@ -11,12 +11,6 @@ if (POLICY CMP0042)
   cmake_policy(SET CMP0042 NEW)
 endif()
 
-if(DEFINED CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "Choose build type")
-else()
-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose build type")
-endif()
-
 project(eosH2ONaCl CXX C)
 # project(${PROJECT_NAME} LANGUAGES CXX)
 if(${CMAKE_VERSION} VERSION_LESS "3.3") 

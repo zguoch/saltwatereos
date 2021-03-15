@@ -30,6 +30,8 @@ macro(set_config_option VARNAME STRING)
 endmacro()
 opt(OpenMP "Enable OpenMP to parallel computing" ON)
 option(FreeSteam "whether use freesteam library" OFF)
+set(SWEOS_LIB_PATH "../Library/lib")
+set(SWEOS_LIB_NAME "eosH2ONaCl")
 
 set(SWEOS_MAJOR_VERSION 1)
 set(SWEOS_MINOR_VERSION 7)
@@ -98,6 +100,8 @@ else()
 endif()
 
 # Using OpenMP
+include_directories(/usr/local/Cellar/libomp/11.0.0/include /usr/local/Cellar/libomp/11.1.0/include)
+find_package(OpenMP REQUIRED)
 if(APPLE)
     set(CMAKE_C_COMPILER clang)
     set(CMAKE_CXX_COMPILER clang++)
@@ -114,8 +118,6 @@ if(APPLE)
         set(OpenMP_omp_LIBRARY omp)
     endif()
 endif()
-
-find_package(OpenMP REQUIRED)
 if(OPENMP_FOUND)
     message("OPENMP FOUND")
     set_config_option(HAVE_OpenMP "OpenMP")
@@ -123,15 +125,22 @@ if(OPENMP_FOUND)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
-include_directories(/usr/local/Cellar/libomp/11.0.0/include /usr/local/Cellar/libomp/11.1.0/include)
-
+#windows vs2017 doesn't need opm library link 
+set(LIBomp "")
+if (APPLE)
+  set(LIBomp "omp")
+endif()
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
+# FreeSteam
+set(LIBFreeSteam "")
+if (FreeSteam)
+    set_config_option(HAVE_FreeSteam "FreeSteam")
+    # add freesteam library path
+    link_directories("/usr/local/lib")
+    set(LIBFreeSteam "freesteam")
+endif()
 # set icon
-set(MACOSX_BUNDLE_ICON_FILE logo.icns)
 set(myApp_ICON ${CMAKE_CURRENT_SOURCE_DIR}/Icons/logo.icns)
-set_source_files_properties(${myApp_ICON} PROPERTIES 
-    MACOSX_PACKAGE_LOCATION "Resources")
 
 find_package(VTK COMPONENTS
   vtkCommonCore
@@ -165,9 +174,9 @@ else()
 endif()
 # add H2ONaCl source and library 
 include_directories(../Library/include ../commandline)
-link_directories("../Library/lib" "/usr/local/lib" "${Qt5_DIR}/../../../lib")
-
-
+link_directories(${SWEOS_LIB_PATH} "/usr/local/lib" "${Qt5_DIR}/../../../lib")
+FILE(GLOB HDRS_SWEOS_Library "${PROJECT_SOURCE_DIR}/../Library/include/*.h" "${PROJECT_SOURCE_DIR}/../Library/include/*.H")
+FILE(GLOB SWEOS_LIB_FILE "${SWEOS_LIB_PATH}/*${SWEOS_LIB_NAME}*")
 
 # Use the include path and library for Qt that is used by VTK.
 include_directories(
@@ -176,21 +185,13 @@ include_directories(
 )
 
 # Set your files and resources here
-# qroundprogressbar.cpp
 set( Srcs main.cxx  MainWindow.cxx qroundprogressbar.cpp  Meter.cpp)
-# qroundprogressbar.h
 set( Hdrs MainWindow.h qroundprogressbar.h  Meter.h)
-
 set( MOC_Hdrs ui_MainWindow.h )
-
 set( UIs MainWindow.ui )
-
 set( QRCs Icons/icons.qrc)
-
 set( Srcs_bash ../commandline/SWEOSbash.cpp ../commandline/MultiProgressBar.cpp)
-
 set( Hdrs_bash ../commandline/SWEOSbash.h ../commandline/MultiProgressBar.h)
-
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
@@ -204,25 +205,22 @@ qt5_add_resources(QRC_Srcs ${QRCs} )
 #languages
 set(TS_FILES languages/zh_CN.ts)
 qt5_add_translation(QON_QM_FILES ${TS_FILES})
-set_source_files_properties(${QON_QM_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/languages")
 
 source_group("Resources" FILES
   ${UIs}
   ${QRCs}
   ${EXE_ICON} # Not present
 )
-
 source_group("Generated" FILES
   ${UI_Srcs}
   ${MOC_Srcs}
   ${QRC_Srcs}
 )
 
-
 # if want to generage mac os app, add MACOSX_BUNDLE follow ${PROGRAM_NAME} 
 add_executable(
   ${PROGRAM_NAME}  
-  MACOSX_BUNDLE
+  WIN32
   ${Srcs} 
   ${Hdrs} 
   ${Srcs_bash} 
@@ -233,23 +231,141 @@ add_executable(
   ${myApp_ICON}
   ${QON_QM_FILES}
   )
-
-set(LIBFreeSteam "")
- 
-if (FreeSteam)
-    set_config_option(HAVE_FreeSteam "FreeSteam")
-    # add freesteam library path
-    link_directories("/usr/local/lib")
-    set(LIBFreeSteam "freesteam")
+# test: disable macos bundle, cancle it after debug
+# set(ENABLE_OS_SPECIFIC_INSTALL ON)
+if(APPLE AND NOT ENABLE_OS_SPECIFIC_INSTALL)
+  message("Configure for macOS install")
+  set_target_properties(${PROGRAM_NAME} PROPERTIES MACOSX_BUNDLE ON)
+  set_target_properties(${PROGRAM_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist)
+  set_source_files_properties(${QON_QM_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/translations")
+  set(MACOSX_BUNDLE_ICON_FILE logo.icns)
+  set_source_files_properties(${myApp_ICON} PROPERTIES 
+    MACOSX_PACKAGE_LOCATION "Resources")
 endif()
 
-#windows vs2017 doesn't need opm library link 
-set(LIBomp "")
-if (APPLE)
-  set(LIBomp "omp")
-endif()
-target_link_libraries(${PROGRAM_NAME} Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Concurrent eosH2ONaCl ${LIBFreeSteam} ${LIBomp})
+target_link_libraries(${PROGRAM_NAME} Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Concurrent ${SWEOS_LIB_NAME} ${LIBFreeSteam} ${LIBomp})
 target_link_libraries(${PROGRAM_NAME} ${VTK_LIBRARIES} )
+
+
+########################################################
+###                   INSTALL                        ###
+########################################################
+if(WIN32)
+  if(ENABLE_OS_SPECIFIC_INSTALL)
+    set(SWEOS_BIN .)
+    set(SWEOS_LIB .)
+    set(SWEOS_DOC .)
+    set(SWEOS_MAN .)
+    set(SWEOS_INC .)
+  else()
+    include(GNUInstallDirs)
+    set(SWEOS_BIN ${CMAKE_INSTALL_BINDIR})
+    set(SWEOS_LIB ${CMAKE_INSTALL_LIBDIR})
+    set(SWEOS_DOC ${CMAKE_INSTALL_DOCDIR})
+    set(SWEOS_MAN ${CMAKE_INSTALL_MANDIR}/man1)
+    set(SWEOS_INC ${CMAKE_INSTALL_INCLUDEDIR})
+  endif()
+  if(CYGWIN)
+    unix2dos(SWEOS_API)
+    if(ENABLE_PRIVATE_API)
+      unix2dos(SWEOS_PRIVATE_API)
+    endif()
+    unix2dos(WELCOME_FILE)
+    unix2dos(SDK_FILE)
+    unix2dos(LICENSE_FILE)
+    unix2dos(CREDITS_FILE)
+    unix2dos(CHANGELOG_FILE)
+    unix2dos(TUTORIAL_FILES)
+    foreach(DIR ${DEMOS_DIRS})
+      file(GLOB DEMO_FILES ${DIR}/?*.*)
+      unix2dos(DEMO_FILES)
+    endforeach()
+  endif()
+elseif(APPLE AND ENABLE_OS_SPECIFIC_INSTALL)
+  # set these so that the files get installed nicely in the MacOSX
+  # .app bundle
+  message("macOS install path config")
+  set(SWEOS_BIN ../MacOS)
+  set(SWEOS_LIB ../MacOS)
+  set(SWEOS_DOC ../../..)
+  set(SWEOS_MAN ../../..)
+  set(SWEOS_INC ../MacOS)
+elseif(APPLE AND NOT ENABLE_OS_SPECIFIC_INSTALL)
+  # set these so that the files get installed nicely in the MacOSX
+  # .app bundle
+  set(SWEOS_BIN .)
+  set(SWEOS_LIB ./lib)
+  set(SWEOS_DOC ./doc)
+  set(SWEOS_MAN ./man)
+  set(SWEOS_INC ./include)
+else()
+  include(GNUInstallDirs)
+  set(SWEOS_BIN ${CMAKE_INSTALL_BINDIR})
+  set(SWEOS_LIB ${CMAKE_INSTALL_LIBDIR})
+  set(SWEOS_DOC ${CMAKE_INSTALL_DOCDIR})
+  set(SWEOS_MAN ${CMAKE_INSTALL_MANDIR}/man1)
+  set(SWEOS_INC ${CMAKE_INSTALL_INCLUDEDIR})
+endif() 
+install (TARGETS ${PROGRAM_NAME} DESTINATION ${SWEOS_BIN})
+# install(FILES ${Hdrs_bash} DESTINATION ${SWEOS_INC})
+install(FILES ${HDRS_SWEOS_Library} DESTINATION ${SWEOS_INC})
+install(FILES ${SWEOS_LIB_FILE} DESTINATION ${SWEOS_LIB})
+# install API
+# 0. c++
+FILE(GLOB SWEOS_API_cpp "${SWEOS_LIB_PATH}/../../test/c++/*.*")
+install(FILES ${SWEOS_API_cpp} DESTINATION "API/c++/")
+# 1. python
+FILE(GLOB SWEOS_API_Python "${SWEOS_LIB_PATH}/../../Library/API/python/pyswEOS/*")
+install(FILES ${SWEOS_API_Python} DESTINATION "API/python/")
+# 2. tcl
+FILE(GLOB SWEOS_API_tcl "${SWEOS_LIB_PATH}/../../Library/API/tcl/*")
+install(FILES ${SWEOS_API_tcl} DESTINATION "API/tcl/")
+
+########################################################
+###                   CPACK                          ###
+########################################################
+set(CPACK_PACKAGE_VENDOR "Zhikui Guo (zguo@geomar.de)")
+set(CPACK_PACKAGE_VERSION_MAJOR ${SWEOS_MAJOR_VERSION})
+set(CPACK_PACKAGE_VERSION_MINOR ${SWEOS_MINOR_VERSION})
+set(CPACK_PACKAGE_VERSION_PATCH ${SWEOS_PATCH_VERSION})
+set(CPACK_PACKAGE_DESCRIPTION_FILE ${WELCOME_FILE})
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY
+    "swEOS, a desktop application and API for salt-water (H2ONaCl) EOS and thermodynamic properties.")
+if(SWEOS_EXTRA_VERSION MATCHES "-git.*") # so that we'll overwrite the archives
+  set(CPACK_PACKAGE_FILE_NAME ${PROGRAM_NAME}-git-${SWEOS_OS})
+  set(CPACK_SOURCE_PACKAGE_FILE_NAME ${PROGRAM_NAME}-git-source)
+else()
+  set(CPACK_PACKAGE_FILE_NAME ${PROGRAM_NAME}-${SWEOS_VERSION}-${SWEOS_OS})
+  set(CPACK_SOURCE_PACKAGE_FILE_NAME ${PROGRAM_NAME}-${SWEOS_VERSION}-source)
+endif()
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "${PROGRAM_NAME}")
+set(CPACK_RESOURCE_FILE_LICENSE ${LICENSE_FILE})
+set(CPACK_RESOURCE_FILE_README ${WELCOME_FILE})
+set(CPACK_RESOURCE_FILE_WELCOME ${WELCOME_FILE})
+set(CPACK_PACKAGE_EXECUTABLE "${PROGRAM_NAME}")
+if(ENABLE_PACKAGE_STRIP)
+  set(CPACK_STRIP_FILES TRUE)
+else()
+  set(CPACK_STRIP_FILES FALSE)
+endif()
+set(CPACK_SOURCE_IGNORE_FILES "${CMAKE_CURRENT_BINARY_DIR}" )
+if (WIN32)
+    if (USE_WIX_TOOLSET)
+        set(CPACK_GENERATOR "WIX") # this need WiX Tooset installed and a path to candle.exe
+    else ()
+        set(CPACK_GENERATOR "NSIS") # this needs NSIS installed, and available
+    endif ()
+    set(CPACK_SOURCE_GENERATOR "ZIP")
+elseif ( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
+    set(CPACK_GENERATOR "DragNDrop")
+else ()
+    set(CPACK_GENERATOR "DEB")
+    set(CPACK_SOURCE_GENERATOR "TGZ")
+endif ()
+
+include(CPack)
+
+# Configure versions of macro in head file
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/swEOSConfig.h.in
                ${CMAKE_CURRENT_SOURCE_DIR}/swEOSConfig.h)
@@ -270,4 +386,4 @@ message(STATUS " * Install prefix: " ${CMAKE_INSTALL_PREFIX})
 message(STATUS "")
 
 # solve font blurry on UI
-set_target_properties(${PROGRAM_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist)
+# set_target_properties(${PROGRAM_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist)
