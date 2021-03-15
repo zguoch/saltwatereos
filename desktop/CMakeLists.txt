@@ -306,19 +306,22 @@ else()
   set(SWEOS_MAN ${CMAKE_INSTALL_MANDIR}/man1)
   set(SWEOS_INC ${CMAKE_INSTALL_INCLUDEDIR})
 endif() 
+
 install (TARGETS ${PROGRAM_NAME} DESTINATION ${SWEOS_BIN})
 # install(FILES ${Hdrs_bash} DESTINATION ${SWEOS_INC})
 install(FILES ${HDRS_SWEOS_Library} DESTINATION ${SWEOS_INC})
 install(FILES ${SWEOS_LIB_FILE} DESTINATION ${SWEOS_LIB})
+install(FILES ${PROJECT_SOURCE_DIR}/../LICENSE DESTINATION .)
+
 # install API
 # 0. c++
-FILE(GLOB SWEOS_API_cpp "${SWEOS_LIB_PATH}/../../test/c++/*.*")
+FILE(GLOB SWEOS_API_cpp "${PROJECT_SOURCE_DIR}/../test/c++/*.*")
 install(FILES ${SWEOS_API_cpp} DESTINATION "API/c++/")
 # 1. python
-FILE(GLOB SWEOS_API_Python "${SWEOS_LIB_PATH}/../../Library/API/python/pyswEOS/*")
+FILE(GLOB SWEOS_API_Python "${PROJECT_SOURCE_DIR}/../Library/API/python/pyswEOS/*")
 install(FILES ${SWEOS_API_Python} DESTINATION "API/python/")
 # 2. tcl
-FILE(GLOB SWEOS_API_tcl "${SWEOS_LIB_PATH}/../../Library/API/tcl/*")
+FILE(GLOB SWEOS_API_tcl "${PROJECT_SOURCE_DIR}/../Library/API/tcl/*")
 install(FILES ${SWEOS_API_tcl} DESTINATION "API/tcl/")
 
 ########################################################
@@ -358,6 +361,7 @@ if (WIN32)
     set(CPACK_SOURCE_GENERATOR "ZIP")
 elseif ( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
     set(CPACK_GENERATOR "DragNDrop")
+    set(CPACK_BUNDLE_APPLE_CERT_APP "Developer ID Application: Zhikui GUO (AFCJBNSQCL)")
 else ()
     set(CPACK_GENERATOR "DEB")
     set(CPACK_SOURCE_GENERATOR "TGZ")
@@ -379,6 +383,7 @@ message(STATUS "SWEOS ${SWEOS_VERSION} has been configured for ${SWEOS_OS}")
 message(STATUS "")
 message(STATUS " * Build type: " ${CMAKE_BUILD_TYPE})
 message(STATUS " * Qt version: " ${SWEOS_QT_VERSION})
+message(STATUS " * Qt5_DIR: " ${Qt5_DIR})
 message(STATUS " * VTK version: " ${SWEOS_VTK_VERSION})
 message(STATUS " * C compiler: " ${CMAKE_C_COMPILER})
 message(STATUS " * C++ compiler: " ${CMAKE_CXX_COMPILER})
