@@ -9,7 +9,7 @@ env:
   SOLUTION_FILE_PATH: Library/build
   BUILD_CONFIGURATION: Release
   BUILD_PLATFORM: x64
-  PYTHON_PATH: C:/hostedtoolcache/windows/Python/3.8.7/x64
+  PYTHON_PATH: C:/hostedtoolcache/windows/Python/3.8.8/x64
   HOME: D:/a/saltwatereos/saltwatereos
   AppInstaller: swEOS-Windows-Installer.exe
 jobs:
