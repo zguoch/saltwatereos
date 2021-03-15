@@ -44,6 +44,8 @@ jobs:
           echo "commit id short" ${SHORT_SHA}
           echo "github tag: " ${GIT_TAG}
     # debug workflow through ssh
+      - name: install oh my zsh
+        run: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
       - uses: actions/checkout@v2
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
@@ -68,6 +70,9 @@ jobs:
           cmake -DQt5_DIR=${QT_DIR}/lib/cmake/Qt5 -DVTK_DIR=/usr/local/Cellar/vtk@8.2/8.2.0_3/lib/cmake/vtk-8.2  -DCMAKE_INSTALL_PREFIX=./install ..
           make 
           ${QT_DIR}/bin/macdeployqt swEOS.app
+          make install
+          mkdir install/CommandLineTool
+          cp ../../commandline/build/swEOS install/CommandLineTool
           echo ${MACOS_CERTIFICATE} | base64 --decode > certificate.p12
           security create-keychain -p ${TMP_PWD} signApp.keychain 
           security default-keychain -s signApp.keychain
@@ -77,8 +82,7 @@ jobs:
           # codesign --deep -fs "Developer ID Application: ${APPLEDEVELOPERID_APP}" --options=runtime --timestamp swEOS.app
           # codesign -vvv --deep --strict swEOS.app 
           # hdiutil create -srcfolder swEOS.app swEOS.dmg
-          mkdir install/CommandLineTool
-          cp ../../commandline/build/swEOS install/CommandLineTool
+          
           make package
           # 第一种方案：如果用户无法打开未被验证的app，只需要在终端运行：sudo spctl --master-disable 即可
           # 第二种方案：只对其中一个app进行开放：sudo xattr -r -d com.apple.quarantine /XXX/XXX.app/

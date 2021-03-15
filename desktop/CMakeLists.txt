@@ -401,6 +401,7 @@ elseif ( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
 else ()
     set(CPACK_GENERATOR "DEB")
     set(CPACK_SOURCE_GENERATOR "TGZ")
+    set(CPACK_INSTALL_PREFIX "${HOME}/swEOS")   
 endif ()
 
 include(CPack)
