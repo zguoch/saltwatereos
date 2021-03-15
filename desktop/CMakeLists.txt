@@ -348,7 +348,7 @@ set(CPACK_PACKAGE_DESCRIPTION_FILE ${WELCOME_FILE})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY
     "swEOS, a desktop application and API for salt-water (H2ONaCl) EOS and thermodynamic properties.")
 if(SWEOS_EXTRA_VERSION MATCHES "-git.*") # so that we'll overwrite the archives
-  set(CPACK_PACKAGE_FILE_NAME ${PROGRAM_NAME}-git-${SWEOS_OS})
+  set(CPACK_PACKAGE_FILE_NAME ${PROGRAM_NAME}-${SWEOS_OS}-Installer)
   set(CPACK_SOURCE_PACKAGE_FILE_NAME ${PROGRAM_NAME}-git-source)
 else()
   set(CPACK_PACKAGE_FILE_NAME ${PROGRAM_NAME}-${SWEOS_VERSION}-${SWEOS_OS})

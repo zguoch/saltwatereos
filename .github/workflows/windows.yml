@@ -11,6 +11,7 @@ env:
   BUILD_PLATFORM: x64
   PYTHON_PATH: C:/hostedtoolcache/windows/Python/3.8.7/x64
   HOME: D:/a/saltwatereos/saltwatereos
+  AppInstaller: swEOS-Windows-Installer.exe
 jobs:
   buildApp:
     name: library
@@ -88,23 +89,25 @@ jobs:
           cd ${{env.HOME}}
           mkdir desktop/build
           cd desktop/build
-          cmake -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} -DVTK_DIR=${{env.HOME}}/dependencies_swEOS/windows/VTK8.2/lib/cmake/vtk-8.2 ..
-          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} swEOS.sln
-          ../../QT/Qt/5.15.2/msvc2019_64/bin/windeployqt.exe Release/swEOS.exe
-          cp ${{env.HOME}}/dependencies_swEOS/windows/VTK8.2/bin/*.dll Release
+          cmake -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} -DVTK_DIR=${{env.HOME}}/dependencies_swEOS/windows/VTK8.2/lib/cmake/vtk-8.2 -DCMAKE_INSTALL_PREFIX=${{env.HOME}}/install ..
+          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} swEOS.vcxproj
+          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} INSTALL.vcxproj
+          ../../QT/Qt/5.15.2/msvc2019_64/bin/windeployqt.exe ${{env.HOME}}/install/bin/swEOS.exe
+          # cp ${{env.HOME}}/dependencies_swEOS/windows/VTK8.2/bin/*.dll Release
+          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} PACKAGE.vcxproj
 
-      # package
-      - name: package
-        working-directory: ${{ env.GITHUB_WORKSPACE }}
-        run: |
-          cd ${{env.HOME}}
-          mkdir swEOS_windows
-          cp -r Library/lib swEOS_windows/
-          cp -r Library/API swEOS_windows/
-          cp -r Library/include swEOS_windows/
-          cp commandline\build\Release\*.exe swEOS_windows\swEOS_cmd.exe
-          cp -r desktop\build\Release swEOS_windows\
-          7z a -tzip swEOS_windows ./swEOS_windows/*
+      # # package
+      # - name: package
+      #   working-directory: ${{ env.GITHUB_WORKSPACE }}
+      #   run: |
+      #     cd ${{env.HOME}}
+      #     mkdir swEOS_windows
+      #     cp -r Library/lib swEOS_windows/
+      #     cp -r Library/API swEOS_windows/
+      #     cp -r Library/include swEOS_windows/
+      #     cp commandline\build\Release\*.exe swEOS_windows\swEOS_cmd.exe
+      #     cp -r desktop\build\Release swEOS_windows\
+      #     7z a -tzip swEOS_windows ./swEOS_windows/*
           
       # debug workflow
       # - name: Setup tmate session
@@ -112,7 +115,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: swEOS_windows_${{env.SHORT_SHA}}.zip
-          path: swEOS_windows.zip
+          path: ${{env.HOME}}/desktop/build/${{env.AppInstaller}}
     
       # tag 上传Release
       - name: get tag name
@@ -125,7 +128,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: swEOS_windows.zip
+          file: ${{env.HOME}}/desktop/build/${{env.AppInstaller}}
           asset_name: swEOS_windows_${{env.GIT_TAG}}.zip
           tag: ${{ github.ref }}
           overwrite: true

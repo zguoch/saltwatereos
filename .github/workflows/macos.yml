@@ -14,6 +14,7 @@ jobs:
       TMP_PWD: hydrothermalfoam
       APPLEDEVELOPERID_APP: ${{ secrets.APPLEDEVELOPERID_APP }}
       QT_DIR: /usr/local/Cellar/qt@5/5.15.2
+      AppInstaller: swEOS-MacOSX-Installer.dmg
     steps:
       # checkout source code
       - uses: actions/checkout@v2
@@ -87,7 +88,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: swEOS_OSX_${{ env.SHORT_SHA }}.zip
-          path: desktop/build/swEOS-git-MacOSX.dmg
+          path: desktop/build/${{env.AppInstaller}}
       # debug workflow through ssh
       # - uses: actions/checkout@v2
       # - name: Setup tmate session
@@ -99,7 +100,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: swEOS-git-MacOSX.dmg
+          file: ${{env.AppInstaller}}
           asset_name: swEOS_OSX_${{env.GIT_TAG}}.zip
           tag: ${{ github.ref }}
           overwrite: true
