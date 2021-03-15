@@ -99,7 +99,7 @@ jobs:
           ../../QT/Qt/5.15.2/msvc2019_64/bin/windeployqt.exe ${{env.HOME}}/install/bin/swEOS.exe
           # cp ${{env.HOME}}/dependencies_swEOS/windows/VTK8.2/bin/*.dll Release
           mkdir install/CommandLineTool
-          cp ../../commandline/build/swEOS ${{env.HOME}}/install/CommandLineTool
+          cp ../../commandline/build/Release/swEOS ${{env.HOME}}/install/CommandLineTool
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} PACKAGE.vcxproj
 
       # # package

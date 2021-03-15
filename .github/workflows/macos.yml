@@ -43,6 +43,10 @@ jobs:
           echo ${{ github.ref }}
           echo "commit id short" ${SHORT_SHA}
           echo "github tag: " ${GIT_TAG}
+    # debug workflow through ssh
+      - uses: actions/checkout@v2
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
       - name: compile library
         run: |
@@ -91,11 +95,7 @@ jobs:
         with:
           name: swEOS_OSX_${{ env.SHORT_SHA }}.zip
           path: desktop/build/${{env.AppInstaller}}
-      # debug workflow through ssh
-      # - uses: actions/checkout@v2
-      # - name: Setup tmate session
-      #   uses: mxschmitt/action-tmate@v3
-
+      
       # tag 上传Release
       - name: uploadRelease
         if: startsWith(github.event.ref, 'refs/tags/')

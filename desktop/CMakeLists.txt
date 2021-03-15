@@ -352,6 +352,7 @@ set(CPACK_PACKAGE_VERSION_MAJOR ${SWEOS_MAJOR_VERSION})
 set(CPACK_PACKAGE_VERSION_MINOR ${SWEOS_MINOR_VERSION})
 set(CPACK_PACKAGE_VERSION_PATCH ${SWEOS_PATCH_VERSION})
 set(CPACK_PACKAGE_DESCRIPTION_FILE ${WELCOME_FILE})
+set(CPACK_SET_DESTDIR ON) # the install directory can be specified by user
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY
     "swEOS, a desktop application and API for salt-water (H2ONaCl) EOS and thermodynamic properties.")
 if(SWEOS_EXTRA_VERSION MATCHES "-git.*") # so that we'll overwrite the archives
