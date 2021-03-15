@@ -1,6 +1,6 @@
 #ifndef SWEOSBASH_H
 #define SWEOSBASH_H
-
+#include "swEOSVersion.h"
 #ifdef _WIN32
         
 #else
@@ -130,8 +130,9 @@ namespace SWEOSbash
         cout << "***************************************************\n";
         cout << "*                 program swEOS                   *\n";
         cout << "*                 ~~~~~~~ ~~~~~~~                 *\n";
+        cout << "*  Version: "<<SWEOS_VERSION<<"                     *\n";
         cout << "*                                                 *\n";
-        cout << "*  Equation of state of salt water                *\n";
+        cout << "*  Equation of state of salt-water (H2O-NaCl)     *\n";
         cout << "*  - Independent variables: PTX, PHX              *\n";
         cout << "*  - Properties: density, enthalpy, viscosity     *\n";
         cout << "*  - saturation, salinity, phase diagram          *\n";
@@ -140,7 +141,7 @@ namespace SWEOSbash
         cout << "*      salinity-wt. % NaCl,   density-kg/m3       *\n";
         cout << "*      enthalpy-kJ/kg,        viscosity-Pa s      *\n";
         cout << "*                                                 *\n";
-        cout << "* (c) Zhikui Guo, GEOMAR, Feb 15 2020, Kiel       *\n";
+        cout << "* (c) Zhikui Guo, GEOMAR, "<<SWEOS_DATE<<", Kiel        *\n";
         cout << "*                                                 *\n";
         cout << "***************************************************\n";
         cout << "\n";
@@ -149,18 +150,18 @@ namespace SWEOSbash
     }
     static void helpINFO()
     {
-        string version="1.0";
+        string version=SWEOS_VERSION;
         string author="Zhikui Guo";
         string locus="GEOMAR, Germany";
         string email="zguo@geomar.de";
         unsigned int wordWidth=20;
         // time_t now=time(0);
         // char* now_str=ctime(&now);
-        string now_str="Feb 15, 2020";
+        string now_str=SWEOS_DATE;
 
         //30: black  31:red  32:green  33:yellow  34:blue  35:purple  36:darkgreen
         cout<<"========================== swEOS ==========================="<<std::endl;;
-        cout<<"Analytical continuation of potential field data"<<std::endl;;
+        cout<<"swEOS, a multi-platform program for Salt-Water (H2O-NaCl) Equation of State and thermodynamic properties calculation."<<std::endl;;
         cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Author "<<COLOR_GREEN<<author<<COLOR_DEFAULT<<std::endl;;
         cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Locus "<<COLOR_GREEN<<locus<<COLOR_DEFAULT<<std::endl;;
         cout<<setw(wordWidth)<<setiosflags(ios::left)<<"Date "<<COLOR_GREEN<<now_str<<COLOR_DEFAULT<<std::endl;;

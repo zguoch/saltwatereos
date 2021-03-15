@@ -1,0 +1,27 @@
+/**
+ * @file swEOSVersion.h.in
+ * @author Zhikui Guo (zguo@geomar.de)
+ * @brief Version config
+ * @version 0.1
+ * @date 2021-03-15
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+#ifndef SWEOS_VERSION_H
+#define SWEOS_VERSION_H
+
+#define SWEOS_MAJOR_VERSION ${SWEOS_MAJOR_VERSION}
+#define SWEOS_MINOR_VERSION ${SWEOS_MINOR_VERSION}
+#define SWEOS_PATCH_VERSION ${SWEOS_PATCH_VERSION}
+#define SWEOS_EXTRA_VERSION "${SWEOS_EXTRA_VERSION}"
+#define SWEOS_VERSION       "${SWEOS_VERSION}"
+#define SWEOS_DATE          "${SWEOS_DATE}"
+#define SWEOS_HOST          "${SWEOS_HOST}"
+#define SWEOS_PACKAGER      "${SWEOS_PACKAGER}"
+#define SWEOS_OS            "${SWEOS_OS}"
+#define SWEOS_SHORT_LICENSE "${SWEOS_SHORT_LICENSE}"
+#define SWEOS_QT_VERSION      "${SWEOS_QT_VERSION}"
+#define SWEOS_VTK_VERSION       "${SWEOS_VTK_VERSION}"
+
+#endif
