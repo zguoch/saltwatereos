@@ -2,8 +2,8 @@ name: Windows
 on: 
   push:
     branches: master
-    # tags:
-    #   - 'V*'
+    tags:
+      - 'V*'
 env:
   # Path to the solution file relative to the root of the project.
   SOLUTION_FILE_PATH: Library/build
