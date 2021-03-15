@@ -10,6 +10,8 @@ jobs:
   buildApp:
     name: library
     runs-on: ubuntu-latest
+    env:
+      AppInstaller: swEOS-Linux-Installer.deb
     steps:
       # checkout source code
       - uses: actions/checkout@v2
@@ -54,9 +56,9 @@ jobs:
           echo ${{ github.ref }}
           echo "commit id short" ${SHORT_SHA}
           echo "github tag: " ${GIT_TAG}
-      # debug workflow
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      # # debug workflow
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
 
       # cmake library
       - name: build swEOS library
@@ -82,29 +84,34 @@ jobs:
           cd ${{env.HOME}}
           mkdir desktop/build
           cd desktop/build
-          cmake -DVTK_DIR=${{env.HOME}}/dependencies_swEOS/ubuntu/VTK8.2/lib/cmake/vtk-8.2 ..
+          cmake -DVTK_DIR=${{env.HOME}}/dependencies_swEOS/ubuntu/VTK8.2/lib/cmake/vtk-8.2 -DCMAKE_INSTALL_PREFIX=./install ..
           make 
-          cqtdeployer -bin swEOS -qmake ${Qt5_DIR}/bin/qmake -targetDir  Release
-          cp ${{env.HOME}}/dependencies_swEOS/ubuntu/VTK8.2/lib/*.so.1 Release/lib
-          chmod 755 Release/swEOS.sh
-          chmod 755 Release/bin/swEOS
+          make install
+          cqtdeployer -bin install/bin/swEOS -qmake ${Qt5_DIR}/bin/qmake -targetDir  install
+          # cp ${{env.HOME}}/dependencies_swEOS/ubuntu/VTK8.2/lib/*.so.1 Release/lib
+          chmod 755 install/swEOS.sh
+          chmod 755 install/bin/swEOS
+          mkdir install/CommandLineTool
+          cp ../../commandline/build/swEOS install/CommandLineTool
+          make package
       # package
-      - name: package
-        run: |
-          cd ${{env.HOME}}
-          mkdir swEOS_ubuntu
-          cp -rf Library/lib swEOS_ubuntu/
-          cp -rf Library/API swEOS_ubuntu/
-          cp -rf Library/include swEOS_ubuntu/
-          cp commandline/build/swEOS swEOS_ubuntu/swEOS_cmd
-          cp -rf desktop/build/Release swEOS_ubuntu/
-          zip -r swEOS_ubuntu.zip swEOS_ubuntu
+      # - name: package
+      #   run: |
+      #     cd ${{env.HOME}}
+      #     mkdir swEOS_ubuntu
+      #     cp -rf Library/lib swEOS_ubuntu/
+      #     cp -rf Library/API swEOS_ubuntu/
+      #     cp -rf Library/include swEOS_ubuntu/
+      #     cp commandline/build/swEOS swEOS_ubuntu/swEOS_cmd
+      #     cp -rf desktop/build/Release swEOS_ubuntu/
+      #     zip -r swEOS_ubuntu.zip swEOS_ubuntu
 
       # upload artifacts
       - uses: actions/upload-artifact@v2
         with:
           name: swEOS_ubuntu_${{env.SHORT_SHA}}.zip
-          path: swEOS_ubuntu.zip
+          path: |
+            desktop/build/${{env.AppInstaller}}
 
       # tag 上传Release
       - name: uploadRelease
@@ -112,7 +119,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: swEOS_ubuntu.zip
+          file: desktop/build/${{env.AppInstaller}}
           asset_name: swEOS_ubuntu_${{env.GIT_TAG}}.zip
           tag: ${{ github.ref }}
           overwrite: true

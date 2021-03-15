@@ -1,7 +1,7 @@
 name: MacOS
 on: 
   push:
-    branches: main
+    branches: master
     tags:
       - 'V*'
 jobs:
@@ -73,6 +73,8 @@ jobs:
           # codesign --deep -fs "Developer ID Application: ${APPLEDEVELOPERID_APP}" --options=runtime --timestamp swEOS.app
           # codesign -vvv --deep --strict swEOS.app 
           # hdiutil create -srcfolder swEOS.app swEOS.dmg
+          mkdir install/CommandLineTool
+          cp ../../commandline/build/swEOS install/CommandLineTool
           make package
           # 第一种方案：如果用户无法打开未被验证的app，只需要在终端运行：sudo spctl --master-disable 即可
           # 第二种方案：只对其中一个app进行开放：sudo xattr -r -d com.apple.quarantine /XXX/XXX.app/
