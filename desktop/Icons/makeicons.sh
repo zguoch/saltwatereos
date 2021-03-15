@@ -34,6 +34,18 @@ function makeicon_doxygon()
     sips -z 90 90     swEOS.png --out icons.doxygon/SWEOS55x55.png
     sips -z 1200 1200     swEOS.png --out icons.doxygon/favicon.png
 }
-makeicon
+function makeico_windows()
+{
+    for size in 16 32 64 128 256 512 1024
+    do
+        sips -z $size $size     swEOS.png --out icon-${size}.png
+    done
+    magick convert icon-16.png icon-32.png icon-64.png  icon-128.png  icon-256.png  icon-512.png  icon-1024.png icon.ico
+    rm icon-*.png
+}
 
-makeicon_doxygon
+# makeicon
+
+# makeicon_doxygon
+
+makeico_windows
