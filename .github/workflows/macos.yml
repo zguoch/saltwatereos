@@ -71,6 +71,7 @@ jobs:
           make 
           ${QT_DIR}/bin/macdeployqt swEOS.app
           make install
+          chmod 755 install/commandline/swEOS
           # mkdir install/CommandLineTool
           # cp ../../commandline/build/swEOS install/CommandLineTool
           echo ${MACOS_CERTIFICATE} | base64 --decode > certificate.p12
@@ -106,7 +107,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{env.AppInstaller}}
+          file: desktop/build/${{env.AppInstaller}}
           asset_name: swEOS_OSX_${{env.GIT_TAG}}.zip
           tag: ${{ github.ref }}
           overwrite: true

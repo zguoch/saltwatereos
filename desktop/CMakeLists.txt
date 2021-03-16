@@ -320,6 +320,7 @@ set( LICENSE_FILE ${PROJECT_SOURCE_DIR}/../LICENSE)
 set( WELCOME_FILE ${PROJECT_SOURCE_DIR}/../readme.md)
 install(FILES ${LICENSE_FILE} DESTINATION .)
 if(APPLE)
+  install (FILES ${PROJECT_SOURCE_DIR}/../commandline/build/swEOS DESTINATION "commandline")
 else()
   # install language translations
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${translation_zh}.qm DESTINATION ./Resources/translations)
