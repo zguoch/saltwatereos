@@ -1,6 +1,6 @@
 ################################# Default configuration ###################
 # provide your domain here
-baseURL = "https://hydrothermal-openfoam.gitlab.io/saltwatereos/"
+baseURL = "https://www.sweos.info/"
 ################################# Default configuration ###################
 # theme
 theme = "dot"

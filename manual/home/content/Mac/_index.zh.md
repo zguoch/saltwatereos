@@ -13,7 +13,7 @@ type : "apps"
         <a href="https://github.com/zguoch/saltwatereos/releases/download/V1.7.0/swEOS_OSX_V1.7.0.zip">
             应用程序
         </a>
-        <a href="https://github.com/zguoch/saltwatereos/archive/V1.7.0.zip">
+        <a href="https://github.com/zguoch/saltwatereos">
             源代码
         </a>
         <p class="mb-0">Catalina</p>
