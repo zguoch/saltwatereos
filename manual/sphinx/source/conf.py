@@ -175,8 +175,8 @@ imgmath_dvipng_args = ['-gamma', '1.5', '-bg', 'Transparent']
 #  author, documentclass [howto, manual, or own class]).
 latex_name='SaltWaterEOS'
 latex_documents = [
-    (master_doc, latex_name+'.tex', '\\textcolor{EOS_green}{S}alt \\textcolor{EOS_green}{W}ater \\textcolor{EOS_green}{E}quation \\textcolor{EOS_green}{o}f \\textcolor{EOS_green}{S}tate Manual',
-     'Zhikui Guo, Lars Rüpke', 'manual'),
+    (master_doc, latex_name+'.tex', 'swEOS: \\textcolor{EOS_green}{S}alt \\textcolor{EOS_green}{W}ater \\textcolor{EOS_green}{E}quation \\textcolor{EOS_green}{o}f \\textcolor{EOS_green}{S}tate',
+     '\href{mailto:zguo@geomar.de}{Zhikui Guo}, \href{mailto:lruepke@geomar.de}{Lars Rüpke}\\\\ \href{mailto:joerg.hasenclever@uni-hamburg.de}{Jörg Hasenclever}, \href{mailto:falko.vehling@ifg.uni-kiel.de}{Vehling Falko}', 'manual'),
 ]
 
 

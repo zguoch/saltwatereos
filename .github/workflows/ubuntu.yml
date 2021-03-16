@@ -90,20 +90,20 @@ jobs:
           cqtdeployer -bin install/bin/swEOS -qmake ${Qt5_DIR}/bin/qmake -targetDir  install
           chmod 755 install/swEOS.sh
           chmod 755 install/bin/swEOS
-          # mkdir install/CommandLineTool
-          # cp ../../commandline/build/swEOS install/CommandLineTool
-          make package
+          mkdir install/CommandLineTool
+          cp ../../commandline/build/swEOS install/CommandLineTool
+          # make package
       # package
-      # - name: package
-      #   run: |
-      #     cd ${{env.HOME}}
-      #     mkdir swEOS_ubuntu
-      #     cp -rf Library/lib swEOS_ubuntu/
-      #     cp -rf Library/API swEOS_ubuntu/
-      #     cp -rf Library/include swEOS_ubuntu/
-      #     cp commandline/build/swEOS swEOS_ubuntu/swEOS_cmd
-      #     cp -rf desktop/build/Release swEOS_ubuntu/
-      #     zip -r swEOS_ubuntu.zip swEOS_ubuntu
+      - name: package
+        run: |
+          cd ${{env.HOME}}/desktop/build
+          # mkdir swEOS_ubuntu
+          # cp -rf Library/lib swEOS_ubuntu/
+          # cp -rf Library/API swEOS_ubuntu/
+          # cp -rf Library/include swEOS_ubuntu/
+          # cp commandline/build/swEOS swEOS_ubuntu/swEOS_cmd
+          # cp -rf desktop/build/Release swEOS_ubuntu/
+          zip -r ${{env.AppInstaller}} install
 
       # upload artifacts
       - uses: actions/upload-artifact@v2
