@@ -11,7 +11,7 @@ jobs:
     name: library
     runs-on: ubuntu-latest
     env:
-      AppInstaller: swEOS-Linux-Installer.deb
+      AppInstaller: swEOS-Linux-Installer.zip
     steps:
       # checkout source code
       - uses: actions/checkout@v2
@@ -90,8 +90,8 @@ jobs:
           cqtdeployer -bin install/bin/swEOS -qmake ${Qt5_DIR}/bin/qmake -targetDir  install
           chmod 755 install/swEOS.sh
           chmod 755 install/bin/swEOS
-          mkdir install/CommandLineTool
-          cp ../../commandline/build/swEOS install/CommandLineTool
+          # mkdir install/CommandLineTool
+          # cp ../../commandline/build/swEOS install/CommandLineTool
           make package
       # package
       # - name: package

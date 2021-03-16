@@ -71,8 +71,8 @@ jobs:
           make 
           ${QT_DIR}/bin/macdeployqt swEOS.app
           make install
-          mkdir install/CommandLineTool
-          cp ../../commandline/build/swEOS install/CommandLineTool
+          # mkdir install/CommandLineTool
+          # cp ../../commandline/build/swEOS install/CommandLineTool
           echo ${MACOS_CERTIFICATE} | base64 --decode > certificate.p12
           security create-keychain -p ${TMP_PWD} signApp.keychain 
           security default-keychain -s signApp.keychain

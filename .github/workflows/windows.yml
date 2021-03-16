@@ -93,14 +93,15 @@ jobs:
           cd ${{env.HOME}}
           mkdir desktop/build
           cd desktop/build
-          cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} -DVTK_DIR=${{env.HOME}}/dependencies_swEOS/windows/VTK8.2/lib/cmake/vtk-8.2 -DCMAKE_INSTALL_PREFIX=${{env.HOME}}/install -DCPACK_GENERATOR=ON ..
+          cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} -DVTK_DIR=${{env.HOME}}/dependencies_swEOS/windows/VTK8.2/lib/cmake/vtk-8.2 -DCMAKE_INSTALL_PREFIX=${{env.HOME}}/install ..
+          # -DCPACK_GENERATOR=ON 
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} swEOS.vcxproj
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} INSTALL.vcxproj
           ../../QT/Qt/5.15.2/msvc2019_64/bin/windeployqt.exe ${{env.HOME}}/install/bin/swEOS.exe
           # cp ${{env.HOME}}/dependencies_swEOS/windows/VTK8.2/bin/*.dll Release
-          mkdir ${{env.HOME}}/install/CommandLineTool
-          cp ../../commandline/build/Release/swEOS.exe ${{env.HOME}}/install/CommandLineTool
-          # msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} PACKAGE.vcxproj
+          # mkdir ${{env.HOME}}/install/CommandLineTool
+          # cp ../../commandline/build/Release/swEOS.exe ${{env.HOME}}/install/CommandLineTool
+          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} PACKAGE.vcxproj
 
       # package
       - name: package
