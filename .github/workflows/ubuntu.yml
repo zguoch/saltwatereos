@@ -119,6 +119,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: desktop/build/${{env.AppInstaller}}
-          asset_name: swEOS_ubuntu_${{env.GIT_TAG}}.zip
+          asset_name: ${{env.AppInstaller}}
           tag: ${{ github.ref }}
           overwrite: true

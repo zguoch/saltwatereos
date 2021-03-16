@@ -10,7 +10,7 @@ type : "apps"
 <div class="row" >
     <div class="card border-danger mb-3 text-center col-lg-5 col-sm-6 mb-4 " style="min-width: 20%; margin-right:2%" >
         <h4 class="card-header text-center shadow">最新版</h4>
-        <a href="https://github.com/zguoch/saltwatereos/releases/download/V1.7.3/swEOS_windows_.zip">
+        <a href="https://github.com/zguoch/saltwatereos/releases/download/V1.7.4/swEOS-Windows-Installer.exe">
             应用程序
         </a>
         <a href="https://github.com/zguoch/saltwatereos/archive/V1.7.3.zip">
