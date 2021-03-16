@@ -88,7 +88,6 @@ jobs:
           make 
           make install
           cqtdeployer -bin install/bin/swEOS -qmake ${Qt5_DIR}/bin/qmake -targetDir  install
-          # cp ${{env.HOME}}/dependencies_swEOS/ubuntu/VTK8.2/lib/*.so.1 Release/lib
           chmod 755 install/swEOS.sh
           chmod 755 install/bin/swEOS
           mkdir install/CommandLineTool

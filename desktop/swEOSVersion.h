@@ -14,8 +14,8 @@
 #define SWEOS_MAJOR_VERSION 1
 #define SWEOS_MINOR_VERSION 7
 #define SWEOS_PATCH_VERSION 0
-#define SWEOS_EXTRA_VERSION "-git-ed10197"
-#define SWEOS_VERSION       "1.7.0-git-ed10197"
+#define SWEOS_EXTRA_VERSION "-git-b60a3fe"
+#define SWEOS_VERSION       "1.7.0-git-b60a3fe"
 #define SWEOS_DATE          "2021-03-16"
 #define SWEOS_HOST          "zhikuis-MacBook-Pro.local"
 #define SWEOS_PACKAGER      "zguo"
