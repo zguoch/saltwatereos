@@ -5,3 +5,4 @@
 !setup*.py
 !.gitattributes 
 !pyH2ONaCl
+!MANIFEST.in

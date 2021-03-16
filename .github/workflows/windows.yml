@@ -1,7 +1,7 @@
 name: Windows
 on: 
   push:
-    branches: main
+    branches: master
     tags:
       - 'V*'
 env:
@@ -97,7 +97,7 @@ jobs:
           # -DCPACK_GENERATOR=ON 
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} swEOS.vcxproj
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} INSTALL.vcxproj
-          ../../QT/Qt/5.15.2/msvc2019_64/bin/windeployqt.exe ${{env.HOME}}/install/bin/swEOS.exe
+          ../../QT/Qt/5.15.2/msvc2019_64/bin/windeployqt.exe ${{env.BUILD_CONFIGURATION}}/swEOS.exe
           # cp ${{env.HOME}}/dependencies_swEOS/windows/VTK8.2/bin/*.dll Release
           # mkdir ${{env.HOME}}/install/CommandLineTool
           # cp ../../commandline/build/Release/swEOS.exe ${{env.HOME}}/install/CommandLineTool

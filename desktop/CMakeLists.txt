@@ -327,6 +327,8 @@ else()
     # install vtk libs
     FILE(GLOB VTK_LIBS "${VTK_DIR}/../../../bin/*.dll")
     install (FILES ${VTK_LIBS} DESTINATION ${SWEOS_BIN})
+    install (DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Release/ DESTINATION ${SWEOS_BIN})
+    install (DIRECTORY ${PROJECT_SOURCE_DIR}../commandline/Release/ DESTINATION "commandline")
   else()
     FILE(GLOB VTK_LIBS "${VTK_DIR}/../../*vtk*.*")
     install (FILES ${VTK_LIBS} DESTINATION ${SWEOS_LIB})

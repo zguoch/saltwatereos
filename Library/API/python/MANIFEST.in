@@ -1,0 +1,2 @@
+include pyswEOS/*.pyd
+include pyswEOS/*.so
