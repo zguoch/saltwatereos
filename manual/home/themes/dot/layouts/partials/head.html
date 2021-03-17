@@ -14,10 +14,10 @@
   <title>{{ .Title }}</title>
   <script type="application/ld+json">
     {
-      "@context": "https://www.sweos.info",
+      "@context": "https://schema.org",
       "@type": "SoftwareApplication",
       "name": "swEOS",
-      "operatingSystem": "Windows 7, OSX 10.6, Linux",
+      "operatingSystem": "Windows 10, macOS Catalina, Linux ubuntu",
       "applicationCategory": "UtilitiesApplication",
       "aggregateRating": {
         "@type": "AggregateRating",
@@ -26,11 +26,22 @@
       },
       "offers": {
         "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
+        "price": "0"
       }
     }
     </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "url": "https://www.sweos.info/",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://query.sweos.info/search?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+      </script>
   {{ hugo.Generator }}
   
   {{ "<!-- mobile responsive meta -->" | safeHTML }}
