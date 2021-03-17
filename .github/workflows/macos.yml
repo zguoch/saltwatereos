@@ -1,7 +1,7 @@
 name: MacOS
 on: 
   push:
-    branches: main
+    branches: master
     tags:
       - 'V*'
 jobs:
@@ -67,7 +67,7 @@ jobs:
         run: |
           mkdir -p desktop/build
           cd desktop/build
-          cmake -DQt5_DIR=${QT_DIR}/lib/cmake/Qt5 -DVTK_DIR=/usr/local/Cellar/vtk@8.2/8.2.0_3/lib/cmake/vtk-8.2  -DCMAKE_INSTALL_PREFIX=./install ..
+          cmake -DQt5_DIR=${QT_DIR}/lib/cmake/Qt5 -DVTK_DIR=/usr/local/opt/vtk@8.2/lib/cmake/vtk-8.2  -DCMAKE_INSTALL_PREFIX=./install ..
           make 
           ${QT_DIR}/bin/macdeployqt swEOS.app
           make install
