@@ -194,8 +194,8 @@ set( Hdrs MainWindow.h qroundprogressbar.h  Meter.h)
 set( MOC_Hdrs ui_MainWindow.h )
 set( UIs MainWindow.ui )
 set( QRCs Icons/icons.qrc)
-set( Srcs_bash ../commandline/SWEOSbash.cpp ../commandline/MultiProgressBar.cpp)
-set( Hdrs_bash ../commandline/SWEOSbash.h ../commandline/MultiProgressBar.h)
+set( Srcs_bash ../commandline/SWEOSbash.cpp ../commandline/MultiProgressBar.cpp ../commandline/getopt.cpp)
+set( Hdrs_bash ../commandline/SWEOSbash.h ../commandline/MultiProgressBar.h ../commandline/getopt.h)
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
