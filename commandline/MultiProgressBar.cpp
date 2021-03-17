@@ -10,14 +10,28 @@
  */
 #include "MultiProgressBar.h"
 #include <iomanip>
+#ifdef _WIN32
+    #define COLOR_DEFAULT_PROGRESSBAR ""
+#else
+    #define COLOR_DEFAULT_PROGRESSBAR "\033[0m"
+#endif
 
 void MultiProgressBar::init_colors()
 {
-    m_colors.push_back("\033[35m"); //Purple
-    m_colors.push_back("\033[34m"); //blue
-    m_colors.push_back("\033[32m"); //green
-    m_colors.push_back("\033[33m"); //yellow
-    m_colors.push_back("\033[31m"); //red
+    #ifdef _WIN32
+        m_colors.push_back(""); //Purple
+        m_colors.push_back(""); //blue
+        m_colors.push_back(""); //green
+        m_colors.push_back(""); //yellow
+        m_colors.push_back(""); //red
+    #else
+        m_colors.push_back("\033[35m"); //Purple
+        m_colors.push_back("\033[34m"); //blue
+        m_colors.push_back("\033[32m"); //green
+        m_colors.push_back("\033[33m"); //yellow
+        m_colors.push_back("\033[31m"); //red
+    #endif
+    
 }
 MultiProgressBar::~MultiProgressBar()
 {
@@ -119,19 +133,19 @@ void MultiProgressBar::Update(vector<double> current_pos)
         {
             cout << "[" << m_colors[(k + m_defaultcolor) % m_colors.size()]
                  << m_bar_str[k]
-                 << COLOR_DEFAULT << "]"
+                 << COLOR_DEFAULT_PROGRESSBAR << "]"
                  << m_colors[(k + m_defaultcolor) % m_colors.size()] << setw(3) << right << int(m_percent[k]) << "%"
-                 << COLOR_DEFAULT << endl;
+                 << COLOR_DEFAULT_PROGRESSBAR << endl;
         }
         else
         {
             cout << "[" << m_colors[(k + m_defaultcolor) % m_colors.size()]
                  << m_bar_str[k]
-                 << COLOR_DEFAULT << "]"
+                 << COLOR_DEFAULT_PROGRESSBAR << "]"
                  << m_colors[(k + m_defaultcolor) % m_colors.size()] << setw(3) << right << int(m_percent[k])
-                 << "% " << COLOR_DEFAULT
+                 << "% " << COLOR_DEFAULT_PROGRESSBAR
                  << "[" << setw(m_maxLength_title) << left << m_title[k]
-                 << "] [" << m_colors[(k + m_defaultcolor) % m_colors.size()] << setw(10) << left << current_pos[k] << COLOR_DEFAULT
+                 << "] [" << m_colors[(k + m_defaultcolor) % m_colors.size()] << setw(10) << left << current_pos[k] << COLOR_DEFAULT_PROGRESSBAR
                  << "]"
                  << endl;
         }

@@ -5,7 +5,19 @@ namespace SWEOSbash
   bool bash_run(int argc, char** argv)
   {
     #ifdef _WIN32
-        
+      // set terminal as black(bg)+white(fg) model
+      system("color 07"); //see https://www.geeksforgeeks.org/how-to-print-colored-text-in-c/
+      GetConsoleScreenBufferInfo(m_hConsole, &csbi); 
+      m_currentConsoleAttr = csbi.wAttributes;
+      int width = (int)(csbi.srWindow.Right-csbi.srWindow.Left+1);
+      // int height = (int)(csbi.srWindow.Bottom-csbi.srWindow.Top+1);
+      if(width>119)
+      {
+          StartText_artASCII();
+      }else
+      {
+          StartText();
+      }
     #else
       struct winsize w;
       ioctl(0, TIOCGWINSZ, &w);
@@ -68,6 +80,10 @@ namespace SWEOSbash
   #ifdef _WIN32
     bool cSWEOSarg::Parse(int argc, char** argv)
     {
+      for(int i=0;i<argc;i++)
+      {
+        cout<<argv[i]<<endl;
+      }
       return true;
     }
   #else
