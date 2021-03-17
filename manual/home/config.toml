@@ -5,11 +5,11 @@ baseURL = "https://www.sweos.info/"
 # theme
 theme = "dot"
 # site title
-title = "swEOS"
+title = "Salt-Water (H2O-NaCl) EOS and themodynamic properties"
 # disable language
 disableLanguages = []
 # google analytics
-googleAnalytics = "" # paste your analytics ID here. Ex: UA-123-45
+googleAnalytics = "G-QHFFZZMDMC" # paste your analytics ID here. Ex: UA-123-45
 
 # unsafe html
 [markup.goldmark.renderer]
