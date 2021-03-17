@@ -171,14 +171,14 @@ namespace SWEOSbash
       int opt; 
       const char *optstring = "D:V:P:T:X:H:R:O:G:t:vh"; // set argument templete
       int option_index = 0;
-      static struct option long_options[] = {
-          {"version", no_argument, NULL, 'v'},
-          {"help", no_argument, NULL, 'h'},
-          {0, 0, 0, 0}  // to avoid empty input
-      };
+      // static struct option long_options[] = {
+      //     {"version", no_argument, NULL, 'v'},
+      //     {"help", no_argument, NULL, 'h'},
+      //     {0, 0, 0, 0}  // to avoid empty input
+      // };
       int valid_args=0;
       double doubleOptValue;
-      while ((opt = getopt_long(argc, argv, optstring,long_options, &option_index)) != -1) 
+      while ((opt = getopt(argc, argv, optstring)) != -1) 
       {
         if(opt!='?')valid_args++;
         switch (opt)

@@ -2,7 +2,7 @@
 #ifdef _WIN32
     #include <windows.h>
 #else
-
+    #include <string.h>
 #endif
 
 char* optarg = NULL;

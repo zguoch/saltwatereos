@@ -12,11 +12,10 @@
 
 #ifndef MULTIPROGRESSBAR
 #define MULTIPROGRESSBAR
-#include <sstream>
 #include <iostream>
-#include <fstream>
-#include <iomanip>
 #include <vector>
+#include <cmath>
+#include <string> 
 using namespace std;
 
 #define COLOR_BAR_PURPLE 0
@@ -24,14 +23,10 @@ using namespace std;
 #define COLOR_BAR_GREEN 2
 #define COLOR_BAR_YELLOW 3
 #define COLOR_BAR_RED 4
- #include "windows.h"
 #ifdef _WIN32
     #include "windows.h"
 #else
-    // getopt_long only works on MacOS and linux, doesn't work on windows
-    // for getting console window size
     #include <sys/ioctl.h>
-    // #include <unistd.h>
 #endif
 #define MOVEUP(x) printf("\033[%dA", (x))
 // clean screen
