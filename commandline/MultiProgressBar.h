@@ -12,20 +12,21 @@
 
 #ifndef MULTIPROGRESSBAR
 #define MULTIPROGRESSBAR
-#include "stdio.h"
+#include <sstream>
 #include <iostream>
+#include <fstream>
+#include <iomanip>
 #include <vector>
-
-#include <stdio.h>
 using namespace std;
-#include "SWEOSbash.h"
+
 #define COLOR_BAR_PURPLE 0
 #define COLOR_BAR_BLUE 1
 #define COLOR_BAR_GREEN 2
 #define COLOR_BAR_YELLOW 3
 #define COLOR_BAR_RED 4
+ #include "windows.h"
 #ifdef _WIN32
-        
+    #include "windows.h"
 #else
     // getopt_long only works on MacOS and linux, doesn't work on windows
     // for getting console window size

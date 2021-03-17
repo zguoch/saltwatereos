@@ -1,15 +1,7 @@
 #ifndef SWEOSBASH_H
 #define SWEOSBASH_H
 #include "swEOSVersion.h"
-#ifdef _WIN32
-    
-#else
-    // getopt_long only works on MacOS and linux, doesn't work on windows
-    // #include <unistd.h>
-    #include <getopt.h>
-    // #include <sys/ioctl.h>
-#endif
-
+#include "getopt.h"
 #include <sstream>
 #include <iostream>
 #include <fstream>
@@ -156,7 +148,7 @@ namespace SWEOSbash
         cout << "*  - Properties: density, enthalpy, viscosity     *\n";
         cout << "*  - saturation, salinity, phase diagram          *\n";
         cout << "*  unit:                                          *\n";
-        cout << "*      temperature-°C,        pressure-bar        *\n";
+        cout << "*      temperature-deg.C,        pressure-bar     *\n";
         cout << "*      salinity-wt. % NaCl,   density-kg/m3       *\n";
         cout << "*      enthalpy-kJ/kg,        viscosity-Pa s      *\n";
         cout << "*                                                 *\n";
@@ -207,7 +199,7 @@ namespace SWEOSbash
         cout<<setw(wordWidth)<<setiosflags(ios::left)<<"     "<<COLOR_DEFAULT<<"Supported file format is vtk, csv, txt."<<COLOR_DEFAULT<<std::endl;;
         cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -t "<<COLOR_BLUE<<"Set number of thread for parallel computing."<<COLOR_DEFAULT<<std::endl;;
         cout<<"Units:"<<std::endl;;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Temperature "<<COLOR_BLUE<<"Degree Celsius: 273.15 °C = 1 K (Kelvin)"<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Temperature "<<COLOR_BLUE<<"Degree Celsius: 273.15 deg.C = 1 K (Kelvin)"<<COLOR_DEFAULT<<std::endl;;
         cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Pressure "<<COLOR_BLUE<<"bar: 1 bar = 1e5 Pa = 0.1 MPa"<<COLOR_DEFAULT<<std::endl;;
         cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Salinity "<<COLOR_BLUE<<"Weight percent in range of [0,1]: seawater is 0.032 = 3.2 wt. % NaCl"<<COLOR_DEFAULT<<std::endl;;
         cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Enthalpy "<<COLOR_BLUE<<"Specific enthalpy: kJ/kg = 1000 J/kg"<<COLOR_DEFAULT<<std::endl;;

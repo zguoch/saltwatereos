@@ -41,7 +41,10 @@ MultiProgressBar::MultiProgressBar(double total, int color) : m_bar_char_left('#
                                                               m_defaultcolor(color)
 {
     #ifdef _WIN32
-        m_length_bar = 100;
+        CONSOLE_SCREEN_BUFFER_INFO csbi;
+        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi); 
+        int width = (int)(csbi.srWindow.Right-csbi.srWindow.Left+1);
+        m_length_bar = width - 35;
     #else
         struct winsize w;
         ioctl(0, TIOCGWINSZ, &w);

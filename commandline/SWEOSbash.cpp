@@ -80,9 +80,87 @@ namespace SWEOSbash
   #ifdef _WIN32
     bool cSWEOSarg::Parse(int argc, char** argv)
     {
-      for(int i=0;i<argc;i++)
+      if(argc<2)return false; //there is no arguments
+      int opt; 
+      const char *optstring = "D:V:P:T:X:H:R:O:G:t:vh"; // set argument templete
+      int option_index = 0;
+      // static struct option long_options[] = {
+      //     {"version", no_argument, NULL, 'v'},
+      //     {"help", no_argument, NULL, 'h'},
+      //     {0, 0, 0, 0}  // to avoid empty input
+      // };
+      int valid_args=0;
+      double doubleOptValue;
+      while ((opt = getopt(argc, argv, optstring)) != -1) 
       {
-        cout<<argv[i]<<endl;
+        if(opt!='?')valid_args++;
+        switch (opt)
+        {
+        case 'h':
+          helpINFO();
+          exit(0);
+          break;
+        case 'v':
+          cout<<"Version: "<<VERSION_MAJOR<<"."<<VERSION_MINOR<<endl;
+          exit(0);
+          break;
+        case 'D':
+          m_haveD=true;
+          if(!GetOptionValue(opt, optarg, doubleOptValue))return false;
+          m_valueD=(int)doubleOptValue;
+          break;
+        case 't':
+          m_havet=true;
+          if(!GetOptionValue(opt, optarg, doubleOptValue))return false;
+          m_threadNumOMP=(int)doubleOptValue;
+          if(m_threadNumOMP>omp_get_max_threads())m_threadNumOMP=omp_get_max_threads();
+          if(m_threadNumOMP<1)m_threadNumOMP=1;
+          break;
+        case 'V':
+          m_haveV=true;
+          m_valueV=optarg;
+          break;
+        case 'P':
+          m_haveP=true;
+          if(!GetOptionValue(opt, optarg, m_valueP))return false;
+          break;
+        case 'T':
+          m_haveT=true;
+          if(!GetOptionValue(opt, optarg, m_valueT))return false;
+          break;
+        case 'X':
+          m_haveX=true;
+          if(!GetOptionValue(opt, optarg, m_valueX))return false;
+          break;
+        case 'H':
+          m_haveH=true;
+          if(!GetOptionValue(opt, optarg, m_valueH))return false;
+          break;
+        case 'G':
+          m_haveG=true;
+          m_valueG=optarg;
+          break;
+        case 'R':
+          m_haveR=true;
+          m_valueR_str= string_split(optarg,"/");
+          break;
+        case 'O':
+          m_haveO=true;
+          m_valueO=optarg;
+          break;
+        default:
+          break;
+        }
+      }
+      if(!m_haveD)
+      {
+        cout<<ERROR_COUT<<"must have -D arguments"<<endl;
+        return false;
+      }
+      if(!m_haveV)
+      {
+        cout<<ERROR_COUT<<"must have -V arguments"<<endl;
+        return false;
       }
       return true;
     }
@@ -312,8 +390,8 @@ namespace SWEOSbash
       
       MultiProgressBar multibar(arrP.size(),COLOR_BAR_BLUE);
       omp_set_num_threads(m_threadNumOMP);
-      cout<<"2D calculation using "<<m_threadNumOMP<<" threads, T ∈ ["
-          <<rangeT[0]<<", "<<rangeT[1]<<"] °C, P ∈ ["
+      cout<<"2D calculation using "<<m_threadNumOMP<<" threads, T in ["
+          <<rangeT[0]<<", "<<rangeT[1]<<"] deg.C, P in ["
           <<rangeP[0]<<", "<<rangeP[1]<<"] bar, fixed salinity X="
           <<m_valueX<<" "
           <<"\n"<<endl;
@@ -331,7 +409,7 @@ namespace SWEOSbash
         #pragma omp critical
         multibar.Update();
       } 
-      Write2D3DResult(arrT, arrP, arrX, props, m_valueO, "Temperature (°C)", "Pressure (bar)", "Salinity");
+      Write2D3DResult(arrT, arrP, arrX, props, m_valueO, "Temperature (deg.C)", "Pressure (bar)", "Salinity");
         
     }else if(m_valueV=="PX" || m_valueV=="XP")
     {
@@ -357,10 +435,10 @@ namespace SWEOSbash
       props.resize(arrP.size()*arrX.size());
       MultiProgressBar multibar(arrP.size(),COLOR_BAR_BLUE);
       omp_set_num_threads(m_threadNumOMP);
-      cout<<"2D calculation using "<<m_threadNumOMP<<" threads, X ∈ ["
-          <<rangeX[0]<<", "<<rangeX[1]<<"] , P ∈ ["
+      cout<<"2D calculation using "<<m_threadNumOMP<<" threads, X in ["
+          <<rangeX[0]<<", "<<rangeX[1]<<"] , P in ["
           <<rangeP[0]<<", "<<rangeP[1]<<"] bar, fixed temperature T="
-          <<m_valueT<<" °C "
+          <<m_valueT<<" deg.C "
           <<"\n"<<endl;
       int lenX=arrX.size();
       int lenP = (int)(arrP.size());
@@ -376,7 +454,7 @@ namespace SWEOSbash
         #pragma omp critical
         multibar.Update();
       } 
-      Write2D3DResult(arrX, arrP, arrT, props, m_valueO, "Salinity", "Pressure (bar)", "Temperature (°C)");
+      Write2D3DResult(arrX, arrP, arrT, props, m_valueO, "Salinity", "Pressure (bar)", "Temperature (deg.C)");
     }else if(m_valueV=="TX" || m_valueV=="XT")
     {
       if(!(m_haveP && CheckRange_P(m_valueP)))
@@ -401,9 +479,9 @@ namespace SWEOSbash
       props.resize(arrT.size()*arrX.size());
       MultiProgressBar multibar(arrX.size(),COLOR_BAR_BLUE);
       omp_set_num_threads(m_threadNumOMP);
-      cout<<"2D calculation using "<<m_threadNumOMP<<" threads, X ∈ ["
-          <<rangeX[0]<<", "<<rangeX[1]<<"] , T ∈ ["
-          <<rangeT[0]<<", "<<rangeT[1]<<"] °C, fixed pressure P="
+      cout<<"2D calculation using "<<m_threadNumOMP<<" threads, X in ["
+          <<rangeX[0]<<", "<<rangeX[1]<<"] , T in ["
+          <<rangeT[0]<<", "<<rangeT[1]<<"] deg.C, fixed pressure P="
           <<m_valueP<<" bar "
           <<"\n"<<endl;
       int lenT=arrT.size();
@@ -420,7 +498,7 @@ namespace SWEOSbash
         #pragma omp critical
         multibar.Update();
       } 
-      Write2D3DResult(arrT, arrX, arrP, props, m_valueO, "Temperature (°C)", "Salinity", "Pressure (bar)");
+      Write2D3DResult(arrT, arrX, arrP, props, m_valueO, "Temperature (deg.C)", "Salinity", "Pressure (bar)");
     }else if(m_valueV=="PH" || m_valueV=="HP")
     {
       if(!(m_haveX && CheckRange_X(m_valueX)))
@@ -446,8 +524,8 @@ namespace SWEOSbash
       
       MultiProgressBar multibar(arrP.size(),COLOR_BAR_BLUE);
       omp_set_num_threads(m_threadNumOMP);
-      cout<<"2D calculation using "<<m_threadNumOMP<<" threads, H ∈ ["
-          <<rangeH[0]<<", "<<rangeH[1]<<"] kJ/kg, P ∈ ["
+      cout<<"2D calculation using "<<m_threadNumOMP<<" threads, H in ["
+          <<rangeH[0]<<", "<<rangeH[1]<<"] kJ/kg, P in ["
           <<rangeP[0]<<", "<<rangeP[1]<<"] bar, fixed salinity X="
           <<m_valueX<<" "
           <<"\n"<<endl;
@@ -491,8 +569,8 @@ namespace SWEOSbash
       
       MultiProgressBar multibar(arrX.size(),COLOR_BAR_BLUE);
       omp_set_num_threads(m_threadNumOMP);
-      cout<<"2D calculation using "<<m_threadNumOMP<<" threads, H ∈ ["
-          <<rangeH[0]<<", "<<rangeH[1]<<"] kJ/kg, X ∈ ["
+      cout<<"2D calculation using "<<m_threadNumOMP<<" threads, H in ["
+          <<rangeH[0]<<", "<<rangeH[1]<<"] kJ/kg, X in ["
           <<rangeX[0]<<", "<<rangeX[1]<<"], fixed pressure P="
           <<m_valueP<<" bar"
           <<"\n"<<endl;
@@ -558,7 +636,7 @@ namespace SWEOSbash
     cout<<COLOR_BLUE<<"Results have been saved to file: "<<outFile<<endl;
     cout<<COLOR_BLUE<<"Paraview-python script is generated as : "<<outFile+".py"<<endl;
     string cmd_pv=" paraview --script="+outFile+".py";
-    cout<<"You can use command of "<<COLOR_GREEN<<cmd_pv<<COLOR_DEFAULT<<" to present result in paraview"<<endl;
+    cout<<"You can use command of "<<COLOR_GREEN<<cmd_pv<<COLOR_DEFAULT<<" to visualize result in paraview"<<endl;
     return true;
   }
   bool cSWEOSarg::Validate_3D()
@@ -632,9 +710,9 @@ namespace SWEOSbash
       //progressbar
       MultiProgressBar multiBar(arrP.size(),COLOR_BAR_BLUE);
       omp_set_num_threads(m_threadNumOMP);
-      cout<<"3D calculation using "<<m_threadNumOMP<<" threads, T ∈ ["
-          <<rangeT[0]<<", "<<rangeT[1]<<"] °C, P ∈ ["
-          <<rangeP[0]<<", "<<rangeP[1]<<"] bar, X ∈ ["
+      cout<<"3D calculation using "<<m_threadNumOMP<<" threads, T in ["
+          <<rangeT[0]<<", "<<rangeT[1]<<"] deg.C, P in ["
+          <<rangeP[0]<<", "<<rangeP[1]<<"] bar, X in ["
           <<rangeX[0]<<", "<<rangeX[1]<<"]"
           <<"\n"<<endl;
       int lenT=arrT.size();
@@ -655,7 +733,7 @@ namespace SWEOSbash
         #pragma omp critical
         multiBar.Update();
       }
-      Write2D3DResult(arrX, arrT, arrP, props, m_valueO, "Salinity", "Temperature (°C)", "Pressure (bar)");
+      Write2D3DResult(arrX, arrT, arrP, props, m_valueO, "Salinity", "Temperature (deg.C)", "Pressure (bar)");
     }else if(m_valueV=="PHX" || m_valueV=="PXH" || m_valueV=="HPX" || m_valueV=="HXP" || m_valueV=="XPH" || m_valueV=="XHP")
     {
       int indP=0, indH=1, indX=2;
@@ -691,9 +769,9 @@ namespace SWEOSbash
       //progressbar
       MultiProgressBar multiBar(arrP.size(),COLOR_BAR_BLUE);
       omp_set_num_threads(m_threadNumOMP);
-      cout<<"3D calculation using "<<m_threadNumOMP<<" threads, H ∈ ["
-          <<rangeH[0]<<", "<<rangeH[1]<<"] kJ/kg, P ∈ ["
-          <<rangeP[0]<<", "<<rangeP[1]<<"] bar, X ∈ ["
+      cout<<"3D calculation using "<<m_threadNumOMP<<" threads, H in ["
+          <<rangeH[0]<<", "<<rangeH[1]<<"] kJ/kg, P in ["
+          <<rangeP[0]<<", "<<rangeP[1]<<"] bar, X in ["
           <<rangeX[0]<<", "<<rangeX[1]<<"]"
           <<"\n"<<endl;
       int lenH=arrH.size();
@@ -1019,7 +1097,7 @@ namespace SWEOSbash
   {
     if(T0>H2ONaCl::TMAX-Kelvin || T0<H2ONaCl::TMIN-Kelvin)
     {
-      cout<<ERROR_COUT<<"-T specify temperature ="<<T0<<"°C = "<<T0+Kelvin<<" K, out of range ["<<TMIN<<", "<<TMAX<<"] K"<<endl;
+      cout<<ERROR_COUT<<"-T specify temperature ="<<T0<<"deg.C = "<<T0+Kelvin<<" K, out of range ["<<TMIN<<", "<<TMAX<<"] K"<<endl;
       return false;
     }
     return true;
@@ -1028,12 +1106,12 @@ namespace SWEOSbash
   {
     if(Trange[0]>H2ONaCl::TMAX-Kelvin || Trange[0]<H2ONaCl::TMIN-Kelvin)
     {
-      cout<<ERROR_COUT<<"The minimum value of temperature specified by -R argument Tmin ="<<Trange[0]<<"°C = "<<Trange[0]+Kelvin<<" K, out of range ["<<TMIN<<", "<<TMAX<<"] K"<<endl;
+      cout<<ERROR_COUT<<"The minimum value of temperature specified by -R argument Tmin ="<<Trange[0]<<"deg.C = "<<Trange[0]+Kelvin<<" K, out of range ["<<TMIN<<", "<<TMAX<<"] K"<<endl;
       return false;
     }
     if(Trange[1]>H2ONaCl::TMAX-Kelvin || Trange[1]<H2ONaCl::TMIN-Kelvin)
     {
-      cout<<ERROR_COUT<<"The maximum value of temperature specified by -R argument Tmax ="<<Trange[1]<<"°C = "<<Trange[1]+Kelvin<<" K, out of range ["<<TMIN<<", "<<TMAX<<"] K"<<endl;
+      cout<<ERROR_COUT<<"The maximum value of temperature specified by -R argument Tmax ="<<Trange[1]<<"deg.C = "<<Trange[1]+Kelvin<<" K, out of range ["<<TMIN<<", "<<TMAX<<"] K"<<endl;
       return false;
     }
     return true;

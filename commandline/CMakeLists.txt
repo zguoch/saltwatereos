@@ -87,9 +87,9 @@ link_directories("../Library/lib" "/usr/local/lib" )
 #2. Source code dir
 aux_source_directory(. SRC_MAIN)
 
-set( Srcs_bash ./SWEOSbash.cpp ./MultiProgressBar.cpp)
+set( Srcs_bash ./SWEOSbash.cpp ./MultiProgressBar.cpp ./getopt.cpp)
 
-set( Hdrs_bash ./SWEOSbash.h ./MultiProgressBar.h)
+set( Hdrs_bash ./SWEOSbash.h ./MultiProgressBar.h ./getopt.h)
 
 
 # add Executable target
