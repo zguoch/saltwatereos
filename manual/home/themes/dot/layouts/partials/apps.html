@@ -1,0 +1,96 @@
+{{ "<!-- details page -->" | safeHTML }}
+<section class="single section-sm pb-0">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-2">
+        <div class="bg-white pl-lg-4 py-4 pr-4 mb-5 mb-lg-0 sticky-top top-100 overflow-hidden">
+          <ul class="list-styled">
+            {{ $currentNode := . }}
+            <a class="d-block h4 back-btn" href="{{ .Site.BaseURL | relLangURL }}">{{ i18n "Back-home"}}</a>
+            {{range .Site.Home.Sections.ByWeight}}
+              {{ if eq .FirstSection $currentNode.FirstSection }} {{/* print current section only */}}
+              {{ template "section-tree-nav" dict "sect" . "currentnode" $currentNode}}
+              {{ end }}
+            {{ end }}
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-10">
+        <div class="p-lg-5 p-4 bg-white">
+          {{ "<!-- apps page -->" | safeHTML }}
+          <image class="social_logo" src="{{ .Params.logo | absURL }}" >
+            {{/*  <h2 class="section-title text-primary">{{ .Title }}</h2>  */}}
+          </image>
+          <div class="downloadButtons ">
+          {{ $os := .Title }}
+          {{ $osVersion := .Params.systemVersion}}
+          {{ $appName := .Site.Params.appName}}
+          {{ range .Params.installerFormats }}
+              <a class="downloadButton text-center" os={{$os}} osformat={{.}}>
+                  {{ i18n "download_app" }}<br>
+              <span class="downloadVersion">{{$appName}} <span class="currentVersion" id="version"></span> (<span id="installerFormat"  class="installerFormat">{{.}}</span>)<br>
+              for {{ $os }} <b></b>{{ $osVersion }}  </span>
+              </a>
+          {{ end }}
+          </div>
+          {{ if .Params.warning }}
+            <br>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              {{.Params.warning}}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          {{ end }}
+          {{ if .Params.appSnapShot }}
+            <image class="appSnapShot"  src="{{ .Params.appSnapShot | absURL }}" ></image>
+          {{ end }}
+          {{ "<!-- /apps page -->" | safeHTML }}
+          {{ if .Content }}
+          <div class="content">{{.Content}}</div>
+          {{ else }}
+          <div class="bg-light p-4">
+            <ul class="page-list">
+              {{ template "section-tree-nav" dict "sect" . "currentnode" $currentNode }}
+            </ul>
+          </div>
+          {{ end }}
+          <p class="post-meta border-bottom pb-3 mb-0 mt-3">Updated on {{ .Lastmod.Format "02 Jan 2006" }}</p>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{{ "<!-- /details page -->" | safeHTML }}
+
+<!-- templates -->
+{{ define "section-tree-nav" }}
+{{ $showvisitedlinks := .showvisitedlinks }}
+{{ $currentNode := .currentnode }}
+{{with .sect}}
+{{safeHTML .Params.head}}
+{{ $fileUniqueID := "" }}
+{{ with .File }}{{ $fileUniqueID = .UniqueID }}{{ end }}
+{{ $currentNodeFileUniqueID := "" }}
+{{ with $currentNode.File }}{{ $currentNodeFileUniqueID = .UniqueID }}{{ end }}
+<li data-nav-id="{{.Permalink}}" title="{{.Title}}" class="sidelist
+  {{if eq $fileUniqueID $currentNodeFileUniqueID}}active{{end}}">
+  <a href="{{.Permalink}}">
+    {{safeHTML .Params.Pre}}{{or .Params.menuTitle .LinkTitle .Title}}{{safeHTML .Params.Post}}
+  </a>
+  {{ $numberOfPages := (add (len .Pages) (len .Sections)) }}
+  {{ if ne $numberOfPages 0 }}
+    <ul>
+      {{ range .Pages.ByWeight }}
+        {{ if and .Params.hidden (not $.showhidden) }}
+        {{else}}
+          {{ template "section-tree-nav" dict "sect" . "currentnode" $currentNode }}
+        {{end}}
+      {{end}}
+    </ul>
+  {{ end }}
+</li>
+{{ end }}
+{{ end }}
+

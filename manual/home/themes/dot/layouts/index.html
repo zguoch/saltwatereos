@@ -1,5 +1,23 @@
 {{ define "main" }}
 
+{{ "<!-- badges -->" | safeHTML }}
+<div>
+  <image src="https://img.shields.io/github/commit-activity/m/zguoch/saltwatereos"></image>
+  <image src="https://img.shields.io/github/last-commit/zguoch/saltwatereos/master"></image>
+  <image src="https://img.shields.io/github/release-date/zguoch/saltwatereos"></image>
+  <image src="https://img.shields.io/github/languages/code-size/zguoch/saltwatereos"></image>
+  <image src="https://img.shields.io/github/repo-size/zguoch/saltwatereos"></image>
+  <image src="https://img.shields.io/github/downloads/zguoch/saltwatereos/total"></image>
+  <image id="githubClones" src="https://img.shields.io/github/downloads/zguoch/saltwatereos/total"></image>
+  {{ if .Site.Params.binderURL }}
+    <image id="binder" src="https://binder.pangeo.io/badge_logo.svg" href={{.Site.Params.binderURL}}></image>
+  {{ end }}
+  {{ if .Site.Params.jupyterURL }}
+    <image id="binder" src="https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter" href={{.Site.Params.jupyterURL}}></image>
+  {{ end }}
+  
+</div>
+
   {{ "<!-- topics -->" | safeHTML }}
   <section class="section">
     <div class="container">
@@ -18,6 +36,54 @@
 							{{ end }}
             <h3 class="mb-3 mt-0">{{ .Title }}</h3>
             <p class="mb-0">{{ .Params.Description }}</p>
+            <script type="text/JavaScript">
+              function updateAppsDownloadCounts(theUrl)
+              {
+                var request = null;
+                request = new XMLHttpRequest();
+                request.open( "GET", theUrl, false );
+                request.setRequestHeader('Authorization', 'token '+{{ .Site.Params.githubToken }});
+                request.send( null );
+                if (request.status == 200) //成功获取
+                {
+                  var json = JSON.parse(request.responseText);
+                  var download_count = 0
+                  var have_this_os = false
+                  for (var i =0;i<json.length;i++) //不同release版本
+                  {
+                    var release = json[i]
+                    var assets=release.assets
+                    for(var j =0; j<assets.length;j++)//不同系统的安装包
+                    {
+                      var asset = assets[j]
+                      var asset_name=asset.name   //安装包的名称
+                      if(asset_name.includes({{ .Title }})) //判断安装包的名称是否与此处html中所表示的系统一致
+                      {
+                        download_count = download_count + asset.download_count
+                        have_this_os = true
+                      }
+                    }
+                  }
+                  // 判断是否有此系统的安装包
+                  if(have_this_os)
+                  {
+                    var color_download="inactive"
+                    if(download_count>5){color_download="informational"}
+                    else if(download_count>50){color_download="critical"}
+                    else if(download_count>100){color_download="important"}
+                    else if(download_count>200){color_download="success"}
+                    else if(download_count>500){color_download="blueviolet"}
+                    else if(download_count>1000){color_download="red"}
+                    return '<image src="https://img.shields.io/badge/Downloads-'+download_count+'-'+color_download+'.svg"></image>'
+                  }
+                  else
+                  {
+                    return ""
+                  }
+                }
+              }
+              </script>
+            <script>document.write(updateAppsDownloadCounts("https://api.github.com/repos/"+{{ .Site.Params.githubRepo }}+"/releases"))</script>
           </a>
         </div>
         {{ end }}
@@ -35,6 +101,10 @@
 							{{ end }}
             <h5 class="mb-3 mt-0">{{ .Title }}</h5>
             <p class="mb-0">{{ .Params.Description }}</p>
+            {{ if eq .Title "Python" }}
+              <img src="https://pypi.org/static/images/logo-small.6eef541e.svg" height=14px> <img src="https://img.shields.io/pypi/dm/pyswEOS?label=downloads" alt="sciPyFoam">
+              {{/*  <img src="https://img.shields.io/pypi/pyversions/pysweos"></img>  */}}
+            {{ end }}
           </a>
         </div>
         {{ end }}

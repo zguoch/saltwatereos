@@ -20,3 +20,82 @@
 {{ "<!-- Main Script -->" | safeHTML }}
 {{ $script := resources.Get "js/script.js" | minify}}
 <script src="{{ $script.Permalink }}"></script>
+
+{{/*  根据github上的release信息自动更新软件下载链接和版本  */}}
+<script type="text/JavaScript">
+  function updateAppsDownloadURL_Versions(element,osName, installerFormat,ele_version)
+  {
+      var theUrl="https://api.github.com/repos/"+{{ .Site.Params.githubRepo }}+"/releases"
+      var request = null;
+      request = new XMLHttpRequest();
+      request.open( "GET", theUrl, false );
+      request.setRequestHeader('Authorization', 'token '+{{ .Site.Params.githubToken }});
+      request.send( null );
+      if (request.status == 200) //成功获取
+      {
+          var json = JSON.parse(request.responseText);
+          var download_count = 0
+          var have_this_os = false
+          for (var i =0;i<json.length;i++) //不同release版本
+          {
+              var release = json[i]
+              var assets=release.assets
+              for(var j =0; j<assets.length;j++)//不同系统的安装包
+              {
+                  var asset = assets[j]
+                  var asset_name=asset.name   //安装包的名称
+                  if(asset_name.includes(osName) && asset_name.includes(installerFormat)) //判断安装包的名称是否与此处html中所表示的系统一致
+                  {
+                    //window.alert(osName+'_'+installerFormat)
+                    element.href=asset.browser_download_url
+                    ele_version.textContent=release.tag_name
+                    return true
+                  }
+              }
+          }
+      }
+  }
+  function updateGitHubClonesBadge()
+  {
+      var theUrl="https://api.github.com/repos/"+{{ .Site.Params.githubRepo }}+"/traffic/clones"
+      var request = null;
+      request = new XMLHttpRequest();
+      request.open( "GET", theUrl, false );
+      request.setRequestHeader('Authorization', 'token '+{{ .Site.Params.githubToken }});
+      request.send( null );
+      if (request.status == 200) //成功获取
+      {
+          var json = JSON.parse(request.responseText);
+          var clones = json.uniques
+          return clones
+      }else{return false}
+  }
+  window.onload = function ()
+  {
+    var pagetitle=document.title
+    if("Windows Mac Linux".includes(pagetitle))
+    {
+      var downloadButtons = document.getElementsByClassName("downloadButton")
+      var ele_version_btns = document.getElementsByClassName("currentVersion")
+      var ele_downloadVersion_btns = document.getElementsByClassName("downloadVersion")
+      for (var i =0;i<downloadButtons.length;i++)
+      {
+        var installerFormat = downloadButtons[i].getAttribute('osformat')
+        var os = downloadButtons[i].getAttribute('os')
+        if(!updateAppsDownloadURL_Versions(downloadButtons[i], os, installerFormat,ele_version_btns[i]))
+        {
+          //downloadButtons[i].style.color = "gray";
+          ele_downloadVersion_btns[i].style.color = "lightgray";
+          downloadButtons[i].style.backgroundColor="gray"
+        }
+      }
+    }
+    // update clones badge
+    var clones=updateGitHubClonesBadge()
+    if(clones)
+    {
+      var clonesBadge = document.getElementById("githubClones")
+      clonesBadge.src="https://img.shields.io/badge/Clones-"+clones+"-orange.svg"
+    }
+  }
+</script>

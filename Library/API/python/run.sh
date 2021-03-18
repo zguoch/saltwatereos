@@ -1,4 +1,6 @@
-for platform in mac:macosx-10.9-x86_64 linux:manylinux2010_x86_64 win32:win_amd64
+
+# 拷贝不同系统的Release中的API文件夹到当前目录，分别命名为mac, linux, win
+for platform in mac:macosx-10.9-x86_64
 do
     platName=$(echo $platform | cut -d ":" -f 1)
     platTag=$(echo $platform | cut -d ":" -f 2)
@@ -13,6 +15,6 @@ do
     cd ${platName} 
     version=`cat version.txt`
     python setup.py sdist bdist_wheel --plat-name $platTag
-    twine upload dist/*${version}*-${platTag}.whl --verbose
+    twine upload dist/*.whl --verbose
     cd ..
 done

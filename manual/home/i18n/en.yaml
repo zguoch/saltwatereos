@@ -9,3 +9,6 @@
   
 - id: send
   translation: Send
+
+- id: download_app
+  translation: Download now

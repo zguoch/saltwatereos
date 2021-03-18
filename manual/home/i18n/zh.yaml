@@ -8,4 +8,7 @@
   translation: 说明文档
 
 - id: send
-  translation: Send
+  translation: 发送
+
+- id: download_app
+  translation: 下载

@@ -17,6 +17,11 @@ unsafe= true
 
 ############################# Default Parameters ##########################
 [params]
+githubRepo = "zguoch/saltwatereos"
+githubToken = "ab5082751f39cd2f24f8053f9622685d7b09a4d6"
+# binderURL = "https://binder.pangeo.io/v2/gh/Naereen/badges/master"
+# jupyterURL = "https://binder.pangeo.io/v2/gh/Naereen/badges/master"
+appName = "swEOS"
 # logo is for all page
 logo = "images/swEOS.png"
 # logo white is for homepage logo, you can use colorful logo too...
