@@ -29,7 +29,7 @@
       var request = null;
       request = new XMLHttpRequest();
       request.open( "GET", theUrl, false );
-      request.setRequestHeader('Authorization', 'token '+{{ .Site.Params.githubToken }});
+      //request.setRequestHeader('Authorization', 'token '+{{ .Site.Params.githubToken }});
       request.send( null );
       if (request.status == 200) //成功获取
       {
@@ -61,7 +61,7 @@
       var request = null;
       request = new XMLHttpRequest();
       request.open( "GET", theUrl, false );
-      request.setRequestHeader('Authorization', 'token '+{{ .Site.Params.githubToken }});
+      //request.setRequestHeader('Authorization', 'token '+{{ .Site.Params.githubToken }});
       request.send( null );
       if (request.status == 200) //成功获取
       {

@@ -18,7 +18,7 @@ unsafe= true
 ############################# Default Parameters ##########################
 [params]
 githubRepo = "zguoch/saltwatereos"
-githubToken = "759f7a01b6de1f2accdae0f8e01e7cd37e0f18af"
+githubToken = ""
 # binderURL = "https://binder.pangeo.io/v2/gh/Naereen/badges/master"
 # jupyterURL = "https://binder.pangeo.io/v2/gh/Naereen/badges/master"
 appName = "swEOS"

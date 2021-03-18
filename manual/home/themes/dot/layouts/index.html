@@ -7,7 +7,6 @@
   <image src="https://img.shields.io/github/release-date/zguoch/saltwatereos"></image>
   <image src="https://img.shields.io/github/languages/code-size/zguoch/saltwatereos"></image>
   <image src="https://img.shields.io/github/repo-size/zguoch/saltwatereos"></image>
-  <image src="https://img.shields.io/github/downloads/zguoch/saltwatereos/total"></image>
   <image id="githubClones" src="https://img.shields.io/github/downloads/zguoch/saltwatereos/total"></image>
   {{ if .Site.Params.binderURL }}
     <image id="binder" src="https://binder.pangeo.io/badge_logo.svg" href={{.Site.Params.binderURL}}></image>
@@ -42,7 +41,7 @@
                 var request = null;
                 request = new XMLHttpRequest();
                 request.open( "GET", theUrl, false );
-                request.setRequestHeader('Authorization', 'token '+{{ .Site.Params.githubToken }});
+                {{/*  request.setRequestHeader('Authorization', 'token '+{{ .Site.Params.githubToken }});  */}}
                 request.send( null );
                 if (request.status == 200) //成功获取
                 {
