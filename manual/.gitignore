@@ -3,7 +3,6 @@
 *.bbl
 *.blg
 *.gz
-*.pdf
 [.tex
 _minted-manual
 *.idx
