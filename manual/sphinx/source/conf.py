@@ -20,7 +20,7 @@ sys.path.append(os.path.abspath('_extensions'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'SaltWater EOS'
+project = 'Salt-Water (NaCl-H2O) EOS'
 latex_name='SaltWaterEOS'
 copyright = "Zhikui Guo, Lars Ruepke"
 author = 'Zhikui Guo'
@@ -93,7 +93,7 @@ html_theme_options = {
     'titles_only': True,
     'display_version': False,
     'prev_next_buttons_location': 'both',
-    'style_nav_header_background': 'skyblue',
+    'style_nav_header_background': '#02007e',
     # 'gitlab_url': 'https://gitlab.com/gmdpapers/hydrothermalfoam'
 }
 
@@ -136,7 +136,7 @@ html_favicon = "_static/logo.png"
 html_static_path = ['_static']
 html_last_updated_fmt = '%b %d, %Y'
 # If true, links to the reST sources are added to the pages.
-html_logo = "_static/logo.png" 
+html_logo = "_static/logo_beta.png" 
 html_show_sourcelink = False 
 # List of custom CSS files (needs sphinx>=1.8)
 html_css_files = ["style.css"]

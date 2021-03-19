@@ -23,7 +23,7 @@ githubToken = ""
 # jupyterURL = "https://binder.pangeo.io/v2/gh/Naereen/badges/master"
 appName = "swEOS"
 # logo is for all page
-logo = "images/swEOS.png"
+logo = "images/swEOS_beta.png"
 # logo white is for homepage logo, you can use colorful logo too...
 logo_white = ""
 # when logo is empty, it will shown your site title

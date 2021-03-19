@@ -104,6 +104,9 @@
               <img src="https://pypi.org/static/images/logo-small.6eef541e.svg" height=14px> <img src="https://img.shields.io/pypi/dm/pyswEOS?label=downloads" alt="sciPyFoam">
               {{/*  <img src="https://img.shields.io/pypi/pyversions/pysweos"></img>  */}}
             {{ end }}
+            {{ if eq .Title "OpenFOAM" }}
+              <img src="https://img.shields.io/badge/Foundation-Version 7%7cVersion%208-brightgreen.svg" height=18px> 
+            {{ end }}
           </a>
         </div>
         {{ end }}

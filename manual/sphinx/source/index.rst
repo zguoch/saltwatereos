@@ -1,5 +1,39 @@
 .. SaltWater EOS documentation front page
 
+.. only:: html 
+
+   .. raw:: html 
+   
+      <div class="bs-header">
+         <div class="container">
+            <h2 font face="Times">
+            <b>swEOS:</b>
+            <b style="color: #50B0F0">s</b>alt-
+            <b style="color: #50B0F0">w</b>ater (NaCl-H2O)
+            <b style="color: #50B0F0">E</b>quation
+            <b style="color: #50B0F0">o</b>f
+            <b style="color: #50B0F0">S</b>tate
+            </h2>
+
+            <table>
+               <tbody><tr valign="top">
+               <td width="10%"><b>What it is:</b></td>
+               <td>
+                  An extensible code written in C++ to support research
+                  in using EOS and thermodynamic properties of H2O-NaCl system in both p-T-X and p-H-X coordinate space.
+               </td>
+               </tr>
+               <tr valign="top">
+               <td><b>Motivation:</b></td>
+               <td>
+                  To provide easy-to-use application, library and API for cross-platforms and programing languages. The users can implement their own research calculation using the library and APIs.
+               </td>
+               </tr>
+            </tbody></table>
+         </div>
+      </div>
+
+
 .. download page 
 
 .. only:: html
@@ -28,7 +62,7 @@
 Welcome to the SaltWater EOS Docs! Here you'll find resources for using SaltWater EOS and examples of what
 it can do.
 
-SaltWater EOS Documentation
+swEOS User Manual
 =======================================
 
 
@@ -37,24 +71,10 @@ SaltWater EOS Documentation
    :caption: Contents
 
    Introduction/index.rst
-
-.. toctree::
-   :maxdepth: 3
-   :caption: Build
-
+   Install/apps/index.rst
    compile/index.rst
-   
-.. toctree::
-   :maxdepth: 3
-   :caption: Tutorials
-
-   Tutorial/index.rst
-
-.. toctree::
-   :hidden:
-
    Application/desktop.rst
-   Tutorial/cmd.rst
+   Tutorial/index.rst
    Application/mobile.rst
 
 .. bibliography:: manual.bib
