@@ -41,8 +41,10 @@ Authors and Developers
 Cite
 =======
 
-.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.4603878.svg
-   :target: https://doi.org/10.5281/zenodo.4603878
+.. only:: html
+
+   .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.4603878.svg
+      :target: https://doi.org/10.5281/zenodo.4603878
 
 .. code:: bib
 
