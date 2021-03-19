@@ -2,12 +2,22 @@
 
 .. _OpenFOAM: https://openfoam.org
 
-.. _Gmsh: http://gmsh.info
+.. _download page of macOS installer of swEOS: https://www.sweos.info/mac/
+
+.. _download page of Windows installer of swEOS: https://www.sweos.info/windows/
+
+.. _download page of Linux installer of swEOS: https://www.sweos.info/linux/
 
 .. |ssd| replace:: :math:`^{\circ}\text{C}`
 
-.. |foam| replace:: HydrothermalFoam
+.. |foam| replace:: OpenFOAM
 
-.. |darcyfoam| replace:: HydrothermalSinglePhaseDarcyFoam
+.. |htf| replace:: HydrothermalFoam
 
-.. |anhydritefoam| replace:: HydrothermalSinglePhaseDarcyAnhydriteFoam
+.. |app_mac_download| replace:: `download page of macOS installer of swEOS`_
+
+.. |app_win_download| replace:: `download page of Windows installer of swEOS`_
+
+.. |app_linux_download| replace:: `download page of Linux installer of swEOS`_
+
+

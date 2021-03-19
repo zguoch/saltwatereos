@@ -1,0 +1,48 @@
+/Volumes/swEOS-MacOSX-Installer
+├── API
+│   ├── c++
+│   │   ├── CMakeLists.txt
+│   │   ├── ReadMe.md
+│   │   └── main.cpp
+│   ├── python
+│   │   ├── H2O.py
+│   │   ├── H2ONaCl.py
+│   │   ├── NaCl.py
+│   │   ├── PhaseDiagramSlice.py
+│   │   ├── _H2O.so
+│   │   ├── _H2ONaCl.so
+│   │   ├── _NaCl.so
+│   │   ├── test_H2O.py
+│   │   ├── test_H2ONaCl.py
+│   │   └── test_NaCl.py
+│   └── tcl
+│       ├── H2O
+│       ├── H2ONaCl
+│       ├── NaCl
+│       ├── test_H2O.tcl
+│       ├── test_H2ONaCl.tcl
+│       └── test_NaCl.tcl
+├── Applications -> /Applications
+├── LICENSE
+├── commandline
+│   └── swEOS
+├── include
+│   ├── Gallery.H
+│   ├── H2O.H
+│   ├── H2ONaCl.H
+│   ├── NaCl.H
+│   ├── Polynomial.h
+│   ├── PolynomialRootFinder.h
+│   ├── Validation.H
+│   ├── dataStruct_H2ONaCl.H
+│   ├── stdfunc.H
+│   └── steam4.h
+├── lib
+│   └── libeosH2ONaCl.a
+└── swEOS.app
+    └── Contents
+        ├── Frameworks
+        ├── Info.plist
+        ├── MacOS
+        ├── PlugIns
+        └── Resources

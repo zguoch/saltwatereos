@@ -4,5 +4,5 @@
 Linux
 *******************
 
-.. include:: ../include.rst_
+.. include:: /include.rst_
 
