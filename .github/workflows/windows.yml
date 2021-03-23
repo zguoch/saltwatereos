@@ -18,8 +18,11 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        python-version: [3.8, 3.9]
-        python-lib: [python38.lib, python39.lib]
+        python:
+          - {version: '3.6', lib: 'python36.lib' }
+          - {version: '3.7', lib: 'python37.lib' }
+          - {version: '3.8', lib: 'python38.lib' }
+          - {version: '3.9', lib: 'python39.lib' }
     steps:
       # checkout source code
       - uses: actions/checkout@v2
@@ -49,7 +52,7 @@ jobs:
       - name: Set up Python version
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ matrix.python.version }}
 
       # get short SHA of commit 
       - name: Add SHORT_SHA env property with commit short sha
@@ -73,7 +76,7 @@ jobs:
           cd ${{env.HOME}}
           mkdir Library/build
           cd Library/build
-          cmake -DSWIG_EXECUTABLE=${{env.HOME}}/dependencies_swEOS/windows/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=${{env.pythonLocation}}\include -DPYTHON_LIBRARY=${{env.pythonLocation}}\libs\${{matrix.python-lib}} -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
+          cmake -DSWIG_EXECUTABLE=${{env.HOME}}/dependencies_swEOS/windows/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=${{env.pythonLocation}}\include -DPYTHON_LIBRARY=${{env.pythonLocation}}\libs\${{matrix.python.lib}} -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} eosH2ONaCl.vcxproj
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} INSTALL.vcxproj
           # mkdir ../API/python/pyswEOS
@@ -129,7 +132,7 @@ jobs:
       
       - uses: actions/upload-artifact@v2
         with:
-          name: swEOS_windows_py${{matrix.python-version}}_${{env.SHORT_SHA}}.zip
+          name: swEOS_windows_py${{matrix.python.version}}_${{env.SHORT_SHA}}.zip
           path: |
             ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.exe
             ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.zip
@@ -146,7 +149,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.exe
-          asset_name: ${{env.AppInstaller}}_${{matrix.python-version}}.exe
+          asset_name: ${{env.AppInstaller}}_${{matrix.python.version}}.exe
           tag: ${{ github.ref }}
           overwrite: true
       - name: upload zip install
@@ -155,6 +158,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.zip
-          asset_name: ${{env.AppInstaller}}_${{matrix.python-version}}.zip
+          asset_name: ${{env.AppInstaller}}_${{matrix.python.version}}.zip
           tag: ${{ github.ref }}
           overwrite: true
