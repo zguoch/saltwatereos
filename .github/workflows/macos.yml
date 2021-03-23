@@ -11,10 +11,10 @@ jobs:
     strategy:
       matrix:
         python:
-          - {version: '3.6', lib: 'libpython3.6.so' }
-          - {version: '3.7', lib: 'libpython3.7.so' }
-          - {version: '3.8', lib: 'libpython3.8.so' }
-          - {version: '3.9', lib: 'libpython3.9.so' }
+          - {version: '3.6', lib: 'libpython3.6.dylib' }
+          - {version: '3.7', lib: 'libpython3.7.dylib' }
+          - {version: '3.8', lib: 'libpython3.8.dylib' }
+          - {version: '3.9', lib: 'libpython3.9.dylib' }
     env:
       MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
       MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
@@ -52,7 +52,7 @@ jobs:
           echo "github tag: " ${GIT_TAG}
           python --version
           ls ${{env.pythonLocation}}/include
-          ls ${{env.pythonLocation}}/libs
+          ls ${{env.pythonLocation}}/lib
     # # debug workflow through ssh
     #   - name: install oh my zsh
     #     run: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -64,7 +64,7 @@ jobs:
         run: |
           mkdir Library/build
           cd Library/build
-          cmake -DPYTHON_INCLUDE_DIR=${{env.pythonLocation}}/include -DPYTHON_LIBRARY=${{env.pythonLocation}}/libs/${{matrix.python.lib}} ..
+          cmake -DPYTHON_INCLUDE_DIR=${{env.pythonLocation}}/include/python${{matrix.python.version}} -DPYTHON_LIBRARY=${{env.pythonLocation}}/lib/${{matrix.python.lib}} ..
           make install
           cd ../..
       - name: build command line app
