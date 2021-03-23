@@ -1,7 +1,7 @@
 name: Ubuntu
 on: 
   push:
-    branches: main
+    branches: master
     tags:
       - 'V*'
 env:
@@ -14,9 +14,6 @@ jobs:
       matrix:
         python:
           - {version: '3.6', lib: 'libpython3.6.so' }
-          - {version: '3.7', lib: 'libpython3.7.so' }
-          - {version: '3.8', lib: 'libpython3.8.so' }
-          - {version: '3.9', lib: 'libpython3.9.so' }
     env:
       AppInstaller: swEOS-Linux-Installer
     steps:
@@ -64,16 +61,18 @@ jobs:
           echo "commit id short" ${SHORT_SHA}
           echo "github tag: " ${GIT_TAG}
           python --version
-      # # debug workflow
-      # - name: Setup tmate session
-      #   uses: mxschmitt/action-tmate@v3
+      # debug workflow
+      - name: install oh my zsh
+        run: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
       # cmake library
       - name: build swEOS library
         run: |
           mkdir Library/build
           cd Library/build
-          cmake -DBuild_API_tcl=OFF -DPYTHON_INCLUDE_DIR=${{env.pythonLocation}}/include -DPYTHON_LIBRARY=${{env.pythonLocation}}/libs/${{matrix.python.lib}} ..
+          cmake -DBuild_API_tcl=OFF  ..
           make install
           cd ../..
       
@@ -116,7 +115,7 @@ jobs:
       # upload artifacts
       - uses: actions/upload-artifact@v2
         with:
-          name: swEOS_ubuntu_python${{matrix.python.version}}_${{env.SHORT_SHA}}
+          name: swEOS_ubuntu_${{env.SHORT_SHA}}
           path: |
             desktop/build/${{env.AppInstaller}}.zip
 
@@ -127,6 +126,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: desktop/build/${{env.AppInstaller}}.zip
-          asset_name: ${{env.AppInstaller}}_python${{matrix.python.version}}.zip
+          asset_name: ${{env.AppInstaller}}.zip
           tag: ${{ github.ref }}
           overwrite: true
