@@ -14,7 +14,7 @@ jobs:
       matrix:
         python-version: [3.8, 3.9]
     env:
-      AppInstaller: swEOS-Linux-Installer.zip
+      AppInstaller: swEOS-Linux-Installer
     steps:
       # checkout source code
       - uses: actions/checkout@v2
@@ -107,14 +107,14 @@ jobs:
           # cp -rf Library/include swEOS_ubuntu/
           # cp commandline/build/swEOS swEOS_ubuntu/swEOS_cmd
           # cp -rf desktop/build/Release swEOS_ubuntu/
-          zip -r ${{env.AppInstaller}} install
+          zip -r ${{env.AppInstaller}}.zip install
 
       # upload artifacts
       - uses: actions/upload-artifact@v2
         with:
-          name: swEOS_ubuntu_${{env.SHORT_SHA}}.zip
+          name: swEOS_ubuntu_${{env.python-version}}_${{env.SHORT_SHA}}.zip
           path: |
-            desktop/build/${{env.AppInstaller}}
+            desktop/build/${{env.AppInstaller}}.zip
 
       # tag 上传Release
       - name: uploadRelease
@@ -122,7 +122,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: desktop/build/${{env.AppInstaller}}
-          asset_name: ${{env.AppInstaller}}
+          file: desktop/build/${{env.AppInstaller}}.zip
+          asset_name: ${{env.AppInstaller}}_${{env.python-version}}.zip
           tag: ${{ github.ref }}
           overwrite: true

@@ -11,7 +11,7 @@ env:
   BUILD_PLATFORM: x64
   PYTHON_PATH: C:/hostedtoolcache/windows/Python/3.8.8/x64
   HOME: D:/a/saltwatereos/saltwatereos
-  AppInstaller: swEOS-Windows-Installer.exe
+  AppInstaller: swEOS-Windows-Installer
 jobs:
   buildApp:
     name: library
@@ -19,6 +19,7 @@ jobs:
     strategy:
       matrix:
         python-version: [3.8, 3.9]
+        python-lib: [python38.lib, python39.lib]
     steps:
       # checkout source code
       - uses: actions/checkout@v2
@@ -72,7 +73,7 @@ jobs:
           cd ${{env.HOME}}
           mkdir Library/build
           cd Library/build
-          cmake -DSWIG_EXECUTABLE=${{env.HOME}}/dependencies_swEOS/windows/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=${{env.PYTHON_PATH}}/include -DPYTHON_LIBRARY=${{env.PYTHON_PATH}}/libs/python38.lib -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
+          cmake -DSWIG_EXECUTABLE=${{env.HOME}}/dependencies_swEOS/windows/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=${{env.pythonLocation}}\include -DPYTHON_LIBRARY=${{env.pythonLocation}}\libs\${{env.python-lib}} -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} eosH2ONaCl.vcxproj
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} INSTALL.vcxproj
           # mkdir ../API/python/pyswEOS
@@ -112,24 +113,26 @@ jobs:
           # cp ../../commandline/build/Release/swEOS.exe ${{env.HOME}}/install/CommandLineTool
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} PACKAGE.vcxproj
 
-      # # package
-      # - name: package
-      #   working-directory: ${{ env.GITHUB_WORKSPACE }}
-      #   run: |
-      #     cd ${{env.HOME}}/desktop/build
-      #     # mkdir swEOS_windows
-      #     # cp -r Library/lib swEOS_windows/
-      #     # cp -r Library/API swEOS_windows/
-      #     # cp -r Library/include swEOS_windows/
-      #     # cp commandline\build\Release\*.exe swEOS_windows\swEOS_cmd.exe
-      #     # cp -r desktop\build\Release swEOS_windows\
-      #     7z a -tzip ${{env.AppInstaller}} ${{env.HOME}}/install/*
+      # package
+      - name: package zip format
+        working-directory: ${{ env.GITHUB_WORKSPACE }}
+        run: |
+          cd ${{env.HOME}}/desktop/build
+          # mkdir swEOS_windows
+          # cp -r Library/lib swEOS_windows/
+          # cp -r Library/API swEOS_windows/
+          # cp -r Library/include swEOS_windows/
+          # cp commandline\build\Release\*.exe swEOS_windows\swEOS_cmd.exe
+          # cp -r desktop\build\Release swEOS_windows\
+          7z a -tzip swEOS-Windows-Installer.zip ${{env.HOME}}/install/*
           
       
       - uses: actions/upload-artifact@v2
         with:
-          name: swEOS_windows_${{env.SHORT_SHA}}.zip
-          path: ${{env.HOME}}/desktop/build/${{env.AppInstaller}}
+          name: swEOS_windows_py${{env.python-version}}_${{env.SHORT_SHA}}.zip
+          path: |
+            ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.exe
+            ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.zip
     
       # tag 上传Release
       - name: get tag name
@@ -137,12 +140,21 @@ jobs:
         run: |
           echo "GIT_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
           echo "GIT_TAG=$(git describe --tags --abbrev=0)"
-      - name: uploadRelease
+      - name: upload exe install
         if: startsWith(github.event.ref, 'refs/tags/')
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{env.HOME}}/desktop/build/${{env.AppInstaller}}
-          asset_name: ${{env.AppInstaller}}
+          file: ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.exe
+          asset_name: ${{env.AppInstaller}}_${{env.python-version}}.exe
+          tag: ${{ github.ref }}
+          overwrite: true
+      - name: upload zip install
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{env.HOME}}/desktop/build/swEOS-Windows-Installer.zip
+          asset_name: swEOS-Windows-Installer.zip
           tag: ${{ github.ref }}
           overwrite: true

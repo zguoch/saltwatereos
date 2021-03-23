@@ -17,7 +17,7 @@ jobs:
       TMP_PWD: hydrothermalfoam
       APPLEDEVELOPERID_APP: ${{ secrets.APPLEDEVELOPERID_APP }}
       QT_DIR: /usr/local/Cellar/qt@5/5.15.2
-      AppInstaller: swEOS-MacOSX-Installer.dmg
+      AppInstaller: swEOS-MacOSX-Installer
     steps:
       # checkout source code
       - uses: actions/checkout@v2
@@ -102,8 +102,8 @@ jobs:
       #     zip -r swEOS_OSX.zip swEOS_OSX
       - uses: actions/upload-artifact@v2
         with:
-          name: swEOS_OSX_${{ env.SHORT_SHA }}.zip
-          path: desktop/build/${{env.AppInstaller}}
+          name: swEOS_OSX_${{env.python-version}}_${{ env.SHORT_SHA }}.zip
+          path: desktop/build/${{env.AppInstaller}}.dmg
       
       # tag 上传Release
       - name: uploadRelease
@@ -111,7 +111,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: desktop/build/${{env.AppInstaller}}
-          asset_name: ${{env.AppInstaller}}
+          file: desktop/build/${{env.AppInstaller}}.dmg
+          asset_name: ${{env.AppInstaller}}_${{env.python-version}}.dmg
           tag: ${{ github.ref }}
           overwrite: true
