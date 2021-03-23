@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: install dependence
         run: |
-          brew install tcl-tk
+          # brew install tcl-tk
           brew install swig
           brew install libomp
           brew install vtk@8.2
@@ -51,6 +51,8 @@ jobs:
           echo "commit id short" ${SHORT_SHA}
           echo "github tag: " ${GIT_TAG}
           python --version
+          ls ${{env.pythonLocation}}/include
+          ls ${{env.pythonLocation}}/libs
     # # debug workflow through ssh
     #   - name: install oh my zsh
     #     run: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -66,12 +68,14 @@ jobs:
           make install
           cd ../..
       - name: build command line app
+        if: ${{ matrix.python.version == '3.8' }}
         run: |
           mkdir -p commandline/build
           cd commandline/build
           cmake ..
           make 
       - name: build desktop app
+        if: ${{ matrix.python.version == '3.8' }}
         run: |
           mkdir -p desktop/build
           cd desktop/build
@@ -105,17 +109,32 @@ jobs:
       #     cp desktop/build/*.dmg swEOS_OSX/
       #     zip -r swEOS_OSX.zip swEOS_OSX
       - uses: actions/upload-artifact@v2
+        if: ${{ matrix.python.version == '3.8' }}
         with:
           name: swEOS_OSX_python${{matrix.python.version}}_${{ env.SHORT_SHA }}
           path: desktop/build/${{env.AppInstaller}}.dmg
+      # upload python APIs with all python versions
+      - uses: actions/upload-artifact@v2
+        with:
+          name: pyswEOS_MacOSX_python${{matrix.python.version}}_${{ env.SHORT_SHA }}.zip
+          path: Library/API/python/pyswEOS/
       
       # tag 上传Release
       - name: uploadRelease
-        if: startsWith(github.event.ref, 'refs/tags/')
+        if: startsWith(github.event.ref, 'refs/tags/') && ${{ matrix.python.version == '3.8' }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: desktop/build/${{env.AppInstaller}}.dmg
           asset_name: ${{env.AppInstaller}}_python${{matrix.python.version}}.dmg
+          tag: ${{ github.ref }}
+          overwrite: true
+      - name: uploadRelease of pyswEOS
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: Library/API/python/pyswEOS/
+          asset_name: pyswEOS_MacOSX_python${{matrix.python.version}}.zip
           tag: ${{ github.ref }}
           overwrite: true
