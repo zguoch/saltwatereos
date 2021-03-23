@@ -1,7 +1,7 @@
 name: Ubuntu
 on: 
   push:
-    branches: main
+    branches: master
     tags:
       - 'V*'
 env:
@@ -10,12 +10,9 @@ jobs:
   buildApp:
     name: library
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python:
-          - {version: '3.6', lib: 'libpython3.6.so' }
     env:
       AppInstaller: swEOS-Linux-Installer
+      Path_Pythons: /opt/hostedtoolcache/Python
     steps:
       # checkout source code
       - uses: actions/checkout@v2
@@ -41,12 +38,6 @@ jobs:
           git clone https://github.com/zguoch/dependencies_swEOS.git
           cd dependencies_swEOS/ubuntu
           unzip -qq VTK8.2.zip
-
-      # set python env
-      - name: Set up Python version
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python.version }}
       
       # get short SHA of commit 
       - name: Add SHORT_SHA env property with commit short sha
@@ -62,12 +53,12 @@ jobs:
           echo "github tag: " ${GIT_TAG}
           python --version
       # debug workflow
-      - name: install oh my zsh
-        run: |
-          sudo apt-get install zsh
-          sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      # - name: install oh my zsh
+      #   run: |
+      #     sudo apt-get install zsh
+      #     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
 
       # cmake library
       - name: build swEOS library
@@ -118,8 +109,18 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: swEOS_ubuntu_${{env.SHORT_SHA}}
-          path: |
-            desktop/build/${{env.AppInstaller}}.zip
+          path: desktop/build/${{env.AppInstaller}}.zip
+
+      # Build Python API with different python library versions
+      - name: build python APIs
+        run: |
+          bash buildPythonAPIs.sh ${{ env.Path_Pythons }} so "-DBuild_API_tcl=OFF"
+          zip -r API_Python_Linux.zip Library/API/python
+      # upload python APIs with all python versions
+      - uses: actions/upload-artifact@v2
+        with:
+          name: API_Python_Linux_${{ env.SHORT_SHA }}
+          path: API_Python_Linux.zip
 
       # tag 上传Release
       - name: uploadRelease
@@ -129,5 +130,16 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: desktop/build/${{env.AppInstaller}}.zip
           asset_name: ${{env.AppInstaller}}.zip
+          tag: ${{ github.ref }}
+          overwrite: true
+
+      # tag upload python APIs
+      - name: uploadRelease
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: API_Python_Linux.zip
+          asset_name: API_Python_Linux.zip
           tag: ${{ github.ref }}
           overwrite: true

@@ -100,13 +100,16 @@ jobs:
           path: desktop/build/${{env.AppInstaller}}.dmg
       
       # Build Python API with different python library versions
-      - name: build desktop app
-        run: bash buildPythonAPIs.sh ${{ env.Path_Pythons }} dylib -DBuild_API_tcl=ON 
+      - name: build python APIs
+        run: |
+          bash buildPythonAPIs.sh ${{ env.Path_Pythons }} dylib "-DBuild_API_tcl=ON"
+          zip -r API_Python_MacOSX.zip Library/API/python
       # upload python APIs with all python versions
       - uses: actions/upload-artifact@v2
         with:
-          name: API_Python_MacOSX_${{ env.SHORT_SHA }}.zip
-          path: Library/API/python/
+          name: API_Python_MacOSX_${{ env.SHORT_SHA }}
+          path: API_Python_MacOSX.zip
+
       # tag 上传Release
       - name: uploadRelease
         if: startsWith(github.event.ref, 'refs/tags/')
@@ -115,5 +118,15 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: desktop/build/${{env.AppInstaller}}.dmg
           asset_name: ${{env.AppInstaller}}.dmg
+          tag: ${{ github.ref }}
+          overwrite: true
+      # tag upload Python APIs
+      - name: uploadRelease
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: API_Python_MacOSX.zip
+          asset_name: API_Python_MacOSX.zip
           tag: ${{ github.ref }}
           overwrite: true
