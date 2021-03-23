@@ -1,7 +1,7 @@
 name: MacOS
 on: 
   push:
-    branches: main
+    branches: master
     tags:
       - 'V*'
 jobs:
@@ -41,8 +41,6 @@ jobs:
           echo "commit id short" ${SHORT_SHA}
           echo "github tag: " ${GIT_TAG}
           python --version
-          ls ${{env.pythonLocation}}/include
-          ls ${{env.pythonLocation}}/lib
     # # debug workflow through ssh
     #   - name: install oh my zsh
     #     run: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -103,7 +101,7 @@ jobs:
       
       # Build Python API with different python library versions
       - name: build desktop app
-        run: bash buildPythonAPIs.sh ${{ env.Path_Pythons }}
+        run: bash buildPythonAPIs.sh ${{ env.Path_Pythons }} dylib -DBuild_API_tcl=ON 
       # upload python APIs with all python versions
       - uses: actions/upload-artifact@v2
         with:

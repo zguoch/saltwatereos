@@ -2,6 +2,8 @@
 # tested for macOS
 
 basePath_python=$1
+extName_PythonLib=$2
+cmake_config=$3
 function buildPythonAPI()
 {
     libBuildPath=$1
@@ -9,7 +11,7 @@ function buildPythonAPI()
     libPath=$3
     currentPath=${PWD}
     cd $libBuildPath
-    cmake cmake -DPYTHON_INCLUDE_DIR=$includePath -DPYTHON_LIBRARY=$libPath ..
+    cmake cmake -DPYTHON_INCLUDE_DIR=$includePath -DPYTHON_LIBRARY=$libPath $cmake_config ..
     make install
     cd $currentPath
 }
@@ -22,7 +24,7 @@ do
     for pyversion_minor in `ls ${python_path}/x64/include`
     do 
         inlucde_path=${python_path}/x64/include/${pyversion_minor}
-        lib_path=${python_path}/x64/lib/lib${pyversion_minor}.dylib
+        lib_path=${python_path}/x64/lib/lib${pyversion_minor}.$extName_PythonLib
         # ls $inlucde_path
         # ls $lib_path
         # build
