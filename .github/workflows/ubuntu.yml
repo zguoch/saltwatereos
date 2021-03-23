@@ -63,7 +63,9 @@ jobs:
           python --version
       # debug workflow
       - name: install oh my zsh
-        run: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+        run: |
+          sudo apt-get install zsh
+          sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
 
