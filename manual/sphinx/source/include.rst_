@@ -4,11 +4,15 @@
 
 .. _CMake: https://cmake.org
 
+.. _Visual Studio 2017 Community: https://visualstudio.microsoft.com/vs/older-downloads/
+
 .. _download page of macOS installer of swEOS: https://www.sweos.info/mac/
 
 .. _download page of Windows installer of swEOS: https://www.sweos.info/windows/
 
 .. _download page of Linux installer of swEOS: https://www.sweos.info/linux/
+
+.. |vs2017| replace:: `Visual Studio 2017 Community`_
 
 .. |ssd| replace:: :math:`^{\circ}\text{C}`
 

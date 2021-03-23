@@ -1,7 +1,7 @@
 name: Ubuntu
 on: 
   push:
-    branches: master
+    branches: main
     tags:
       - 'V*'
 env:
@@ -112,7 +112,7 @@ jobs:
       # upload artifacts
       - uses: actions/upload-artifact@v2
         with:
-          name: swEOS_ubuntu_${{matrix.python-version}}_${{env.SHORT_SHA}}.zip
+          name: swEOS_ubuntu_python${{matrix.python-version}}_${{env.SHORT_SHA}}
           path: |
             desktop/build/${{env.AppInstaller}}.zip
 
@@ -123,6 +123,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: desktop/build/${{env.AppInstaller}}.zip
-          asset_name: ${{env.AppInstaller}}_${{matrix.python-version}}.zip
+          asset_name: ${{env.AppInstaller}}_python${{matrix.python-version}}.zip
           tag: ${{ github.ref }}
           overwrite: true

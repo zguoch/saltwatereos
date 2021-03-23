@@ -1,7 +1,7 @@
 name: MacOS
 on: 
   push:
-    branches: master
+    branches: main
     tags:
       - 'V*'
 jobs:
@@ -102,7 +102,7 @@ jobs:
       #     zip -r swEOS_OSX.zip swEOS_OSX
       - uses: actions/upload-artifact@v2
         with:
-          name: swEOS_OSX_${{matrix.python-version}}_${{ env.SHORT_SHA }}.zip
+          name: swEOS_OSX_python${{matrix.python-version}}_${{ env.SHORT_SHA }}
           path: desktop/build/${{env.AppInstaller}}.dmg
       
       # tag 上传Release
@@ -112,6 +112,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: desktop/build/${{env.AppInstaller}}.dmg
-          asset_name: ${{env.AppInstaller}}_${{matrix.python-version}}.dmg
+          asset_name: ${{env.AppInstaller}}_python${{matrix.python-version}}.dmg
           tag: ${{ github.ref }}
           overwrite: true
