@@ -12,9 +12,6 @@ jobs:
       matrix:
         python:
           - {version: '3.6', lib: 'libpython3.6.dylib' }
-          - {version: '3.7', lib: 'libpython3.7.dylib' }
-          - {version: '3.8', lib: 'libpython3.8.dylib' }
-          - {version: '3.9', lib: 'libpython3.9.dylib' }
     env:
       MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
       MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
@@ -53,12 +50,12 @@ jobs:
           python --version
           ls ${{env.pythonLocation}}/include
           ls ${{env.pythonLocation}}/lib
-    # # debug workflow through ssh
-    #   - name: install oh my zsh
-    #     run: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    #   - uses: actions/checkout@v2
-    #   - name: Setup tmate session
-    #     uses: mxschmitt/action-tmate@v3
+    # debug workflow through ssh
+      - name: install oh my zsh
+        run: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+      - uses: actions/checkout@v2
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
       - name: compile library
         run: |
