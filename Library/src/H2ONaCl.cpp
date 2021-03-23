@@ -1964,7 +1964,7 @@ namespace H2ONaCl
         }
         fpout.close();
     }
-    void cH2ONaCl:: writeProps2VTK(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, std::string fname, bool isWritePy, std::string xTitle, std::string yTitle, std::string zTitle)
+    void cH2ONaCl:: writeProps2VTK(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, std::string fname, bool isNormalize, std::string xTitle, std::string yTitle, std::string zTitle)
     {
         cout<<"Writing results to file ..."<<endl;
         if((x.size()*y.size()*z.size())!=props.size())
@@ -1986,20 +1986,20 @@ namespace H2ONaCl
         fpout<<"DATASET RECTILINEAR_GRID"<<endl;
         fpout<<"DIMENSIONS "<<x.size()<<" "<<y.size()<<" "<<z.size()<<endl;
         double len_x=1, len_y=1, len_z=1;
-        if(isWritePy)
+        double xMAX=max(x);
+        double xMIN=min(x);
+        double yMAX=max(y);
+        double yMIN=min(y);
+        double zMAX=max(z);
+        double zMIN=min(z);
+        double scale_x=1, scale_y=1, scale_z=1;
+        len_x=(xMAX==xMIN ? 1: xMAX-xMIN);
+        len_y=(yMAX==yMIN ? 1: yMAX-yMIN);
+        len_z=(zMAX==zMIN ? 1: zMAX-zMIN);
+        if(!isNormalize) // if not normalize the vtk file, write a python script to better visualize result
         {
-            double xMAX=max(x);
-            double xMIN=min(x);
-            double yMAX=max(y);
-            double yMIN=min(y);
-            double zMAX=max(z);
-            double zMIN=min(z);
-            len_x=(xMAX==xMIN ? 1: xMAX-xMIN);
-            len_y=(yMAX==yMIN ? 1: yMAX-yMIN);
-            len_z=(zMAX==zMIN ? 1: zMAX-zMIN);
-            double scale_x=1;
-            double scale_y=len_x/len_y;
-            double scale_z=len_x/len_z;
+            scale_y=len_x/len_y;
+            scale_z=len_x/len_z;
             ofstream fout_py(fname_py);
             if(!fout_py)
             {
@@ -2014,6 +2014,7 @@ namespace H2ONaCl
                 fout_py<<"renderView1.AxesGrid.Visibility = 1"<<endl;
                 fout_py<<"xHvtkDisplay.Scale = ["<<scale_x<<", "<<scale_y<<", "<<scale_z<<"]"<<endl;
                 fout_py<<"renderView1.AxesGrid.DataScale = ["<<scale_x<<", "<<scale_y<<", "<<scale_z<<"]"<<endl;
+                fout_py<<"renderView1.AxesGrid.DataBoundsInflateFactor = 0"<<endl;
                 fout_py<<"renderView1.AxesGrid.XTitle = \'"<<xTitle<<"\'"<<endl;
                 fout_py<<"renderView1.AxesGrid.YTitle = \'"<<yTitle<<"\'"<<endl;
                 fout_py<<"renderView1.AxesGrid.ZTitle = \'"<<zTitle<<"\'"<<endl;
@@ -2036,21 +2037,31 @@ namespace H2ONaCl
                 fout_py<<"renderView1.ResetCamera()"<<endl;
                 fout_py.close();
             }
-            
-            // fpout<<"X_COORDINATES "<<x.size()<<" float"<<endl;
-            // for(int i=0;i<x.size();i++)fpout<<(x[i]-xMIN)/(xMAX-xMIN ==0 ? 1 : xMAX-xMIN)<<" ";fpout<<endl;
-            // fpout<<"Y_COORDINATES "<<y.size()<<" float"<<endl;
-            // for(int i=0;i<y.size();i++)fpout<<(y[i]-yMIN)/(yMAX-yMIN ==0 ? 1 : yMAX-yMIN)<<" ";fpout<<endl;
-            // fpout<<"Z_COORDINATES "<<z.size()<<" float"<<endl;
-            // for(int i=0;i<z.size();i++)fpout<<(z[i]-zMIN)/(zMAX-zMIN ==0 ? 1 : zMAX-zMIN)<<" ";fpout<<endl;
-
         }
         fpout<<"X_COORDINATES "<<x.size()<<" float"<<endl;
-        for(int i=0;i<x.size();i++)fpout<<x[i]/len_x<<" ";fpout<<endl;
+        if(isNormalize)
+        {
+            for(int i=0;i<x.size();i++)fpout<<(x[i]-xMIN)/len_x<<" ";fpout<<endl;
+        }else
+        {
+            for(int i=0;i<x.size();i++)fpout<<x[i]<<" ";fpout<<endl;
+        }
         fpout<<"Y_COORDINATES "<<y.size()<<" float"<<endl;
-        for(int i=0;i<y.size();i++)fpout<<y[i]/len_y<<" ";fpout<<endl;
+        if(isNormalize)
+        {
+            for(int i=0;i<y.size();i++)fpout<<(y[i]-yMIN)/len_y<<" ";fpout<<endl;
+        }else
+        {
+            for(int i=0;i<y.size();i++)fpout<<y[i]<<" ";fpout<<endl;
+        }
         fpout<<"Z_COORDINATES "<<z.size()<<" float"<<endl;
-        for(int i=0;i<z.size();i++)fpout<<z[i]/len_z<<" ";fpout<<endl;
+        if(isNormalize)
+        {
+            for(int i=0;i<z.size();i++)fpout<<(z[i]-zMIN)/len_z<<" ";fpout<<endl;
+        }else
+        {
+            for(int i=0;i<z.size();i++)fpout<<z[i]<<" ";fpout<<endl;
+        }
         fpout<<"POINT_DATA "<<props.size()<<endl;
         // 1. phase region
         fpout<<"SCALARS PhaseRegion int"<<endl;

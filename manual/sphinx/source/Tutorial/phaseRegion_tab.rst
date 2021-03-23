@@ -1,6 +1,6 @@
 .. _phaseRegion_Name_tab:
 
-Lookup table of phase index
+Table of phase index
 =============================
 
 +-------------------+--------------------------------------+

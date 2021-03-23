@@ -43,6 +43,7 @@ namespace SWEOSbash
   :m_haveD(false), m_haveV(false), m_haveP(false)
   ,m_haveT(false), m_havet(false), m_haveX(false), m_haveH(false), m_haveR(false),m_haveO(false)
   ,m_valueD(-1),m_threadNumOMP(omp_get_max_threads()), m_valueO(""),m_valueV("")
+  ,m_normalize_vtk(false)
   {
     for(int i=0;i<3;i++)
     for(int j=0;j<3;j++)m_valueR[i][j]=0;
@@ -77,182 +78,102 @@ namespace SWEOSbash
     return true;
   }
   
-  #ifdef _WIN32
-    bool cSWEOSarg::Parse(int argc, char** argv)
+  bool cSWEOSarg::Parse(int argc, char** argv)
+  {
+    if(argc<2)return false; //there is no arguments
+    int opt; 
+    const char *optstring = "D:V:P:T:X:H:R:O:G:t:vhn"; // set argument templete
+    int option_index = 0;
+    // static struct option long_options[] = {
+    //     {"version", no_argument, NULL, 'v'},
+    //     {"help", no_argument, NULL, 'h'},
+    //     {0, 0, 0, 0}  // to avoid empty input
+    // };
+    int valid_args=0;
+    double doubleOptValue;
+    while ((opt = getopt(argc, argv, optstring)) != -1) 
     {
-      if(argc<2)return false; //there is no arguments
-      int opt; 
-      const char *optstring = "D:V:P:T:X:H:R:O:G:t:vh"; // set argument templete
-      int option_index = 0;
-      // static struct option long_options[] = {
-      //     {"version", no_argument, NULL, 'v'},
-      //     {"help", no_argument, NULL, 'h'},
-      //     {0, 0, 0, 0}  // to avoid empty input
-      // };
-      int valid_args=0;
-      double doubleOptValue;
-      while ((opt = getopt(argc, argv, optstring)) != -1) 
+      if(opt!='?')
       {
-        if(opt!='?')valid_args++;
-        switch (opt)
-        {
-        case 'h':
-          helpINFO();
-          exit(0);
-          break;
-        case 'v':
-          cout<<"Version: "<<VERSION_MAJOR<<"."<<VERSION_MINOR<<endl;
-          exit(0);
-          break;
-        case 'D':
-          m_haveD=true;
-          if(!GetOptionValue(opt, optarg, doubleOptValue))return false;
-          m_valueD=(int)doubleOptValue;
-          break;
-        case 't':
-          m_havet=true;
-          if(!GetOptionValue(opt, optarg, doubleOptValue))return false;
-          m_threadNumOMP=(int)doubleOptValue;
-          if(m_threadNumOMP>omp_get_max_threads())m_threadNumOMP=omp_get_max_threads();
-          if(m_threadNumOMP<1)m_threadNumOMP=1;
-          break;
-        case 'V':
-          m_haveV=true;
-          m_valueV=optarg;
-          break;
-        case 'P':
-          m_haveP=true;
-          if(!GetOptionValue(opt, optarg, m_valueP))return false;
-          break;
-        case 'T':
-          m_haveT=true;
-          if(!GetOptionValue(opt, optarg, m_valueT))return false;
-          break;
-        case 'X':
-          m_haveX=true;
-          if(!GetOptionValue(opt, optarg, m_valueX))return false;
-          break;
-        case 'H':
-          m_haveH=true;
-          if(!GetOptionValue(opt, optarg, m_valueH))return false;
-          break;
-        case 'G':
-          m_haveG=true;
-          m_valueG=optarg;
-          break;
-        case 'R':
-          m_haveR=true;
-          m_valueR_str= string_split(optarg,"/");
-          break;
-        case 'O':
-          m_haveO=true;
-          m_valueO=optarg;
-          break;
-        default:
-          break;
-        }
-      }
-      if(!m_haveD)
+        valid_args++;
+      }else
       {
-        cout<<ERROR_COUT<<"must have -D arguments"<<endl;
-        return false;
+        cout<<WARN_COUT<<"Unknown option "<<argv[optind-1]<<endl;
       }
-      if(!m_haveV)
+      switch (opt)
       {
-        cout<<ERROR_COUT<<"must have -V arguments"<<endl;
-        return false;
+      case 'h':
+        helpINFO();
+        exit(0);
+        break;
+      case 'v':
+        cout<<"Version: "<<VERSION_MAJOR<<"."<<VERSION_MINOR<<endl;
+        exit(0);
+        break;
+      case 'n':
+        m_normalize_vtk=true;
+        break;
+      case 'D':
+        m_haveD=true;
+        if(!GetOptionValue(opt, optarg, doubleOptValue))return false;
+        m_valueD=(int)doubleOptValue;
+        break;
+      case 't':
+        m_havet=true;
+        if(!GetOptionValue(opt, optarg, doubleOptValue))return false;
+        m_threadNumOMP=(int)doubleOptValue;
+        if(m_threadNumOMP>omp_get_max_threads())m_threadNumOMP=omp_get_max_threads();
+        if(m_threadNumOMP<1)m_threadNumOMP=1;
+        break;
+      case 'V':
+        m_haveV=true;
+        m_valueV=optarg;
+        break;
+      case 'P':
+        m_haveP=true;
+        if(!GetOptionValue(opt, optarg, m_valueP))return false;
+        break;
+      case 'T':
+        m_haveT=true;
+        if(!GetOptionValue(opt, optarg, m_valueT))return false;
+        break;
+      case 'X':
+        m_haveX=true;
+        if(!GetOptionValue(opt, optarg, m_valueX))return false;
+        break;
+      case 'H':
+        m_haveH=true;
+        if(!GetOptionValue(opt, optarg, m_valueH))return false;
+        break;
+      case 'G':
+        m_haveG=true;
+        m_valueG=optarg;
+        break;
+      case 'R':
+        m_haveR=true;
+        m_valueR_str= string_split(optarg,"/");
+        break;
+      case 'O':
+        m_haveO=true;
+        m_valueO=optarg;
+        break;
+      default:
+        break;
       }
-      return true;
     }
-  #else
-    bool cSWEOSarg::Parse(int argc, char** argv)
+    if(!m_haveD)
     {
-      if(argc<2)return false; //there is no arguments
-      int opt; 
-      const char *optstring = "D:V:P:T:X:H:R:O:G:t:vh"; // set argument templete
-      int option_index = 0;
-      // static struct option long_options[] = {
-      //     {"version", no_argument, NULL, 'v'},
-      //     {"help", no_argument, NULL, 'h'},
-      //     {0, 0, 0, 0}  // to avoid empty input
-      // };
-      int valid_args=0;
-      double doubleOptValue;
-      while ((opt = getopt(argc, argv, optstring)) != -1) 
-      {
-        if(opt!='?')valid_args++;
-        switch (opt)
-        {
-        case 'h':
-          helpINFO();
-          exit(0);
-          break;
-        case 'v':
-          cout<<"Version: "<<VERSION_MAJOR<<"."<<VERSION_MINOR<<endl;
-          exit(0);
-          break;
-        case 'D':
-          m_haveD=true;
-          if(!GetOptionValue(opt, optarg, doubleOptValue))return false;
-          m_valueD=(int)doubleOptValue;
-          break;
-        case 't':
-          m_havet=true;
-          if(!GetOptionValue(opt, optarg, doubleOptValue))return false;
-          m_threadNumOMP=(int)doubleOptValue;
-          if(m_threadNumOMP>omp_get_max_threads())m_threadNumOMP=omp_get_max_threads();
-          if(m_threadNumOMP<1)m_threadNumOMP=1;
-          break;
-        case 'V':
-          m_haveV=true;
-          m_valueV=optarg;
-          break;
-        case 'P':
-          m_haveP=true;
-          if(!GetOptionValue(opt, optarg, m_valueP))return false;
-          break;
-        case 'T':
-          m_haveT=true;
-          if(!GetOptionValue(opt, optarg, m_valueT))return false;
-          break;
-        case 'X':
-          m_haveX=true;
-          if(!GetOptionValue(opt, optarg, m_valueX))return false;
-          break;
-        case 'H':
-          m_haveH=true;
-          if(!GetOptionValue(opt, optarg, m_valueH))return false;
-          break;
-        case 'G':
-          m_haveG=true;
-          m_valueG=optarg;
-          break;
-        case 'R':
-          m_haveR=true;
-          m_valueR_str= string_split(optarg,"/");
-          break;
-        case 'O':
-          m_haveO=true;
-          m_valueO=optarg;
-          break;
-        default:
-          break;
-        }
-      }
-      if(!m_haveD)
-      {
-        cout<<ERROR_COUT<<"must have -D arguments"<<endl;
-        return false;
-      }
-      if(!m_haveV)
-      {
-        cout<<ERROR_COUT<<"must have -V arguments"<<endl;
-        return false;
-      }
-      return true;
+      cout<<ERROR_COUT<<"must have -D arguments"<<endl;
+      return false;
     }
-  #endif
-
+    if(!m_haveV)
+    {
+      cout<<ERROR_COUT<<"must have -V arguments"<<endl;
+      return false;
+    }
+    return true;
+  }
+  
   bool cSWEOSarg::Validate()
   {
     //check required arguments
@@ -409,7 +330,7 @@ namespace SWEOSbash
         #pragma omp critical
         multibar.Update();
       } 
-      Write2D3DResult(arrT, arrP, arrX, props, m_valueO, "Temperature (deg.C)", "Pressure (bar)", "Salinity");
+      Write2D3DResult(arrT, arrP, arrX, props, m_valueO, "Temperature (deg.C)", "Pressure (bar)", "Salinity",m_normalize_vtk);
         
     }else if(m_valueV=="PX" || m_valueV=="XP")
     {
@@ -454,7 +375,7 @@ namespace SWEOSbash
         #pragma omp critical
         multibar.Update();
       } 
-      Write2D3DResult(arrX, arrP, arrT, props, m_valueO, "Salinity", "Pressure (bar)", "Temperature (deg.C)");
+      Write2D3DResult(arrX, arrP, arrT, props, m_valueO, "Salinity", "Pressure (bar)", "Temperature (deg.C)",m_normalize_vtk);
     }else if(m_valueV=="TX" || m_valueV=="XT")
     {
       if(!(m_haveP && CheckRange_P(m_valueP)))
@@ -498,7 +419,7 @@ namespace SWEOSbash
         #pragma omp critical
         multibar.Update();
       } 
-      Write2D3DResult(arrT, arrX, arrP, props, m_valueO, "Temperature (deg.C)", "Salinity", "Pressure (bar)");
+      Write2D3DResult(arrT, arrX, arrP, props, m_valueO, "Temperature (deg.C)", "Salinity", "Pressure (bar)",m_normalize_vtk);
     }else if(m_valueV=="PH" || m_valueV=="HP")
     {
       if(!(m_haveX && CheckRange_X(m_valueX)))
@@ -543,7 +464,7 @@ namespace SWEOSbash
         #pragma omp critical
         multibar.Update();
       } 
-      Write2D3DResult(arrH, arrP, arrX, props, m_valueO, "Enthalpy (kJ/kg)", "Pressure (bar)", "Salinity");
+      Write2D3DResult(arrH, arrP, arrX, props, m_valueO, "Enthalpy (kJ/kg)", "Pressure (bar)", "Salinity",m_normalize_vtk);
     }else if(m_valueV=="HX" || m_valueV=="XH")
     {
       if(!(m_haveP && CheckRange_P(m_valueP)))
@@ -588,7 +509,7 @@ namespace SWEOSbash
         #pragma omp critical
         multibar.Update();
       } 
-      Write2D3DResult(arrH, arrX, arrP, props, m_valueO, "Enthalpy (kJ/kg)", "Salinity", "Pressure (bar)");
+      Write2D3DResult(arrH, arrX, arrP, props, m_valueO, "Enthalpy (kJ/kg)", "Salinity", "Pressure (bar)",m_normalize_vtk);
     }else
     {
       cout<<ERROR_COUT<<"Unrecognized -V parameter for two-dimension calculation: -V"<<m_valueV<<endl;
@@ -598,7 +519,7 @@ namespace SWEOSbash
     return true;
   }
   bool Write2D3DResult(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, 
-                       std::string outFile, std::string xTitle, std::string yTitle, std::string zTitle, bool isWritePy)
+                       std::string outFile, std::string xTitle, std::string yTitle, std::string zTitle, bool isNormalize)
   {
     string extname;
     string fname_pyScript;
@@ -610,7 +531,7 @@ namespace SWEOSbash
     if(extname=="vtk")
     {
       H2ONaCl::cH2ONaCl eos;
-      eos.writeProps2VTK(x,y,z,props, outFile, isWritePy, xTitle, yTitle, zTitle);
+      eos.writeProps2VTK(x,y,z,props, outFile, isNormalize, xTitle, yTitle, zTitle);
     }else if(extname=="txt")
     {
       H2ONaCl::cH2ONaCl eos;
@@ -631,12 +552,20 @@ namespace SWEOSbash
       }
       outFile=newfilename+".vtk";
       H2ONaCl::cH2ONaCl eos;
-      eos.writeProps2VTK(x,y,z,props, outFile, isWritePy, xTitle, yTitle, zTitle);
+      eos.writeProps2VTK(x,y,z,props, outFile, isNormalize, xTitle, yTitle, zTitle);
     }
-    cout<<COLOR_BLUE<<"Results have been saved to file: "<<outFile<<endl;
-    cout<<COLOR_BLUE<<"Paraview-python script is generated as : "<<outFile+".py"<<endl;
-    string cmd_pv=" paraview --script="+outFile+".py";
-    cout<<"You can use command of "<<COLOR_GREEN<<cmd_pv<<COLOR_DEFAULT<<" to visualize result in paraview"<<endl;
+    cout<<COLOR_BLUE<<"Results have been saved to file: "<<COLOR_DEFAULT<<outFile<<endl;
+    
+    if(!isNormalize)
+    {
+      cout<<COLOR_BLUE<<"Paraview-python script is generated as : "<<outFile+".py"<<endl;
+      string cmd_pv=" paraview --script="+outFile+".py";
+      cout<<"You can use command of "<<COLOR_GREEN<<cmd_pv<<COLOR_DEFAULT<<" to visualize result in paraview"<<endl;
+    }else
+    {
+      cout<<WARN_COUT<<"The X,T[H], P in the vtk file are normalized using -n option"<<endl;
+    }
+    
     return true;
   }
   bool cSWEOSarg::Validate_3D()
@@ -733,7 +662,7 @@ namespace SWEOSbash
         #pragma omp critical
         multiBar.Update();
       }
-      Write2D3DResult(arrX, arrT, arrP, props, m_valueO, "Salinity", "Temperature (deg.C)", "Pressure (bar)");
+      Write2D3DResult(arrX, arrT, arrP, props, m_valueO, "Salinity", "Temperature (deg.C)", "Pressure (bar)",m_normalize_vtk);
     }else if(m_valueV=="PHX" || m_valueV=="PXH" || m_valueV=="HPX" || m_valueV=="HXP" || m_valueV=="XPH" || m_valueV=="XHP")
     {
       int indP=0, indH=1, indX=2;
@@ -815,7 +744,7 @@ namespace SWEOSbash
         #pragma omp critical
         multiBar.Update();
       }
-      Write2D3DResult(arrX, arrH, arrP, props, m_valueO, "Salinity", "Enthalpy (kJ/kg)", "Pressure (bar)");
+      Write2D3DResult(arrX, arrH, arrP, props, m_valueO, "Salinity", "Enthalpy (kJ/kg)", "Pressure (bar)",m_normalize_vtk);
     }
     return true;
   }

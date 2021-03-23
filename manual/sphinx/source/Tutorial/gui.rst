@@ -1,6 +1,6 @@
 .. _gui_tutorial:
 
-Desktop application with GUI
+Desktop app with GUI
 ==================================
 
 Single point calculation

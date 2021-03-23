@@ -1,0 +1,12 @@
+T(C), P(bar), X, Phase Index, Phase Region, Bulk density(kg/m3), Liquid density(kg/m3), Vapour density(kg/m3), Halite density(kg/m3), Bulk enthalpy(kJ/kg), Liquid enthalpy(kJ/kg), Vapour enthalpy(kJ/kg), Halite enthalpy(kJ/kg), Liquid Saturation, Vapour Saturation, Halite Saturation, Liquid viscosity, Vapour viscosity, Liquid salinity, Vapour salinity
+2, 399, 0.032, 0, Single phase(Liquid), 1041.2, 1041.2, 0, 0, 50.6992, 50.6992, 0, 0, 1, 0, 0, 0.00173781, 0, 0.032, 0
+3, 399, 0.032, 0, Single phase(Liquid), 1041.03, 1041.03, 0, 0, 54.6358, 54.6358, 0, 0, 1, 0, 0, 0.00168646, 0, 0.032, 0
+4, 399, 0.032, 0, Single phase(Liquid), 1040.86, 1040.86, 0, 0, 58.5725, 58.5725, 0, 0, 1, 0, 0, 0.00163743, 0, 0.032, 0
+5, 399, 0.032, 0, Single phase(Liquid), 1040.68, 1040.68, 0, 0, 62.5098, 62.5098, 0, 0, 1, 0, 0, 0.00159059, 0, 0.032, 0
+6, 399, 0.032, 0, Single phase(Liquid), 1040.49, 1040.49, 0, 0, 66.4479, 66.4479, 0, 0, 1, 0, 0, 0.00154583, 0, 0.032, 0
+...
+96, 399, 0.032, 0, Single phase(Liquid), 999.76, 999.76, 0, 0, 424.937, 424.937, 0, 0, 1, 0, 0, 0.000335152, 0, 0.032, 0
+97, 399, 0.032, 0, Single phase(Liquid), 999.113, 999.113, 0, 0, 428.951, 428.951, 0, 0, 1, 0, 0, 0.000331626, 0, 0.032, 0
+98, 399, 0.032, 0, Single phase(Liquid), 998.463, 998.463, 0, 0, 432.966, 432.966, 0, 0, 1, 0, 0, 0.000328166, 0, 0.032, 0
+99, 399, 0.032, 0, Single phase(Liquid), 997.809, 997.809, 0, 0, 436.981, 436.981, 0, 0, 1, 0, 0, 0.000324769, 0, 0.032, 0
+100, 399, 0.032, 0, Single phase(Liquid), 997.151, 997.151, 0, 0, 440.998, 440.998, 0, 0, 1, 0, 0, 0.000321433, 0, 0.032, 0

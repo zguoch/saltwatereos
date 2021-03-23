@@ -59,7 +59,8 @@ Command line tool
 
 The standalone command line tool(cmd) is also included in the installer, 
 if you want to use this cmd app, 
-just need to copy :code:`commandline/swEOS` (see lines 27-28 in :numref:`lst:installer:mac`) file to some directory (e.g. /usr/local/bin) in your file system.
+just need to copy :code:`commandline/swEOS` (see lines 27-28 in :numref:`lst:installer:mac`) file to some directory (e.g. /usr/local/bin) in your file system, 
+or make a symbol link to the environment PATH folder, e.g. :code:`ln -s /Applications/swEOS.app/Contents/MacOS/swEOS /usr/local/bin`。
 The you can use the cmd app in the for batch calculation purpose (see the following animation).
 
 .. tip::
@@ -77,7 +78,7 @@ The you can use the cmd app in the for batch calculation purpose (see the follow
         :caption: Demo of running standalone cmd version of :code:`swEOS` in terminal
         :name: lst:runcmd:mac
         :emphasize-lines: 1-2
-
+        
         $ cp /Volumes/swEOS-MacOSX-Installer/commandline/swEOS /usr/local/bin
         $ chmod 755 /usr/local/bin/swEOS
         $ sudo xattr -r -d com.apple.quarantine /usr/local/bin/swEOS

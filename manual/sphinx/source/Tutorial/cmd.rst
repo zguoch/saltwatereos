@@ -89,23 +89,48 @@ Required Arguments
 |-G|\ [ *inputfile* ]
     Sets input file for multiple points calculation, the input file with three columns with delimiter of space or table( :code:`\t` ) correspondint to |-V| option. For example, :code:`-D0 -VPTX -Ginput.txt` means calculate EOS of some points, independent variables of each point are pressure, temperature and salinity which are listed in :code:`input.txt` as belows
 
-    .. code-block:: bash
+    .. tab:: PTX
 
-        #p(bar) T(C) X
-        316	10	0.032
-        316	11	0.032
-        316	12	0.032
-        316	13	0.032
-        316	14	0.032
-        316	15	0.032
-        316	16	0.032
-        316	17	0.032
-        316	18	0.032
-        316	19	0.032
-        316	20	0.032
-        316	21	0.032
-        316	22	0.032
-        316	23	0.032
+        .. code-block:: bash
+            :name: lst:inputfile:ptx
+            :caption: Input file for multi-points calculation, three columns are :code:`p(bar) T(deg.C) X(wt% NaCl)`
+
+            316	10	0.032
+            316	11	0.032
+            316	12	0.032
+            316	13	0.032
+            316	14	0.032
+            316	15	0.032
+            316	16	0.032
+            316	17	0.032
+            316	18	0.032
+            316	19	0.032
+            316	20	0.032
+            316	21	0.032
+            316	22	0.032
+            316	23	0.032
+    
+    .. tab:: PHX
+
+            .. code-block:: bash
+                :name: lst:inputfile:phx
+                :caption: Input file for multi-points calculation, three columns are :code:`p(bar) H(kJ/kg) X(wt% NaCl)`
+    
+                316	74.3015	0.032
+                316	78.2695	0.032
+                316	82.2389	0.032
+                316	86.2098	0.032
+                316	90.1822	0.032
+                316	94.1561	0.032
+                316	98.1316	0.032
+                316	102.109	0.032
+                316	106.087	0.032
+                316	110.067	0.032
+                316	114.049	0.032
+                316	118.031	0.032
+                316	122.016	0.032
+                316	126.001	0.032
+                316	126.001	0.032
 
 .. _-O:
 
@@ -126,39 +151,126 @@ Single point calculation
 
 .. code-block:: bash 
 
-    swEOS -D0 -VPXT -P316 -T100 -X0.032
-    swEOS -D0 -VPXH -H438 -P316 -X0.032
+    swEOS -D 0 -V PXT -P 316 -T 100 -X 0.032
+    swEOS -D 0 -V PXH -H 438 -P 316 -X 0.032
+
+.. raw:: html
+
+    <script id="asciicast-z13UZmFuRN7U39tVguaBkXF12" src="https://asciinema.org/a/zCb09bq5gI4UKZYGPHMOxYdrK.js" async data-autoplay="false"></script>
 
 Multi-points calculation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: bash 
 
-    swEOS -D0 -VPHX -G../test/PHX.txt -OPHX_0D.csv
-    swEOS -D0 -VPHX -G../test/PHX.txt
-    swEOS -D0 -VPTX -G../test/PTX.txt -OPTX_0D.csv
-    swEOS -D0 -VPTX -G../test/PTX.txt
+    swEOS -D 0 -V PHX -G phx.txt -O PHX_0D.csv
+    swEOS -D 0 -V PTX -G ptx.txt -O PTX_0D.csv
+
+.. only:: html
+
+    .. tab:: Usage animation 
+
+        .. raw:: html
+
+            <script id="asciicast-vevYoK7t4jfuODEfBKfQfGBZ6" src="https://asciinema.org/a/zCb09bq5gI4UKZYGPHMOxYdrK.js" async data-autoplay="false"></script>
+
+    .. tab:: Input: PTX
+
+        .. code-block:: bash
+    
+            316	10	0.032
+            316	11	0.032
+            316	12	0.032
+            316	13	0.032
+            316	14	0.032
+            316	15	0.032
+            316	16	0.032
+            316	17	0.032
+            316	18	0.032
+            316	19	0.032
+            316	20	0.032
+            316	21	0.032
+            316	22	0.032
+            316	23	0.032
+        
+    .. tab:: Result: PTX
+    
+        .. csv-table:: Calculation result with `PTX` input file
+            :file: res_0D_ptx.csv
+
+    .. tab:: Input: PHX
+
+        .. code-block:: bash
+
+            316	74.3015	0.032
+            316	78.2695	0.032
+            316	82.2389	0.032
+            316	86.2098	0.032
+            316	90.1822	0.032
+            316	94.1561	0.032
+            316	98.1316	0.032
+            316	102.109	0.032
+            316	106.087	0.032
+            316	110.067	0.032
+            316	114.049	0.032
+            316	118.031	0.032
+            316	122.016	0.032
+            316	126.001	0.032
+            316	126.001	0.032
+        
+    .. tab:: Result: PHX
+
+        .. csv-table:: Calculation result with `PHX` input file
+            :file: res_0D_phx.csv
 
 One-dimensional calculation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: bash 
 
-    swEOS -D1 -VH -X0.032 -P399 -R43/1/100 -OH_1D.csv
-    swEOS -D1 -VT -X0.032 -P399 -R0/1/100 -OT_1D.csv
-    swEOS -D1 -VP -X0.032 -T100 -R5/1/100 -OP_1D.csv
-    swEOS -D1 -VX -T100 -P399 -R0/0.001/1 -OX_1D.csv
+    swEOS -D 1 -V H -X 0.032 -P 399 -R 43/1/100 -O H_1D.csv
+    swEOS -D 1 -V T -X 0.032 -P 399 -R 0/1/100 -O T_1D.csv
+    swEOS -D 1 -V P -X 0.032 -T 100 -R 5/1/100 -O P_1D.csv
+    swEOS -D 1 -V X -T 100 -P 399 -R 0/0.001/1 -O X_1D.csv
+
+.. only:: html
+
+    .. tab:: Usage animation 
+
+        .. raw:: html
+
+            <script id="asciicast-iIdDC7uC5lvoHVvsBVgWyi64Y" src="https://asciinema.org/a/zCb09bq5gI4UKZYGPHMOxYdrK.js" async data-autoplay="false"></script>
+
+    .. tab:: Results: change T
+
+        .. csv-table:: Fix P and X, change T
+            :file: T_1D.csv
+
+    .. tab:: Results: change P
+
+        .. csv-table:: Fix T and X, change P
+            :file: P_1D.csv
+
+    .. tab:: Results: change X
+
+        .. csv-table:: Fix P and T, change X
+            :file: X_1D.csv
+
+    .. tab:: Results: change H
+
+        .. csv-table:: Fix P and X, change H
+            :file: H_1D.csv
 
 Two-dimensional calculation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: bash 
 
-    swEOS -D2 -VPT -R1/0.1/100/0/1/500 -X0.032 -Orest/PT_2D.vt 
-    swEOS -D2 -VPX -R100/0.1/800/0/0.01/1 -T100  -OPX_2D.vtk
-    swEOS -D2 -VTX -R0/1/800/0/0.01/1 -P100  -OTX_2D.vtk
-    swEOS -D2 -VPH -R100/1/800/100/1/700 -X0.032  -OPH_2D.vtk
-    swEOS -D2 -VXH -R0/0.001/1/100/1/700 -P200  -OXH_2D.vtk
+    swEOS -D 2 -V PT -R 10/0.1/100/1/1/500 -X 0.032 -O PT_2D.vtk
+    swEOS -D 2 -V PX -R 100/0.1/800/0/0.01/1 -T 100  -O PX_2D.vtk
+    swEOS -D 2 -V TX -R 1/1/800/0/0.01/1 -P 100  -O TX_2D.vtk
+    swEOS -D 2 -V PH -R 100/1/800/100/1/700 -X 0.032  -O PH_2D.vtk
+    swEOS -D 2 -V XH -R 0.001/0.001/1/100/1/700 -P 200  -O XH_2D.vtk
 
 
 Three-dimensional calculation
@@ -166,8 +278,8 @@ Three-dimensional calculation
 
 .. code-block:: bash 
 
-    swEOS -D3 -VPTX -R1/10/500/0/10/600/0/0.01/1 -t8
-    swEOS -D3 -VPHX -R1/10/500/100/10/600/0/0.01/1 -t8
+    swEOS -D 3 -V PTX -R 1/10/500/0/10/600/0/0.01/1 -O PTX.vtk
+    swEOS -D3 -V PHX -R 1/10/500/100/10/600/0/0.01/1 -O PTX.vtk
 
 .. warning::
 

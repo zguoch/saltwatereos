@@ -87,6 +87,7 @@ namespace SWEOSbash
         int m_valueD, m_threadNumOMP;
         string m_valueV, m_valueG, m_valueO;
         double m_valueT, m_valueP, m_valueX, m_valueH;
+        bool m_normalize_vtk;
         // min/delta/max, order coresponding to -V parameter, 
         //e.g. -VPT, m_valueR1 for pressure, m_valueR2 for temperature
         // double m_valueR1[3], m_valueR2[3], m_valueR3[3];
@@ -131,7 +132,7 @@ namespace SWEOSbash
     bool WriteCSV(string outFile,vector<double> P, vector<double> X, vector<H2ONaCl::PROP_H2ONaCl> props);
     bool Write1Dresult(string outFile,vector<double> P, vector<double> X, vector<H2ONaCl::PROP_H2ONaCl> props);
     bool Write2D3DResult(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, 
-                        std::string outFile, std::string xTitle, std::string yTitle, std::string zTitle, bool isWritePy=true);
+                        std::string outFile, std::string xTitle, std::string yTitle, std::string zTitle, bool isNormalize=true);
     static void StartText()
     {
         //30: black  31:red  32:green  33:yellow  34:blue  35:purple  36:darkgreen
