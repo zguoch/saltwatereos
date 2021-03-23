@@ -72,7 +72,7 @@ swEOS User Manual
 
    Introduction/index.rst
    Install/apps/index.rst
-   compile/index.rst
+   Build/index.rst
    Application/desktop.rst
    Tutorial/index.rst
    Application/mobile.rst

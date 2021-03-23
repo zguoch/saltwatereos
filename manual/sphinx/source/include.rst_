@@ -2,6 +2,8 @@
 
 .. _OpenFOAM: https://openfoam.org
 
+.. _CMake: https://cmake.org
+
 .. _download page of macOS installer of swEOS: https://www.sweos.info/mac/
 
 .. _download page of Windows installer of swEOS: https://www.sweos.info/windows/

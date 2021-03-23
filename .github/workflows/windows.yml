@@ -73,7 +73,7 @@ jobs:
           cd ${{env.HOME}}
           mkdir Library/build
           cd Library/build
-          cmake -DSWIG_EXECUTABLE=${{env.HOME}}/dependencies_swEOS/windows/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=${{env.pythonLocation}}\include -DPYTHON_LIBRARY=${{env.pythonLocation}}\libs\${{env.python-lib}} -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
+          cmake -DSWIG_EXECUTABLE=${{env.HOME}}/dependencies_swEOS/windows/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=${{env.pythonLocation}}\include -DPYTHON_LIBRARY=${{env.pythonLocation}}\libs\${{matrix.python-lib}} -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} eosH2ONaCl.vcxproj
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} INSTALL.vcxproj
           # mkdir ../API/python/pyswEOS
@@ -129,7 +129,7 @@ jobs:
       
       - uses: actions/upload-artifact@v2
         with:
-          name: swEOS_windows_py${{env.python-version}}_${{env.SHORT_SHA}}.zip
+          name: swEOS_windows_py${{matrix.python-version}}_${{env.SHORT_SHA}}.zip
           path: |
             ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.exe
             ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.zip
@@ -146,7 +146,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.exe
-          asset_name: ${{env.AppInstaller}}_${{env.python-version}}.exe
+          asset_name: ${{env.AppInstaller}}_${{matrix.python-version}}.exe
           tag: ${{ github.ref }}
           overwrite: true
       - name: upload zip install
@@ -154,7 +154,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{env.HOME}}/desktop/build/swEOS-Windows-Installer.zip
-          asset_name: swEOS-Windows-Installer.zip
+          file: ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.zip
+          asset_name: ${{env.AppInstaller}}_${{matrix.python-version}}.zip
           tag: ${{ github.ref }}
           overwrite: true
