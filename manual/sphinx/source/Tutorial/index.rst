@@ -12,5 +12,6 @@ Tutorial
 
    cmd.rst
    gui.rst
+   API.rst 
    ios.rst
-   phaseRegion_tab.rst
+   

@@ -272,15 +272,42 @@ Two-dimensional calculation
     swEOS -D 2 -V PH -R 100/1/800/100/1/700 -X 0.032  -O PH_2D.vtk
     swEOS -D 2 -V XH -R 0.001/0.001/1/100/1/700 -P 200  -O XH_2D.vtk
 
+.. raw:: html
+
+    <script id="asciicast-7p6v2o8fux1lvW2T48o3oBsev" src="https://asciinema.org/a/zCb09bq5gI4UKZYGPHMOxYdrK.js" async data-autoplay="false"></script>
+
 
 Three-dimensional calculation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: bash 
 
-    swEOS -D 3 -V PTX -R 1/10/500/0/10/600/0/0.01/1 -O PTX.vtk
-    swEOS -D3 -V PHX -R 1/10/500/100/10/600/0/0.01/1 -O PTX.vtk
+    swEOS -D 3 -V PTX -R 10/10/500/1/10/600/0/0.01/1 -O PTX.vtk
+    swEOS -D 3 -V PHX -R 10/10/500/100/10/600/0.001/0.01/1 -O PTX.vtk
 
-.. warning::
+.. raw:: html
 
-    Please see table :ref:`phaseRegion_Name_tab` for phase index and phae region 
+    <script id="asciicast-t2PDdWGa13XRh76tlB4OYGpFu" src="https://asciinema.org/a/zCb09bq5gI4UKZYGPHMOxYdrK.js" async data-autoplay="false"></script>
+
+
+.. admonition:: Phase region index table
+
+    +-------------------+--------------------------------------+
+    |Phase region index | Phase region                         |
+    +-------------------+--------------------------------------+
+    |0                  | Single phase(Liquid)                 |
+    +-------------------+--------------------------------------+
+    |1                  | Liquid + Vapor at X=0                |
+    +-------------------+--------------------------------------+
+    |2                  | Pure vapour phase                    |
+    +-------------------+--------------------------------------+
+    |3                  | Liquid + Halite                      |
+    +-------------------+--------------------------------------+
+    |4                  | Vapour + Halite                      |
+    +-------------------+--------------------------------------+
+    |5                  | Vapour + Liquid + Halite             |
+    +-------------------+--------------------------------------+
+    |6                  | Vapour + Liquid on the liquid side   |
+    +-------------------+--------------------------------------+
+    |7                  | Vapour + Liquid on the vapour side   |
+    +-------------------+--------------------------------------+

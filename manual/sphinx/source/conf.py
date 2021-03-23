@@ -105,15 +105,23 @@ html_context = {
         ),
         (
             '<i class="fa fa-book fa-fw"></i> License',
-            "xxx",
+            "https://github.com/zguoch/saltwatereos/blob/master/LICENSE",
         ),
         (
-            '<i class="fa fa-comment fa-fw"></i> Contact',
-            "xxx",
+            '<i class="fa fa-envelope fa-fw"></i> Contact',
+            "mailto:zguo@geomar.de",
+        ),
+        (
+            '<i class="fa fa-gitlab fa-fw"></i> Bug report',
+            "https://gitlab.com/hydrothermal-openfoam/saltwatereos/-/issues",
         ),
         (
             '<i class="fa fa-github fa-fw"></i> Source Code',
-            "https://gitlab.com/hydrothermal-openfoam/saltwatereos",
+            "https://github.com/zguoch/saltwatereos",
+        ),
+        (
+            '<i class="fa fa-github fa-fw"></i> Code documentation',
+            "https://www.sweos.info/doxygen/",
         ),
     ],
     'project':project,
