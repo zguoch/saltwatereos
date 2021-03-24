@@ -10,6 +10,7 @@ env:
   BUILD_CONFIGURATION: Release
   BUILD_PLATFORM: x64
   PYTHON_PATH: C:/hostedtoolcache/windows/Python/3.8.8/x64
+  BASIC_PYTHON: 3.8
   HOME: D:/a/saltwatereos/saltwatereos
   AppInstaller: swEOS-Windows-Installer
 jobs:
@@ -20,6 +21,9 @@ jobs:
       matrix:
         python:
           - {version: '3.6', lib: 'python36.lib' }
+          - {version: '3.7', lib: 'python37.lib' }
+          - {version: '3.8', lib: 'python38.lib' }
+          - {version: '3.9', lib: 'python39.lib' }
     steps:
       # checkout source code
       - uses: actions/checkout@v2
@@ -39,6 +43,7 @@ jobs:
 
       # install dependencies, e.g. VTK, swig
       - name: install dependencies
+        if: ${{ matrix.python.version == env.BASIC_PYTHON }}
         working-directory: ${{ env.GITHUB_WORKSPACE }}
         run: |
           git clone https://github.com/zguoch/dependencies_swEOS.git
@@ -62,7 +67,6 @@ jobs:
           echo ${{ github.ref }}
           echo "commit id short" ${SHORT_SHA}
           python --version
-          bash --version
       # # debug workflow
       # - name: Setup tmate session
       #   uses: mxschmitt/action-tmate@v3
@@ -85,10 +89,17 @@ jobs:
           # cp swig/H2ONaCl/H2ONaCl.py ../API/python/pyswEOS
           # cp swig/H2ONaCl/Release/*H2ONaCl* ../API/python/pyswEOS
           # mkdir ../lib
-          # cp Release/*.lib ../lib/ 
-
+          # cp Release/*.lib ../lib/
+      # upload python API
+      - name: upload pyswEOS
+        uses: actions/upload-artifact@v2
+        with:
+          name: pyswEOS_python${{matrix.python.version}}_${{env.SHORT_SHA}}
+          path: |
+            ${{env.HOME}}/Library/API/python/pyswEOS
       # build swEOS cmd app
       - name: build cmd app
+        if: ${{ matrix.python.version == env.BASIC_PYTHON }}
         working-directory: ${{ env.GITHUB_WORKSPACE }}
         run: |
           cd ${{env.HOME}}
@@ -99,6 +110,7 @@ jobs:
       
       # build desktop app
       - name: build desktop app
+        if: ${{ matrix.python.version == env.BASIC_PYTHON }}
         working-directory: ${{ env.GITHUB_WORKSPACE }}
         run: |
           cd ${{env.HOME}}
@@ -116,6 +128,7 @@ jobs:
 
       # package
       - name: package zip format
+        if: ${{ matrix.python.version == env.BASIC_PYTHON }}
         working-directory: ${{ env.GITHUB_WORKSPACE }}
         run: |
           cd ${{env.HOME}}/desktop/build
@@ -126,60 +139,46 @@ jobs:
           # cp commandline\build\Release\*.exe swEOS_windows\swEOS_cmd.exe
           # cp -r desktop\build\Release swEOS_windows\
           7z a -tzip swEOS-Windows-Installer.zip ${{env.HOME}}/install/*
-    
-      - uses: actions/upload-artifact@v2
+
+      - name: upload app
+        if: ${{ matrix.python.version == env.BASIC_PYTHON }}
+        uses: actions/upload-artifact@v2
         with:
-          name: swEOS_windows_python${{matrix.python.version}}_${{env.SHORT_SHA}}
+          name: swEOS_windows_${{env.SHORT_SHA}}
           path: |
             ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.exe
             ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.zip
-
-      # Build Python API with different python library versions
-      - name: build python APIs
-        run: |
-          bash --version
-          bash test.sh
-          # Powershell -noprofile -executionpolicy bypass -file buildPythonAPIs.ps1 C:\hostedtoolcache\windows\Python ${{env.HOME}} ${{env.BUILD_CONFIGURATION}} ${{env.BUILD_PLATFORM}}
-          # cp -r Library/API/python API_Python_Windows
-          # 7z a -tzip API_Python_Windows.zip API_Python_Windows/*
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: API_Python_Windows
-          path: |
-            API_Python_Windows.zip
-
+    
       # tag 上传Release
       - name: get tag name
-        if: startsWith(github.event.ref, 'refs/tags/')
+        if: startsWith(github.event.ref, 'refs/tags/') && ${{ matrix.python.version == env.BASIC_PYTHON }}
         run: |
           echo "GIT_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
           echo "GIT_TAG=$(git describe --tags --abbrev=0)"
       - name: upload exe install
-        if: startsWith(github.event.ref, 'refs/tags/')
+        if: startsWith(github.event.ref, 'refs/tags/') && ${{ matrix.python.version == env.BASIC_PYTHON }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.exe
-          asset_name: ${{env.AppInstaller}}_python${{matrix.python.version}}.exe
+          asset_name: ${{env.AppInstaller}}.exe
           tag: ${{ github.ref }}
           overwrite: true
       - name: upload zip install
-        if: startsWith(github.event.ref, 'refs/tags/')
+        if: startsWith(github.event.ref, 'refs/tags/') && ${{ matrix.python.version == env.BASIC_PYTHON }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.zip
-          asset_name: ${{env.AppInstaller}}_python${{matrix.python.version}}.zip
+          asset_name: ${{env.AppInstaller}}.zip
           tag: ${{ github.ref }}
           overwrite: true
-
-      - name: upload zip of python APIs
+      - name: upload pyswEOS
         if: startsWith(github.event.ref, 'refs/tags/')
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{env.HOME}}/API_Python_Windows.zip
-          asset_name: API_Python_Windows.zip
+          file: ${{env.HOME}}/Library/API/python/pyswEOS/
+          asset_name: pyswEOS_python${{matrix.python.version}}.zip
           tag: ${{ github.ref }}
           overwrite: true
