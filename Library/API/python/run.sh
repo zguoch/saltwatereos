@@ -26,9 +26,8 @@ function distPython()
         # cp MANIFEST.in ${packageName} 
 
         # change python tag in setup.cfg
-        awk -v pythonTag=$pyTag '{gsub(/python-tag = pythonTag/, "python-tag = "pythonTag""); print }' setup.cfg.in | \
-        awk -v pythonVersion=$pythonVersion '{gsub(/python_requires = ==3.6/, "python_requires = =="pythonVersion".*"); print }' > setup.cfg
-
+        awk -v pythonTag=$pyTag '{gsub(/python-tag = pythonTag/, "python-tag = "pythonTag""); print }' setup.cfg.in  > setup.cfg
+        # awk -v pythonVersion=$pythonVersion '{gsub(/python_requires = ==3.6/, "python_requires = =="pythonVersion".*"); print }'
         # build
         python setup.py bdist_wheel --plat-name $platTag
 
@@ -45,6 +44,6 @@ function distPython()
 
 rm -rf dist build
 
-# distPython manylinux2010_x86_64 "2.7 3.5 3.6 3.7 3.8 3.9" /Users/zguo/Downloads/API_Python_Linux
-# distPython macosx_10_9_x86_64 "2.7 3.5 3.6 3.7 3.8 3.9" /Users/zguo/Downloads/API_Python_MacOSX
-distPython win_amd64 "2.7 3.5 3.6 3.7 3.8 3.9" /Users/zguo/Downloads/API_Python_Windows
+distPython manylinux2010_x86_64 "2.7 3.5 3.6 3.7 3.8 3.9" /Users/zguo/Downloads/API_Python_Linux
+distPython macosx_10_9_x86_64 "2.7 3.5 3.6 3.7 3.8 3.9" /Users/zguo/Downloads/API_Python_MacOSX
+# distPython win_amd64 "2.7 3.5 3.6 3.7 3.8 3.9" /Users/zguo/Downloads/API_Python_Windows
