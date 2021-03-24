@@ -62,9 +62,9 @@ jobs:
           echo ${{ github.ref }}
           echo "commit id short" ${SHORT_SHA}
           python --version
-      # debug workflow
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      # # debug workflow
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
 
       # build swEOS library
       - name: build library
@@ -136,8 +136,16 @@ jobs:
       # Build Python API with different python library versions
       - name: build python APIs
         run: |
-          Powershell -noprofile -executionpolicy bypass -file buildPythonAPIs.ps1 C:\hostedtoolcache\windows\Python 
-          
+          # Powershell -noprofile -executionpolicy bypass -file buildPythonAPIs.ps1 C:\hostedtoolcache\windows\Python ${{env.HOME}} ${{env.BUILD_CONFIGURATION}} ${{env.BUILD_PLATFORM}}
+          cp -r Library/API/python API_Python_Windows
+          7z a -tzip API_Python_Windows.zip API_Python_Windows/*
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: API_Python_Windows
+          path: |
+            API_Python_Windows.zip
+
       # tag 上传Release
       - name: get tag name
         if: startsWith(github.event.ref, 'refs/tags/')
@@ -160,5 +168,15 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.zip
           asset_name: ${{env.AppInstaller}}_python${{matrix.python.version}}.zip
+          tag: ${{ github.ref }}
+          overwrite: true
+
+      - name: upload zip of python APIs
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{env.HOME}}/API_Python_Windows.zip
+          asset_name: API_Python_Windows.zip
           tag: ${{ github.ref }}
           overwrite: true
