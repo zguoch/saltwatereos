@@ -45,8 +45,8 @@ foreach($pyversion in Get-ChildItem -Path $basePath_python)
 
     $pyswEOS_newPath = "../API/python/pyswEOS_python" + $pyversion.BaseName
     mv ../API/python/pyswEOS $pyswEOS_newPath 
-
-    echo "==============================" $pyversion.BaseName " done ===================="
+    $statue = "==============================" + $pyversion.BaseName + " done ===================="
+    echo $statue
 }
 
 cd ../../
