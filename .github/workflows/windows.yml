@@ -43,7 +43,6 @@ jobs:
 
       # install dependencies, e.g. VTK, swig
       - name: install dependencies
-        if: ${{ matrix.python.version == env.BASIC_PYTHON }}
         working-directory: ${{ env.GITHUB_WORKSPACE }}
         run: |
           git clone https://github.com/zguoch/dependencies_swEOS.git
