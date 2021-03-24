@@ -1,9 +1,9 @@
 
-# 拷贝不同系统的Release中的API文件夹到当前目录，分别命名为mac, linux, win
 function distPython()
 {
     platTag=$1
     pythonTags=$2
+    pkgsPath=$3
     packageName=pyswEOS
     for pythonTag in $pythonTags
     do
@@ -12,20 +12,22 @@ function distPython()
 
         majorTag=$(echo $pythonTag | cut -d "." -f 1)
         minorTag=$(echo $pythonTag | cut -d "." -f 2)
-        # pyTag=${majorTag}${minorTag}
+        pythonVersion="${pythonTag:0:3}"
         pyTag=py$pythonTag
-        echo $pythonTag $pyTag
+        echo $pythonTag $pyTag $pythonVersion
         pkgFolder=pyswEOS_python$pythonTag
-        cp -rf $pkgFolder $packageName
+        cp -rf $pkgsPath/${pkgFolder}* $packageName
+        echo $pkgsPath/${pkgFolder}*
 
         # create __init__.py in module folder !!!important
-        touch ${packageName}/__init__.py
+        cp __init__.py.in ${packageName}/__init__.py
 
         # include libraries as materials
-        cp MANIFEST.in ${packageName} 
+        # cp MANIFEST.in ${packageName} 
 
         # change python tag in setup.cfg
-        awk -v pythonTag=$pyTag '{gsub(/python-tag = pythonTag/, "python-tag = "pythonTag""); print }' setup.cfg.in > setup.cfg
+        awk -v pythonTag=$pyTag '{gsub(/python-tag = pythonTag/, "python-tag = "pythonTag""); print }' setup.cfg.in | \
+        awk -v pythonVersion=$pythonVersion '{gsub(/python_requires = ==3.6/, "python_requires = =="pythonVersion".*"); print }' > setup.cfg
 
         # build
         python setup.py bdist_wheel --plat-name $platTag
@@ -37,7 +39,12 @@ function distPython()
         twine upload $whlFile --verbose
 
         rm -rf $packageName
+        rm -rf ${packageName}.egg-info
     done
 }
 
-distPython manylinux2010_x86_64 "2.7 3.5m 3.6m 3.7m 3.8 3.9"
+rm -rf dist build
+
+# distPython manylinux2010_x86_64 "2.7 3.5 3.6 3.7 3.8 3.9" /Users/zguo/Downloads/API_Python_Linux
+# distPython macosx_10_9_x86_64 "2.7 3.5 3.6 3.7 3.8 3.9" /Users/zguo/Downloads/API_Python_MacOSX
+distPython win_amd64 "2.7 3.5 3.6 3.7 3.8 3.9" /Users/zguo/Downloads/API_Python_Windows

@@ -15,14 +15,17 @@ foreach($pyversion in Get-ChildItem -Path $basePath_python)
     $libname = $pyversion.BaseName[0] + $pyversion.BaseName[2]
     $includePath = $python_path + "\include"
     $libPath = $python_path + "\libs\python" + $libname + ".lib"
+    $SWIG_EXECUTABLE = $HOME_PATH + "/dependencies_swEOS/windows/swigwin-4.0.2/swig.exe"
     echo $libPath
     # compile
-    cmake -DSWIG_EXECUTABLE=$HOME_PATH/dependencies_swEOS/windows/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=$includePath -DPYTHON_LIBRARY=$libPath -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION -DCMAKE_GENERATOR_PLATFORM=$BUILD_PLATFORM ..
+    cmake -DSWIG_EXECUTABLE=$SWIG_EXECUTABLE -DPYTHON_INCLUDE_DIR=$includePath -DPYTHON_LIBRARY=$libPath -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION -DCMAKE_GENERATOR_PLATFORM=$BUILD_PLATFORM ..
     msbuild /m /p:Configuration=$BUILD_CONFIGURATION eosH2ONaCl.vcxproj
     msbuild /m /p:Configuration=$BUILD_CONFIGURATION INSTALL.vcxproj
 
     $pyswEOS_newPath = "../API/python/pyswEOS_python" + $pyversion.BaseName
     mv ../API/python/pyswEOS $pyswEOS_newPath 
+
+    echo "==============================" $pyversion.BaseName " done ===================="
 }
 
 cd ../../

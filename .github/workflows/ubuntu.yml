@@ -1,7 +1,7 @@
 name: Ubuntu
 on: 
   push:
-    branches: master
+    branches: main
     tags:
       - 'V*'
 env:

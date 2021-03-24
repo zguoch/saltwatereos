@@ -1,0 +1,6 @@
+[bdist_wheel]
+universal = 0
+python-tag = pythonTag
+
+[options]
+python_requires = ==3.6

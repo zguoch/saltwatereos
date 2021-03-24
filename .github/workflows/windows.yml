@@ -1,7 +1,7 @@
 name: Windows
 on: 
   push:
-    branches: main
+    branches: master
     tags:
       - 'V*'
 env:
@@ -84,7 +84,7 @@ jobs:
           # cp swig/H2ONaCl/H2ONaCl.py ../API/python/pyswEOS
           # cp swig/H2ONaCl/Release/*H2ONaCl* ../API/python/pyswEOS
           # mkdir ../lib
-          # cp Release/*.lib ../lib/
+          # cp Release/*.lib ../lib/ 
 
       # build swEOS cmd app
       - name: build cmd app

@@ -1,8 +1,8 @@
 *
 !*.sh
 !.gitignore
-!readme.md
+!readme.
 !setup*.py
+!*.in
 !.gitattributes 
-!pyH2ONaCl
 !MANIFEST.in
