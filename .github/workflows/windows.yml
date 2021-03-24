@@ -143,14 +143,14 @@ jobs:
         if: ${{ matrix.python.version == env.BASIC_PYTHON }}
         uses: actions/upload-artifact@v2
         with:
-          name: swEOS_windows_${{env.SHORT_SHA}}
+          name: swEOS_windows_python${{matrix.python.version}}_${{env.SHORT_SHA}}
           path: |
             ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.exe
             ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.zip
     
       # tag 上传Release
       - name: get tag name
-        if: startsWith(github.event.ref, 'refs/tags/') && ${{ matrix.python.version == env.BASIC_PYTHON }}
+        if: startsWith(github.event.ref, 'refs/tags/')
         run: |
           echo "GIT_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
           echo "GIT_TAG=$(git describe --tags --abbrev=0)"
@@ -160,7 +160,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.exe
-          asset_name: ${{env.AppInstaller}}.exe
+          asset_name: ${{env.AppInstaller}}_python${{matrix.python.version}}.exe
           tag: ${{ github.ref }}
           overwrite: true
       - name: upload zip install
@@ -169,7 +169,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.zip
-          asset_name: ${{env.AppInstaller}}.zip
+          asset_name: ${{env.AppInstaller}}_python${{matrix.python.version}}.zip
           tag: ${{ github.ref }}
           overwrite: true
       - name: upload pyswEOS
