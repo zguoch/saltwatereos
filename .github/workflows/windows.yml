@@ -62,9 +62,10 @@ jobs:
           echo ${{ github.ref }}
           echo "commit id short" ${SHORT_SHA}
           python --version
-      # debug workflow
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+          bash --version
+      # # debug workflow
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
 
       # build swEOS library
       - name: build library
@@ -136,9 +137,11 @@ jobs:
       # Build Python API with different python library versions
       - name: build python APIs
         run: |
-          Powershell -noprofile -executionpolicy bypass -file buildPythonAPIs.ps1 C:\hostedtoolcache\windows\Python ${{env.HOME}} ${{env.BUILD_CONFIGURATION}} ${{env.BUILD_PLATFORM}}
-          cp -r Library/API/python API_Python_Windows
-          7z a -tzip API_Python_Windows.zip API_Python_Windows/*
+          bash --version
+          bash test.sh
+          # Powershell -noprofile -executionpolicy bypass -file buildPythonAPIs.ps1 C:\hostedtoolcache\windows\Python ${{env.HOME}} ${{env.BUILD_CONFIGURATION}} ${{env.BUILD_PLATFORM}}
+          # cp -r Library/API/python API_Python_Windows
+          # 7z a -tzip API_Python_Windows.zip API_Python_Windows/*
 
       - uses: actions/upload-artifact@v2
         with:
