@@ -46,4 +46,4 @@ rm -rf dist build
 
 distPython manylinux2010_x86_64 "2.7 3.5 3.6 3.7 3.8 3.9" /Users/zguo/Downloads/API_Python_Linux
 distPython macosx_10_9_x86_64 "2.7 3.5 3.6 3.7 3.8 3.9" /Users/zguo/Downloads/API_Python_MacOSX
-# distPython win_amd64 "2.7 3.5 3.6 3.7 3.8 3.9" /Users/zguo/Downloads/API_Python_Windows
+distPython win_amd64 "2.7 3.5 3.6 3.7 3.8 3.9" /Users/zguo/Downloads/API_Python_Windows

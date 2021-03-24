@@ -89,9 +89,9 @@ jobs:
       - name: upload pyswEOS
         uses: actions/upload-artifact@v2
         with:
-          name: pyswEOS_python${{ matrix.python.version }}_${{env.SHORT_SHA}}
+          name: pyswEOS_windows_python${{ matrix.python.version }}_${{env.SHORT_SHA}}
           path: |
-            pyswEOS_windows_python${{ matrix.python.version }}.zip
+            pyswEOS_python${{ matrix.python.version }}.zip
       # build swEOS cmd app
       - name: build cmd app
         if: ${{ matrix.python.version == env.BASIC_PYTHON }}
