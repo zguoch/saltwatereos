@@ -136,7 +136,7 @@ jobs:
       # Build Python API with different python library versions
       - name: build python APIs
         run: |
-          # Powershell -noprofile -executionpolicy bypass -file buildPythonAPIs.ps1 C:\hostedtoolcache\windows\Python ${{env.HOME}} ${{env.BUILD_CONFIGURATION}} ${{env.BUILD_PLATFORM}}
+          Powershell -noprofile -executionpolicy bypass -file buildPythonAPIs.ps1 C:\hostedtoolcache\windows\Python ${{env.HOME}} ${{env.BUILD_CONFIGURATION}} ${{env.BUILD_PLATFORM}}
           cp -r Library/API/python API_Python_Windows
           7z a -tzip API_Python_Windows.zip API_Python_Windows/*
 
