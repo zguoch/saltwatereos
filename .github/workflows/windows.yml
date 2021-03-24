@@ -155,7 +155,8 @@ jobs:
           echo "GIT_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
           echo "GIT_TAG=$(git describe --tags --abbrev=0)"
       - name: upload exe install
-        if: startsWith(github.event.ref, 'refs/tags/') && ${{ matrix.python.version == env.BASIC_PYTHON }}
+        if: startsWith(github.event.ref, 'refs/tags/') 
+        if: ${{ matrix.python.version == env.BASIC_PYTHON }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -164,7 +165,8 @@ jobs:
           tag: ${{ github.ref }}
           overwrite: true
       - name: upload zip installer
-        if: startsWith(github.event.ref, 'refs/tags/') && ${{ matrix.python.version == env.BASIC_PYTHON }}
+        if: startsWith(github.event.ref, 'refs/tags/') 
+        if: ${{ matrix.python.version == env.BASIC_PYTHON }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
