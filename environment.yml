@@ -1,6 +1,0 @@
-name: swEOS
-channels:
-  - conda-forge
-  - defaults
-dependencies:
-  - https://files.pythonhosted.org/packages/a2/8e/e29dbbb95058b8fef7f10b388c4fbc07afd72fc5f4ec45f11dec81999140/pyswEOS-0.2.5-py3.7-none-manylinux2010_x86_64.whl
