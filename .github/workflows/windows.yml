@@ -80,22 +80,16 @@ jobs:
           cmake -DSWIG_EXECUTABLE=${{env.HOME}}/dependencies_swEOS/windows/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=${{env.pythonLocation}}\include -DPYTHON_LIBRARY=${{env.pythonLocation}}\libs\${{matrix.python.lib}} -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} eosH2ONaCl.vcxproj
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} INSTALL.vcxproj
-          # mkdir ../API/python/pyswEOS
-          # cp swig/H2O/H2O.py ../API/python/pyswEOS
-          # cp swig/H2O/Release/*H2O* ../API/python/pyswEOS
-          # cp swig/NaCl/NaCl.py ../API/python/pyswEOS
-          # cp swig/NaCl/Release/*NaCl* ../API/python/pyswEOS
-          # cp swig/H2ONaCl/H2ONaCl.py ../API/python/pyswEOS
-          # cp swig/H2ONaCl/Release/*H2ONaCl* ../API/python/pyswEOS
-          # mkdir ../lib
-          # cp Release/*.lib ../lib/
+          cd ${{env.HOME}}
+          cp -r Library/API/python/pyswEOS pyswEOS_windows_py${{ matrix.python.version }}
+          7z a -tzip pyswEOS_windows_py${{ matrix.python.version }}.zip pyswEOS_windows_py${{ matrix.python.version }}
       # upload python API
       - name: upload pyswEOS
         uses: actions/upload-artifact@v2
         with:
-          name: pyswEOS_python${{matrix.python.version}}_${{env.SHORT_SHA}}
+          name: pyswEOS_windows_py${{ matrix.python.version }}_${{env.SHORT_SHA}}
           path: |
-            ${{env.HOME}}/Library/API/python/pyswEOS
+            pyswEOS_windows_py${{ matrix.python.version }}.zip
       # build swEOS cmd app
       - name: build cmd app
         if: ${{ matrix.python.version == env.BASIC_PYTHON }}
@@ -177,7 +171,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{env.HOME}}/Library/API/python/pyswEOS/
-          asset_name: pyswEOS_python${{matrix.python.version}}.zip
+          file: pyswEOS_windows_py${{ matrix.python.version }}.zip
+          asset_name: pyswEOS_windows_py${{ matrix.python.version }}.zip
           tag: ${{ github.ref }}
           overwrite: true
