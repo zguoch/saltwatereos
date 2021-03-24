@@ -10,7 +10,7 @@ env:
   BUILD_CONFIGURATION: Release
   BUILD_PLATFORM: x64
   PYTHON_PATH: C:/hostedtoolcache/windows/Python/3.8.8/x64
-  BASIC_PYTHON: "3.8"
+  BASIC_PYTHON: 3.8
   HOME: D:/a/saltwatereos/saltwatereos
   AppInstaller: swEOS-Windows-Installer
 jobs:
@@ -148,38 +148,36 @@ jobs:
             ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.exe
             ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.zip
     
-      # tag 上传Release
-      - name: get tag name
-        if: startsWith(github.event.ref, 'refs/tags/')
-        run: |
-          echo "GIT_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
-          echo "GIT_TAG=$(git describe --tags --abbrev=0)"
-      - name: upload exe install
-        if: startsWith(github.event.ref, 'refs/tags/') 
-        if: ${{ matrix.python.version == env.BASIC_PYTHON }}
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.exe
-          asset_name: ${{env.AppInstaller}}_python${{matrix.python.version}}.exe
-          tag: ${{ github.ref }}
-          overwrite: true
-      - name: upload zip installer
-        if: startsWith(github.event.ref, 'refs/tags/') 
-        if: ${{ matrix.python.version == env.BASIC_PYTHON }}
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.zip
-          asset_name: ${{env.AppInstaller}}_python${{matrix.python.version}}.zip
-          tag: ${{ github.ref }}
-          overwrite: true
-      - name: upload pyswEOS
-        if: startsWith(github.event.ref, 'refs/tags/')
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{env.HOME}}/Library/API/python/pyswEOS/
-          asset_name: pyswEOS_python${{matrix.python.version}}.zip
-          tag: ${{ github.ref }}
-          overwrite: true
+      # # tag 上传Release
+      # - name: get tag name
+      #   if: startsWith(github.event.ref, 'refs/tags/')
+      #   run: |
+      #     echo "GIT_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+      #     echo "GIT_TAG=$(git describe --tags --abbrev=0)"
+      # - name: upload exe install
+      #   if: startsWith(github.event.ref, 'refs/tags/') && ${{ matrix.python.version == env.BASIC_PYTHON }}
+      #   uses: svenstaro/upload-release-action@v2
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.exe
+      #     asset_name: ${{env.AppInstaller}}_python${{matrix.python.version}}.exe
+      #     tag: ${{ github.ref }}
+      #     overwrite: true
+      # - name: upload zip installer
+      #   if: startsWith(github.event.ref, 'refs/tags/') && ${{ matrix.python.version == env.BASIC_PYTHON }}
+      #   uses: svenstaro/upload-release-action@v2
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.zip
+      #     asset_name: ${{env.AppInstaller}}_python${{matrix.python.version}}.zip
+      #     tag: ${{ github.ref }}
+      #     overwrite: true
+      # - name: upload pyswEOS
+      #   if: startsWith(github.event.ref, 'refs/tags/')
+      #   uses: svenstaro/upload-release-action@v2
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: ${{env.HOME}}/Library/API/python/pyswEOS/
+      #     asset_name: pyswEOS_python${{matrix.python.version}}.zip
+      #     tag: ${{ github.ref }}
+      #     overwrite: true
