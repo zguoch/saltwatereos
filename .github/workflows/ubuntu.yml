@@ -1,7 +1,7 @@
 name: Ubuntu
 on: 
   push:
-    branches: main
+    branches: master
     tags:
       - 'V*'
 env:
@@ -9,7 +9,8 @@ env:
 jobs:
   buildApp:
     name: library
-    runs-on: ubuntu-latest
+    # ubuntu-latest (ubuntu-20.04: glibc 2.31), ubuntu-18.04 (glibc 2.27), ubuntu-16.04 (glibc 2.23)
+    runs-on: ubuntu-18.04
     env:
       AppInstaller: swEOS-Linux-Installer
       Path_Pythons: /opt/hostedtoolcache/Python
@@ -52,6 +53,7 @@ jobs:
           echo "commit id short" ${SHORT_SHA}
           echo "github tag: " ${GIT_TAG}
           python --version
+          ldd --version
       # debug workflow
       # - name: install oh my zsh
       #   run: |
