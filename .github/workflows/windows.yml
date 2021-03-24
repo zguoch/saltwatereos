@@ -10,7 +10,7 @@ env:
   BUILD_CONFIGURATION: Release
   BUILD_PLATFORM: x64
   PYTHON_PATH: C:/hostedtoolcache/windows/Python/3.8.8/x64
-  BASIC_PYTHON: 3.8
+  BASIC_PYTHON: "3.8"
   HOME: D:/a/saltwatereos/saltwatereos
   AppInstaller: swEOS-Windows-Installer
 jobs:
@@ -163,7 +163,7 @@ jobs:
           asset_name: ${{env.AppInstaller}}_python${{matrix.python.version}}.exe
           tag: ${{ github.ref }}
           overwrite: true
-      - name: upload zip install
+      - name: upload zip installer
         if: startsWith(github.event.ref, 'refs/tags/') && ${{ matrix.python.version == env.BASIC_PYTHON }}
         uses: svenstaro/upload-release-action@v2
         with:
