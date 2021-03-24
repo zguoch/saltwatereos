@@ -21,7 +21,7 @@ jobs:
       matrix:
         python:
           - {version: '2.7', lib: 'python27.lib' }
-          - {version: '3.5', lib: 'python36.lib' }
+          - {version: '3.5', lib: 'python35.lib' }
           - {version: '3.6', lib: 'python36.lib' }
           - {version: '3.7', lib: 'python37.lib' }
           - {version: '3.8', lib: 'python38.lib' }
