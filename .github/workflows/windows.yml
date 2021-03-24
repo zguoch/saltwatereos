@@ -1,7 +1,7 @@
 name: Windows
 on: 
   push:
-    branches: main
+    branches: master
     tags:
       - 'V*'
 env:
@@ -20,9 +20,6 @@ jobs:
       matrix:
         python:
           - {version: '3.6', lib: 'python36.lib' }
-          - {version: '3.7', lib: 'python37.lib' }
-          - {version: '3.8', lib: 'python38.lib' }
-          - {version: '3.9', lib: 'python39.lib' }
     steps:
       # checkout source code
       - uses: actions/checkout@v2
@@ -65,9 +62,9 @@ jobs:
           echo ${{ github.ref }}
           echo "commit id short" ${SHORT_SHA}
           python --version
-      # # debug workflow
-      # - name: Setup tmate session
-      #   uses: mxschmitt/action-tmate@v3
+      # debug workflow
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
       # build swEOS library
       - name: build library
@@ -135,7 +132,12 @@ jobs:
           path: |
             ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.exe
             ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.zip
-    
+
+      # Build Python API with different python library versions
+      - name: build python APIs
+        run: |
+          Powershell -noprofile -executionpolicy bypass -file buildPythonAPIs.ps1 C:\hostedtoolcache\windows\Python 
+          
       # tag 上传Release
       - name: get tag name
         if: startsWith(github.event.ref, 'refs/tags/')

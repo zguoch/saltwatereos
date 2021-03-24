@@ -115,7 +115,8 @@ jobs:
       - name: build python APIs
         run: |
           bash buildPythonAPIs.sh ${{ env.Path_Pythons }} so "-DBuild_API_tcl=OFF"
-          zip -r API_Python_Linux.zip Library/API/python
+          cp -rf Library/API/python API_Python_Linux
+          zip -r API_Python_Linux.zip API_Python_Linux
       # upload python APIs with all python versions
       - uses: actions/upload-artifact@v2
         with:

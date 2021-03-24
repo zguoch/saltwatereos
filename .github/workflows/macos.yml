@@ -103,7 +103,8 @@ jobs:
       - name: build python APIs
         run: |
           bash buildPythonAPIs.sh ${{ env.Path_Pythons }} dylib "-DBuild_API_tcl=ON"
-          zip -r API_Python_MacOSX.zip Library/API/python
+          cp -rf Library/API/python API_Python_MacOSX
+          zip -r API_Python_MacOSX.zip API_Python_MacOSX
       # upload python APIs with all python versions
       - uses: actions/upload-artifact@v2
         with:
