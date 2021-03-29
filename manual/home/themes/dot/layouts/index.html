@@ -9,10 +9,10 @@
   <image src="https://img.shields.io/github/repo-size/zguoch/saltwatereos"></image>
   <image id="githubClones" src="https://img.shields.io/github/downloads/zguoch/saltwatereos/total"></image>
   {{ if .Site.Params.binderURL }}
-    <image id="binder" src="https://binder.pangeo.io/badge_logo.svg" href={{.Site.Params.binderURL}}></image>
+    <a href={{.Site.Params.binderURL}}><image id="binder" src="https://binder.pangeo.io/badge_logo.svg" ></image></a>
   {{ end }}
   {{ if .Site.Params.jupyterURL }}
-    <image id="binder" src="https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter" href={{.Site.Params.jupyterURL}}></image>
+    <a href={{.Site.Params.jupyterURL}}><image id="binder" src="https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter" ></image></a>
   {{ end }}
   
 </div>
@@ -41,7 +41,13 @@
                 var request = null;
                 request = new XMLHttpRequest();
                 request.open( "GET", theUrl, false );
-                {{/*  request.setRequestHeader('Authorization', 'token '+{{ .Site.Params.githubToken }});  */}}
+                request.setRequestHeader("Authorization", "Basic ODNmMTk0NTBmNzExNTc5ZTlkYjA6Y2NjMGI2ZTkyYjEzYzdiNDZiM2E3MjMxYWY0ZGU0MjExZWYyYmU1Zg==");
+                //request.setRequestHeader('Authorization', 'token '+{{ .Site.Params.githubToken }});
+                request.onreadystatechange = function () {
+                  if (xhr.readyState === 4) {
+                     console.log(xhr.status);
+                     console.log(xhr.responseText);
+                  }};
                 request.send( null );
                 if (request.status == 200) //成功获取
                 {
@@ -102,7 +108,7 @@
             <p class="mb-0">{{ .Params.Description }}</p>
             {{ if eq .Title "Python" }}
               <img src="https://pypi.org/static/images/logo-small.6eef541e.svg" height=14px> <img src="https://img.shields.io/pypi/dm/pyswEOS?label=downloads" alt="sciPyFoam">
-              {{/*  <img src="https://img.shields.io/pypi/pyversions/pysweos"></img>  */}}
+              <img src="https://img.shields.io/pypi/pyversions/pysweos"></img>
             {{ end }}
             {{ if eq .Title "OpenFOAM" }}
               <img src="https://img.shields.io/badge/Foundation-Version 7%7cVersion%208-brightgreen.svg" height=18px> 

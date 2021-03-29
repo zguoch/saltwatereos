@@ -9,6 +9,36 @@ type : "api"
 
 ## Install [pyswEOS](https://pypi.org/project/pyswEOS/)
 
+<!-- <div>
+<select id="pyswEOS-os" class="form-select" aria-label="pyswEOS-OS" onchange="pyswEOSselect(this);">
+  <option selected>Select OS</option>
+  <option value="1">MacOSX</option>
+  <option value="2">Linux</option>
+  <option value="3">Windows</option>
+</select>
+<select id="pyswEOS-pyversion" class="form-select" aria-label="pyswEOS-pyversion" onchange="pyswEOSselect(this);">
+  <option selected>Select Python Version</option>
+  <option value="1" id="dadfs">2.7</option>
+  <option value="2">3.5</option>
+  <option value="3">3.6</option>
+  <option value="3">3.7</option>
+  <option value="3">3.8</option>
+  <option value="3">3.9</option>
+</select>
+<div class="btn-group">
+  <button class="btn btn-secondary btn-sm" type="button">
+    Small split button
+  </button>
+  <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="sr-only">Toggle Dropdown</span>
+  </button>
+  <div class="dropdown-menu" id="pyswEOS-dropdown">
+    <a class="dropdown-item" href="#">Action</a>
+    <a class="dropdown-item" href="#">Action</a>
+  </div>
+</div>
+</div> -->
+
 ```bash
 pip install pyswEOS
 ```

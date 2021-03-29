@@ -29,7 +29,7 @@
       var request = null;
       request = new XMLHttpRequest();
       request.open( "GET", theUrl, false );
-      //request.setRequestHeader('Authorization', 'token '+{{ .Site.Params.githubToken }});
+      request.setRequestHeader("Authorization", "Basic ODNmMTk0NTBmNzExNTc5ZTlkYjA6Y2NjMGI2ZTkyYjEzYzdiNDZiM2E3MjMxYWY0ZGU0MjExZWYyYmU1Zg==");
       request.send( null );
       if (request.status == 200) //成功获取
       {
@@ -44,7 +44,7 @@
               {
                   var asset = assets[j]
                   var asset_name=asset.name   //安装包的名称
-                  if(asset_name.includes(osName) && asset_name.includes(installerFormat)) //判断安装包的名称是否与此处html中所表示的系统一致
+                  if(asset_name.includes(osName) && asset_name.includes(installerFormat) && asset_name.includes("Installer")) //判断安装包的名称是否与此处html中所表示的系统一致
                   {
                     //window.alert(osName+'_'+installerFormat)
                     element.href=asset.browser_download_url
@@ -98,4 +98,44 @@
       clonesBadge.src="https://img.shields.io/badge/Clones-"+clones+"-orange.svg"
     }
   }
+</script>
+{{/*  根据下拉菜单选择pyswEOS的下载链接  */}}
+<script type="text/javascript">
+  function pyswEOSselect(obj) {
+    // var ext = ".html";
+    // var url = window.location.href;
+    var selector=obj.options[obj.selectedIndex]
+    var lang = selector.value;
+    window.alert(selector.id);
+    // if (lang == "en") //en -> zh
+    // {
+    //   var ind_zh = url.indexOf("/zh/");
+    //   if (ind_zh > 0) {
+    //     url_new = url.replace("/zh/", "/en/");
+    //   }
+    // } else if (lang == "zh") //zh -> en
+    // {
+    //   var ind_en = url.indexOf("/en/");
+    //   if (ind_en > 0) {
+    //     url_new = url.replace("/en/", "/zh/");
+    //   }
+    // }
+    // window.open(url_new, "_self");
+  }
+
+  function getAllpyswEOSDownloadURL() {
+    // var url = window.location.href;
+    // var ind_en = url.indexOf("/en/");
+    // var ind_zh = url.indexOf("/zh/");
+    var pyswEOS_url_items = document.getElementById("pyswEOS-dropdown");
+
+    // if (ind_en > 0) {
+    //   select_lang.selectedIndex = "0";
+    //   // alert("英文版");
+    // } else if (ind_zh > 0) {
+    //   select_lang.selectedIndex = "1";
+    //   // alert("中文版");
+    // }
+  }
+  //window.onload = getAllpyswEOSDownloadURL;
 </script>

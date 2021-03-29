@@ -1,7 +1,7 @@
 name: Windows
 on: 
   push:
-    branches: master
+    branches: main
     tags:
       - 'V*'
 env:
@@ -89,7 +89,7 @@ jobs:
       - name: upload pyswEOS
         uses: actions/upload-artifact@v2
         with:
-          name: pyswEOS_windows_python${{ matrix.python.version }}_${{env.SHORT_SHA}}
+          name: pyswEOS_python${{ matrix.python.version }}_${{env.SHORT_SHA}}
           path: |
             pyswEOS_python${{ matrix.python.version }}.zip
       # build swEOS cmd app
