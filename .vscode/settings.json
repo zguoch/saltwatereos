@@ -132,5 +132,6 @@
     },
     "C_Cpp.errorSquiggles": "Disabled",
     "restructuredtext.linter.disabled": true,
-    "restructuredtext.confPath": ""
+    "restructuredtext.confPath": "",
+    "restructuredtext.languageServer.disabled": true
 }
