@@ -11,16 +11,18 @@ Synopsis
 .. include:: ../include.rst_
 
 
-**swEOS** [ |-D|\ [ *dimension* ]] 
-[ |-V|\ [ *variables* ] ]
-[ |-P|\ [:math:`p_{bar}`] ]
-[ |-T|\ [:math:`T_{^{\circ}C}`] ]
-[ |-X|\ [:math:`x_{wt. NaCl}`] ]
-[ |-H|\ [:math:`h_{kJ/kg}`] ]
-[ |-R|\ *min1/delta1/max1/min2/delta2/max2/min3/delta3/max3* ]
-[ |-G|\ [*inputfile*] ]
-[ |-O|\ [*outputfile*] ]
-[ |-t|\ [*threads*] ]
+**swEOS** [ |-D|  [ *dimension* ]] 
+[ |-V|  [ *variables* ] ]
+[ |-P|  [:math:`p_{bar}`] ]
+[ |-T|  [:math:`T_{^{\circ}C}`] ]
+[ |-X|  [:math:`x_{wt. NaCl}`] ]
+[ |-H|  [:math:`h_{kJ/kg}`] ]
+[ |-R|  *min1/delta1/max1/min2/delta2/max2/min3/delta3/max3* ]
+[ |-G|  [*inputfile*] ]
+[ |-O|  [*outputfile*] ]
+[ |-t|  [*threads*] ]
+[ |-n|  ]
+[ |-hh|  ]
 
 |No-spaces|
 
@@ -35,7 +37,7 @@ Required Arguments
 
 .. _-D:
 
-|-D|\ [ *dimension* ]
+|-D| [ *dimension* ]
     Sets dimension. This is the first key option, the available arguments are **0**, **1**, **2** and **3**.
 
     * **0** means **single point** calculation. If |-D| is set to **0**, the |-V| option only support **PTX** or **PHX**. In addition, the pressure, salinity, temperature or enthalpy must be specified by |-P|, |-X|, |-T| or |-H| option, respectively.
@@ -48,10 +50,10 @@ Required Arguments
 
 .. _-V:
 
-|-V|\ [ *variables* ]
+|-V|  [ *variables* ]
     Sets variables accroding to |-D| option. This is the second key option, the available arguments are **PTX**, **PHX**, **P**, **T**, **X**, **H**, **PT**, **PX**, **TX**, **PH** and **HX**.
 
-    * **PTX**, if argument of |-D| option is **0** (single point or multiple points case), then the pressure, temperature and salinity is set by |-P|, |-T| and |-X| option, respectively. While if argument of |-D| is **3** (three dimension case), the range of pressure, temperature and salinity must be specified by |-R| option **in the same order** of argument of |-V| option. Therefore, for the same calculation, |-V| option can be **PTX**, **PXT**, **TPX**, **TXP**, **XPT** and **XTP** unless you set |-R| option in the save order. For example, :code:`-VXPT -R0/0.1/1/5/1/400/0/1/100` means salinity in range of [0, 1] with interval of 0.1, pressure in range of [5, 400] bar with interval of 1 bar, temperature in range of [0, 100] :math:`^{\circ}\text{C}` with interval 1 :math:`^{\circ}\text{C}` . Alternately, you can also do the same thing using command of |-V|\ *TPX* |-R|\ *0/1/100/5/1/400/0/0.1/1* .
+    * **PTX**, if argument of |-D| option is **0** (single point or multiple points case), then the pressure, temperature and salinity is set by |-P|, |-T| and |-X| option, respectively. While if argument of |-D| is **3** (three dimension case), the range of pressure, temperature and salinity must be specified by |-R| option **in the same order** of argument of |-V| option. Therefore, for the same calculation, |-V| option can be **PTX**, **PXT**, **TPX**, **TXP**, **XPT** and **XTP** unless you set |-R| option in the save order. For example, :code:`-VXPT -R0/0.1/1/5/1/400/0/1/100` means salinity in range of [0, 1] with interval of 0.1, pressure in range of [5, 400] bar with interval of 1 bar, temperature in range of [0, 100] :math:`^{\circ}\text{C}` with interval 1 :math:`^{\circ}\text{C}` . Alternately, you can also do the same thing using command of |-V|  *TPX* |-R|  *0/1/100/5/1/400/0/0.1/1* .
 
     * **PHX**, similar to **PTX**, it just replaced temperature with enthalpy.
 
@@ -61,32 +63,32 @@ Required Arguments
 
 .. _-P:
 
-|-P|\ [ *pressure* ]
+|-P|  [ *pressure* ]
     Sets fixed pressure value, it should be a float or integer number. The unit is **bar**. 
 
 .. _-T:
 
-|-T|\ [ *temperature* ]
+|-T|  [ *temperature* ]
     Sets fixed temperature value, it should be a float or integer number. The unit is |ssd|. 
 
 .. _-X:
 
-|-X|\ [ *salinity* ]
+|-X|  [ *salinity* ]
     Sets fixed salinity value, it should be a float or integer number. The unit is :math:`wt. NaCl`. 
 
 .. _-H:
 
-|-H|\ [ *enthalpy* ]
+|-H|  [ *enthalpy* ]
     Sets fixed enthalpy value, it should be a float or integer number. 
 
 .. _-R:
 
-|-R|\ [ *min/delta/max* ]
+|-R|  [ *min/delta/max* ]
     Sets range and interval of independent variable(s), |-R| option must correspond to |-V| and |-D| options. For example, :code:`-D1 -VT -R0/1/100` , :code:`-D2 -VTX -R0/1/100/0/0.1/0.8` , :code:`-D3 -VTXP -R0/1/100/0/0.1/0.8/5/1/500` .
 
 .. _-G:
 
-|-G|\ [ *inputfile* ]
+|-G|  [ *inputfile* ]
     Sets input file for multiple points calculation, the input file with three columns with delimiter of space or table( :code:`\t` ) correspondint to |-V| option. For example, :code:`-D0 -VPTX -Ginput.txt` means calculate EOS of some points, independent variables of each point are pressure, temperature and salinity which are listed in :code:`input.txt` as belows
 
     .. tab:: PTX
@@ -134,13 +136,33 @@ Required Arguments
 
 .. _-O:
 
-|-O|\ [ *outputfile* ]
+|-O|  [ *outputfile* ]
     Sets output file name for one, two and three-dimensional calculation. The supported file format for 1D is csv, for 2D and 3D can be one of txt(delimiter is :code:`\t` ), csv(delimiter is :code:`,` ) and vtk. Because temperature, pressure and salinity have different scaling, if open the vtk file directlly by paraview, you can not see anything in salinity dimension. Therefore there is a python script generated by :code:`swEOS` can deal with the scaling issue automatically. You just need to type a command in terminal to visualize the result. e.g.  :code:`paraview --script=test3D.vtk.py` .
 
 .. _-tt:
 
-|-t|\ [ *thread* ]
+|-t|  [ *thread* ]
     Sets number of threads for parallel computing.
+
+.. _-n:
+
+|-n| 
+    If need to normalize the coordinates of result in vtk file, it is only valid in 3D calculation. Because the coordinates of the results are (P,T,X), (P,H,X), ... with different scale, if use paraview to visualize the result, one have to deal with the coordinate scale. One option is set using |-n| to normalize the coordinate. Otherwise, a python script will be generated by swEOS automatically, one can use this python script to visualize results (see also :ref:`cmd_3D`).
+
+    .. code-block:: console
+        :emphasize-lines: 5,6
+
+        3D calculation using 8 threads, H in [100, 600] kJ/kg, P in [10, 500] bar, X in [0.001, 1]
+        [################################]100%
+        Writing results to file ...
+        Results have been saved to file: PTX.vtk
+        Paraview-python script is generated as : PTX.vtk.py
+        You can use command of  paraview --script=PTX.vtk.py to visualize result in paraview
+
+.. _-hh:
+
+|-hh| 
+    Print a short message about the syntax of the command. 
 
 
 Examples
@@ -276,6 +298,7 @@ Two-dimensional calculation
 
     <script id="asciicast-7p6v2o8fux1lvW2T48o3oBsev" src="https://asciinema.org/a/zCb09bq5gI4UKZYGPHMOxYdrK.js" async data-autoplay="false"></script>
 
+.. _cmd_3D:
 
 Three-dimensional calculation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

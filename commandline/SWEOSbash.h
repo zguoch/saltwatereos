@@ -180,8 +180,8 @@ namespace SWEOSbash
         cout<<"============================================================"<<std::endl;;
         cout<<COLOR_BLUE<<"Usage: swEOS [options]"<<COLOR_DEFAULT<<std::endl;;
         cout<<"options:"<<std::endl;;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  --help "<<COLOR_BLUE<<"List descriptions of usage and available arguments"<<COLOR_DEFAULT<<std::endl;;
-        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  --version "<<COLOR_BLUE<<"Print swEOS version number"<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -h "<<COLOR_BLUE<<"List descriptions of usage and available arguments"<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -v "<<COLOR_BLUE<<"Print swEOS version number"<<COLOR_DEFAULT<<std::endl;;
         cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -D "<<COLOR_BLUE<<"Dimension: 0, 1, 2, 3. e.g.: -D2"<<COLOR_DEFAULT<<std::endl;;
         cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -V "<<COLOR_BLUE<<"Select independent variables according to -D arguments."<<COLOR_DEFAULT<<std::endl;;
         cout<<setw(wordWidth)<<setiosflags(ios::left)<<"     "<<COLOR_DEFAULT<<"Combination of: T, P, X, H. e.g.: -VXT"<<COLOR_DEFAULT<<std::endl;;
@@ -196,6 +196,7 @@ namespace SWEOSbash
         cout<<setw(wordWidth)<<setiosflags(ios::left)<<"     "<<COLOR_DEFAULT<<"The text file with three columns, PTX or PHX are decided by -V options."<<COLOR_DEFAULT<<std::endl;;
         cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -O "<<COLOR_BLUE<<"Set out put file name, file format is determined by file extension name."<<COLOR_DEFAULT<<std::endl;;
         cout<<setw(wordWidth)<<setiosflags(ios::left)<<"     "<<COLOR_DEFAULT<<"Supported file format is vtk, csv, txt."<<COLOR_DEFAULT<<std::endl;;
+        cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -n "<<COLOR_BLUE<<"If normalize the result in vtk file. Only valid when -D 3"<<COLOR_DEFAULT<<std::endl;;
         cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  -t "<<COLOR_BLUE<<"Set number of thread for parallel computing."<<COLOR_DEFAULT<<std::endl;;
         cout<<"Units:"<<std::endl;;
         cout<<setw(wordWidth)<<setiosflags(ios::left)<<"  Temperature "<<COLOR_BLUE<<"Degree Celsius: 273.15 deg.C = 1 K (Kelvin)"<<COLOR_DEFAULT<<std::endl;;

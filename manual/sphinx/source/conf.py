@@ -65,7 +65,7 @@ lexers['foam'] = OpenFOAMLexer(startinline=True)
 # highlight_language = 'foam'
 # default language to highlight source code
 highlight_language = 'cpp'
-pygments_style = 'monokai'
+pygments_style = 'xcode'
 bibtex_bibfiles = ['manual.bib'] 
 # -- Project configuration ------------------------------------------------
 

@@ -1,25 +1,15 @@
 .. _API_tutorial:
 
+API
+==================================
+
 
 .. include:: ../include.rst_
 
-.. warning:: 
+swEOS package not only contains cross-platform apps, but also contains API for several other programing languages.
+A simple demo of start point is shown in this section, see :ref:`cookbooks` for more details of API usage.
 
-    Under constructing 
-
-API
-=============================
-
-C++
---------
-
-
-
-Python
---------
-
-Matlab
---------
-
-Tcl
---------
+.. toctree::
+    :maxdepth: 3
+ 
+    API/cpp.rst

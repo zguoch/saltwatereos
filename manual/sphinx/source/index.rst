@@ -74,6 +74,7 @@ swEOS User Manual
    Install/apps/index.rst
    Compile/index.rst
    Tutorial/index.rst
+   Cookbooks/index.rst
 
 .. bibliography:: manual.bib
     :cited: 

@@ -29,9 +29,3 @@ Multi-points calculation
 .. image:: /_figures/gui_2D.png
    :align: center
 
-3D chart
------------------------
-
-.. attention:: 
-
-    Coming soon!

@@ -69,3 +69,15 @@
 .. |h-t| raw:: html
 
    <a class="reference internal" href="#tt"><span>
+
+.. |-n| replace:: |h-n| **-n**\ |h-x|
+
+.. |h-n| raw:: html
+
+   <a class="reference internal" href="#n"><span>
+
+.. |-hh| replace:: |h-hh| **-h**\ |h-x|
+
+.. |h-hh| raw:: html
+
+   <a class="reference internal" href="#hh"><span>
