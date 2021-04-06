@@ -99,7 +99,9 @@ namespace H2ONaCl
     double const XMAX = 1;  /**< Maximum valid salinity, [mol fraction].  */ 
     double const HMAX = 6E6; /**< Approximately maximum valid enthalpy, [J/kg]. It may be used to normize vtk output file data*/
     // ===========================================================================
-
+    double const P_max_LVH  = 390.14744433796; /**< Maximum pressure of L+V+H region, [bar] */
+    double const T_Pmax_LVH = 594.63244000000; /**< Temperature at that P_max_LVH */
+    // ===========================================================================
     /**
      * @brief EOS and thermodynamic properties of \f$H_2O-NaCl\f$ system. 
      * 

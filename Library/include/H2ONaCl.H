@@ -33,8 +33,8 @@ namespace H2ONaCl
     // ============= Constants of H2O-NaCl =======================================
     double const PMIN = 10; /**< Minimum valid pressure of H2O, [bar]. */ 
     double const PMAX = 2100; /**< Maximum valid pressure of H2O, [bar]. */ 
-    double const TMIN = 274.15; /**< Minimum valid pressure of H2O, [K].  */ //TODO： 最后统一为C
-    double const TMAX = 1273.15; /**< Maximum valid pressure of H2O, [K]. */ //TODO: 最后统一为C
+    double const TMIN = 274.15; /**< Minimum valid pressure of H2O, [K].  */ 
+    double const TMAX = 1273.15; /**< Maximum valid pressure of H2O, [K]. */
     double const TMIN_K = 274.15; /**< Minimum valid pressure of H2O, [K].  */ 
     double const TMAX_K = 1273.15; /**< Maximum valid pressure of H2O, [K]. */ 
     double const TMIN_C = 1; /**< Minimum valid pressure of H2O, [C].  */ 
@@ -42,6 +42,9 @@ namespace H2ONaCl
     double const XMIN = 0;  /**< Minimum valid salinity, [mol fraction].  */ 
     double const XMAX = 1;  /**< Maximum valid salinity, [mol fraction].  */ 
     double const HMAX = 6E6; /**< Approximately maximum valid enthalpy, [J/kg]. It may be used to normize vtk output file data*/
+    // ===========================================================================
+    double const P_max_LVH  = 390.14744433796; /**< Maximum pressure of L+V+H region, [bar] */
+    double const T_Pmax_LVH = 594.63244000000; /**< Temperature at that P_max_LVH */
     // ===========================================================================
 
     /**

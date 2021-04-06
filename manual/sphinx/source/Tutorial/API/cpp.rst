@@ -80,3 +80,5 @@ More features
 ---------------------
 
 All right, now you must know how to use c++ api of swEOS package in your own program, see :ref:`cookbooks` for usage of more functions.
+
+pip install scipyFoam

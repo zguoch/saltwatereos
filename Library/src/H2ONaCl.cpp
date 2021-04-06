@@ -2545,44 +2545,9 @@ namespace H2ONaCl
                 h_l = h_l_ind_high;
             }
         }
-        // printf("h_l: %f\n",h_l);
-        //FIND ENTHALPY OF HALITE
         if(ind_h)
         {
-            double l0  = 2.1704e3;
-            double l1  = -2.4599e-1;
-            double l2  = -9.5797e-5;
-            double l3  = 5.727e-3;
-            double l4  = 2.715e-3;
-            double l5  = 733.4;
-            
-            double T_100 = 100;
-//            double P_100 = 100;
-            double h_h_pt100 = 9.415867359e4;  // from Driesner Table
-            double l = l3 + l4*exp(T_100/l5);
-            double Rho0_h = l0 + l1*(T_100) + l2*pow(T_100,2);
-            double dldT      = l4/l5 * exp(T_100/l5);
-            double dRho0_hdT = l1 + 2 * l2 * T_100;
-            double F_V_100 = 86792219.2899765; // P_100(P[pa])
-            double dF_V_100dT = -43058.0130278123;                           
-            double F_V_p =  1./(l* 1e-5) * log(Rho0_h  +  l * P_in); 
-            double dF_V_pdT =  1e5 * ( ( - dldT / (l*l) ) * log(Rho0_h  +  l * P_in) +  1./(l) * ( dRho0_hdT + dldT * P_in ) / (Rho0_h  +  l * P_in) );            
-            // enthalpy at T_100 and at P_in         
-            double h_h_p_t100 = h_h_pt100 + (F_V_p - F_V_100 - (T_100 + Kelvin) * ( dF_V_pdT - dF_V_100dT ) ) ;
-            double r0      = 1148.81;
-            double r1      = 0.275774;
-            double r2      = 8.8103e-5;
-            //r3      = -1.7099e-3 - 3.82734e-6*T_in - 8.65455e-9*T_in;
-            double r4      = 5.29063e-8 - 9.63084e-11 + 6.50745e-13;
-            double const1 = -0.190169972750000;
-            double const2 = 5.28106423450000e-6;
-            double F_Cp_100_const = 88393.4640361410;    
-            double F_Cp_100 = F_Cp_100_const + const1* P_in  + const2 * pow(P_in,2) ;
-            double F_Cp = r0 * T_in + r1* pow(T_in,2) - 2 * r1* T_in * T_trip_salt 
-                        + r2*pow(T_in,3) - 3 *r2 * pow(T_in,2) * T_trip_salt + 3 * r2 * T_in * pow(T_trip_salt,2)
-                        + ( -1.7099e-3 * T_in - 0.5 * 3.82734e-6*pow(T_in,2) - 0.5 * 8.65455e-9*pow(T_in,2) )* P_in
-                        + r4 * T_in * pow(P_in,2) ;
-            h_h = h_h_p_t100 + F_Cp - F_Cp_100;
+            h_h = m_NaCl.SpecificEnthalpy(T_in,P_in);
         }
     }
 
