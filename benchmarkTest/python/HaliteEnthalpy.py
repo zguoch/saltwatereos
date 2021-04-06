@@ -79,7 +79,6 @@ def cal_Plot():
     plt.tight_layout()
     for fmt in ['pdf','svg','jpg']:
         plt.savefig('Halite_H_Cp.%s'%(fmt))
-    # plt.show()
 def main(argv):
     cal_Plot()
 if __name__ == '__main__':

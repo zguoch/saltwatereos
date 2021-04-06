@@ -31,15 +31,14 @@ namespace H2ONaCl
 
     struct PROP_H2ONaCl
     {
-        PhaseRegion Region;
-        double T, P, X_wt, H, Rho, Mu; //temperature(C), P(Pa), X_wt(wt%),bulk enthalpy, bulk density
+        PhaseRegion Region; 
+        double T, P, X_wt, H, Cp, Rho, Mu; /**< temperature(C), P(Pa), X_wt(wt%),bulk enthalpy [J/kg], bulk specific heat [J/kg/K], bulk density [kg/m3], viscosity [Pa s] */
         double Rho_l, Rho_v, Rho_h; //density [kg/m3]
         double H_l, H_v, H_h; //enthalpy [J/kg]
-        double S_l, S_v, S_h; //saturation
+        double Cp_l, Cp_v, Cp_h;
+        double S_l, S_v, S_h; //saturation [-]
         double X_l, X_v; // volume fraction of NaCl in vaper and liquid, it is a composition fraction. H2O + NaCl
-        double Mu_l, Mu_v;//viscosity
-        // derivertive
-        // double dS_hdh, dS_vdh, dS_ldh, dRhodh;
+        double Mu_l, Mu_v;//viscosity [Pa s]
     };
 
     struct MP_STRUCT

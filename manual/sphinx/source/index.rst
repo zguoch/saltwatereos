@@ -43,6 +43,15 @@
       .. raw:: html
 
          <video width=100% autoplay muted controls loop>
+            <source src="./_static/video/swEOS_framework.m4v" type="video/mp4">
+            Your browser does not support HTML video.
+         </video>
+
+   .. tab:: Phase changes animation
+
+      .. raw:: html
+
+         <video width=100% autoplay muted controls loop>
             <source src="./_static/video/PhaseChanges.mp4" type="video/mp4">
             Your browser does not support HTML video.
          </video>

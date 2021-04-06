@@ -59,23 +59,50 @@ namespace H2ONaCl
         void init_PhaseRegionName();
         void init_prop();
         void init_prop(H2ONaCl::PROP_H2ONaCl& prop);
-        // double m_P, m_T, m_Xwt, m_Xmol; //P: Pa; T: C; X, wt%: (0, 1]. 
-        // Note that !!! m_T unite is C, but to keep consistent with OpenFoam, the T variable in public member function with unit of K
-        // const double *m_Parray;
-        // const double *m_Tarray;
-        // const double *m_Xarray;
-        // int m_number; //how many points of (P, T, X)
         Cr_STRUCT m_Cr;
         Cr_STRUCT init_Cr();
         f_STRUCT m_f;
         f_STRUCT init_f();
         bool m_colorPrint;
     private:
+        /**
+         * @brief Find phase region when (T,P,X) is given.
+         * 
+         * @param T Temperature [deg.C]
+         * @param P Pressure [Pa]
+         * @param X Bulk salinity [Mole fraction of NaCl]
+         * @param Xl_all Salinity of liquid phase [mole fraction of NaCl]
+         * @param Xv_all Salinity of vapor phase [mole fraction of NaCl]
+         * @return H2ONaCl::PhaseRegion 
+         */
         PhaseRegion findRegion(const double T, const double P, const double X, double& Xl_all, double& Xv_all);
         void calcRho(int reg, double T_in, double P_in, double X_l, double X_v, double& Rho_l, double& Rho_v, double& Rho_h, 
                         double& V_l_out, double& V_v_out, double& T_star_l_out, double& T_star_v_out, double& n1_v_out, double& n2_v_out);
+        /**
+         * @brief Calculate specific enthalpy.
+         * 
+         * @param reg Phase region index, H2ONaCl::PhaseRegion
+         * @param T_in Temperature [deg.C]
+         * @param P_in Pressure [bar]
+         * @param X_l Salinity of liquid phase [mole fraction of NaCl]
+         * @param X_v Salinity of vapor phase [mole fraction of NaCl]
+         * @param h_l Specific enthalpy of liquid phase [J/kg]
+         * @param h_v Specific enthalpy of vapor phase [J/kg]
+         * @param h_h Specific enthalpy of halite [J/kg]
+         */
         void calcEnthalpy(int reg, double T_in, double P_in, double X_l, double X_v,
             double& h_l, double& h_v, double& h_h);
+        /**
+         * @brief Calculate dynamic viscosity.
+         * 
+         * @param reg Phase region index, H2ONaCl::PhaseRegion
+         * @param P Pressure [Pa]
+         * @param T Temperature [deg.C]
+         * @param Xw_l \todo 搞清楚这里的盐度单位和黏度计算公式
+         * @param Xw_v 
+         * @param mu_l 
+         * @param mu_v 
+         */
         void calcViscosity(int reg, double P, double T, double Xw_l, double Xw_v, double& mu_l, double& mu_v);
         void fluidProp_crit_T(double T, double tol, double& P,double& Rho_l, double& Rho_v, double& h_l, double& h_v);
         void fluidProp_crit_P(double P, double tol, double& T_2ph, double& Rho_l, double& h_l, double& h_v, double& dpd_l, double& dpd_v, double& Rho_v, double& Mu_l, double& Mu_v);
@@ -106,19 +133,28 @@ namespace H2ONaCl
          * @return H2ONaCl::PROP_H2ONaCl 
          */
         H2ONaCl::PROP_H2ONaCl prop_pTX(double p, double T_K, double X_wt, bool visc_on=true);
+       
         /**
          * @brief Calculate thermal dynamic properties of NaCl-H2O system.
          * 
          * @param p pressure [Pa]
          * @param H specific enthalpy [J/kg]
          * @param X_wt Salinity [mass fraction, [0,1]]
+         * @return H2ONaCl::PROP_H2ONaCl 
          */
-        H2ONaCl::PROP_H2ONaCl prop_pHX(double p, double H, double X_wt); /** Calculate properties by P, H, X */
-        double rho_pTX(double p, double T_K, double X_wt); //get bulk density. p: Pa; T: K; X: wt%
-        double rho_l_pTX(double p, double T_K, double X_wt); //get density of liquid. p: Pa; T: K; X: wt%
-        double mu_l_pTX(double p, double T_K, double X_wt); //get dynamic viscosity of liquid. p: Pa; T: K; X: wt%
-        double mu_pTX(double p, double T_K, double X_wt); //get bulk dynamic viscosity. p: Pa; T: K; X: wt%
-        //X:[0,1]; T: deg. C; P: bar
+        H2ONaCl::PROP_H2ONaCl prop_pHX(double p, double H, double X_wt);
+        /**
+         * @brief Calculate bulk density.
+         * 
+         * @param p [Pa]
+         * @param T_K [K]
+         * @param X_wt [mass fraction of NaCl]
+         * @return double Density [kg/m3]
+         */
+        double rho_pTX(double p_Pa, double T_K, double X_wt); 
+        double rho_l_pTX(double p_Pa, double T_K, double X_wt); 
+        double mu_l_pTX(double p_Pa, double T_K, double X_wt);
+        double mu_pTX(double p_Pa, double T_K, double X_wt);
         void writeProps2VTK(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, std::string fname, bool isNormalize=true, std::string xTitle="x", std::string yTitle="y", std::string zTitle="z");
         void writeProps2xyz(std::vector<double> x, std::vector<double> y, std::vector<double> z, std::vector<H2ONaCl::PROP_H2ONaCl> props, std::string fname, std::string xTitle="x", std::string yTitle="y", std::string zTitle="z", string delimiter=" ");
         friend ostream & operator<<(ostream & out,  cH2ONaCl & A);
@@ -130,7 +166,7 @@ namespace H2ONaCl
         string CheckRanges_H_PX(double HMIN0, double HMAX0, double PXrange[4]);
         string CheckRanges_H_P(double HMIN0, double HMAX0, double Prange[2], double X0);
         /**
-         * @brief Check valid ranges of enthalpy and salinity
+         * @brief Check valid ranges of enthalpy given salinity
          * 
          * @param HMIN0 
          * @param HMAX0 
@@ -327,17 +363,18 @@ namespace H2ONaCl
          * @return double Density [\f$ kg/m^3 \f$]
          */
         double Rho_brine(double T, double P, double X);
+
         /**
          * @brief Find phase region for giving T, P and X.
          * 
          * @param T Temperature [\f$ ^{\circ}\text{C} \f$]
          * @param P Pressure [bar]
-         * @param X Salinity [Mole fraction of NaCl]
-         * @param Xl_all 
-         * @param Xv_all 
-         * @return PhaseRegion 
+         * @param X_wt Salinity [Mass fraction of NaCl]
+         * @param Xl_all Salinity of liquid phase [mole fraction of NaCl]
+         * @param Xv_all Salinity of vapor phase [mole fraction of NaCl]
+         * @return H2ONaCl::PhaseRegion 
          */
-        PhaseRegion findPhaseRegion(const double T, const double P, const double X_wt, double& Xl_all, double& Xv_all);
+        PhaseRegion findPhaseRegion(const double T_c, const double P_bar, const double X_wt, double& Xl_all, double& Xv_all);
         /**
          * @brief Write VLH phase boundary surface in PHX space to VTU file
          * 
