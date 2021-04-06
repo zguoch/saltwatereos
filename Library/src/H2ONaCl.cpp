@@ -3995,6 +3995,11 @@ namespace H2ONaCl
     {
         return findRegion(T_c, P_bar*1E5, Xwt2Xmol(X_wt), Xl_all, Xv_all);
     }
+    PhaseRegion cH2ONaCl::findPhaseRegion(const double T_c, const double P_bar, const double X_wt)
+    {
+        double Xl_all, Xv_all;
+        return findRegion(T_c, P_bar*1E5, Xwt2Xmol(X_wt), Xl_all, Xv_all);
+    }
     void cH2ONaCl::writePhaseSurface_XHP(double scale_X, double scale_H, double scale_P, string outpath, H2ONaCl::fmtOutPutFile fmt, int nP)
     {
         double Pmin = PMIN; // bar

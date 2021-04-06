@@ -44,12 +44,20 @@ extensions = ['sphinx.ext.mathjax',
             'jinja',
             'sphinx.ext.ifconfig',
             'sphinx_inline_tabs',
+            'plot_directive',
             'sphinxcontrib.bibtex']
 source_encoding = 'utf-8-sig'
 source_suffix = '.rst'
 master_doc = 'index'
 templates_path = ['_templates']
-
+plot_basedir='Cookbooks/python'
+# 配置字体
+import matplotlib.font_manager as font_manager
+path = '_static/fonts/Arial.ttf'
+prop = font_manager.FontProperties(fname=path)
+plot_rcparams={'font.family':prop.get_name(),'mathtext.fontset':'cm'}
+plot_html_show_source_link=True
+ 
 # internationalization
 language = 'en'
 locale_dirs = ['locale/']

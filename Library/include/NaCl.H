@@ -14,7 +14,7 @@ using namespace std;
 namespace NaCl
 {
     // ============= Constants of NaCl =======================================
-    double const MolarMass = 0.058443; /**< molar mass of water  [kg/mol] */
+    double const MolarMass = 0.058443; /**< molar mass  [kg/mol] */
     double const T_Triple = 800.7; /**< Temperature at triple point of NaCl, [\f$^{\circ}C \f$] */ 
     double const P_Triple = 0.0005; /**< Pressure at triple point of NaCl, [bar] */
     // =======================================================================
@@ -108,15 +108,6 @@ namespace NaCl
          * @return double 
          */
         double Cp(double T, double P);
-
-        /**
-         * @brief Specific enthalpy of NaCl as a function of T and P.
-         * Using the halite enthalpy at the NaCl triple point, equation 30 of \cite Driesner2007Part2.  can be integrated to obtain the specific enthalpy of halite (referenced to a value of 0 J/kg for the enthalpy of pure liquid water at the H2O triple point) at the T and P of interest. 
-         * 
-         * @param T Temperature, [\f$ ^{\circ}C\f$]
-         * @param P Pressure, [bar]
-         * @return double 
-         */
         double SpecificEnthalpy(double T, double P);
     public:
         

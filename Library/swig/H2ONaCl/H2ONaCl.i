@@ -393,6 +393,7 @@ namespace H2ONaCl
          * @return PhaseRegion 
          */
         PhaseRegion findPhaseRegion(const double T, const double P, const double X_wt, double& Xl_all, double& Xv_all);
+        PhaseRegion findPhaseRegion(const double T_c, const double P_bar, const double X_wt);
         /**
          * @brief Write VLH phase boundary surface in PHX space to VTU file
          * 

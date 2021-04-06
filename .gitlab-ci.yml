@@ -30,6 +30,8 @@ buildPages:
     - sphinx-build -b latex manual/sphinx/source public/latex/en
     - sphinx-build -b latex manual/sphinx/source public/latex/zh -Dlanguage=zh
     - cp manual/sphinx/index.html public/manual # the default entrance
+    - python --version
+    - pip install https://files.pythonhosted.org/packages/e0/d9/38da6ddce037c492d2bdcd3df7be0816be725e1a1fa3fdf55a629c6a30ae/pyswEOS-0.2.8-py3.7-none-manylinux2010_x86_64.whl
     # - sed 's/en\/index.html/manual\/en\/index.html/g' manual/sphinx/index.html | sed 's/zh\/index.html/manual\/zh\/index.html/g' >public/index.html # main entrance
     # - sphinx-build -b html manual/sphinx/source public/manual
   artifacts:

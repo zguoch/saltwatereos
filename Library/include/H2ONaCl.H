@@ -31,7 +31,7 @@ using namespace std;
 namespace H2ONaCl
 {
     // ============= Constants of H2O-NaCl =======================================
-    double const PMIN = 10; /**< Minimum valid pressure of H2O, [bar]. */ 
+    double const PMIN = 5; /**< Minimum valid pressure of H2O, [bar]. */ 
     double const PMAX = 2100; /**< Maximum valid pressure of H2O, [bar]. */ 
     double const TMIN = 274.15; /**< Minimum valid pressure of H2O, [K].  */ 
     double const TMAX = 1273.15; /**< Maximum valid pressure of H2O, [K]. */
@@ -375,6 +375,7 @@ namespace H2ONaCl
          * @return H2ONaCl::PhaseRegion 
          */
         PhaseRegion findPhaseRegion(const double T_c, const double P_bar, const double X_wt, double& Xl_all, double& Xv_all);
+        PhaseRegion findPhaseRegion(const double T_c, const double P_bar, const double X_wt);
         /**
          * @brief Write VLH phase boundary surface in PHX space to VTU file
          * 

@@ -48,6 +48,30 @@ namespace NaCl
         double kappa = m[4] + m[5]*T;
         return rho0/(1 - 0.1*log(1 + 10*P*kappa));
     }
+    /**
+     * @brief Specific enthalpy of NaCl as a function of T and P.
+     * Using the halite enthalpy at the NaCl triple point, equation 30 of \cite Driesner2007Part2.  can be integrated to obtain the specific enthalpy of halite (referenced to a value of 0 J/kg for the enthalpy of pure liquid water at the H2O triple point) at the T and P of interest. 
+     * 
+     * @param T Temperature, [\f$ ^{\circ}C\f$]
+     * @param P Pressure, [bar]
+     * @return double 
+     * 
+     * Equation (30) of \cite Driesner2007Part2 express a general fit of the halite heat capacity as a function of T and P,
+     * \f{align}
+     * c_{p, halite} &= r_0 + 2r_1 (T-T_{triple, NaCl}) + 3r_2 (T - T_{triple, NaCl})^2 + r_3P + r_4 P^2 \\
+     * &= r_0 + 2r_1 (T-T_{triple, NaCl}) + 3r_2 T^2 - 6r_2 T_{triple, NaCl} T + 3r_2 T_{triple, NaCl}^2 + \color{red}{r_3} P + r_4 P^2 \\
+     * \color{red}{r_3} &= r_{3a} + r_{3b}T + r_{3c}T^2
+     * \f}
+     * where \f$r_0\f$ to \f$ r_4 \f$ are given in Table 5. 
+     * 
+     * Specific heat capacity is defined as \f$ c_p = \frac{dH}{dT}\f$, so the specific enthalpy can be calculated by integrating the above equation, \f$ \int dH = \int c_p dT \f$, 
+     * 
+     * \f{equation}
+     * H_{halite}(T,P) = r_0 \color{blue}{T} + r_1\color{blue}{T^2} -2r_1 T_{triple, NaCl}\color{blue}{T} + r_2\color{blue}{T^3} - 3r_2T_{triple, NaCl}\color{blue}{T^2} + 3r_2T_{triple, NaCl}^2\color{blue}{T} + \left(r_{3a}\color{blue}{T} + \frac{1}{2}r_{3b}\color{blue}{T^2} + \frac{1}{3}r_{3c}\color{blue}{T^3} \right)P + r_4P^2\color{blue}{T} + \color{green}{C}
+     * \f}
+     * where the constant \f$ C \f$ can be calculated from halite enthalpy at NaCl triple point (NaCl::T_Triple, NaCl::P_Triple)
+     * \todo Why use T=100 and P=100 in cNaCl::SpecificEnthalpy
+     */
     double cNaCl::SpecificEnthalpy(double T, double P)
     {
         double l0  = 2.1704e3;
