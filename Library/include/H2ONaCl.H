@@ -297,7 +297,7 @@ namespace H2ONaCl
         std::vector<double> X_VaporLiquidCoexistSurface_VaporBranch(std::vector<double> T, std::vector<double> P);
 
         void writeVaporLiquidCoexistSurface(string filename="VaporLiquid", double Tmin=TMIN_C, double Tmax=TMAX_C, H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nT=100, int nP=100); 
-
+        void T_star_V_n1n2(double P, double X, double& n1, double& n2);
         /**
          * @brief \f$ T_V^* \f$ is used to determin the correction between NaCl-H2O and H2O. For a given molar volume, NaCl solution and pure water temperature are \f$ T \f$ and \f$ T_V^* \f$, respectively. The principle is shown in Fig.2 (below) of reference \cite Driesner2007Part2. \f$ T_V^* \f$ is calculated from equation (8, 13) of \cite Driesner2007Part2.
          * 

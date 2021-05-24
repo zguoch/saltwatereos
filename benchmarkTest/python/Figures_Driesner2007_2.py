@@ -67,7 +67,9 @@ def Fig2():
     ax.set_title('p=%.0f bar'%(P0))
     for X in [0,10]:
         data = molV_PX(P0,X)
-        ax.plot(data['T'],data['V_water']*1E6,label='%.0f wt.%% NaCl'%(X))
+        label=label='%.0f wt.%% NaCl'%(X)
+        if(X==0) : label='Pure water'
+        ax.plot(data['T'],data['V_water']*1E6,label=label)
     ax.set_ylabel('V ($cm^3/mol$)')
     ax.set_xlabel('T ($^{\circ}$C)')
     ax.set_xlim(200,700)
@@ -86,11 +88,70 @@ def Fig2():
     for fmt in fmt_figs:
         figname=str('%s/Fig2_Driesner2007_part2.%s'%(figpath,fmt))
         plt.savefig(figname, bbox_inches='tight')
+def Fig4():
+    fig,axes=plt.subplots(1,2,figsize=(12,5))
+    X=np.linspace(0,1,100)
+    P=[200, 500, 1000, 2000, 3000, 4000]
+    for p in P:
+        n1,n2=np.zeros_like(X),np.zeros_like(X)
+        for i in range(0,len(X)):
+            n1n2=sw.T_star_V_n1n2(p,X[i])
+            n1[i],n2[i]=n1n2[0],n1n2[1]
+        axes[0].plot(X,n1,label='%.0f bar'%(p))
+        axes[1].plot(X,n2,label='%.0f bar'%(p))
+    for ax,ylabel,label in zip(axes,['$n_1$','$n_2$'],['a','b']):
+        ax.legend()
+        ax.set_xlim(0,1)
+        ax.tick_params(axis='both',which='both',left=True,right=True,direction='in')
+        ax.set_ylabel(ylabel)
+        ax.set_xlabel('$X_{NaCl}$')
+        ax.text(0.02,1.02,label,ha='left',va='bottom',transform=ax.transAxes,fontsize=14,fontweight='bold')
+    axes[0].set_ylim(0,800)
+    axes[1].set_ylim(0,1)
+    axes[0].yaxis.set_minor_locator(MultipleLocator(50))
+    axes[1].yaxis.set_minor_locator(MultipleLocator(0.1))
+    for fmt in fmt_figs:
+        figname=str('%s/Fig4_Driesner2007_part2.%s'%(figpath,fmt))
+        plt.savefig(figname, bbox_inches='tight')
+def Fig5():
+    P0=5 #bar
+    T=np.linspace(130,170,100)
+    V_water,V_sat, V_extrapol=np.zeros_like(T),np.zeros_like(T),np.zeros_like(T)
+    for i in range(0,len(T)):
+        V_water[i]=H2O.MolarMass / water.Rho(T[i],P0)
+        T_star=sw.T_star_V(T[i],P0, sw.X_HaliteLiquidus(T[i],P0))
+        V_sat[i]=H2O.MolarMass / water.Rho(T_star, P0)
+        V_extrapol[i]=sw.V_extrapol(T[i],P0,sw.X_HaliteLiquidus(T[i],P0))
+    fig=plt.figure()
+    ax=plt.gca()
+    ax.plot(T,V_water*1E6,label='Pure water')
+    ax.plot(T,V_sat*1E6,'.',label='$V_{sat}$')
+    ax.plot(T,V_extrapol,'.',label='Extrapolated $V_{sat}$')
+    # boiling point of water at pressure P0
+    T_boil=water.T_Boiling(P0)
+    V_boil=H2O.MolarMass / water.Rho(T_boil,P0)*1E6
+    ax.plot(T_boil,V_boil,'.',color='red')
+    ax.text(T_boil+0.5, V_boil, '$T_{L\\rightarrow V}=%.2f ^{\circ}$C'%(T_boil),ha='left',va='center',color='r')
+    
+    ax.legend(loc='lower right')
+
+    ax.set_ylim(19.2,20.1)
+    ax.yaxis.set_major_locator(MultipleLocator(0.1))
+    ax.yaxis.set_minor_locator(MultipleLocator(0.05))
+    ax.set_xlim(130,170)
+    ax.xaxis.set_major_locator(MultipleLocator(10))
+    ax.xaxis.set_minor_locator(MultipleLocator(5))
+    ax.text(0.02,0.98,'%.0f bar'%(P0),fontsize=14,fontweight='bold',va='top',ha='left',transform=ax.transAxes)
+    for fmt in fmt_figs:
+        figname=str('%s/Fig5_Driesner2007_part2.%s'%(figpath,fmt))
+        plt.savefig(figname, bbox_inches='tight')
 def main(argv):
     # argc=len(argv)
     # usage(argv)
     # exit(0)
-    Fig2()
+    # Fig2()
+    # Fig4()
+    Fig5()
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

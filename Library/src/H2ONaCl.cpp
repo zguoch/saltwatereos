@@ -3365,6 +3365,24 @@ namespace H2ONaCl
         }
         return X;
     }
+    void cH2ONaCl::T_star_V_n1n2(double P, double X_NaCl, double& n1, double& n2)
+    {
+        double X_H2O = 1-X_NaCl;
+        double P_sqrt = sqrt(P), PP = P*P, PPP=P*PP;
+
+        double n11 = -54.2958 - 45.7623 * exp(-0.000944785 * P);
+        double n1_XNaCl = 330.47 + 0.942876 * P_sqrt + 0.0817193 * P - 2.47556E-08 * PP + 3.45052E-10 * PPP; //eq. 11
+        double n10 = n1_XNaCl; //eq. 10 when X_NaCl=1
+        double n12 = -n11 - n10; //eq. 10 when X_NaCl=0
+        n1 = n10 + n11 * X_H2O + n12 * X_H2O*X_H2O;
+
+        double n21 = -2.6142 - 0.000239092 * P;
+        double n22 = 0.0356828 + 4.37235E-06 * P + 2.0566E-09 * P*P;
+        double n2_XNaCl = -0.0370751 + 0.00237723 * P_sqrt + 5.42049E-05 * P + 5.84709E-09 * PP - 5.99373E-13 * PPP; //eq. 12
+        double n20 = 1 - n21 * sqrt(n22); //eq. 10 when X_NaCl=0
+        double n23 = n2_XNaCl - n20 - n21 * sqrt(1 + n22); //eq. 10 when X_NaCl=1
+        n2 = n20 + n21 * sqrt(X_NaCl + n22) + n23 * X_NaCl;
+    }
     /**
      * \image html Driesner2007_Fig2.png "Molar volume of brine" width=25%.
      * Fig. 2 of \cite Driesner2007Part2. Graphical illustration of the principle used to derive correlations for molar volumes: the molar volume of an aqueous NaCl solution (here: 10 wt% NaCl at 1000 bar) at temperature T is identical to that of pure water at a different temperature \f$ T_V^* \f$.
@@ -3385,13 +3403,8 @@ namespace H2ONaCl
      * 
      * \image html water_rho_lowP.svg "Water density in low pressure region" width=25%.
      */
-    double cH2ONaCl::T_star_V(double T, double P, double X)
+    double cH2ONaCl::T_star_V(double T, double P, double X_NaCl)
     {
-        double X_NaCl = X;
-        double X_H2O = 1-X_NaCl;
-        double n11 = -54.2958 - 45.7623 * exp(-0.000944785 * P);
-        double n21 = -2.6142 - 0.000239092 * P;
-        double n22 = 0.0356828 + 4.37235E-06 * P + 2.0566E-09 * P*P;
         double n300 = 7606640/pow(P + 472.051, 2.0);
         double n301 = -50 - 86.1446 * exp(-0.000621128 * P);
         double n302 = 294.318 * exp(-0.00566735 * P);
@@ -3400,16 +3413,9 @@ namespace H2ONaCl
         double n312 = -0.278529 - 0.00081381 * P;
         double n30 = n300 * (exp(n301 * X_NaCl) - 1) + n302 * X_NaCl; //eq. 15
         double n31 = n310 * exp(n311 * X_NaCl) + n312 * X_NaCl; //eq. 16
-        double P_sqrt = sqrt(P), PP = P*P, PPP=P*PP;
-        double n1_XNaCl = 330.47 + 0.942876 * P_sqrt + 0.0817193 * P - 2.47556E-08 * PP + 3.45052E-10 * PPP; //eq. 11
-        double n2_XNaCl = -0.0370751 + 0.00237723 * P_sqrt + 5.42049E-05 * P + 5.84709E-09 * PP - 5.99373E-13 * PPP; //eq. 12
-        double n10 = n1_XNaCl; //eq. 10 when X_NaCl=1
-        double n12 = -n11 - n10; //eq. 10 when X_NaCl=0
-        double n20 = 1 - n21 * sqrt(n22); //eq. 10 when X_NaCl=0
-        double n23 = n2_XNaCl - n20 - n21 * sqrt(1 + n22); //eq. 10 when X_NaCl=1
-        double n1 = n10 + n11 * X_H2O + n12 * X_H2O*X_H2O;
-        double n2 = n20 + n21 * sqrt(X_NaCl + n22) + n23 * X_NaCl;
         double D = n30 * exp(n31 * T); //eq. 14
+        double n1, n2;
+        T_star_V_n1n2(P,X_NaCl, n1,n2);
         return n1 + n2*T + D;
     }
     
