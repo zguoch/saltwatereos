@@ -10,6 +10,8 @@ Cookbooks
 Phase region
 =================
 
+`findPhaseRegion <../../doxygen/classH2ONaCl_1_1cH2ONaCl.html#acbd241bcad8a0b181a2fbefefb33daec>`_
+
 .. tab:: figure      
 
     .. plot:: plot_phaseRegion.py
