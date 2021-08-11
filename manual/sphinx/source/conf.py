@@ -108,11 +108,15 @@ html_theme_options = {
 html_context = {
     "menu_links": [
         (
-            '<i class="fa fa-home fa-fw"></i> Home',
+            '<i class="fa fa-home fa-fw"></i> Homepage',
             "https://hydrothermal-openfoam.gitlab.io/saltwatereos/",
         ),
         (
-            '<i class="fa fa-book fa-fw"></i> License',
+            '<img src="https://zenodo.org/badge/DOI/10.5281/zenodo.4603878.svg">',
+            'https://zenodo.org/record/4603878/export/hx#.YRPazi8RrSw'
+        ),
+        (
+            '<i class="fa fa-book fa-fw"></i> License:GPL',
             "https://github.com/zguoch/saltwatereos/blob/master/LICENSE",
         ),
         (

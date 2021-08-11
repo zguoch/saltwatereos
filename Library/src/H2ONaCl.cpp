@@ -3442,7 +3442,7 @@ namespace H2ONaCl
         double V_extrapol0 = 0;
         double RoundDown_X = floor(X*1E5)/1E5, RoundDown2 = 0; //DEBUG
         double molFactor = (H2O::MolarMass * (1-X) + NaCl::MolarMass*X);
-        if (T<=200 && P<=m_water.BoilingCurve(T) && (X_L_sat - X)<0.01)
+        // if (T<=200 && P<=m_water.BoilingCurve(T) && (X_L_sat - X)<0.01)
         {
             T = T_star_V(T, P, X);
             double V_L_sat = H2O::MolarMass / m_water.Rho_Liquid_Saturated(T) * 1E6; //Molar volume , cm3/mol
@@ -3457,25 +3457,25 @@ namespace H2ONaCl
                 V_extrapol0 = o0 + o1*T + o2*TTT;
             }
         }
-        else if(P <= 350 && T>=600)
-        {
-            X_L_sat = X_VaporLiquidCoexistSurface_LiquidBranch(T, P);
-            RoundDown2 = floor(X_L_sat*1E5)/1E5; //DEBUG
-            if(X >= X_L_sat)
-            {
-                double V1000 =  molFactor/ Rho_Br_for_V_extrapol(T,1000,X)* 1E6;//cm3/mol  //DEBUG: 可以简化！！！！
-                V1 = molFactor / Rho_Br_for_V_extrapol(T,390.147,X)* 1E6;//cm3/mol
-                V2 = molFactor / Rho_Br_for_V_extrapol(T,390.137,X)* 1E6;//cm3/mol
-                double dVdP390 = (V1-V2)/(0.01);
-                o4 = (V1 - V1000 + dVdP390*1609.853) / (log(1390.147 / 2000) - 2390.147 / 1390.147); //eq. 18, eq. 7 DEBUG: LogExp ????
-                o3 = V1 - o4 * log(1390.147) - 390.147 * dVdP390 + 390.147 / 1390.147 * o4;
-                o5 = dVdP390 - o4 /1390.147;
-                V_extrapol0 = o3 + o4*log(P + 1000) + o5*P; //eq. 18
-            }
-        }else
-        {
-            V_extrapol0 = 0;
-        }
+        // else if(P <= 350 && T>=600)
+        // {
+        //     X_L_sat = X_VaporLiquidCoexistSurface_LiquidBranch(T, P);
+        //     RoundDown2 = floor(X_L_sat*1E5)/1E5; //DEBUG
+        //     if(X >= X_L_sat)
+        //     {
+        //         double V1000 =  molFactor/ Rho_Br_for_V_extrapol(T,1000,X)* 1E6;//cm3/mol  //DEBUG: 可以简化！！！！
+        //         V1 = molFactor / Rho_Br_for_V_extrapol(T,390.147,X)* 1E6;//cm3/mol
+        //         V2 = molFactor / Rho_Br_for_V_extrapol(T,390.137,X)* 1E6;//cm3/mol
+        //         double dVdP390 = (V1-V2)/(0.01);
+        //         o4 = (V1 - V1000 + dVdP390*1609.853) / (log(1390.147 / 2000) - 2390.147 / 1390.147); //eq. 18, eq. 7 DEBUG: LogExp ????
+        //         o3 = V1 - o4 * log(1390.147) - 390.147 * dVdP390 + 390.147 / 1390.147 * o4;
+        //         o5 = dVdP390 - o4 /1390.147;
+        //         V_extrapol0 = o3 + o4*log(P + 1000) + o5*P; //eq. 18
+        //     }
+        // }else
+        // {
+        //     V_extrapol0 = 0;
+        // }
         return V_extrapol0;
     }
     double cH2ONaCl::Rho_brine(double T, double P, double X)

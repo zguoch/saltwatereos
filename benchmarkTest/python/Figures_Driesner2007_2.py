@@ -116,17 +116,21 @@ def Fig4():
 def Fig5():
     P0=5 #bar
     T=np.linspace(130,170,100)
-    V_water,V_sat, V_extrapol=np.zeros_like(T),np.zeros_like(T),np.zeros_like(T)
+    V_water,V_sat, V_extrapol,V_brine=np.zeros_like(T),np.zeros_like(T),np.zeros_like(T),np.zeros_like(T)
     for i in range(0,len(T)):
         V_water[i]=H2O.MolarMass / water.Rho(T[i],P0)
-        T_star=sw.T_star_V(T[i],P0, sw.X_HaliteLiquidus(T[i],P0))
+        X_sat=sw.X_HaliteLiquidus(T[i],P0)
+        T_star=sw.T_star_V(T[i],P0, X_sat)
+        # V_brine[i]=H2O.MolarMass /sw.rho_pTX(P0*1E5, T[i]+273.15, 0.3) #sw.Mol2Wt(X_sat)
         V_sat[i]=H2O.MolarMass / water.Rho(T_star, P0)
         V_extrapol[i]=sw.V_extrapol(T[i],P0,sw.X_HaliteLiquidus(T[i],P0))
     fig=plt.figure()
     ax=plt.gca()
     ax.plot(T,V_water*1E6,label='Pure water')
-    ax.plot(T,V_sat*1E6,'.',label='$V_{sat}$')
-    ax.plot(T,V_extrapol,'.',label='Extrapolated $V_{sat}$')
+    ax.plot(T,V_sat*1E6,label='$V_{sat}$')
+    ax.plot(T,V_extrapol,label='Extrapolated $V_{sat}$',ls='dashed')
+    # ax.plot(T,V_brine*1E6,label='Brine',ls='dotted')
+
     # boiling point of water at pressure P0
     T_boil=water.T_Boiling(P0)
     V_boil=H2O.MolarMass / water.Rho(T_boil,P0)*1E6
@@ -134,14 +138,16 @@ def Fig5():
     ax.text(T_boil+0.5, V_boil, '$T_{L\\rightarrow V}=%.2f ^{\circ}$C'%(T_boil),ha='left',va='center',color='r')
     
     ax.legend(loc='lower right')
-
+    ax.set_ylabel('V ($cm^3/mol$)')
+    ax.set_xlabel('T ($^{\circ}$C)')
     ax.set_ylim(19.2,20.1)
-    ax.yaxis.set_major_locator(MultipleLocator(0.1))
-    ax.yaxis.set_minor_locator(MultipleLocator(0.05))
+    # ax.yaxis.set_major_locator(MultipleLocator(0.1))
+    # ax.yaxis.set_minor_locator(MultipleLocator(0.05))
     ax.set_xlim(130,170)
-    ax.xaxis.set_major_locator(MultipleLocator(10))
-    ax.xaxis.set_minor_locator(MultipleLocator(5))
+    # ax.xaxis.set_major_locator(MultipleLocator(10))
+    # ax.xaxis.set_minor_locator(MultipleLocator(5))
     ax.text(0.02,0.98,'%.0f bar'%(P0),fontsize=14,fontweight='bold',va='top',ha='left',transform=ax.transAxes)
+    
     for fmt in fmt_figs:
         figname=str('%s/Fig5_Driesner2007_part2.%s'%(figpath,fmt))
         plt.savefig(figname, bbox_inches='tight')
