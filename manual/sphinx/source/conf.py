@@ -44,7 +44,8 @@ extensions = ['sphinx.ext.mathjax',
             'jinja',
             'sphinx.ext.ifconfig',
             'sphinx_inline_tabs',
-            'plot_directive',
+            "sphinx_copybutton",
+            # 'plot_directive',
             'sphinxcontrib.bibtex']
 source_encoding = 'utf-8-sig'
 source_suffix = '.rst'

@@ -24,6 +24,9 @@ buildPages:
     - pip install sphinx==1.6.7
     - pip install sphinxcontrib-bibtex sphinx_inline_tabs sphinx_sitemap
     - pip install sphinx-intl
+    - pip install sphinx_copybutton
+    # - pip install matplotlib
+    - apt-get install -y python-numpy python-matplotlib
     - sphinx-intl build
     - sphinx-build -b html manual/sphinx/source public/manual/en
     - sphinx-build -b html manual/sphinx/source public/manual/zh -Dlanguage=zh
