@@ -1,3 +1,24 @@
+Cite
+------------
+
+```tex
+@software{zhikui_guo_2021_4603878,
+  author       = {Zhikui Guo and
+                  Lars Rüpke and
+                  Falko Vehling and
+                  Jörg Hasenclever and
+                  Chunhui Tao},
+  title        = {{swEOS: multi-platform multi-language package of 
+                   salt-water equation of state}},
+  month        = mar,
+  year         = 2021,
+  publisher    = {Zenodo},
+  version      = {1.7.0},
+  doi          = {10.5281/zenodo.4603878},
+  url          = {https://doi.org/10.5281/zenodo.4603878}
+}
+```
+
 
 Continuous Integration Status:
 ------------------------
