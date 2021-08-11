@@ -52,11 +52,11 @@ master_doc = 'index'
 templates_path = ['_templates']
 plot_basedir='Cookbooks/python'
 # 配置字体
-import matplotlib.font_manager as font_manager
-path = '_static/fonts/Arial.ttf'
-prop = font_manager.FontProperties(fname=path)
-plot_rcparams={'font.family':prop.get_name(),'mathtext.fontset':'cm'}
-plot_html_show_source_link=True
+# import matplotlib.font_manager as font_manager
+# path = '_static/fonts/Arial.ttf'
+# prop = font_manager.FontProperties(fname=path)
+# plot_rcparams={'font.family':prop.get_name(),'mathtext.fontset':'cm'}
+# plot_html_show_source_link=True
  
 # internationalization
 language = 'en'
