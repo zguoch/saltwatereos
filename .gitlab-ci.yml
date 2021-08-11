@@ -26,7 +26,7 @@ buildPages:
     - pip install sphinx-intl
     - pip install sphinx_copybutton
     # - pip install matplotlib
-    - apt-get install -y python-numpy python-matplotlib
+    - apk add  python-numpy python-matplotlib
     - sphinx-intl build
     - sphinx-build -b html manual/sphinx/source public/manual/en
     - sphinx-build -b html manual/sphinx/source public/manual/zh -Dlanguage=zh
