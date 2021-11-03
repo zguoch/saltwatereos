@@ -13,7 +13,8 @@ def getPhaseRegion(TT,PP,XX):
     region=np.zeros_like(TT)
     for i in range(0,TT.shape[0]):
         for j in range(0,TT.shape[1]):
-            region[i][j] = sw.findPhaseRegion(TT[i][j],PP[i][j],XX[i][j])
+            print(sw.findPhaseRegion(TT[i][j],PP[i][j],XX[i][j])[0])
+            region[i][j] = sw.findPhaseRegion(TT[i][j],PP[i][j],XX[i][j])[0]
     return region
 def plotRegion(ax,x,y,region,showColorbar=False,xlabel='',ylabel='',title='',label=''):
     minlevel,maxlevel=0,9

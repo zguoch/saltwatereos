@@ -9,14 +9,143 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SaltWater EOS 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-24 21:07+0100\n"
+"POT-Creation-Date: 2021-08-21 18:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.7.0\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/Tutorial/API.rst:4
+msgid "API"
+msgstr ""
+
+#: ../../source/Tutorial/API.rst:9
+msgid ""
+"swEOS package not only contains cross-platform apps, but also contains "
+"API for several other programing languages. A simple demo of start point "
+"is shown in this section, see :ref:`cookbooks` for more details of API "
+"usage."
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:6
+msgid "C++"
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:8
+msgid ""
+"The C++ API is provided by head files and a library file named "
+":code:`libeosH2ONaCl.a` for macOS and linux,  :code:`libeosH2ONaCl.lib` "
+"for windows system, respectively. The head files and library file are "
+"contained in the app installer (in the :code:`include` and :code:`lib` "
+"folder), see also :ref:`install` section."
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:10
+msgid ""
+"Before starting to use c++ api of swEOS, the CMake_ and c++ compiler have"
+" to be installed."
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:13
+msgid "How to start ?"
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:15
+msgid ""
+"Assuming the library file and head files has been downloaded and saved in"
+" :code:`~/Download/swEOS` (please use your own path) path, it means that "
+"the :code:`lib` folder and :code:`include` folder are in "
+":code:`~/Download/swEOS` path."
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:17
+msgid ""
+"**Step 1.** Create a source code folder and check directory to this "
+"folder."
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:19
+msgid ""
+"**Step 2.** Create c++ source code, e.g. :download:`main.cpp "
+"<cpp/main.cpp>`, see :numref:`lst:tutorial:api:cpp`. Include the head "
+"file(line 1) and instantiate a object (line 5) of :code:`cH2ONaCl` class,"
+" then all the properties and member functions can be accessed through "
+"object :code:`eos`, e.g. density (line 9)."
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:21
+msgid "Source code of C++ api for calculating density of H2ONaCl."
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:29
+msgid ""
+"**Step 3.** Create :download:`CMakeLists.txt <cpp/CMakeLists.txt>`, see "
+":numref:`lst:tutorial:api:cpp:cmake`."
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:31
+msgid "CMake file"
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:38
+msgid ""
+"**Step 4.** Configure and generate project using CMake_ command line tool"
+" or GUI app."
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:40
+msgid ""
+"Please remember set cmake cache variable of :code:`SWEOS_DIR` to specify "
+"the swEOS library path which contains :code:`lib` and :code:`include` "
+"folders."
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:50
+msgid ""
+"If :code:`SWEOS_DIR` is not set or set incorrectly, you will get the "
+"following error information. Then you just make sure set a correct path "
+"for :code:`SWEOS_DIR` to fix the problem."
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:62
+msgid "**Step 5.** Compile and build the program."
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:64
+msgid ""
+"In macOS or Linux system, just run :code:`make` to compile and build the "
+"program. While, in Windows system and using |vs2017|, you will get a "
+":code:`.sln` file. Now, every VS user should know how to do!"
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:66
+msgid "**Step 6.** Run the program."
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:68
+msgid ""
+"The executable program name is :code:`test_swEOS`, which is configured in"
+" the CMakeLists file (see line 4 of "
+":numref:`lst:tutorial:api:cpp:cmake`). Run this program in the terminal, "
+"you will get the output like this,"
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:80
+msgid "More features"
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:82
+msgid ""
+"All right, now you must know how to use c++ api of swEOS package in your "
+"own program, see :ref:`cookbooks` for usage of more functions."
+msgstr ""
+
+#: ../../source/Tutorial/API/cpp.rst:84
+msgid "pip install scipyFoam"
+msgstr ""
 
 #: ../../source/Tutorial/cmd.rst:4
 msgid "Command line tool"
@@ -28,43 +157,44 @@ msgstr ""
 
 #: ../../source/Tutorial/cmd.rst:14
 msgid ""
-"**swEOS** [ |-D|\\ [ *dimension* ]] [ |-V|\\ [ *variables* ] ] [ |-P|\\ "
-"[:math:`p_{bar}`] ] [ |-T|\\ [:math:`T_{^{\\circ}C}`] ] [ |-X|\\ "
-"[:math:`x_{wt. NaCl}`] ] [ |-H|\\ [:math:`h_{kJ/kg}`] ] [ |-R|\\ "
-"*min1/delta1/max1/min2/delta2/max2/min3/delta3/max3* ] [ |-G|\\ "
-"[*inputfile*] ] [ |-O|\\ [*outputfile*] ] [ |-t|\\ [*threads*] ]"
+"**swEOS** [ |-D|  [ *dimension* ]] [ |-V|  [ *variables* ] ] [ |-P|  "
+"[:math:`p_{bar}`] ] [ |-T|  [:math:`T_{^{\\circ}C}`] ] [ |-X|  "
+"[:math:`x_{wt. NaCl}`] ] [ |-H|  [:math:`h_{kJ/kg}`] ] [ |-R|  "
+"*min1/delta1/max1/min2/delta2/max2/min3/delta3/max3* ] [ |-G|  "
+"[*inputfile*] ] [ |-O|  [*outputfile*] ] [ |-t|  [*threads*] ] [ |-n|  ] "
+"[ |-hh|  ]"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:25
+#: ../../source/Tutorial/cmd.rst:27
 msgid "|No-spaces|"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:29
+#: ../../source/Tutorial/cmd.rst:31
 msgid "Description"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:31
+#: ../../source/Tutorial/cmd.rst:33
 msgid ""
 "**swEOS** can calculate phase relations and thermodynamic properties of "
 "salt water in single point, one-dimension, two-dimension and three-"
 "dimension, respectively."
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:34
+#: ../../source/Tutorial/cmd.rst:36
 msgid "Required Arguments"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:47
-msgid "|-D|\\ [ *dimension* ]"
+#: ../../source/Tutorial/cmd.rst:49
+msgid "|-D| [ *dimension* ]"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:39
+#: ../../source/Tutorial/cmd.rst:41
 msgid ""
 "Sets dimension. This is the first key option, the available arguments are"
 " **0**, **1**, **2** and **3**."
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:41
+#: ../../source/Tutorial/cmd.rst:43
 msgid ""
 "**0** means **single point** calculation. If |-D| is set to **0**, the "
 "|-V| option only support **PTX** or **PHX**. In addition, the pressure, "
@@ -72,7 +202,7 @@ msgid ""
 "or |-H| option, respectively."
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:43
+#: ../../source/Tutorial/cmd.rst:45
 msgid ""
 "**1** means only one variable changes and the others are set to fixed "
 "value. If |-D| is set to **1**, the |-V| option only support **P**, "
@@ -83,28 +213,28 @@ msgid ""
 "default file name and print the file path in terminal."
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:45
+#: ../../source/Tutorial/cmd.rst:47
 msgid ""
 "**2** means change two variables and fixed the third variable. Similar to"
 " **-D1** case."
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:47
+#: ../../source/Tutorial/cmd.rst:49
 msgid "**3** means no fixed variable. Similar to **-D1** case."
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:60
-msgid "|-V|\\ [ *variables* ]"
+#: ../../source/Tutorial/cmd.rst:62
+msgid "|-V|  [ *variables* ]"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:52
+#: ../../source/Tutorial/cmd.rst:54
 msgid ""
 "Sets variables accroding to |-D| option. This is the second key option, "
 "the available arguments are **PTX**, **PHX**, **P**, **T**, **X**, **H**,"
 " **PT**, **PX**, **TX**, **PH** and **HX**."
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:54
+#: ../../source/Tutorial/cmd.rst:56
 msgid ""
 "**PTX**, if argument of |-D| option is **0** (single point or multiple "
 "points case), then the pressure, temperature and salinity is set by |-P|,"
@@ -118,15 +248,14 @@ msgid ""
 "interval of 0.1, pressure in range of [5, 400] bar with interval of 1 "
 "bar, temperature in range of [0, 100] :math:`^{\\circ}\\text{C}` with "
 "interval 1 :math:`^{\\circ}\\text{C}` . Alternately, you can also do the "
-"same thing using command of |-V|\\ *TPX* |-R|\\ *0/1/100/5/1/400/0/0.1/1*"
-" ."
-msgstr ""
-
-#: ../../source/Tutorial/cmd.rst:56
-msgid "**PHX**, similar to **PTX**, it just replaced temperature with enthalpy."
+"same thing using command of |-V|  *TPX* |-R|  *0/1/100/5/1/400/0/0.1/1* ."
 msgstr ""
 
 #: ../../source/Tutorial/cmd.rst:58
+msgid "**PHX**, similar to **PTX**, it just replaced temperature with enthalpy."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:60
 msgid ""
 "**T**. This is only valid when argument of |-D| option is **1** (one "
 "dimension case). It means temperature is the independent variable, its "
@@ -137,7 +266,7 @@ msgid ""
 "write as csv file format. **P**, **X**, **H** similar to **T**."
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:60
+#: ../../source/Tutorial/cmd.rst:62
 msgid ""
 "**PT**. This is only valid when argument of |-D| option is set to **2** "
 "(two dimension case). It means pressure and temperature are the "
@@ -154,49 +283,49 @@ msgid ""
 "**HX** are similar with **PT**."
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:65
-msgid "|-P|\\ [ *pressure* ]"
+#: ../../source/Tutorial/cmd.rst:67
+msgid "|-P|  [ *pressure* ]"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:65
+#: ../../source/Tutorial/cmd.rst:67
 msgid ""
 "Sets fixed pressure value, it should be a float or integer number. The "
 "unit is **bar**."
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:70
-msgid "|-T|\\ [ *temperature* ]"
+#: ../../source/Tutorial/cmd.rst:72
+msgid "|-T|  [ *temperature* ]"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:70
+#: ../../source/Tutorial/cmd.rst:72
 msgid ""
 "Sets fixed temperature value, it should be a float or integer number. The"
 " unit is |ssd|."
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:75
-msgid "|-X|\\ [ *salinity* ]"
+#: ../../source/Tutorial/cmd.rst:77
+msgid "|-X|  [ *salinity* ]"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:75
+#: ../../source/Tutorial/cmd.rst:77
 msgid ""
 "Sets fixed salinity value, it should be a float or integer number. The "
 "unit is :math:`wt. NaCl`."
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:80
-msgid "|-H|\\ [ *enthalpy* ]"
+#: ../../source/Tutorial/cmd.rst:82
+msgid "|-H|  [ *enthalpy* ]"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:80
+#: ../../source/Tutorial/cmd.rst:82
 msgid "Sets fixed enthalpy value, it should be a float or integer number."
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:85
-msgid "|-R|\\ [ *min/delta/max* ]"
+#: ../../source/Tutorial/cmd.rst:87
+msgid "|-R|  [ *min/delta/max* ]"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:85
+#: ../../source/Tutorial/cmd.rst:87
 msgid ""
 "Sets range and interval of independent variable(s), |-R| option must "
 "correspond to |-V| and |-D| options. For example, :code:`-D1 -VT "
@@ -204,11 +333,11 @@ msgid ""
 "-R0/1/100/0/0.1/0.8/5/1/500` ."
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:108
-msgid "|-G|\\ [ *inputfile* ]"
+#: ../../source/Tutorial/cmd.rst:135
+msgid "|-G|  [ *inputfile* ]"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:90
+#: ../../source/Tutorial/cmd.rst:92
 msgid ""
 "Sets input file for multiple points calculation, the input file with "
 "three columns with delimiter of space or table( :code:`\\t` ) "
@@ -218,11 +347,23 @@ msgid ""
 ":code:`input.txt` as belows"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:113
-msgid "|-O|\\ [ *outputfile* ]"
+#: ../../source/Tutorial/cmd.rst:96
+msgid ""
+"Input file for multi-points calculation, three columns are :code:`p(bar) "
+"T(deg.C) X(wt% NaCl)`"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:113
+#: ../../source/Tutorial/cmd.rst:117
+msgid ""
+"Input file for multi-points calculation, three columns are :code:`p(bar) "
+"H(kJ/kg) X(wt% NaCl)`"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:140
+msgid "|-O|  [ *outputfile* ]"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:140
 msgid ""
 "Sets output file name for one, two and three-dimensional calculation. The"
 " supported file format for 1D is csv, for 2D and 3D can be one of "
@@ -235,47 +376,1394 @@ msgid ""
 ":code:`paraview --script=test3D.vtk.py` ."
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:119
-msgid "|-t|\\ [ *thread* ]"
+#: ../../source/Tutorial/cmd.rst:145
+msgid "|-t|  [ *thread* ]"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:118
+#: ../../source/Tutorial/cmd.rst:145
 msgid "Sets number of threads for parallel computing."
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:122
+#: ../../source/Tutorial/cmd.rst:160
+msgid "|-n|"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:150
+msgid ""
+"If need to normalize the coordinates of result in vtk file, it is only "
+"valid in 3D calculation. Because the coordinates of the results are "
+"(P,T,X), (P,H,X), ... with different scale, if use paraview to visualize "
+"the result, one have to deal with the coordinate scale. One option is set"
+" using |-n| to normalize the coordinate. Otherwise, a python script will "
+"be generated by swEOS automatically, one can use this python script to "
+"visualize results (see also :ref:`cmd_3D`)."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:166
+msgid "|-hh|"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:165
+msgid "Print a short message about the syntax of the command."
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:169
 msgid "Examples"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:125 ../../source/Tutorial/gui.rst:7
+#: ../../source/Tutorial/cmd.rst:172 ../../source/Tutorial/gui.rst:7
 #: ../../source/Tutorial/ios.rst:10
 msgid "Single point calculation"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:133 ../../source/Tutorial/gui.rst:14
+#: ../../source/Tutorial/cmd.rst:184 ../../source/Tutorial/gui.rst:14
 msgid "Multi-points calculation"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:143
+#: ../../source/Tutorial/cmd.rst:220
+msgid "Calculation result with `PTX` input file"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "T(C)"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "P(bar)"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "X"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "Phase Index"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "Phase Region"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "Bulk density(kg/m3)"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "Liquid density(kg/m3)"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "Vapour density(kg/m3)"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "Halite density(kg/m3)"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "Bulk enthalpy(kJ/kg)"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "Liquid enthalpy(kJ/kg)"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "Vapour enthalpy(kJ/kg)"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "Halite enthalpy(kJ/kg)"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "Liquid Saturation"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "Vapour Saturation"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "Halite Saturation"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "Liquid viscosity"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "Vapour viscosity"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "Liquid salinity"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "Vapour salinity"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1 ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "10"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "316"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "0.032"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/cmd.rst:321 ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "0"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/cmd.rst:321 ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "Single phase(Liquid)"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "1036.03"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "74.3015"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/cmd.rst:323 ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "1"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "0.00139265"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1 ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "11"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "1035.81"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "78.2695"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "0.00135602"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1 ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "12"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "1035.59"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "82.2389"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "0.00132091"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1 ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "13"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "1035.35"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "86.2098"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "0.00128723"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1 ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "14"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "1035.11"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "90.1822"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "0.00125491"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "15"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "1034.86"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "94.1561"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "0.00122386"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "16"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "1034.61"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "98.1316"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "0.00119402"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "17"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "1034.34"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "102.109"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "0.00116533"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "18"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "1034.07"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "106.087"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "0.00113773"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "19"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "1033.79"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "110.067"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "0.00111117"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "20"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "1033.51"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "114.049"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "0.00108558"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "21"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "1033.21"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "118.031"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "0.00106093"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "22"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "1032.91"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "122.016"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "0.00103717"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "23"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "1032.61"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "126.001"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_ptx.csv:1
+msgid "0.00101425"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:245
+msgid "Calculation result with `PHX` input file"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "9.99903"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "74.2976"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "0.00139268"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "10.999"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "78.2653"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "0.00135606"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "11.9989"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "82.2344"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "0.00132095"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "12.9988"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "86.2051"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "0.00128727"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "13.9988"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "90.1772"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "0.00125495"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "14.9987"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "94.1509"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "0.0012239"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "15.9986"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "98.1262"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "0.00119406"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "16.9987"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "102.103"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "0.00116537"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "17.9985"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "106.081"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "0.00113777"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "18.9985"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "110.061"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "0.00111121"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "19.9986"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "114.043"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "0.00108562"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "20.9984"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "118.025"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "0.00106097"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "21.9985"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "122.01"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "0.00103721"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "22.9984"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "125.995"
+msgstr ""
+
+#: ../../source/Tutorial/res_0D_phx.csv:1
+msgid "0.00101429"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:249
 msgid "One-dimensional calculation"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:153
+#: ../../source/Tutorial/cmd.rst:268
+msgid "Fix P and X, change T"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/cmd.rst:325
+msgid "2"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/T_1D.csv:1
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "399"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/T_1D.csv:1
+msgid "1041.2"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "50.6992"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "0.00173781"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+#: ../../source/Tutorial/cmd.rst:327
+msgid "3"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "1041.03"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "54.6358"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "0.00168646"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/cmd.rst:329
+msgid "4"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "1040.86"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "58.5725"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "0.00163743"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/cmd.rst:331
+msgid "5"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "1040.68"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "62.5098"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "0.00159059"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/cmd.rst:333
+msgid "6"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "1040.49"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "66.4479"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "0.00154583"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1 ../../source/Tutorial/P_1D.csv:1
+#: ../../source/Tutorial/T_1D.csv:1 ../../source/Tutorial/X_1D.csv:1
+msgid "..."
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1 ../../source/Tutorial/T_1D.csv:1
+msgid "96"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "999.76"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "424.937"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "0.000335152"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1 ../../source/Tutorial/T_1D.csv:1
+msgid "97"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "999.113"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "428.951"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "0.000331626"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1 ../../source/Tutorial/T_1D.csv:1
+msgid "98"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "998.463"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "432.966"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "0.000328166"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1 ../../source/Tutorial/T_1D.csv:1
+msgid "99"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "997.809"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "436.981"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "0.000324769"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1 ../../source/Tutorial/T_1D.csv:1
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "100"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "997.151"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "440.998"
+msgstr ""
+
+#: ../../source/Tutorial/T_1D.csv:1
+msgid "0.000321433"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:273
+msgid "Fix T and X, change P"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "980.288"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "410.864"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "0.000310974"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "980.332"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "410.942"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "0.000311001"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "980.376"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "411.019"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "0.000311028"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "980.42"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "411.096"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "0.000311055"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "980.465"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "411.173"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "0.000311081"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "95"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "984.088"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "417.43"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "0.000313254"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "984.133"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "417.508"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "0.00031328"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "984.177"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "417.585"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "0.000313307"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "984.222"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "417.662"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "0.000313334"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "984.266"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "417.74"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "0.000313361"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "984.311"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "417.817"
+msgstr ""
+
+#: ../../source/Tutorial/P_1D.csv:1
+msgid "0.000313388"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:278
+msgid "Fix P and T, change X"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "976.076"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "449.16"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.00029246"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.001"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "976.729"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "448.896"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.00029413"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.002"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "977.382"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "448.632"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.00029538"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.003"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "978.036"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "448.369"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.000296513"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.994"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1 ../../source/Tutorial/cmd.rst:327
+msgid "Liquid + Halite"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "2133.81"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "1182.84"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "2148.37"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "109.823"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "391.953"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "107.446"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.0150758"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.984924"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.000564111"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.282037"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.995"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "2136.23"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "109.427"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.0125774"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.987423"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.996"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "2138.64"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "109.031"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.0100733"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.989927"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.997"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "2141.07"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "108.634"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.00756352"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.992436"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.998"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "2143.5"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "108.238"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.00504806"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.994952"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.999"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "2145.93"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "107.842"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.0025269"
+msgstr ""
+
+#: ../../source/Tutorial/X_1D.csv:1
+msgid "0.997473"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:283
+msgid "Fix P and X, change H"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "1.00948"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "1041.35"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "46.7996"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "0.00179106"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "1.26345"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "1041.32"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "47.7996"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "0.00177718"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "1.51743"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "1041.28"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "48.7995"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "0.00176346"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "1.77142"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "1041.24"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "49.7994"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "0.00174989"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "2.02541"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "50.7993"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "0.00173648"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "2.27941"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "1041.15"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "51.7992"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "0.00172323"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "2.53341"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "1041.11"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "52.7991"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "0.00171013"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "2.78742"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "1041.07"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "53.799"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "0.00169718"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "13.9466"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "1038.67"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "97.7957"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "0.00125143"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "14.1997"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "1038.61"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "98.7957"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "0.00124356"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "14.4526"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "1038.54"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "99.7956"
+msgstr ""
+
+#: ../../source/Tutorial/H_1D.csv:1
+msgid "0.00123577"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:287
 msgid "Two-dimensional calculation"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:165
+#: ../../source/Tutorial/cmd.rst:304
 msgid "Three-dimensional calculation"
 msgstr ""
 
-#: ../../source/Tutorial/cmd.rst:174
-msgid ""
-"Please see table :ref:`phaseRegion_Name_tab` for phase index and phae "
-"region"
+#: ../../source/Tutorial/cmd.rst:316
+msgid "Phase region index table"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:319
+msgid "Phase region index"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:319
+msgid "Phase region"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:323
+msgid "Liquid + Vapor at X=0"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:325
+msgid "Pure vapour phase"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:329
+msgid "Vapour + Halite"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:331
+msgid "Vapour + Liquid + Halite"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:333
+msgid "Vapour + Liquid on the liquid side"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:335
+msgid "7"
+msgstr ""
+
+#: ../../source/Tutorial/cmd.rst:335
+msgid "Vapour + Liquid on the vapour side"
 msgstr ""
 
 #: ../../source/Tutorial/gui.rst:4
-msgid "Desktop application with GUI"
+msgid "Desktop app with GUI"
 msgstr ""
 
 #: ../../source/Tutorial/gui.rst:21 ../../source/Tutorial/ios.rst:16
@@ -284,15 +1772,6 @@ msgstr ""
 
 #: ../../source/Tutorial/gui.rst:27 ../../source/Tutorial/ios.rst:25
 msgid "2D chart"
-msgstr ""
-
-#: ../../source/Tutorial/gui.rst:33 ../../source/Tutorial/ios.rst:35
-msgid "3D chart"
-msgstr ""
-
-#: ../../source/Tutorial/gui.rst:37 ../../source/Tutorial/ios.rst:39
-#: ../../source/Tutorial/ios.rst:46
-msgid "Coming soon!"
 msgstr ""
 
 #: ../../source/Tutorial/index.rst:5
@@ -307,83 +1786,94 @@ msgstr ""
 msgid "iPhone"
 msgstr ""
 
-#: ../../source/Tutorial/ios.rst:42
-msgid "iPad"
-msgstr ""
+#~ msgid ""
+#~ "**swEOS** [ |-D|\\ [ *dimension* ]] "
+#~ "[ |-V|\\ [ *variables* ] ] [ "
+#~ "|-P|\\ [:math:`p_{bar}`] ] [ |-T|\\ "
+#~ "[:math:`T_{^{\\circ}C}`] ] [ |-X|\\ "
+#~ "[:math:`x_{wt. NaCl}`] ] [ |-H|\\ "
+#~ "[:math:`h_{kJ/kg}`] ] [ |-R|\\ "
+#~ "*min1/delta1/max1/min2/delta2/max2/min3/delta3/max3* ] ["
+#~ " |-G|\\ [*inputfile*] ] [ |-O|\\ "
+#~ "[*outputfile*] ] [ |-t|\\ [*threads*] ]"
+#~ msgstr ""
 
-#: ../../source/Tutorial/phaseRegion_tab.rst:4
-msgid "Lookup table of phase index"
-msgstr ""
+#~ msgid "|-D|\\ [ *dimension* ]"
+#~ msgstr ""
 
-#: ../../source/Tutorial/phaseRegion_tab.rst:7
-msgid "Phase region index"
-msgstr ""
+#~ msgid "|-V|\\ [ *variables* ]"
+#~ msgstr ""
 
-#: ../../source/Tutorial/phaseRegion_tab.rst:7
-msgid "Phase region"
-msgstr ""
+#~ msgid ""
+#~ "**PTX**, if argument of |-D| option "
+#~ "is **0** (single point or multiple "
+#~ "points case), then the pressure, "
+#~ "temperature and salinity is set by "
+#~ "|-P|, |-T| and |-X| option, "
+#~ "respectively. While if argument of |-D|"
+#~ " is **3** (three dimension case), the"
+#~ " range of pressure, temperature and "
+#~ "salinity must be specified by |-R| "
+#~ "option **in the same order** of "
+#~ "argument of |-V| option. Therefore, for"
+#~ " the same calculation, |-V| option "
+#~ "can be **PTX**, **PXT**, **TPX**, "
+#~ "**TXP**, **XPT** and **XTP** unless you"
+#~ " set |-R| option in the save "
+#~ "order. For example, :code:`-VXPT "
+#~ "-R0/0.1/1/5/1/400/0/1/100` means salinity in "
+#~ "range of [0, 1] with interval of"
+#~ " 0.1, pressure in range of [5, "
+#~ "400] bar with interval of 1 bar,"
+#~ " temperature in range of [0, 100] "
+#~ ":math:`^{\\circ}\\text{C}` with interval 1 "
+#~ ":math:`^{\\circ}\\text{C}` . Alternately, you "
+#~ "can also do the same thing using"
+#~ " command of |-V|\\ *TPX* |-R|\\ "
+#~ "*0/1/100/5/1/400/0/0.1/1* ."
+#~ msgstr ""
 
-#: ../../source/Tutorial/phaseRegion_tab.rst:9
-msgid "0"
-msgstr ""
+#~ msgid "|-P|\\ [ *pressure* ]"
+#~ msgstr ""
 
-#: ../../source/Tutorial/phaseRegion_tab.rst:9
-msgid "Single phase(Liquid)"
-msgstr ""
+#~ msgid "|-T|\\ [ *temperature* ]"
+#~ msgstr ""
 
-#: ../../source/Tutorial/phaseRegion_tab.rst:11
-msgid "1"
-msgstr ""
+#~ msgid "|-X|\\ [ *salinity* ]"
+#~ msgstr ""
 
-#: ../../source/Tutorial/phaseRegion_tab.rst:11
-msgid "Liquid + Vapor at X=0"
-msgstr ""
+#~ msgid "|-H|\\ [ *enthalpy* ]"
+#~ msgstr ""
 
-#: ../../source/Tutorial/phaseRegion_tab.rst:13
-msgid "2"
-msgstr ""
+#~ msgid "|-R|\\ [ *min/delta/max* ]"
+#~ msgstr ""
 
-#: ../../source/Tutorial/phaseRegion_tab.rst:13
-msgid "Pure vapour phase"
-msgstr ""
+#~ msgid "|-G|\\ [ *inputfile* ]"
+#~ msgstr ""
 
-#: ../../source/Tutorial/phaseRegion_tab.rst:15
-msgid "3"
-msgstr ""
+#~ msgid "|-O|\\ [ *outputfile* ]"
+#~ msgstr ""
 
-#: ../../source/Tutorial/phaseRegion_tab.rst:15
-msgid "Liquid + Halite"
-msgstr ""
+#~ msgid "|-t|\\ [ *thread* ]"
+#~ msgstr ""
 
-#: ../../source/Tutorial/phaseRegion_tab.rst:17
-msgid "4"
-msgstr ""
+#~ msgid ""
+#~ "Please see table :ref:`phaseRegion_Name_tab` "
+#~ "for phase index and phae region"
+#~ msgstr ""
 
-#: ../../source/Tutorial/phaseRegion_tab.rst:17
-msgid "Vapour + Halite"
-msgstr ""
+#~ msgid "Desktop application with GUI"
+#~ msgstr ""
 
-#: ../../source/Tutorial/phaseRegion_tab.rst:19
-msgid "5"
-msgstr ""
+#~ msgid "3D chart"
+#~ msgstr ""
 
-#: ../../source/Tutorial/phaseRegion_tab.rst:19
-msgid "Vapour + Liquid + Halite"
-msgstr ""
+#~ msgid "Coming soon!"
+#~ msgstr ""
 
-#: ../../source/Tutorial/phaseRegion_tab.rst:21
-msgid "6"
-msgstr ""
+#~ msgid "iPad"
+#~ msgstr ""
 
-#: ../../source/Tutorial/phaseRegion_tab.rst:21
-msgid "Vapour + Liquid on the liquid side"
-msgstr ""
-
-#: ../../source/Tutorial/phaseRegion_tab.rst:23
-msgid "7"
-msgstr ""
-
-#: ../../source/Tutorial/phaseRegion_tab.rst:23
-msgid "Vapour + Liquid on the vapour side"
-msgstr ""
+#~ msgid "Lookup table of phase index"
+#~ msgstr ""
 

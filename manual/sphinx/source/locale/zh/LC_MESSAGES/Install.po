@@ -1,0 +1,220 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) Zhikui Guo, Lars Ruepke
+# This file is distributed under the same license as the Salt-Water
+# (NaCl-H2O) EOS package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Salt-Water (NaCl-H2O) EOS 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-08-21 18:17+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/Install/apps/index.rst:5
+msgid "App install"
+msgstr ""
+
+#: ../../source/Install/apps/index.rst:9
+msgid ""
+"The pre-compiled applications include both desktop application with GUI "
+"(graphical user interface) and standalone command line tool (cmd) which "
+"can be used for batch calculation."
+msgstr ""
+
+#: ../../source/Install/apps/index.rst:14
+msgid ""
+"The desktop app with GUI also contains cmd features, it works well in "
+"macOS and linux (ubuntu), but there still are some issues in windows "
+"version. Therefore for the windows users, if you want to use cmd feature,"
+" please use the standalone cmd app."
+msgstr ""
+
+#: ../../source/Install/apps/linux.rst:5
+msgid "Linux"
+msgstr ""
+
+#: ../../source/Install/apps/linux.rst:11
+msgid "Download and install"
+msgstr ""
+
+#: ../../source/Install/apps/linux.rst:13
+msgid ""
+"For Linux system, the install process is pretty easy. Similar to "
+":ref:`install_mac`, download the :code:`.zip` installer from "
+"|app_linux_download| and unzip it to wherever you like, e.g. "
+":code:`/home/swEOS`."
+msgstr ""
+
+#: ../../source/Install/apps/linux.rst:17 ../../source/Install/apps/mac.rst:41
+#: ../../source/Install/apps/windows.rst:28
+msgid "Desktop app with GUI"
+msgstr ""
+
+#: ../../source/Install/apps/linux.rst:19
+msgid "Run the following command in terminal to launch the swEOS GUI version."
+msgstr ""
+
+#: ../../source/Install/apps/linux.rst:26 ../../source/Install/apps/mac.rst:58
+#: ../../source/Install/apps/windows.rst:33
+msgid "Command line tool"
+msgstr ""
+
+#: ../../source/Install/apps/linux.rst:28
+msgid "There are two ways to use the command line tool."
+msgstr ""
+
+#: ../../source/Install/apps/linux.rst:30
+msgid ""
+"Set arguments and options directory after :code:`swEOS.sh`, for example "
+":code:`/home/swEOS/swEOS.sh -h`, because the command line arguments and "
+"options is also integrated in the GUI version."
+msgstr ""
+
+#: ../../source/Install/apps/linux.rst:32
+msgid ""
+"Use the standalone command line tool, for example "
+":code:`/home/swEOS/CommandLineTool/swEOS`"
+msgstr ""
+
+#: ../../source/Install/apps/linux.rst:36
+msgid ""
+"If there is a error information of :code:`permission denied` after run "
+":code:`/home/swEOS/CommandLineTool/swEOS` command, please set the swEOS "
+"command line tool as executable mode. This can be done by running "
+":code:`chmod 755 /home/swEOS/CommandLineTool/swEOS`"
+msgstr ""
+
+#: ../../source/Install/apps/linux.rst:38
+msgid ""
+"If you want to access swEOS much easier, please add the command line tool"
+" path to the environment variable, just run command of :code:`echo "
+"\"PATH=\"/home/swEOS/CommandLineTool:$PATH\"\" >>~/.bashrc`."
+msgstr ""
+
+#: ../../source/Install/apps/mac.rst:5
+msgid "macOS"
+msgstr ""
+
+#: ../../source/Install/apps/mac.rst:12
+#: ../../source/Install/apps/windows.rst:10
+msgid "Download"
+msgstr ""
+
+#: ../../source/Install/apps/mac.rst:14
+msgid ""
+"Please go to the |app_mac_download| to download the proper version (e.g. "
+"Catalina or newer) according to your system version. If there is not a "
+"proper version, please look at the :ref:`build` section for help."
+msgstr ""
+
+#: ../../source/Install/apps/mac.rst:18
+#: ../../source/Install/apps/windows.rst:15
+msgid "Install"
+msgstr ""
+
+#: ../../source/Install/apps/mac.rst:20
+msgid ""
+"The downloaded installer is a :code:`.dmg` file. Then you can get all the"
+" files (see :numref:`fig:installer:mac`) of swEOS app by simply double "
+"clicking the .dmg file and accepting the licence."
+msgstr ""
+
+#: ../../source/Install/apps/mac.rst:29
+msgid "Files in the installer"
+msgstr ""
+
+#: ../../source/Install/apps/mac.rst:33
+msgid "File trees of macOS installer of swEOS app"
+msgstr ""
+
+#: ../../source/Install/apps/mac.rst:43
+msgid ""
+"If you want to use the desktop app, just drag the :code:`swEOS` (see "
+":numref:`fig:installer:mac`) to :code:`Applications` folder. This "
+"\"drag\" install process is the same as any other macOS app."
+msgstr ""
+
+#: ../../source/Install/apps/mac.rst:48
+msgid ""
+"The app has not been notarized by Apple because there is no funding to "
+"support a Apple Developer ID. Therefore the :code:`swEOS` app will be "
+"blocked by the Gatekeeper of macOS (see `Apple support "
+"<https://support.apple.com/en-us/HT202491>`_ for more details). In order "
+"to allow swEOS to run on your macOS, you have to run the following "
+"command with superuser permission(:code:`sudo`) in the terminal:"
+msgstr ""
+
+#: ../../source/Install/apps/mac.rst:60
+msgid ""
+"The standalone command line tool(cmd) is also included in the installer, "
+"if you want to use this cmd app, just need to copy "
+":code:`commandline/swEOS` (see lines 27-28 in "
+":numref:`lst:installer:mac`) file to some directory (e.g. /usr/local/bin)"
+" in your file system, or make a symbol link to the environment PATH "
+"folder, e.g. :code:`ln -s /Applications/swEOS.app/Contents/MacOS/swEOS "
+"/usr/local/bin`。 The you can use the cmd app in the for batch calculation"
+" purpose (see the following animation)."
+msgstr ""
+
+#: ../../source/Install/apps/mac.rst:68
+msgid ""
+"If there is a error information of :code:`permission denied: swEOS`, one "
+"can run command of :code:`chmod 755 /usr/local/bin/swEOS` to change its "
+"file model as an executable."
+msgstr ""
+
+#: ../../source/Install/apps/mac.rst:76
+msgid "Demo of running standalone cmd version of :code:`swEOS` in terminal"
+msgstr ""
+
+#: ../../source/Install/apps/windows.rst:5
+msgid "Windows"
+msgstr ""
+
+#: ../../source/Install/apps/windows.rst:12
+msgid ""
+"Please go to the |app_win_download| to download the proper version (e.g. "
+"windows 10) according to your system version."
+msgstr ""
+
+#: ../../source/Install/apps/windows.rst:17
+msgid ""
+"The downloaded installer is a :code:`.exe` file. Then double click it to "
+"install just like any other general windows software installer, there is "
+"nothing special. After successfully installing, one can get something "
+"like :numref:`fig:install:windows`."
+msgstr ""
+
+#: ../../source/Install/apps/windows.rst:25
+msgid "Snapshot of swEOS desktop app installed in windows 10 system."
+msgstr ""
+
+#: ../../source/Install/apps/windows.rst:30
+msgid ""
+"If you want to use the GUI version of swEOS, just click the shortcut "
+"automatically added in the start menu (see "
+":numref:`fig:install:windows`)."
+msgstr ""
+
+#: ../../source/Install/apps/windows.rst:35
+msgid ""
+"The standalone command line tool(cmd) is also included in the installer, "
+"if you want to use this cmd app, just need to add the command line tool "
+"install path (see :numref:`fig:install:windows`) to the system "
+"environment variable of :code:`PATH` (see "
+":numref:`fig:install:windows:setENVpath`). Then :code:`swEOS` command can"
+" be used in PowerShell or traditional cmd terminal."
+msgstr ""
+
+#: ../../source/Install/apps/windows.rst:44
+msgid "Snapshot of environment variable setting."
+msgstr ""
+

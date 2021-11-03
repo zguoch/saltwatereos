@@ -100,7 +100,7 @@ else()
 endif()
 
 # Using OpenMP
-include_directories(/usr/local/Cellar/libomp/11.0.0/include /usr/local/Cellar/libomp/11.1.0/include)
+include_directories(/usr/local/Cellar/libomp/12.0.1/include /usr/local/Cellar/libomp/11.0.0/include /usr/local/Cellar/libomp/11.1.0/include)
 find_package(OpenMP REQUIRED)
 if(APPLE)
     set(CMAKE_C_COMPILER clang)

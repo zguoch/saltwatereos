@@ -15,6 +15,7 @@ using namespace std;
 %include "typemaps.i"
 %apply double *OUTPUT { double& P_crit, double& X_crit }; //multi return, use typemaps.i and something like this
 %apply double *OUTPUT { double& T_crit, double& X_crit };
+%apply double *OUTPUT { double& Xl_all, double& Xv_all };
 %apply double *OUTPUT { double& T, double& P };
 %{
     // #define SWIG_FILE_WITH_INIT

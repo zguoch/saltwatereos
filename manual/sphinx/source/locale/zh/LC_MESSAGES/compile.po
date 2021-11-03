@@ -9,58 +9,173 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SaltWater EOS 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-24 21:07+0100\n"
+"POT-Creation-Date: 2021-08-21 18:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.7.0\n"
+"Generated-By: Babel 2.9.1\n"
 
-#: ../../source/compile/cmd.rst:4
-msgid "Command line tool"
-msgstr ""
-
-#: ../../source/compile/cmd.rst:8
-msgid "It's pretty easy to build command line version of swEOS from source code."
-msgstr ""
-
-#: ../../source/compile/cmd.rst:10
-msgid "Download or clone source code"
-msgstr ""
-
-#: ../../source/compile/cmd.rst:16
-msgid "Change directory to the source code"
-msgstr ""
-
-#: ../../source/compile/cmd.rst:22
-msgid "Compile c++ library"
-msgstr ""
-
-#: ../../source/compile/cmd.rst:32
-msgid ""
-"Then you will get :code:`libeosH2ONaCl.a` static library in "
-":code:`saltwatereos/Library/lib` folder."
-msgstr ""
-
-#: ../../source/compile/cmd.rst:34
-msgid "Build command line tool"
-msgstr ""
-
-#: ../../source/compile/cmd.rst:47
-msgid ""
-"If there are some error information about openmp during cmake, please "
-"just type :code:`cmake ..` again."
-msgstr ""
-
-#: ../../source/compile/cmd.rst:49
-msgid ""
-"Then you will get the executable file :code:`swEOS` in the current path. "
-"In tutorial of :ref:`cmd` you can find detail usage and example."
-msgstr ""
-
-#: ../../source/compile/index.rst:5
+#: ../../source/Compile/index.rst:5
 msgid "Build from source"
 msgstr ""
+
+#: ../../source/Compile/index.rst:12
+msgid "Build c++ library"
+msgstr ""
+
+#: ../../source/Compile/index.rst:14
+msgid ""
+"One can download the source code and save it to wherever you like, "
+"assuming save the source to :code:`Download` download folder."
+msgstr ""
+
+#: ../../source/Compile/index.rst:16
+msgid "How to do ?"
+msgstr ""
+
+#: ../../source/Compile/index.rst:28 ../../source/Compile/index.rst:58
+#: ../../source/Compile/index.rst:88 ../../source/Compile/index.rst:152
+#: ../../source/Compile/index.rst:180 ../../source/Compile/index.rst:208
+msgid "Requirements: basic development environment"
+msgstr ""
+
+#: ../../source/Compile/index.rst:30 ../../source/Compile/index.rst:60
+#: ../../source/Compile/index.rst:90
+msgid "CMake_ : >=3.3"
+msgstr ""
+
+#: ../../source/Compile/index.rst:31 ../../source/Compile/index.rst:61
+msgid "C++ compiler"
+msgstr ""
+
+#: ../../source/Compile/index.rst:32 ../../source/Compile/index.rst:62
+msgid "make"
+msgstr ""
+
+#: ../../source/Compile/index.rst:33 ../../source/Compile/index.rst:63
+#: ../../source/Compile/index.rst:92
+msgid "git (optional)"
+msgstr ""
+
+#: ../../source/Compile/index.rst:91
+msgid "|vs2017|"
+msgstr ""
+
+#: ../../source/Compile/index.rst:94
+msgid ""
+"The |vs2017| have to be installed and the path of `MSBUILD.exe` is added "
+"in the system environment PATH variable. All the following steps are "
+"performed in PowerShell."
+msgstr ""
+
+#: ../../source/Compile/index.rst:118
+msgid "What will you get ?"
+msgstr ""
+
+#: ../../source/Compile/index.rst:126
+msgid "need to make snapshot"
+msgstr ""
+
+#: ../../source/Compile/index.rst:136
+msgid "Build standalone command line tool"
+msgstr ""
+
+#: ../../source/Compile/index.rst:140
+msgid ""
+"If you want to compile the standalone command line tool by yourself, you "
+"have to finish the previous step of :ref:`build_lib` firstly!"
+msgstr ""
+
+#: ../../source/Compile/index.rst:154 ../../source/Compile/index.rst:182
+#: ../../source/Compile/index.rst:210
+msgid "All requirements in :ref:`build_lib` step"
+msgstr ""
+
+#: ../../source/Compile/index.rst:155
+msgid ""
+"OpenMP: could use `brew install libomp` and check "
+"`/usr/local/Cellar/libomp/*/include` path. The cmake will automatically "
+"detect the OpenMP include files and library files."
+msgstr ""
+
+#: ../../source/Compile/index.rst:183
+msgid ""
+"OpenMP: could use `sudo apt-get install libomp`. The cmake will "
+"automatically detect the OpenMP include files and library files."
+msgstr ""
+
+#: ../../source/Compile/index.rst:232
+msgid "Build APIs"
+msgstr ""
+
+#: ../../source/Compile/index.rst:236
+msgid ""
+"APIs of other programing language, e.g., python, tcl, js, depends on a "
+"lot of tools (e.g. swig, npm, python) and need a lot of programing "
+"skills. We don't recommend users to try out this unless they master "
+"cross-platform and multi-language programing skills. But users can use "
+"the APIs for research, for example the python API :code:`pyswEOS` python "
+"users."
+msgstr ""
+
+#: ../../source/Compile/index.rst:239
+msgid ""
+"Of course, users can find details in the source code if they are "
+"interested in that."
+msgstr ""
+
+#: ../../source/Compile/index.rst:242
+msgid "Build Desktop App with GUI"
+msgstr ""
+
+#: ../../source/Compile/index.rst:246
+msgid ""
+"Again, compilation of the desktop app with GUI also not that easy, "
+"because the GUI version is depends on Qt_ and VTK_. Therefore, it also "
+"needs a lot of programing skills to reach that. If users are interested "
+"in building the GUI version by themselves, please read the source code."
+msgstr ""
+
+#~ msgid "Command line tool"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "It's pretty easy to build command "
+#~ "line version of swEOS from source "
+#~ "code."
+#~ msgstr ""
+
+#~ msgid "Download or clone source code"
+#~ msgstr ""
+
+#~ msgid "Change directory to the source code"
+#~ msgstr ""
+
+#~ msgid "Compile c++ library"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Then you will get :code:`libeosH2ONaCl.a` "
+#~ "static library in :code:`saltwatereos/Library/lib`"
+#~ " folder."
+#~ msgstr ""
+
+#~ msgid "Build command line tool"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "If there are some error information "
+#~ "about openmp during cmake, please just"
+#~ " type :code:`cmake ..` again."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Then you will get the executable "
+#~ "file :code:`swEOS` in the current path."
+#~ " In tutorial of :ref:`cmd` you can"
+#~ " find detail usage and example."
+#~ msgstr ""
 
