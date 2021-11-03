@@ -22,6 +22,7 @@ githubAppID = "83f19450f711579e9db0"
 githubAppClintsecrets="ccc0b6e92b13c7b46b3a7231af4de4211ef2be5f"
 binderURL = "https://mybinder.org/v2/gh/zguoch/saltwatereos.git/HEAD?filepath=test%2Fpython%2FTest.ipynb"
 jupyterURL = "https://jupyter.org/try"
+doi_zenodo="10.5281/zenodo.4603878"
 appName = "swEOS"
 # logo is for all page
 logo = "images/swEOS_beta.png"

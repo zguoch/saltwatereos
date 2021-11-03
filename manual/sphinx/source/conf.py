@@ -44,7 +44,8 @@ extensions = ['sphinx.ext.mathjax',
             'jinja',
             'sphinx.ext.ifconfig',
             'sphinx_inline_tabs',
-            'plot_directive',
+            "sphinx_copybutton",
+            # 'plot_directive',
             'sphinxcontrib.bibtex']
 source_encoding = 'utf-8-sig'
 source_suffix = '.rst'
@@ -52,11 +53,11 @@ master_doc = 'index'
 templates_path = ['_templates']
 plot_basedir='Cookbooks/python'
 # 配置字体
-import matplotlib.font_manager as font_manager
-path = '_static/fonts/Arial.ttf'
-prop = font_manager.FontProperties(fname=path)
-plot_rcparams={'font.family':prop.get_name(),'mathtext.fontset':'cm'}
-plot_html_show_source_link=True
+# import matplotlib.font_manager as font_manager
+# path = '_static/fonts/Arial.ttf'
+# prop = font_manager.FontProperties(fname=path)
+# plot_rcparams={'font.family':prop.get_name(),'mathtext.fontset':'cm'}
+# plot_html_show_source_link=True
  
 # internationalization
 language = 'en'
@@ -108,11 +109,15 @@ html_theme_options = {
 html_context = {
     "menu_links": [
         (
-            '<i class="fa fa-home fa-fw"></i> Home',
+            '<i class="fa fa-home fa-fw"></i> Homepage',
             "https://hydrothermal-openfoam.gitlab.io/saltwatereos/",
         ),
         (
-            '<i class="fa fa-book fa-fw"></i> License',
+            '<img src="https://zenodo.org/badge/DOI/10.5281/zenodo.4603878.svg">',
+            'https://zenodo.org/record/4603878/export/hx#.YRPazi8RrSw'
+        ),
+        (
+            '<i class="fa fa-book fa-fw"></i> License:GPL',
             "https://github.com/zguoch/saltwatereos/blob/master/LICENSE",
         ),
         (

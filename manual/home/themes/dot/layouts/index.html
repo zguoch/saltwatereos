@@ -2,19 +2,17 @@
 
 {{ "<!-- badges -->" | safeHTML }}
 <div>
-  <image src="https://img.shields.io/github/commit-activity/m/zguoch/saltwatereos"></image>
-  <image src="https://img.shields.io/github/last-commit/zguoch/saltwatereos/master"></image>
-  <image src="https://img.shields.io/github/release-date/zguoch/saltwatereos"></image>
-  <image src="https://img.shields.io/github/languages/code-size/zguoch/saltwatereos"></image>
-  <image src="https://img.shields.io/github/repo-size/zguoch/saltwatereos"></image>
-  <image id="githubClones" src="https://img.shields.io/github/downloads/zguoch/saltwatereos/total"></image>
+  <center>
   {{ if .Site.Params.binderURL }}
     <a href={{.Site.Params.binderURL}}><image id="binder" src="https://binder.pangeo.io/badge_logo.svg" ></image></a>
   {{ end }}
   {{ if .Site.Params.jupyterURL }}
     <a href={{.Site.Params.jupyterURL}}><image id="binder" src="https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter" ></image></a>
   {{ end }}
-  
+  {{ if .Site.Params.doi_zenodo }}
+    <a href=https://doi.org/{{.Site.Params.doi_zenodo}}><image id="binder" src="https://zenodo.org/badge/DOI/{{.Site.Params.doi_zenodo}}.svg" ></image></a>
+  {{ end }}
+</center>
 </div>
 
   {{ "<!-- topics -->" | safeHTML }}

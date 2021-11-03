@@ -152,20 +152,21 @@ namespace H2O
     }
     double cH2O::T_Boiling(double P)
     {
-        if(P>P_Critic/10)return NAN;
+        if(P>P_Critic)return NAN;
 
-        double T0 = TMAX, P0 = 0, P1 = 0, dPdT=0, dT=1E-5;
+        double T0 = TMIN, P0 = 0, P1 = 0, dPdT=0, dT=1E-5;
         double T_boiling = (T_Critic - TMIN)/2.0;
         double tol = 1E-4;
         int iter = 0;
         while (fabs(T_boiling-T0)/T_boiling > tol)
         {
             T0 = T_boiling;
-            P_Boiling(T0); // f(x0)
-            P_Boiling(T0 + dT);
+            P0=P_Boiling(T0); // f(x0)
+            P1=P_Boiling(T0 + dT);
             dPdT = (P1-P0)/dT;              //f`(x0)
             T_boiling = T0 - (P0-P)/dPdT;
-            // printf("%d: P=%.2f, P0=%.2f, T0=%.2f, P1=%.0f, dPdT=%.2f, Tnew = %.2f, tol=%.4f\n",iter, P, P0, T0, P1, dPdT, T, fabs(T-T0)/T);
+            if(T_boiling>T_Critic)T_boiling=T_Critic-dT*10;
+            // printf("%d: P=%.2f, P0=%.2f, T0=%.2f, P1=%.0f, dPdT=%.2f, Tnew = %.2f, tol=%.4f\n",iter, P, P0, T0, P1, dPdT, T_boiling, fabs(T_boiling-T0)/T_boiling);
             iter ++;
             if(iter>100)break;
         }

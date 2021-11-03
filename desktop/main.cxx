@@ -7,7 +7,7 @@
  * statement of authorship are reproduced on all copies.
  */
 
-// QT includes
+// QT includes 
 #include <QApplication>
 #include <QSurfaceFormat>
 

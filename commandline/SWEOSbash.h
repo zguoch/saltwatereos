@@ -81,7 +81,7 @@ namespace SWEOSbash
     #define VARIABLE_SELECTION_HX 10
 
     class cSWEOSarg
-    {
+    { 
     private:
         bool m_haveD, m_haveV, m_haveP, m_haveT, m_havet, m_haveX, m_haveH, m_haveR, m_haveG, m_haveO;
         int m_valueD, m_threadNumOMP;

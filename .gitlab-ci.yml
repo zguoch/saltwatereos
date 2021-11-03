@@ -24,9 +24,9 @@ buildPages:
     - pip install sphinx==1.6.7
     - pip install sphinxcontrib-bibtex sphinx_inline_tabs sphinx_sitemap
     - pip install sphinx-intl
-    - pip install matplotlib
-    - python --version
-    - pip install https://files.pythonhosted.org/packages/e0/d9/38da6ddce037c492d2bdcd3df7be0816be725e1a1fa3fdf55a629c6a30ae/pyswEOS-0.2.8-py3.7-none-manylinux2010_x86_64.whl
+    - pip install sphinx_copybutton
+    # - pip install matplotlib
+    # - apk add  python-numpy python-matplotlib
     - sphinx-intl build
     - sphinx-build -b html manual/sphinx/source public/manual/en
     - sphinx-build -b html manual/sphinx/source public/manual/zh -Dlanguage=zh

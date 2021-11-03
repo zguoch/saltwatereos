@@ -10,10 +10,12 @@ Cookbooks
 Phase region
 =================
 
-.. tab:: figure      
+`findPhaseRegion <../../../doxygen/classH2ONaCl_1_1cH2ONaCl.html#acbd241bcad8a0b181a2fbefefb33daec>`_
 
-    .. plot:: plot_phaseRegion.py
-        :align: center    
+.. .. tab:: figure      
+
+..     .. plot:: plot_phaseRegion.py
+..         :align: center    
     
  
 .. tab:: c++
