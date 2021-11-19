@@ -224,9 +224,9 @@ texinfo_documents = [
 
 def setup(app):
     app.add_css_file("style.css")
-    # app.add_javascript("js/custom.js")
-    app.add_js_file(
-        "https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js")
+    # app.add_js_file("js/custom.js")
+    app.add_js_file("https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js")
+    app.add_js_file("js/echarts/echarts.js")
     
 # new defined cite style
 from pybtex.style.formatting.unsrt import Style as UnsrtStyle

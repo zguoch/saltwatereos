@@ -71,6 +71,7 @@
 Welcome to the SaltWater EOS Docs! Here you'll find resources for using SaltWater EOS and examples of what
 it can do.
 
+
 swEOS User Manual
 =======================================
 
@@ -84,6 +85,7 @@ swEOS User Manual
    Compile/index.rst
    Tutorial/index.rst
    Cookbooks/index.rst
+   Benchmarks/index.rst
 
 .. bibliography:: manual.bib
     :cited: 
