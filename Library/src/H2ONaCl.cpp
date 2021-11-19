@@ -2930,6 +2930,17 @@ namespace H2ONaCl
             }
         }
     }
+    void cH2ONaCl::P_X_Critical(std::vector<double> T, std::vector<double>& P_crit, std::vector<double>& X_crit)
+    {
+        P_crit.resize(T.size());
+        X_crit.resize(T.size());
+        for (size_t i = 0; i < T.size(); i++)
+        {
+            P_X_Critical(T[i], P_crit[i], X_crit[i]);
+        }
+        
+    };
+    
     void cH2ONaCl:: T_X_Critical(double P, double& T_crit, double& X_crit)
     {
         double T0 = TMAX_C, P0 = 0, P1 = 0, X_tmp = 0, dPdT=0, dT=1E-5;

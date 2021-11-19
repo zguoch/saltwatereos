@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "*Dict": "OpenFOAM",
+        "k": "OpenFOAM",
+        "epsilon": "OpenFOAM",
+        "nut": "OpenFOAM",
+        "alphat": "OpenFOAM",
         "*Properties": "OpenFOAM",
         "fvSchemes": "OpenFOAM",
         "fvSolution": "OpenFOAM",
@@ -128,7 +132,9 @@
         "numbers": "cpp",
         "scoped_allocator": "cpp",
         "shared_mutex": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "__bits": "c",
+        "semaphore": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled",
     "restructuredtext.linter.disabled": true,

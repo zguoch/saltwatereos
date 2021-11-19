@@ -18,6 +18,7 @@ using namespace std;
 %apply double *OUTPUT { double& Xl_all, double& Xv_all };
 %apply double *OUTPUT { double& T, double& P };
 %apply double *OUTPUT { double& n1, double& n2 };
+%apply std::vector<double> *OUTPUT {std::vector<double>& P_crit, std::vector<double>& X_crit};
 %{
     // #define SWIG_FILE_WITH_INIT
     #include "H2ONaCl.H"
@@ -207,6 +208,8 @@ namespace H2ONaCl
          * 
          */
         void P_X_Critical(double T, double& P_crit, double& X_crit);
+        void P_X_Critical(std::vector<double> T, std::vector<double>& P_crit, std::vector<double>& X_crit);
+        
         /**
          * @brief Calculate critical T given P
          * 

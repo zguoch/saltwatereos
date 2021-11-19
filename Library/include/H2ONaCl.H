@@ -186,6 +186,8 @@ namespace H2ONaCl
          * 
          */
         void P_X_Critical(double T, double& P_crit, double& X_crit);
+        void P_X_Critical(std::vector<double> T, std::vector<double>& P_crit, std::vector<double>& X_crit);
+
         /**
          * @brief Calculate critical T given P
          * 
