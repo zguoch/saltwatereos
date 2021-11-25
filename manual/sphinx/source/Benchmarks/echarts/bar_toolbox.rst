@@ -1,11 +1,11 @@
 .. raw:: html
 
 	<body>
-	    <div id="a66ca06073e54756a748c9a995748e27" class="chart-container" style="width:900px; height:500px;"></div>
+	    <div id="0fb67cd45e2c4a1499ab87543d21e5a3" class="chart-container" style="width:900px; height:500px;"></div>
 	    <script>
-	        var chart_a66ca06073e54756a748c9a995748e27 = echarts.init(
-	            document.getElementById('a66ca06073e54756a748c9a995748e27'), 'white', {renderer: 'canvas'});
-	        var option_a66ca06073e54756a748c9a995748e27 = {
+	        var chart_0fb67cd45e2c4a1499ab87543d21e5a3 = echarts.init(
+	            document.getElementById('0fb67cd45e2c4a1499ab87543d21e5a3'), 'white', {renderer: 'canvas'});
+	        var option_0fb67cd45e2c4a1499ab87543d21e5a3 = {
 	    "animation": true,
 	    "animationThreshold": 2000,
 	    "animationDuration": 1000,
@@ -46,13 +46,13 @@
 	            "name": "\u5546\u5bb6A",
 	            "legendHoverLink": true,
 	            "data": [
-	                144,
-	                80,
-	                109,
-	                51,
-	                26,
-	                104,
-	                20
+	                93,
+	                116,
+	                47,
+	                107,
+	                58,
+	                91,
+	                141
 	            ],
 	            "showBackground": false,
 	            "barMinHeight": 0,
@@ -76,13 +76,13 @@
 	            "name": "\u5546\u5bb6B",
 	            "legendHoverLink": true,
 	            "data": [
-	                120,
-	                54,
-	                110,
-	                48,
-	                57,
-	                49,
-	                121
+	                20,
+	                77,
+	                64,
+	                71,
+	                35,
+	                32,
+	                56
 	            ],
 	            "showBackground": false,
 	            "barMinHeight": 0,
@@ -158,13 +158,13 @@
 	                }
 	            },
 	            "data": [
-	                "\u54c8\u58eb\u5947",
-	                "\u8428\u6469\u8036",
-	                "\u6cf0\u8fea",
-	                "\u91d1\u6bdb",
-	                "\u7267\u7f8a\u72ac",
-	                "\u5409\u5a03\u5a03",
-	                "\u67ef\u57fa"
+	                "\u5c0f\u7c73",
+	                "\u4e09\u661f",
+	                "\u534e\u4e3a",
+	                "\u82f9\u679c",
+	                "\u9b45\u65cf",
+	                "VIVO",
+	                "OPPO"
 	            ]
 	        }
 	    ],
@@ -274,6 +274,6 @@
 	        }
 	    }
 	};
-	        chart_a66ca06073e54756a748c9a995748e27.setOption(option_a66ca06073e54756a748c9a995748e27);
+	        chart_0fb67cd45e2c4a1499ab87543d21e5a3.setOption(option_0fb67cd45e2c4a1499ab87543d21e5a3);
 	    </script>
 	</body>

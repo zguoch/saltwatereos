@@ -1,11 +1,11 @@
 .. raw:: html
 
 	<body>
-	    <div id="7ee7431bc51e4e868f3f1c3b22573ff6" class="chart-container" style="width:800px; height:450px;"></div>
+	    <div id="0b7d0f2ceed7452e9b91a2372def6b10" class="chart-container" style="width:800px; height:450px;"></div>
 	    <script>
-	        var chart_7ee7431bc51e4e868f3f1c3b22573ff6 = echarts.init(
-	            document.getElementById('7ee7431bc51e4e868f3f1c3b22573ff6'), 'white', {renderer: 'canvas'});
-	        var option_7ee7431bc51e4e868f3f1c3b22573ff6 = {
+	        var chart_0b7d0f2ceed7452e9b91a2372def6b10 = echarts.init(
+	            document.getElementById('0b7d0f2ceed7452e9b91a2372def6b10'), 'white', {renderer: 'canvas'});
+	        var option_0b7d0f2ceed7452e9b91a2372def6b10 = {
 	    "animation": true,
 	    "animationThreshold": 2000,
 	    "animationDuration": 1000,
@@ -927,7 +927,7 @@
 	        "trigger": "axis",
 	        "triggerOn": "mousemove|click",
 	        "axisPointer": {
-	            "type": "cross"
+	            "type": "line"
 	        },
 	        "showContent": true,
 	        "alwaysShowContent": false,
@@ -941,17 +941,17 @@
 	    },
 	    "xAxis": [
 	        {
-	            "name": "Temperature (C)",
+	            "name": "Temperature (\u00b0C)",
 	            "show": true,
 	            "scale": false,
-	            "nameLocation": "end",
-	            "nameGap": 15,
+	            "nameLocation": "middle",
+	            "nameGap": 25,
 	            "gridIndex": 0,
 	            "inverse": false,
 	            "offset": 0,
 	            "splitNumber": 5,
 	            "min": 373.946,
-	            "max": 1000.0,
+	            "max": 1005.0,
 	            "minInterval": 0,
 	            "splitLine": {
 	                "show": false,
@@ -972,8 +972,8 @@
 	            "name": "Pressure (bar)",
 	            "show": true,
 	            "scale": false,
-	            "nameLocation": "end",
-	            "nameGap": 15,
+	            "nameLocation": "middle",
+	            "nameGap": 45,
 	            "gridIndex": 0,
 	            "axisTick": {
 	                "show": true,
@@ -1006,8 +1006,8 @@
 	            "name": "Salinity (wt.% NaCl)",
 	            "show": true,
 	            "scale": false,
-	            "nameLocation": "end",
-	            "nameGap": 15,
+	            "nameLocation": "middle",
+	            "nameGap": 20,
 	            "gridIndex": 0,
 	            "axisLabel": {
 	                "show": true,
@@ -1019,7 +1019,7 @@
 	            "offset": 0,
 	            "splitNumber": 5,
 	            "min": 0.0,
-	            "max": 13.454454479999999,
+	            "max": 13.554454479999999,
 	            "minInterval": 0,
 	            "splitLine": {
 	                "show": false,
@@ -1038,8 +1038,69 @@
 	            "padding": 5,
 	            "itemGap": 10
 	        }
-	    ]
+	    ],
+	    "toolbox": {
+	        "show": true,
+	        "orient": "horizontal",
+	        "itemSize": 15,
+	        "itemGap": 10,
+	        "left": "90%",
+	        "feature": {
+	            "saveAsImage": {
+	                "type": "jpg",
+	                "name": "CriticalCurve_H2ONaCl",
+	                "backgroundColor": "white",
+	                "connectedBackgroundColor": "#fff",
+	                "show": true,
+	                "title": "Save as image",
+	                "pixelRatio": 6
+	            },
+	            "dataView": {
+	                "show": false,
+	                "title": "\u6570\u636e\u89c6\u56fe",
+	                "readOnly": false,
+	                "lang": [
+	                    "\u6570\u636e\u89c6\u56fe",
+	                    "\u5173\u95ed",
+	                    "\u5237\u65b0"
+	                ],
+	                "backgroundColor": "#fff",
+	                "textareaColor": "#fff",
+	                "textareaBorderColor": "#333",
+	                "textColor": "#000",
+	                "buttonColor": "#c23531",
+	                "buttonTextColor": "#fff"
+	            },
+	            "dataZoom": {
+	                "show": false,
+	                "title": {
+	                    "zoom": "\u533a\u57df\u7f29\u653e",
+	                    "back": "\u533a\u57df\u7f29\u653e\u8fd8\u539f"
+	                },
+	                "icon": {},
+	                "xAxisIndex": false,
+	                "yAxisIndex": false,
+	                "filterMode": "filter"
+	            },
+	            "magicType": {
+	                "show": false,
+	                "type": [
+	                    "line",
+	                    "bar",
+	                    "stack",
+	                    "tiled"
+	                ],
+	                "title": {
+	                    "line": "\u5207\u6362\u4e3a\u6298\u7ebf\u56fe",
+	                    "bar": "\u5207\u6362\u4e3a\u67f1\u72b6\u56fe",
+	                    "stack": "\u5207\u6362\u4e3a\u5806\u53e0",
+	                    "tiled": "\u5207\u6362\u4e3a\u5e73\u94fa"
+	                },
+	                "icon": {}
+	            }
+	        }
+	    }
 	};
-	        chart_7ee7431bc51e4e868f3f1c3b22573ff6.setOption(option_7ee7431bc51e4e868f3f1c3b22573ff6);
+	        chart_0b7d0f2ceed7452e9b91a2372def6b10.setOption(option_0b7d0f2ceed7452e9b91a2372def6b10);
 	    </script>
 	</body>

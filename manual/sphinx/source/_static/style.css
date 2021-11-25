@@ -2,6 +2,10 @@
 .wy-nav-content {
     max-width: 90%;
 }
+/* tab选项卡的内容如果超过宽度则显示滑动条 */
+.tab-content {
+	overflow: scroll;
+  }
 
 /* See https://github.com/GenericMappingTools/gmt/pull/1564 */
 .rst-content .highlighted{

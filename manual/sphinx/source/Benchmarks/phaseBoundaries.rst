@@ -18,3 +18,4 @@ Note that the minimum valid temperature of the critical curve formula is the cri
 .. tab:: test
 
     .. include:: echarts/bar_toolbox.rst
+
