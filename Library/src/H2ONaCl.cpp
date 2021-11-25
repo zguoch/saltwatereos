@@ -13,6 +13,7 @@ namespace H2ONaCl
     m_colorPrint(false)
     {
         init_PhaseRegionName();
+        createTable4_Driesner2007a(m_tab4_Driesner2007a);
     }
     cH2ONaCl::~cH2ONaCl()
     {
@@ -2846,6 +2847,28 @@ namespace H2ONaCl
         }
         return checkResult;
     }
+    void cH2ONaCl::createTable4_Driesner2007a(TABLE4 & table4)
+    {
+        // Table 4 of Driesner and Heinrich(2007)
+        double c[14] = {-2.36, 0.128534, -0.023707, 0.00320089, -0.000138917, 
+                        1.02789E-07, -4.8376E-11, 2.36, -0.0131417, 0.00298491,
+                        -0.000130114, 0, 0, -0.000488336};// c[11] and c[12] are calculated below
+        double cA[11] = {1, 1.5, 2, 2.5, 3, 4, 5, 1, 2, 2.5, 3};
+        // c[11] (c12 in Driesner and Heinrich(2007)) is the value of P_crit at 500 deg.C, calculated from eq. 5b.
+        // c[12] (c13) is the first temperature derivative of eq. 5b at 500 deg.C
+        for (size_t i = 7; i < 11; i++)
+        {
+            c[11] += c[i] * pow(500 - H2O::T_Critic, cA[i]); //the second term of eq. 5b in Drisner and Heinrich (2007)
+            c[12] += c[i] * cA[i] * pow(500 - H2O::T_Critic, cA[i] - 1); //the first temperature derivative of eq. 5b
+        }
+        c[11] = H2O::P_Critic + c[11];
+        double d[11] = {8E-05, 1E-05, -1.37125E-07, 9.46822E-10, -3.50549E-12, 6.57369E-15, 
+                        -4.89423E-18, 7.77761E-2, 2.7042E-4, -4.244821E-07, 2.580872E-10};
+        // copy 
+        memcpy(table4.c, c, sizeof(double)*14);
+        memcpy(table4.cA, cA, sizeof(double)*11);
+        memcpy(table4.d, d, sizeof(double)*11);
+    }
     /**
      * - Pressure
      * 
@@ -2873,63 +2896,45 @@ namespace H2ONaCl
      * 
      * \image html HaliteCriticalCurves.svg "Critical pressure and composition." width=50%. 
      * Critical pressure (a,b) and composition (c,d) as function of temperature. (a,c) Full range, (b,d) the region just above the critical temperature of water
+     * \todo Critical pressure calculated by Eq. 5a is different (up to 9 bar) from boiling curve of pure water.
      */
     void cH2ONaCl::P_X_Critical(double T, double& P_crit, double& X_crit)
     {
-        // Table 4 of Driesner and Heinrich(2007)
-        double c[14] = {-2.36, 0.128534, -0.023707, 0.00320089, -0.000138917, 
-                        1.02789E-07, -4.8376E-11, 2.36, -0.0131417, 0.00298491,
-                        -0.000130114, 0, 0, -0.000488336};// c[11] and c[12] are calculated below
-        double cA[11] = {1, 1.5, 2, 2.5, 3, 4, 5, 1, 2, 2.5, 3};
-        // c[11] (c12 in Driesner and Heinrich(2007)) is the value of P_crit at 500 deg.C, calculated from eq. 5b.
-        // c[12] (c11) is the first temperature derivative of eq. 5b at 500 deg.C
-        for (size_t i = 7; i < 11; i++)
-        {
-            c[11] += c[i] * pow(500 - H2O::T_Critic, cA[i]); //the second term of eq. 5b in Drisner and Heinrich (2007)
-            c[12] += c[i] * cA[i] * pow(500 - H2O::T_Critic, cA[i] - 1); //the first temperature derivative of eq. 5b
-        }
-        c[11] = H2O::P_Critic + c[11];
-        double d[11] = {8E-05, 1E-05, -1.37125E-07, 9.46822E-10, -3.50549E-12, 6.57369E-15, 
-                        -4.89423E-18, 7.77761E-2, 2.7042E-4, -4.244821E-07, 2.580872E-10};
         // calculate critical pressure
         P_crit=0;
-        if(T < H2O::T_Critic)                        //eq. 5a
-        {
-            for (size_t i = 0; i < 7; i++)
-            {
-                P_crit += c[i]*pow(H2O::T_Critic - T, cA[i]);
+        if(T < H2O::T_Critic && T>=H2ONaCl::TMIN_C){
+            for (size_t i = 0; i < 7; i++){
+                P_crit += m_tab4_Driesner2007a.c[i]*pow(H2O::T_Critic - T, m_tab4_Driesner2007a.cA[i]); //eq. 5a. Note: this should give the same result as IAPWS for pure water.
             }
             P_crit+=H2O::P_Critic;
-        }else if(T >= H2O::T_Critic && T <= 500)     //eq. 5b
-        {
-            for (size_t i = 7; i < 11; i++)
-            {
-                P_crit += c[i]*pow(T - H2O::T_Critic, cA[i]);
+        }else if(T >= H2O::T_Critic && T <= 500){
+            for (size_t i = 7; i < 11; i++){
+                P_crit += m_tab4_Driesner2007a.c[i]*pow(T - H2O::T_Critic, m_tab4_Driesner2007a.cA[i]); //eq. 5b
             }
             P_crit+=H2O::P_Critic;
-        }else                                       //eq. 5c
-        {
-            for (size_t i = 11; i < 14; i++)
-            {
-                P_crit += c[i]*pow(T - 500, i-11);
+        }else if(T > 500 && T <= H2ONaCl::TMAX_C){
+            for (size_t i = 11; i < 14; i++){
+                P_crit += m_tab4_Driesner2007a.c[i]*pow(T - 500, i-11); //eq. 5c
             }
+        }else
+        {
+            cout<<WARN_COUT<<"T: "<<T<<" out of temperature range: ["<<H2ONaCl::TMIN_C<<", "<<H2ONaCl::TMAX_C<<"]"<<endl;
         }
          // calculate critical salinity
         X_crit = 0;
-        if (T>=H2O::T_Critic && T<=600)                  //eq. 7a
-        {
-            for (size_t i = 0; i < 7; i++)
-            {
-                X_crit += d[i]*pow(T - H2O::T_Critic, i+1);
+        if (T>=H2O::T_Critic && T<=600){
+            for (size_t i = 0; i < 7; i++){
+                X_crit += m_tab4_Driesner2007a.d[i]*pow(T - H2O::T_Critic, i+1); //eq. 7a
             }
-        }else                                           //eq. 7b
-        {
-            for (size_t i = 7; i < 11; i++)
-            {
-                X_crit += d[i]*pow(T - 600, i-7);
+        }else if(T > 600 && T <= H2ONaCl::TMAX_C){
+            for (size_t i = 7; i < 11; i++){
+                X_crit += m_tab4_Driesner2007a.d[i]*pow(T - 600, i-7); //eq. 7b
             }
+        }else if(T < H2ONaCl::TMIN_C || T > H2ONaCl::TMAX_C)
+        {
+            cout<<WARN_COUT<<"T: "<<T<<" out of temperature range: ["<<H2ONaCl::TMIN_C<<", "<<H2ONaCl::TMAX_C<<"]"<<endl;
         }
-    }
+    } 
     void cH2ONaCl::P_X_Critical(std::vector<double> T, std::vector<double>& P_crit, std::vector<double>& X_crit)
     {
         P_crit.resize(T.size());

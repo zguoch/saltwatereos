@@ -42,8 +42,8 @@
 //  Local constants.
 //======================================================================
 
-namespace
-{
+// namespace 
+// {
     //------------------------------------------------------------------
     //  The following machine constants are used in this method.
     //
@@ -68,7 +68,7 @@ namespace
     const float f_XX_INITIAL_VALUE = (float)(0.70710678);
     const float f_COSR_INITIAL_VALUE = (float)(-0.069756474);
     const float f_SINR_INITIAL_VALUE = (float)(0.99756405);
-};
+// };
 
 //======================================================================
 //  Constructor: PolynomialRootFinder::PolynomialRootFinder

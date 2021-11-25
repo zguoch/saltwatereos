@@ -3,3 +3,4 @@ __latex*.tex
 *.mo
 __pycache__
 parafoam_js
+source/doxygen

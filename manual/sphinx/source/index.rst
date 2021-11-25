@@ -87,6 +87,7 @@ swEOS User Manual
    Cookbooks/index.rst
    Benchmarks/index.rst
 
+
 .. bibliography:: manual.bib
     :cited: 
     :style: apa 

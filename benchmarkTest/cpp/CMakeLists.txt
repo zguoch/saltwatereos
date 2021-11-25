@@ -35,8 +35,8 @@ if(OPENMP_FOUND)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
-include_directories(../Library/include /usr/local/Cellar/libomp/11.0.0/include)
-link_directories("../Library/lib" "/usr/local/lib" "/Users/zguo/Qt/5.9.9/clang_64/lib")
+include_directories(../../Library/include /usr/local/Cellar/libomp/11.0.0/include /usr/local/Cellar/libomp/12.0.1/include)
+link_directories("../../Library/lib" "/usr/local/lib" "/Users/zguo/Qt/5.9.9/clang_64/lib")
 
 
 #2. Source code dir

@@ -1,11 +1,11 @@
 .. raw:: html
 
 	<body>
-	    <div id="0b7d0f2ceed7452e9b91a2372def6b10" class="chart-container" style="width:800px; height:450px;"></div>
+	    <div id="27dc1a0fdad94a629eb2a21452c762ef" class="chart-container" style="width:800px; height:450px;"></div>
 	    <script>
-	        var chart_0b7d0f2ceed7452e9b91a2372def6b10 = echarts.init(
-	            document.getElementById('0b7d0f2ceed7452e9b91a2372def6b10'), 'white', {renderer: 'canvas'});
-	        var option_0b7d0f2ceed7452e9b91a2372def6b10 = {
+	        var chart_27dc1a0fdad94a629eb2a21452c762ef = echarts.init(
+	            document.getElementById('27dc1a0fdad94a629eb2a21452c762ef'), 'white', {renderer: 'canvas'});
+	        var option_27dc1a0fdad94a629eb2a21452c762ef = {
 	    "animation": true,
 	    "animationThreshold": 2000,
 	    "animationDuration": 1000,
@@ -950,8 +950,7 @@
 	            "inverse": false,
 	            "offset": 0,
 	            "splitNumber": 5,
-	            "min": 373.946,
-	            "max": 1005.0,
+	            "min": 370.946,
 	            "minInterval": 0,
 	            "splitLine": {
 	                "show": false,
@@ -1018,8 +1017,6 @@
 	            "inverse": false,
 	            "offset": 0,
 	            "splitNumber": 5,
-	            "min": 0.0,
-	            "max": 13.554454479999999,
 	            "minInterval": 0,
 	            "splitLine": {
 	                "show": false,
@@ -1056,8 +1053,8 @@
 	                "pixelRatio": 6
 	            },
 	            "dataView": {
-	                "show": false,
-	                "title": "\u6570\u636e\u89c6\u56fe",
+	                "show": true,
+	                "title": "Show data",
 	                "readOnly": false,
 	                "lang": [
 	                    "\u6570\u636e\u89c6\u56fe",
@@ -1101,6 +1098,6 @@
 	        }
 	    }
 	};
-	        chart_0b7d0f2ceed7452e9b91a2372def6b10.setOption(option_0b7d0f2ceed7452e9b91a2372def6b10);
+	        chart_27dc1a0fdad94a629eb2a21452c762ef.setOption(option_27dc1a0fdad94a629eb2a21452c762ef);
 	    </script>
 	</body>

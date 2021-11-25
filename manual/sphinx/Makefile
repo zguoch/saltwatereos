@@ -22,7 +22,7 @@ help:
 html:
 	sphinx-intl build
 	sphinx-build -b $@ source build/$@/en
-	sphinx-build -b $@ source build/$@/zh -Dlanguage=zh
+	# sphinx-build -b $@ source build/$@/zh -Dlanguage=zh
 	cp index.html build/$@
 latex:
 	sphinx-intl build

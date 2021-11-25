@@ -22,7 +22,7 @@ buildPages:
   # sphinx manual
   # to use sphinxcontrib-bibtex, the sphinx version must be 1.6.7 or lower
     - pip install sphinx==1.6.7
-    - pip install sphinxcontrib-bibtex sphinx_inline_tabs sphinx_sitemap
+    - pip install sphinxcontrib-bibtex sphinx_inline_tabs sphinx_sitemap  #exhale  breathe
     - pip install sphinx-intl
     - pip install sphinx_copybutton
     # - pip install matplotlib

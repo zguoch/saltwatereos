@@ -31,14 +31,14 @@ using namespace std;
 namespace H2ONaCl
 {
     // ============= Constants of H2O-NaCl =======================================
-    double const PMIN = 5; /**< Minimum valid pressure of H2O, [bar]. */ 
-    double const PMAX = 2100; /**< Maximum valid pressure of H2O, [bar]. */ 
-    double const TMIN = 274.15; /**< Minimum valid pressure of H2O, [K].  */ 
-    double const TMAX = 1273.15; /**< Maximum valid pressure of H2O, [K]. */
-    double const TMIN_K = 274.15; /**< Minimum valid pressure of H2O, [K].  */ 
-    double const TMAX_K = 1273.15; /**< Maximum valid pressure of H2O, [K]. */ 
-    double const TMIN_C = 1; /**< Minimum valid pressure of H2O, [C].  */ 
-    double const TMAX_C = 1000; /**< Maximum valid pressure of H2O, [C]. */ 
+    double const PMIN = 5; /**< Minimum valid pressure of H2O-NaCl, [bar]. */ 
+    double const PMAX = 5000; /**< Maximum valid pressure of H2O-NaCl, [bar]. */ 
+    double const TMIN = 273.25; /**< Minimum valid pressure of H2O-NaCl, [K].  */ 
+    double const TMAX = 1273.15; /**< Maximum valid pressure of H2O-NaCl, [K]. */
+    double const TMIN_K = 273.25; /**< Minimum valid pressure of H2O-NaCl, [K].  */ 
+    double const TMAX_K = 1273.15; /**< Maximum valid pressure of H2O-NaCl, [K]. */ 
+    double const TMIN_C = 0.1; /**< Minimum valid temperature of H2O-NaCl, [C].  */ 
+    double const TMAX_C = 1000; /**< Maximum valid pressure of H2O-NaCl, [C]. */ 
     double const XMIN = 0;  /**< Minimum valid salinity, [mol fraction].  */ 
     double const XMAX = 1;  /**< Maximum valid salinity, [mol fraction].  */ 
     double const HMAX = 6E6; /**< Approximately maximum valid enthalpy, [J/kg]. It may be used to normize vtk output file data*/
@@ -64,7 +64,9 @@ namespace H2ONaCl
         f_STRUCT m_f;
         f_STRUCT init_f();
         bool m_colorPrint;
+        TABLE4 m_tab4_Driesner2007a; /**< Parameters for the critical curve Critical */
     private:
+        void createTable4_Driesner2007a(TABLE4& table4);
         /**
          * @brief Find phase region when (T,P,X) is given.
          * 
@@ -122,6 +124,27 @@ namespace H2ONaCl
         NaCl::cNaCl m_NaCl;
         H2ONaCl::MAP_PHASE_REGION m_phaseRegion_name;
         H2ONaCl::PROP_H2ONaCl m_prop;
+    // ========================== benchmark test have been done ====================
+        /**
+         * @brief Critical curve of NaCl-H2O system. It can be evaluated into three segments, see equation (5) - (7) of reference \cite Driesner2007Part1. 
+         * 
+         * 
+         * @param T Input temperature, [\f$ ^{\circ}\text{C} \f$]
+         * @param P_crit Output critical pressure, [bar]
+         * @param X_crit Output critical salinity, [Mole fraction of NaCl]
+         * 
+         */
+        void P_X_Critical(double T, double& P_crit, double& X_crit);
+        /**
+         * @brief Array version.
+         * 
+         * @param T 
+         * @param P_crit 
+         * @param X_crit 
+         */
+        void P_X_Critical(std::vector<double> T, std::vector<double>& P_crit, std::vector<double>& X_crit);
+    // ==================================================================================================================
+
         inline string getPhaseRegionName(PhaseRegion regionID){return m_phaseRegion_name[regionID];};
         /**
          * @brief Calculate thermal dynamic properties of NaCl-H2O system.
@@ -175,18 +198,6 @@ namespace H2ONaCl
          * @return string 
          */
         string CheckRanges_H_X(double HMIN0, double HMAX0, double Xrange[2], double P0);
-
-        /**
-         * @brief Critical curve of NaCl-H2O system. It can be evaluated into three segments, see equation (5) - (7) of reference \cite Driesner2007Part1. 
-         * 
-         * 
-         * @param T Input temperature, [\f$ ^{\circ}\text{C} \f$]
-         * @param P_crit Output critical pressure, [bar]
-         * @param X_crit Output critical salinity, [Mole fraction of NaCl]
-         * 
-         */
-        void P_X_Critical(double T, double& P_crit, double& X_crit);
-        void P_X_Critical(std::vector<double> T, std::vector<double>& P_crit, std::vector<double>& X_crit);
 
         /**
          * @brief Calculate critical T given P

@@ -58,8 +58,8 @@ namespace H2O
     double const TMIN = 0.1; /**< Minimum valid pressure of H2O, [\f$ ^{\circ}\text{C} \f$]. IAPWS-95 */ 
     double const TMAX = 1000; /**< Minimum valid pressure of H2O, [\f$ ^{\circ}\text{C} \f$]. IAPWS-95 */ 
     // double const P_Critic_MPa = 22.064; /**< Pressure at critical point of H2O, [MPa]. IAPWS-95 */
-    double const T_Critic_K = 647.096; /**< Temperature at critical point of H2O, [K]. IAPWS-95 */ 
-    double const P_Critic = 220.64; /**< Pressure at critical point of H2O, [bar]. IAPWS-95 */
+    double const T_Critic_K = 647.096; /**< Temperature at critical point of H2O, [K]. IAPWS-95 \todo Critical temperature in Driesner(2007) is 373.976 deg.C (647.126 K) */ 
+    double const P_Critic = 220.64; /**< Pressure at critical point of H2O, [bar]. IAPWS-95 \todo Critical pressure of H2O in IAPWS-IF97 is 22.064 MPa, but in Driesner(2007) is 22.054915 MPa (should be IAPS-84 table) */
     double const T_Critic = T_Critic_K - Kelvin; /**< Temperature at critical point of H2O, [\f$^{\circ}\text{C} \f$]. IAPWS-95 */ 
     double const Rho_Critic = 322; /**< Critical density, [\f$ kg \ m^{-3} \f$]. IAPWS-95 */ 
 
@@ -330,6 +330,7 @@ namespace H2O
          * @return double Pressure [bar]
          */
         double BoilingCurve(double T);
+        void BoilingCurve(std::vector<double> T, std::vector<double>& p_Boiling);
         /**
          * @brief Melting-Pressure. \b Solid-Liquid phase boundary. See equation (2.16) of reference \cite wagner2002iapws.
          * 

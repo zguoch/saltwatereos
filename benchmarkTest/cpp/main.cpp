@@ -335,38 +335,12 @@ void test_HaliteMelting()
 void test_CriticalPressure_Composition()
 {
   H2ONaCl::cH2ONaCl eos;
-  // full range
+  double dT = (H2ONaCl::TMAX_C - H2O::T_Critic)/100;
+  for (double T = H2O::T_Critic; T <= H2ONaCl::TMAX_C; T=T+dT)
   {
-    string filename="HaliteCritical_P_X_fullrange.dat";
-    ofstream fout(filename);
-    if(!fout)
-    {
-      cout<<"Open file failed: "<<filename<<endl;
-    }
-    for (double T = H2O::T_Critic; T <= 1000; T=T+10)
-    {
-      double P,X;
-      eos.P_X_Critical(T,P,X);
-      fout<<T<<" "<<P<<" "<<X<<endl;
-    }
-    fout.close();
-  }
-  
-  // close to critical temperature of water
-  {
-    string filename="HaliteCritical_P_X_closeWaterCriticalT.dat";
-    ofstream fout(filename); 
-    if(!fout)
-    {
-      cout<<"Open file failed: "<<filename<<endl;
-    }
-    for (double T = H2O::T_Critic; T <= 460; T=T+10)
-    {
-      double P,X;
-      eos.P_X_Critical(T,P,X);
-      fout<<T<<" "<<P<<" "<<X<<endl;
-    }
-    fout.close();
+    double P,X;
+    eos.P_X_Critical(T,P,X);
+    cout<<T<<" "<<P<<" "<<X<<endl;
   }
 }
 
@@ -680,9 +654,30 @@ void test_writeVLH_surface_XHP()
   H2ONaCl::cH2ONaCl sw;
   sw.writePhaseSurface_XHP(1, 1.0/H2ONaCl::HMAX, 1.0/H2ONaCl::PMAX, "PhaseBoundary_PHX");
 }
+void help()
+{
+  cout<<"Please select one of the following number"<<endl;
+  cout<<"1 Critical pressure and salinity given temperature"<<endl;
+  exit(0);
+}
 int main( int argc, char** argv )
 {
-  std::cout<<"开始测试计算"<<std::endl;
+  std::cout<<"---Benchmark test start ---"<<std::endl;
+  if(argc!=2)help();
+
+  int index = atoi(argv[1]);
+  switch (index)
+  {
+  case 1:
+    test_CriticalPressure_Composition();
+    break;
+  
+  default:
+    help();
+    break;
+  }
+  std::cout<<"---Benchmark test end ---"<<std::endl;
+  return 0;
   // test_CriticalPressure_Composition();
   // test_SublimationBoiling();
   // test_HaliteMelting();
@@ -708,7 +703,5 @@ int main( int argc, char** argv )
   // test_VaporLiquidCoexistSurface();
   // test_findPhaseRegion_TPX(500, 400, 40);
   // test_NaClH2O_props_p0hx(300);
-  test_writeVLH_surface_XHP();
-
-  std::cout<<"测试计算完毕"<<std::endl;
+  // test_writeVLH_surface_XHP();
 }

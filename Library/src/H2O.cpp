@@ -244,6 +244,16 @@ namespace H2O
         double Rho_Vapor_sat = Rho_Vapor_Saturated(T);
         return Pressure_T_Rho(T, Rho_Vapor_sat);
     }
+    void cH2O::BoilingCurve(std::vector<double> T, std::vector<double>& p_boiling)
+    {
+        p_boiling.resize(T.size());
+        double Rho_Vapor_sat = 0;
+        for (size_t i = 0; i < T.size(); i++)
+        {
+            Rho_Vapor_sat = Rho_Vapor_Saturated(T[i]);
+            p_boiling[i] = Pressure_T_Rho(T[i], Rho_Vapor_sat);
+        }
+    }
     double cH2O::Rho(double T, double P)
     {//DEBUG: Rho_Water# in water_prop.vb
         double T_K = T + Kelvin;

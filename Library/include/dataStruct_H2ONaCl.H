@@ -73,7 +73,10 @@ namespace H2ONaCl
         double f[11];
         double sum_f10;
     };
-
+    struct TABLE4
+    {
+        double c[14], cA[11], d[11];
+    };
 }
 
 #endif

@@ -16,6 +16,14 @@
 
 .. _download page of Linux installer of swEOS: https://www.sweos.info/linux/
 
+.. _P_X_Critical: ../../../../../../doxygen/html/classH2ONaCl_1_1cH2ONaCl.html#a934dc3bd8b6a41f8968fee3fb539044d
+
+.. _TSat_P: https://iapws.readthedocs.io/en/latest/iapws.iapws97.html#iapws.iapws97._TSat_P
+
+.. |TSat_P| replace:: `TSat_P`_
+
+.. |P_X_Critical| replace:: `P_X_Critical`_
+
 .. |vs2017| replace:: `Visual Studio 2017 Community`_
 
 .. |ssd| replace:: :math:`^{\circ}\text{C}`

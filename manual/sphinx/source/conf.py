@@ -45,8 +45,16 @@ extensions = ['sphinx.ext.mathjax',
             'sphinx.ext.ifconfig',
             'sphinx_inline_tabs',
             "sphinx_copybutton",
+            # "breathe",
+            # "exhale",
             # 'plot_directive',
             'sphinxcontrib.bibtex']
+
+# configure exhale and breathe for doxygen
+
+# =======================================
+
+
 source_encoding = 'utf-8-sig'
 source_suffix = '.rst'
 master_doc = 'index'
@@ -58,7 +66,7 @@ plot_basedir='Cookbooks/python'
 # prop = font_manager.FontProperties(fname=path)
 # plot_rcparams={'font.family':prop.get_name(),'mathtext.fontset':'cm'}
 # plot_html_show_source_link=True
- 
+
 # internationalization
 language = 'en'
 locale_dirs = ['locale/']
@@ -155,6 +163,7 @@ html_context = {
 # favicon of the docs
 html_favicon = "_static/logo.png"
 html_static_path = ['_static']
+exclude_patterns = ['doxygen']
 html_last_updated_fmt = '%b %d, %Y'
 # If true, links to the reST sources are added to the pages.
 html_logo = "_static/logo_beta.png" 

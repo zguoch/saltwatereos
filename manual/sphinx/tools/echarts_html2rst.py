@@ -54,7 +54,7 @@ def echarts_html2rst_dir(htmlDir):
     for file in os.listdir(htmlDir):
         if(file.split('.')[-1]=='html'):
             echarts_html2rst('%s/%s'%(htmlDir,file))
-            print('%s processed'%(file))
+            print('%s processed'%(file.replace('.html','')))
 def main(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--save', help='save animation',action='store_true')

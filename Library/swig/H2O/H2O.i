@@ -4,6 +4,22 @@
     #include "H2O.H"
 %}
 
+%include std_string.i
+%include std_vector.i
+// ===== This is required for python API but js seems doesn't need it========
+namespace std {
+   %template(IntVector) vector<int>;
+   %template(DoubleVector) vector<double>;
+   %template(StringVector) vector<string>;
+   %template(ConstCharVector) vector<const char*>;
+}
+// ========================================================================
+%inline %{
+using namespace std;
+%}
+%include "typemaps.i"
+%apply std::vector<double> *OUTPUT {std::vector<double>& p_boiling};
+
 namespace H2O
 {
     /**
@@ -159,6 +175,7 @@ namespace H2O
          * @return double Pressure [bar]
          */
         double BoilingCurve(double T);
+        void BoilingCurve(std::vector<double> T, std::vector<double>& p_boiling);
         /**
          * @brief Melting-Pressure. \b Solid-Liquid phase boundary. See equation (2.16) of reference \cite wagner2002iapws.
          * 
