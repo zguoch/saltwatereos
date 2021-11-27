@@ -10,3 +10,6 @@ doxygen/latex
 latex/
 readme.html
 *.pyc
+ThirdParties/p4est-2.8/build
+ThirdParties/p4est-2.8/local
+ThirdParties/p4est-2.8/

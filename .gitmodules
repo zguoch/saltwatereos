@@ -1,3 +1,0 @@
-[submodule "ThirdParties/p4est"]
-	path = ThirdParties/p4est
-	url = https://github.com/cburstedde/p4est.git
