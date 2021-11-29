@@ -135,6 +135,8 @@ static void write2vtk (p4est_t * p4est)
   /* create VTK output context and set its parameters */
   context = p4est_vtk_context_new (p4est, filename);
   p4est_vtk_context_set_scale (context, 0.99);  /* quadrant at almost full scale */
+  p4est_geometry_t *geom;
+  p4est_vtk_context_set_geom (context, geom);
   /* begin writing the output files */
   context = p4est_vtk_write_header (context);
   SC_CHECK_ABORT (context != NULL, P4EST_STRING "_vtk: Error writing vtk header");

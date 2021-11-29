@@ -18,7 +18,7 @@ include_directories(${P4EST_INCLUDE_DIR})
 link_directories(${P4EST_LIB_DIR})
 aux_source_directory(. SRC_MAIN)
 
-list(APPEND Examples step1 step2 step3)
+list(APPEND Examples step1 step2 step3 step4)
 foreach(example IN LISTS Examples)
     message(STATUS "example ${example}")
     add_executable(${example}  ${example}.cpp)
