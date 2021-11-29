@@ -11,14 +11,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(P4EST_ROOT "../../ThirdParties/p4est-2.8/local")
 set(P4EST_INCLUDE_DIR "${P4EST_ROOT}/include")
 set(P4EST_LIB_DIR "${P4EST_ROOT}/lib")
-list(APPEND P4EST_LIBS p4est) #sc: maybe don't need sc if do not use MPI
+list(APPEND P4EST_LIBS p4est sc)
 
 #2. add p4est include and lib dir
 include_directories(${P4EST_INCLUDE_DIR})
 link_directories(${P4EST_LIB_DIR})
 aux_source_directory(. SRC_MAIN)
 
-list(APPEND Examples step1 )
+list(APPEND Examples step1 step2 step3)
 foreach(example IN LISTS Examples)
     message(STATUS "example ${example}")
     add_executable(${example}  ${example}.cpp)
