@@ -1,0 +1,6640 @@
+2021-09-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Nuke autom4te.cache in bootstrap
+
+2021-09-14  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge 'feature-darwin-ci' into prev3-develop
+
+2021-09-14  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2021-09-14  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'fix-qsort_r-darwin' into develop
+
+2021-09-14  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Put qsort_r and fabs defines into template
+
+2021-09-09  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : fabs check for CMake
+
+2021-09-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Tweak CI titles and names
+
+2021-09-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge 'fix-qsort_r-darwin' into feature-darwin-ci
+
+2021-09-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Smooth over fabs link test
+
+2021-09-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : White space on darwin CI script
+
+2021-09-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Smooth out qsort_r configure checks
+
+2021-09-04  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : one last check for AC_SEARCH_LIBS
+
+2021-09-04  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : fabs link test does not depend on the OS
+
+2021-09-04  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : sanity check 8
+
+2021-09-04  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : sanity check 7
+
+2021-09-04  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : sanity check 6
+
+2021-09-04  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : sanity check 5
+
+2021-09-04  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : CMake now checks for qsort_r prototype definition
+
+2021-09-04  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : minor fixes for CMake check prototype function
+
+2021-09-04  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : adding prototype check for qsort_r on CMake
+
+2021-09-03  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : fabs link check 1
+
+2021-09-03  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : testing new CMake features
+
+2021-09-03  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : checking if the new macros have been assigned
+
+2021-09-03  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : sanity check 4
+
+2021-09-03  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : testing new macros for CMake
+
+2021-09-03  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : sanity check 3
+
+2021-09-03  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : sanity check 2
+
+2021-09-03  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : using existing macros
+
+2021-09-03  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : sanity check 1
+
+2021-09-03  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : seeing if #ifdef works
+
+2021-09-03  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : Checking if _GNU_SOURCE fixes qsort_r not found on linux CMake
+	builds
+
+2021-09-03  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : CMake qsort_r fix for linux builds
+
+2021-08-31  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : CMake and macOS compatibility
+
+2021-08-31  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : some additional files
+
+2021-08-31  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : essential darwin ci files
+
+2021-08-26  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : qsort_r warning fix
+
+2021-07-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2021-07-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : doc/authors: white space
+
+2021-06-28  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Simplify bootstrap using autoreconf
+
+2021-07-02  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge pull request #48 from gghosh8495/fix-timeofday  libsc: add
+	struct timezone to gettimeofday replacement
+
+2021-07-02  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : timeofday with indentation
+
+2021-07-02  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : timeofday without indentation
+
+2021-06-28  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge pull request #46 from gghosh8495/develop  Fix for CI
+	warnings
+
+2021-06-28  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : Adding doc/author_ghosh.txt
+
+2021-06-28  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : sc: add sc_v4l2.m4 to distribution
+
+2021-06-25  Gautam Ghosh <ghosh@ins.uni-bonn.de>
+
+	* : Fix for CI warnings
+
+2021-06-14  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2021-06-14  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-check-v4l2' into develop
+
+2021-06-14  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove NULL warning from configure check
+
+2021-06-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Check for linux version >= 4 in v4l2 config
+
+2021-06-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update v4l2 configure check for strictness
+
+2021-05-19  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-cmake' into prev3-develop
+
+2021-04-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge pull request #42 from scivision/feature-cmake  CMake:
+	improve install
+
+2021-04-29  Michael Hirsch <scivision@users.noreply.github.com>
+
+	* : cmake: update and use presets in CI
+
+2021-04-29  Michael Hirsch <scivision@users.noreply.github.com>
+
+	* : cmake: install findsc
+
+2021-04-29  Michael Hirsch <scivision@users.noreply.github.com>
+
+	* : cmake: remove unused parameters
+
+2021-04-28  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge pull request #41 from mkirilin/feature-cmake  Feature
+	cmake: Thanks! Will update p4est/sc submodule on my end.
+
+2021-04-22  Mikhail Kirilin <kirilin@ins.uni-bonn.de>
+
+	* : cmake: restore option(mpi "use MPI" off)
+
+2021-04-02  Mikhail Kirilin <kirilin@ins.uni-bonn.de>
+
+	* : ci: change -Dmpi and -Dopenmp fields for launching
+
+2021-04-02  Mikhail Kirilin <kirilin@ins.uni-bonn.de>
+
+	* : cmake: mpi and openmpi are disabled by default
+
+2021-03-31  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-cmake' into prev3-develop
+
+2021-03-29  Mikhail Kirilin <kirilin@ins.uni-bonn.de>
+
+	* : Add SC_ENABLE_DEBUG in CMake config
+
+2021-03-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Lowercase sc_memalign help string
+
+2021-03-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2021-03-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update to latest ax_prefix_config_h.m4
+
+2021-03-10  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Catch further corner cases in ax_split_version
+
+2021-03-10  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Default point version to 0 if not matched
+
+2021-03-10  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update to current AX_SPLIT_VERSION
+
+2021-03-04  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-cmake' into prev3-develop
+
+2021-03-04  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2021-03-04  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Provide recursive make target justlibs
+
+2021-03-04  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Use tweak version .999 to indicate dirty source
+
+2021-03-04  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Minor white space in cmake files
+
+2021-03-02  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Reformat ci script
+
+2021-03-02  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Swap two lines in autotools .pc template
+
+2021-03-02  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Use libsc as name .pc and .tar.gz prefix
+
+2021-03-02  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Use build-aux/git-version-gen to identify version
+
+2021-03-01  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2021-03-01  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Improve pkg-config metadata
+
+2021-03-01  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-config' into develop
+
+2021-03-01  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Look for generated headers in config and src
+
+2021-02-25  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-cmake' into prev3-develop
+
+2021-02-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Expose config directory to parent modules
+
+2021-02-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Create autotools config header under config
+
+2021-02-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix a typo
+
+2021-02-24  Michael Hirsch <scivision@users.noreply.github.com>
+
+	* : cmake/sc_config.h.in  put all non-CMakeLists.txt under cmake/
+
+2021-02-24  Michael Hirsch <scivision@users.noreply.github.com>
+
+	* : cmake default install build/.local
+
+2021-02-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-cmake' into prev3-develop
+
+2021-02-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2021-02-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove leading 'v' from cmake pkg version
+
+2021-02-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Further align pkgconfig metadata
+
+2021-02-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add CMakePresets.json to automake dist
+
+2021-02-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'master' into develop
+
+2021-02-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge pull request #36 from cristianomalossi/patch-1  Create
+	author_malossi.txt
+
+2021-02-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge pull request #35 from holke/feature-holke_author_file  Add
+	author file for Holke
+
+2021-02-23  Michael Hirsch <scivision@users.noreply.github.com>
+
+	* : libb64 cmake object library
+
+2021-02-23  Michael Hirsch <scivision@users.noreply.github.com>
+
+	* : cmake: more effective install and export
+
+2021-02-23  Michael Hirsch <scivision@users.noreply.github.com>
+
+	* : pkg-config generated naming
+
+2021-02-23  Cristiano Malossi <acm@zurich.ibm.com>
+
+	* : Create author_malossi.txt  Releasing BG/Q optimizations under
+	FreeBSD license.
+
+2021-02-23  Johannes Holke <johannes.holke@dlr.de>
+
+	* : Add author file for Holke
+
+2021-02-23  Michael Hirsch <scivision@users.noreply.github.com>
+
+	* : iniparser object library
+
+2021-02-23  Michael Hirsch <scivision@users.noreply.github.com>
+
+	* : cmake use project name automatically
+
+2021-02-23  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove -release link option
+
+2021-02-23  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Use relative tolerance in double test
+
+2021-02-23  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge pull request #34 from rubendibattista/lic  Add licensing
+	stub6 of rdb
+
+2021-02-23  Michael Hirsch <scivision@users.noreply.github.com>
+
+	* : ci: package on release
+
+2021-02-23  Michael Hirsch <scivision@users.noreply.github.com>
+
+	* : consolidate CMake options
+
+2021-02-16  Michael Hirsch <scivision@users.noreply.github.com>
+
+	* : ci: check mpiexec exists
+
+2021-02-15  Michael Hirsch <scivision@users.noreply.github.com>
+
+	* : cmake: get version from git describe  cpack name format
+
+2021-02-15  Michael Hirsch <scivision@users.noreply.github.com>
+
+	* : generate pkg-config sc.pc  ci: allow longer timeout for
+	transient downlaods
+
+2021-02-23  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add SIZEOF definitions to sc_config_cmake.h.in
+
+2021-02-23  Ruben Di Battista <rubendibattista@gmail.com>
+
+	* : Add licensing stub
+
+2021-02-23  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Activate more SIZEOF checks for cmake
+
+2021-02-22  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2021-02-22  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Align make dist stale version check
+
+2021-02-19  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-pkg-config' into develop
+
+2021-02-19  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Move template Makefile to config/
+
+2021-02-19  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add URL and libsc_CC to .pc
+
+2021-02-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2021-02-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove .version mechanism for read-only source
+
+2021-02-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove unneeded git describe call
+
+2021-02-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Build system and email updates
+
+2021-02-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Rename to sc_config_autotools.h template
+
+2021-02-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make -j has its perils
+
+2021-02-16  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update to recent git-version-gen script
+
+2021-02-16  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-pkg-config' into develop
+
+2021-02-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : README update
+
+2021-02-16  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Depend on pkg-config for .pc install directory
+
+2021-02-16  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Versioned pkg-config .pc generation
+
+2021-02-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Minimal capitalization
+
+2021-02-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Capitalization in CI
+
+2021-02-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-cmake' into prev3-develop
+
+2021-02-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix a warning with pthreads
+
+2021-02-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add inistring files to CMake configuration
+
+2021-02-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Capitalization in CI names
+
+2021-02-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : README update
+
+2021-02-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'prev3-develop' into feature-cmake
+
+2021-02-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2021-02-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add dirty and tags options to ci describe
+
+2021-02-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Forgotten the other libb64 file
+
+2021-02-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Pragma to disable fallthrough warning in libb64
+
+2021-02-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Latest cleanup of iniparser
+
+2021-02-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Test CI for building tarball
+
+2021-02-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Simplify checks and inclusion dependencies
+
+2021-02-14  Michael Hirsch, Ph.D <scivision@users.noreply.github.com>
+
+	* : doc
+
+2021-02-14  Michael Hirsch, Ph.D <scivision@users.noreply.github.com>
+
+	* : add CMake Presets and use them in CI  ci_windows: install
+	mpiexec  cmake: avoid mpi test race condition. put install near
+	targts  ci windows msiexec separate step  ci: add cpack
+
+2021-02-14  Michael Hirsch, Ph.D <scivision@users.noreply.github.com>
+
+	* : config-time checks of MPI configuration
+
+2021-02-14  Michael Hirsch, Ph.D <scivision@users.noreply.github.com>
+
+	* : cmake compiler options like autotools
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge pull request #30 from scivision/feature-ci  Add CMake CI,
+	improve packaging
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Tweak README formatting
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update some names in CI scripts
+
+2021-02-12  Michael Hirsch, Ph.D <scivision@users.noreply.github.com>
+
+	* : enhance cmake packaging
+
+2021-02-12  Michael Hirsch, Ph.D <scivision@users.noreply.github.com>
+
+	* : add CMake CI workflow
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : README and CI updates
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Tweak README
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : White space in config/sc_v4l2.m4
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-v4l2' into develop
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-doc' into develop
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Store test-suite.log as artifact
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Check for V4L2_CAP_IO_MC to be defined
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into feature-v4l2
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-doc' into develop
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Extend CI script
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Accommodate UNKNOWN sc version
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : First attempt at continuous integration
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Rename README.md back to README
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Tweaks to README.md
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Rename README to README.md
+
+2021-02-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Extend README file
+
+2021-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Configure check for V4L2
+
+2021-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Default to infinite run time
+
+2021-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Play with pixel formats and colors
+
+2021-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Catch SIGINT
+
+2021-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Write image from main loop
+
+2021-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Select and write updates
+
+2021-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Paint image routine
+
+2021-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Setup main loop
+
+2021-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Query readwrite and streaming methods
+
+2021-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Clarify example and semantics
+
+2021-02-10  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Set errno when returning invalid format
+
+2021-02-10  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Check for image size
+
+2021-02-10  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Negotiate output format
+
+2021-02-10  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2021-02-10  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Begin configuring output
+
+2021-02-10  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Return outstring only when output supported
+
+2021-02-10  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Enumerate video outputs of device
+
+2021-02-10  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Query device capabilities
+
+2021-02-10  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Begin V4L2 code and example
+
+2021-02-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add to coding standards
+
+2021-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-cmake' into prev3-develop
+
+2021-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Name configuration input for autotools and cmake
+
+2021-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add cmake src/sc_config.h.in to tarball
+
+2021-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'prev3-develop' into feature-cmake
+
+2021-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2021-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Move PR template one up
+
+2021-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Rename PR template
+
+2021-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add pull request template
+
+2021-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Doc file updates
+
+2021-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Comment on tests in CONTRUBUTING
+
+2021-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove outdated branch doc file
+
+2021-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-doc' into develop
+
+2021-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add to README and CONTRIBUTING
+
+2021-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Rename issue templates with underscore
+
+2021-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Tweak issue templates
+
+2021-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'master' into feature-doc
+
+2021-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Work on coding standards
+
+2021-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Maybe no need to repeat the obvious
+
+2021-02-04  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update issue templates
+
+2021-02-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Safety code in sc_shmem.c
+
+2021-02-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : White space
+
+2021-02-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'mh/feature-cmake' into feature-cmake
+
+2021-02-01  Michael Hirsch, Ph.D <scivision@users.noreply.github.com>
+
+	* : doc compilers known working
+
+2021-01-28  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add cmake files to automake dist
+
+2021-01-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : README edits
+
+2021-01-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Non-functional
+
+2021-01-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Header simplifications
+
+2021-01-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : White space
+
+2021-01-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Initalize path pointers with _MSC_VER
+
+2021-01-28  Michael Hirsch <scivision@users.noreply.github.com>
+
+	* : windows time struct
+
+2021-01-26  Michael Hirsch, Ph.D <scivision@users.noreply.github.com>
+
+	* : add SC::SC imported target for easy use from other projects
+	cmake install option  accomodate CMake >= 3.13  use tests instead of
+	predefines  check if libm needed  use top-level check scope  improve
+	symbol finding  add more exapmles
+
+2021-01-30  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Further updates on contributing
+
+2021-01-30  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Edit coding standards
+
+2021-01-30  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add CONTRIBUTING guidelines
+
+2021-01-30  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add basic code of conduct
+
+2021-01-26  Michael Hirsch, Ph.D <scivision@users.noreply.github.com>
+
+	* : work with Intel Clang on Windows
+
+2021-01-26  Michael Hirsch, Ph.D <scivision@users.noreply.github.com>
+
+	* : implement CMake
+
+2021-01-28  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add cmake files to automake dist
+
+2021-01-28  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'prev3-develop' into feature-cmake
+
+2021-01-28  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Move unmaintained bugs directory into attic
+
+2021-01-28  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add src/sc3_mpi_types.h to distribution
+
+2021-01-28  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'mhirsch/feature-cmake' into feature-cmake
+
+2021-01-28  Michael Hirsch <scivision@users.noreply.github.com>
+
+	* : accomodate CMake >= 3.13
+
+2021-01-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : README edits
+
+2021-01-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Non-functional
+
+2021-01-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Header simplifications
+
+2021-01-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : White space
+
+2021-01-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Initalize path pointers with _MSC_VER
+
+2021-01-26  Michael Hirsch, Ph.D <scivision@users.noreply.github.com>
+
+	* : meta
+
+2021-01-26  Michael Hirsch, Ph.D <scivision@users.noreply.github.com>
+
+	* : cmake install option
+
+2021-01-26  Michael Hirsch, Ph.D <scivision@users.noreply.github.com>
+
+	* : add SC::SC imported target for easy use from other projects
+
+2021-01-26  Michael Hirsch, Ph.D <scivision@users.noreply.github.com>
+
+	* : work with Intel Clang on Windows
+
+2021-01-26  Michael Hirsch, Ph.D <scivision@users.noreply.github.com>
+
+	* : implement CMake
+
+2021-01-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2021-01-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add --disable-mpishared configure option
+
+2021-01-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Tweak MPI configure macros
+
+2021-01-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : More consistent unsigned ins use in containers
+
+2021-01-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add codespell script and fix comment typos
+
+2021-01-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2021-01-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Use sc_atoi throughout
+
+2021-01-06  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Enable BLAS/LAPACK prototype also for C code
+
+2020-11-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Minor tightening of tests
+
+2020-11-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add safe sc_atoi and sc_atol functions with test
+
+2020-11-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Take out redefinitions of math constants
+
+2020-11-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Extend doxygen coverage of sc.h
+
+2020-11-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge pull request #26 from ranocha/feature-version-functions
+	Feature version functions
+
+2020-11-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update log output in test_verison.c
+
+2020-11-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove sc_version_point due to autoconf macros
+
+2020-11-21  Hendrik Ranocha <mail@ranocha.de>
+
+	* : update license header of test_version.c to SC3
+
+2020-11-21  Hendrik Ranocha <mail@ranocha.de>
+
+	* : move SC_TOSTRING to sc.h
+
+2020-11-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Work on macros and their documentation
+
+2020-11-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge pull request #25 from ranocha/feature-version-functions
+	Feature version functions
+
+2020-11-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Tiny tweaks on namespace and simplification
+
+2020-11-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Backport feature-sc3 mpi wrapping
+
+2020-11-18  Hendrik Ranocha <mail@ranocha.de>
+
+	* : run scindent
+
+2020-11-18  Hendrik Ranocha <mail@ranocha.de>
+
+	* : add function sc_version_point
+
+2020-11-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge pull request #24 from ranocha/feature-version-functions
+	Feature version functions
+
+2020-11-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remembered indent is inconclusive on attributes
+
+2020-11-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge pull request #22 from pkestene/develop-git-ignore  Make
+	git ignore files generated by autotools
+
+2020-11-18  Hendrik Ranocha <mail@ranocha.de>
+
+	* : run scindent on modified .h and .c files
+
+2020-11-18  Hendrik Ranocha <mail@ranocha.de>
+
+	* : add doc/author_ranocha.txt with license statement
+
+2020-11-17  Hendrik Ranocha <mail@ranocha.de>
+
+	* : add functions returning the full/major/minor version of libsc
+
+2020-11-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Don't check for lua since it's moved to attic
+
+2020-11-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2020-10-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-lua53' into develop
+
+2020-10-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Include lua 5.3 headers if found
+
+2020-10-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2020-10-14  Pierre Kestener <pkestene@cea.fr>
+
+	* : make git ignore files generated by autotools
+
+2020-09-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-sc_uint128_t' into develop
+
+2020-09-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Document true/false return value according to C
+
+2020-09-12  Tim Griesbach <tim.griesbach@uni-bonn.de>
+
+	Merge branch 'develop' into feature-sc_uint128_t
+
+2020-09-12  Tim Griesbach <tim.griesbach@uni-bonn.de>
+
+	* : Implement sc_uint128_chk_bit
+
+2020-09-10  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-sc_uint128_t' into develop
+
+2020-09-10  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Don't cast function pointer to object pointer
+
+2020-08-06  Tim Griesbach <tim.griesbach@uni-bonn.de>
+
+	* : Add assertions (NULL pointers)
+
+2020-06-25  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2020-06-25  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-psort' into develop
+
+2020-06-25  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Bump verify limit to 100000 in test_sort
+
+2020-06-25  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix and improve output/verify logic in test_sort
+
+2020-06-25  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Rename author file
+
+2020-06-15  hossein <haghakha@buffalo.edu>
+
+	* : added doc/aghakhani.txt
+
+2020-04-04  hossein <haghakha@buffalo.edu>
+
+	* : making minor changes and activate test/test_sort.c
+
+2019-03-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make sc_psort thread-safe if possible
+
+2020-06-25  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Revert "Merge branch 'feature-psort' into develop"  This reverts
+	commit dc79a45ec0b124c989913a674a27ead4f5836abd, reversing changes
+	made to 82c9099feec844fccada7a6f17d0501178646c97.
+
+2020-06-25  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2020-06-25  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-psort' into develop
+
+2020-06-25  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Bump verify limit to 100000 in test_sort
+
+2020-06-25  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix and improve output/verify logic in test_sort
+
+2020-06-25  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Rename author file
+
+2020-06-15  hossein <haghakha@buffalo.edu>
+
+	* : added doc/aghakhani.txt
+
+2020-04-04  hossein <haghakha@buffalo.edu>
+
+	* : making minor changes and activate test/test_sort.c
+
+2020-06-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-sc_uint128_t' into develop
+
+2020-06-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove trailing white space in comments
+
+2020-06-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Indentation
+
+2020-06-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Function rename and edit some comments in uint128
+
+2020-06-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Put newly written libsc code under BSD license
+
+2020-05-27  Pierre Kestener <pierre.kestener@cea.fr>
+
+	* : update AC_CHECK_LIB for lua to check the same lua versions as in
+	AC_CHECK_HEADERS
+
+2020-04-10  Tim Griesbach <tim.griesbach@uni-bonn.de>
+
+	* : Documentation and assertions
+
+2020-04-08  Tim Griesbach <tim.griesbach@uni-bonn.de>
+
+	* : Change indention and whitespaces
+
+2020-04-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge 'feature-blas-attic' into prev3-develop
+
+2020-04-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2020-04-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Backport iniparser safety fixes from sc3
+
+2020-04-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove some warnings
+
+2020-03-25  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Edits on sc_uint128 conventions
+
+2020-03-25  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Whitespace changes
+
+2020-03-20  Tim Griesbach <tim.griesbach@uni-bonn.de>
+
+	* : Modify and extend uint128_t
+
+2020-03-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Move more unmaintained files into attic
+
+2020-03-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Disable configure logic in oudated scripts
+
+2020-03-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Move dmatrix tests into attic
+
+2020-03-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Move unmaintained code into attic
+
+2020-02-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove old lint configure logic
+
+2020-03-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove dependency on the lua scripting language
+
+2020-03-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove dependency on obstack
+
+2020-03-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2020-03-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Don't touch USR2 signal
+
+2020-02-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Provide non-aborting memory check and finalize
+
+2020-01-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Modify the uint128_t interface a bit
+
+2019-11-18  Tim Griesbach <tim.griesbach@uni-bonn.de>
+
+	* : Upload author_griesbach.txt
+
+2019-11-18  Tim Griesbach <tim.griesbach@uni-bonn.de>
+
+	* : Implement sc_uint128_t
+
+2019-11-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'fix-bypass-memcounters' into prev3-develop
+
+2019-11-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop-no-fortran' into prev3-develop
+
+2019-11-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into prev3-develop
+
+2019-11-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Configure switch to disable internal counters
+
+2019-11-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Reformat memalign configure help string
+
+2019-11-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Do not call CXX configuration
+
+2019-10-16  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'master' into develop
+
+2019-10-16  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : White space
+
+2019-10-16  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge pull request #12 from rubendibattista/m4_files  Add
+	missing m4 files to be installed w/ libsc
+
+2019-10-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Recognize environment variable MPIRUN for tests
+
+2019-10-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Provide paranoid function to fclose a file
+
+2019-07-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add sc_mpi_read
+
+2019-06-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-notify-payload' into develop
+
+2019-03-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove fortran configure variable output
+
+2019-03-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Honor SC_NOCOUNT_REFCOUNT and SC_NOCOUNT_LOGINDENT
+
+2019-03-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Disable malloc and free count access on #define
+
+2019-03-11  Nathan X. Marshak <n8xm@protonmail.com>
+
+	* : Licesned my contribution under BSD
+
+2019-03-11  Nathan X. Marshak <n8xm@protonmail.com>
+
+	* : Bypass memory counters if SC_NOCOUNT_MALLOC is passed
+
+2019-03-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make sc_psort thread-safe if possible
+
+2019-03-08  Ruben Di Battista <ruben.di-battista@polytechnique.edu>
+
+	* : Add missing m4 files to be installed w/ libsc
+
+2016-06-13  Toby Isaac <tisaac@uchicago.edu>
+
+	* : version of sc for PETSc's p4est to build without fortran support
+
+
+2019-02-25  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge 'tisaac/feature-notify-payload' into
+	feature-notify-payload
+
+2019-02-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add to NEWS
+
+2019-02-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'fix-init-node-comm' into prev3-master
+
+2019-02-24  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : sc_notify: fix shadow warnings
+
+2019-02-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove some warnings without debug
+
+2019-02-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix some bugs in notify after brainstorm
+
+2019-02-17  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : points in the code to allow support checks for notify
+
+2019-02-17  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : sc_flops: add PAPI avoiding interface, used in notify
+
+2019-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Propose sc_notify_ext as default functionality
+
+2019-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Temporarily disable undecided notify features
+
+2019-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make test_notify compile with C++
+
+2019-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add casts to conform to C++ compiler
+
+2019-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Typedef the compute_superset callback function
+
+2019-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Compatibility with non-MPI compile
+
+2019-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into feature-notify-payload
+
+2019-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-random' into develop
+
+2019-02-06  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Tiny update to Box Muller for symmetry
+
+2019-02-06  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Cleanup random number functions
+
+2019-02-06  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update white space in sc_statistics output
+
+2019-02-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Don't call memcpy or memmove on zero sizes
+
+2019-02-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add sc_array_copy_into, sc_array_move_part
+
+2019-01-31  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Include sc_obstack only when needed
+
+2019-01-31  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add destroy_null for mempool and hash
+
+2019-01-31  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add sc_array_index_null and destroy_null
+
+2019-01-31  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add integer exponentiation of doubles
+
+2019-01-31  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add pseudo random generator
+
+2019-01-31  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-mstamp' into develop
+
+2018-09-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix C++ warning
+
+2018-09-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Extend sc_test_array wrt. sc_mstamp_t
+
+2018-09-14  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Test mstamp code in sc_test_arrays
+
+2018-09-14  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make mstamp code nicer and improve docs
+
+2018-09-14  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Activate new mstamp in mempool
+
+2018-09-14  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add sc_mstamp_truncate and clean up
+
+2018-09-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Write mstamp container for efficient allocation  We are hoping
+	to replace the GNU obstack structure with it.
+
+2018-09-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Tweak includes in sc_obstack
+
+2018-09-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Silence warning from which glibtoolize
+
+2018-09-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Initialize output variables in stats
+
+2018-09-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add meaningful content to NEWS
+
+2018-09-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-polynom' into develop
+
+2018-09-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-stats-prio' into develop
+
+2018-09-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Save a multiplication
+
+2018-09-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Use a more stable computation of square roots
+
+2018-08-31  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Give stats ext functions option to deep copy name
+
+2018-08-31  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Give stats ext functions option to deep copy name
+
+2018-07-16  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : sc_flops: convenience macros for timing a function
+
+2018-07-14  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Optimize quadratic root finding
+
+2018-07-12  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : sc_notify: delay destroying extra_receivers for debugging
+	purposes
+
+2018-07-11  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : sc_notify: added superset implementation
+
+2018-07-10  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : sc_notify: fix nary width initialization
+
+2018-07-10  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : sc_notify: added nonblocking collective implementation
+
+2018-07-10  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : sc_notify: added nonblocking collective implementation
+
+2018-07-10  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : sc_notify: added remote summation implementation  Also share
+	code between census implementations
+
+2018-07-09  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : wip
+
+2018-07-09  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : sc_notify: remove spurious early returns
+
+2018-07-09  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : sc_notify: added pushing/popping stats
+
+2018-07-09  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : sc_notify: expose type strings in header
+
+2018-07-09  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : sc_notify_payload: make separate in_payload and out_payload an
+	option.
+
+2018-07-03  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : wip
+
+2018-07-02  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : sc_notify: ranges implementation
+
+2018-07-02  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : rename
+
+2018-06-29  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : sc_notify_payload: add sorted argument
+
+2018-06-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into feature-polynom
+
+2018-06-29  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : sc_notify: added personalized consensus implementation
+
+2018-06-28  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : sc_notify: added sc_notify_payloadv()
+
+2018-06-28  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : sc_notify_payload(): allow different payload sizes
+
+2018-06-27  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : added alltoall implementation of sc_notify_payload()
+
+2018-06-27  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : sc_notify: create controller type
+
+2018-06-27  Toby Isaac <tisaac@cc.gatech.edu>
+
+	* : silo nary
+
+2018-06-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-stats-prio' into develop
+
+2018-06-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Move _ext calls up in sc_statistics.c
+
+2018-06-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make sc_stats_set1_ext available
+
+2018-06-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add to sc_statistics API
+
+2018-06-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Filter stats also for reduced output
+
+2018-06-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Provide define to query sc_init actions
+
+2018-06-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Supply missing compatibility definitions
+
+2018-06-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Activate filter of stats by group and prio
+
+2018-06-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Complete on group and prio stats API
+
+2018-06-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Prepare group and priority in sc_statistics
+
+2018-06-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Node communicators no longer called in sc_init
+
+2018-06-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add convenience function to get/attach node comm
+
+2018-06-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Node communicator functions require configure test
+
+2018-06-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Simplify behavior of MPI replacement functions
+
+2018-06-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Use sc_MPI prefix throughout in sc_mpi.c
+
+2018-05-06  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into feature-polynom
+
+2018-05-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-notify-nary' into develop
+
+2018-05-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add line to docs of sc_notify_ext
+
+2017-12-28  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Tweaks
+
+2017-12-28  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Use arrays as parameters for sc_notify_ext
+
+2017-12-22  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Use sc_array_init_count
+
+2017-12-22  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into feature-notify-nary
+
+2017-12-22  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Change order of statistics in test_notify
+
+2017-12-22  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Doc tweak
+
+2017-12-22  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Test payload in sc_notify_ext
+
+2017-12-22  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Implement payload for sc_notify_ext
+
+2017-12-22  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Prepare payload for sc_notify_ext
+
+2017-12-22  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Work on docs of sc_notify
+
+2017-12-22  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Introduce sc_notify_ext as recommended API
+
+2017-12-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Simplify array handling in sc_notify
+
+2017-12-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make sc_notify work in place
+
+2017-12-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make test_notify robust and time it
+
+2017-12-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Use distinct tag for nary version of notify
+
+2017-12-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Complete sc_notify_nary_ext
+
+2017-12-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Change default of notify_nary to binary tree
+
+2017-12-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Isolate input and output in sc_notify
+
+2017-12-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Rearrange sc_notify
+
+2017-12-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Extend API and doc of sc_notify_nary
+
+2017-10-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Introduce sc_array_init_count
+
+2017-10-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Write sc_array_memset
+
+2017-08-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'fix-config-openmp' into develop
+
+2017-08-14  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Typo in printf output
+
+2017-08-14  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Format configure help strings  Format the help text for
+	--enable-openmp and --enable-pthreads
+
+2017-08-14  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix openmp and pthread configure to undefault
+
+2017-08-14  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add version of SC_CHECK_LIB without conditional
+
+2017-04-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fleshing out assertions and top level
+
+2017-04-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Extend sc_test_notify with sc_notify_nary
+
+2017-04-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Begin development of sc_notify_nary
+
+2017-04-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add to doc comments of sc_notify
+
+2017-03-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'fix-memalign' into develop
+
+2017-02-07  Johannes Holke <s6joholk@uni-bonn.de>
+
+	* : always cast negative numbers to char before passing to memset
+
+2017-02-06  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge remote-tracking branch 'johannes/fix-memalign' into
+	develop
+
+2017-02-06  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : explicitely cast -2 to char before passing it to memset
+
+2016-09-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into feature-polynom
+
+2016-09-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Change remaining SC_ENABLE to SC_ENABLE_DEBUG
+
+2016-09-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-array-rewind' into develop
+
+2016-09-10  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Write sc_array_rewind
+
+2016-09-10  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Work on sc_array comments
+
+2016-09-10  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Rename array_new_size to array_new_count
+
+2016-09-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Favor SC_ENABLE_DEBUG over SC_DEBUG
+
+2016-08-23  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into feature-polynom
+
+2016-08-23  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add missing MPI size in non-MPI mode  Add the mpi_sizeof of
+	sc_MPI_UNSIGNED_LONG_LONG.
+
+2016-08-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update email address in configure.ac
+
+2016-08-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update copyright notice in source files
+
+2016-08-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into feature-polynom
+
+2016-08-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add const to sc_refcount queries  Also kill an unnecessary
+	dependency on sc_refcount.h in examples
+
+2016-07-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into feature-polynom
+
+2016-07-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add two MPI datatype definitions
+
+2016-07-01  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'fix-stats-average' into develop
+
+2016-07-01  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Initialize average in sc_stats_set1
+
+2016-06-30  Lucas C Wilcox <lucas@swirlee.com>
+
+	* : Initialize average in statistics  This avoids calling snprintf
+	with uninitialized average values when printing statistics that are
+	never filled.
+
+2016-05-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make the roots check fuzzy by a tolerance
+
+2016-05-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'fix-doctypo' into feature-polynom
+
+2016-05-25  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make gcc version check more portable
+
+2016-05-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into feature-polynom
+
+2016-05-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'fix-memalign' into develop
+
+2016-05-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Write polynomial evaluation
+
+2016-05-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Don't return a single root for true quadratic
+
+2016-05-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Simplify memalign offset calculation
+
+2016-05-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Put the type check into context required by
+
+2016-05-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add up to quadratic root finding
+
+2016-05-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Edit API
+
+2016-05-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Edit polynom inline documentation
+
+2016-05-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix doc typo
+
+2016-05-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Move header dependency into sc_polynom.c
+
+2016-05-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Use sc_polynom_coefficient where possible
+
+2016-05-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Rename polynom_index_int to polynom_coefficient
+
+2016-05-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Turn sc_polynom_t into an opaque object
+
+2016-05-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Introduce sc_polynom_index functions
+
+2016-05-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Work on/add to constructors
+
+2016-05-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update copyright line
+
+2016-05-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Rename sc_polynom_assign to _set_polynom
+
+2016-05-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Assert sc_polynom_is_valid
+
+2016-05-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update to current conventions
+
+2016-05-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into feature-polynom  Conflicts:
+	src/Makefile.am
+
+2016-05-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'fix-memalign' into develop
+
+2016-05-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'fix-openmp-libs' into develop
+
+2016-05-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'fix-shmem-finalize' into develop
+
+2016-05-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Introduce second copyright line into sc.{c,h}
+
+2016-05-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into fix-shmem-finalize
+
+2016-05-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add to AUTHORS
+
+2016-04-28  Pierre Kestener <pierre.kestener@cea.fr>
+
+	* : add doxygen comment and licence file
+
+2016-04-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add comments to sc_openmp.m4, sc_pthread.m4
+
+2016-04-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Keep LIBS setting by --enable-openmp
+
+2016-04-26  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Clarify copyright in AUTHORS
+
+2016-04-26  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add free bsd license file to doc for future ref
+
+2016-04-25  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Whitespace
+
+2016-04-25  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : clean-up shmem fix
+
+2016-04-20  Pierre Kestener <pierre.kestener@cea.fr>
+
+	* : fix a segmentation fault related to freeing intranode/internode
+	communicator stored as attributes to another communicator
+
+2016-04-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Enable memory alignment by default
+
+2016-04-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : TYpe fixes in memory allocation
+
+2016-04-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add type parameter to SC_ARG_ALIGN
+
+2016-03-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Put in and fix alignment builtins
+
+2016-03-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Symmetrize free_aligned and realloc_aligned
+
+2016-03-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Finish writing bogus numbers into unused memory
+
+2016-03-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix another bug in sc_array_resize
+
+2016-03-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Rewrite memory alignment  Now also the result of realloc is
+	aligned. Free always accepts a NULL input pointer. We initialize
+	hidden allocated memory to -1.
+
+2016-03-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Initialize memory in test
+
+2016-03-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Default to self-written aligned allocation
+
+2016-03-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Use alignment on calloc too
+
+2016-03-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Use posix_memalign, alloc_aligned, then custom
+
+2016-03-02  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix sc_memalign configuration
+
+2016-03-02  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Configure maintenance
+
+2016-02-16  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix warning in sc_array_position
+
+2016-01-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove warning from non-debug non-mpi
+
+2016-01-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make test_dmatrix work without blas
+
+2015-12-04  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Correct doc comment
+
+2015-12-04  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-abort-callback' into develop  Conflicts:
+	src/sc.c         src/sc.h
+
+2015-12-04  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'fix-realloc' into develop
+
+2015-12-04  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'feature-openmp' into develop
+
+2015-12-04  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Rename/reformat juqueen openmp configure script
+
+2015-12-04  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Minor fixes to sc_openmp
+
+2015-11-23  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Clarify configure usage on realloc
+
+2015-11-23  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : fix usage of realloc
+
+2015-11-19  Toby Isaac <tisaac@uchicago.edu>
+
+	* : Added sc_package_set_abort_alloc_mismatch()
+
+2015-11-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Clean name space of sample .ini files
+
+2015-11-13  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : add configure line for juqueen
+
+2015-11-13  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : add juqueen jobscript
+
+2015-11-13  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : do not add -lomp to LIBS
+
+2015-11-13  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : add small openmp example
+
+2015-11-13  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : add openmp configure option
+
+2015-10-22  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Realloc convention as discussed
+
+2015-10-13  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : typo
+
+2015-10-13  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : Add shmem_copy test to node_comm test
+
+2015-10-08  Johannes Holke <holke@ins.uni-bonn.de>
+
+	Merge remote-tracking branch 'Toby/tisaac/v1.2-proposed' into
+	test_v1.2
+
+2015-10-08  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : correct header
+
+2015-10-05  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : allow sc_abort to be user defined
+
+2015-10-05  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : note about sc_shmem_prefix() behavior
+
+2015-10-05  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : remove unnecessary barrier in BGQ shmem malloc
+
+2015-10-05  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : contain SC_USE_REALLOC with sc_realloc()
+
+2015-09-29  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : fix test_shmem_prefix
+
+2015-09-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Indent test and examples
+
+2015-09-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Indent in src
+
+2015-09-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Replace C++ style comments
+
+2015-09-28  Johannes Holke <s6joholk@uni-bonn.de>
+
+	* : output the array entries
+
+2015-09-28  Johannes Holke <s6joholk@uni-bonn.de>
+
+	* : implement test_schmem_prefix
+
+2015-09-28  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : done test_shmem_write
+
+2015-09-28  Johannes Holke <s6joholk@uni-bonn.de>
+
+	* : start test_shmem_write
+
+2015-09-25  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : remove mpi.h dependency from shmem_test
+
+2015-09-25  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : in shmem_test make own function for array allocation and
+	creation
+
+2015-09-25  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : use test_shmem_copy
+
+2015-09-25  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : write test_shmem_copy
+
+2015-09-25  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : fix comment
+
+2015-09-25  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : add \file to shmem.h for doxygen
+
+2015-09-25  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : iteration of enum c++ compatible
+
+2015-09-25  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : more output, small bugfix
+
+2015-09-25  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* :  add comments
+
+2015-09-25  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : indent
+
+2015-09-25  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : test shmem_allgather on all types
+
+2015-09-25  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : reduze data_size
+
+2015-09-24  Johannes Holke <s6joholk@uni-bonn.de>
+
+	* : use lots of data in shmem
+
+2015-09-23  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : modify makefile
+
+2015-09-23  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : add shmem test program
+
+2015-09-20  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc_io: Add function to read out IO mirror of a source.
+
+2015-09-19  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc_io: Add align functions. Add mirror to IO source.
+
+2015-09-17  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc_mpi: Add wrappers for MPI group management. Add some missing
+	communicator functions.
+
+2015-09-13  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : remove // comment
+
+2015-09-13  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : added --enable-memalign=bytes
+
+2015-09-11  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : started sc_memalign.m4
+
+2015-09-10  Johann Rudi <johann@ices.utexas.edu>
+
+	* : test_node_comm: Activate posix feature explicitly.
+
+2015-09-10  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc_search: Remove compiler warning for redundant >=0 comparison
+	of an unsigned integer.
+
+2015-09-10  Johann Rudi <johann@ices.utexas.edu>
+
+	* : Add test for sc_darray_work.
+
+2015-09-10  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc: Add error message at compile time if
+	SC_ENABLE_POSIX_MEMALIGN is set but SC_MEMALIGN_BYTES is not set.
+
+2015-09-10  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc: Modify memory alignment with posix_memalign.
+
+2015-09-10  Johann Rudi <johann@ices.utexas.edu>
+
+	* : configure: Fix typo in comment.
+
+2015-09-10  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc: Check if _POSIX_C_SOURCE wasn't defined already.
+
+2015-09-09  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc: Simplify malloc with memory alignment.
+
+2015-09-09  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc: Move lines of code around.
+
+2015-07-30  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc: Maybe this needs reordering.
+
+2015-07-30  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc: Add macros for memory alignment directives. Replace malloc
+	with aligned an version.  Conflicts:         src/sc.c
+
+2015-07-29  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc: Add macros for memory alignments.  Conflicts:
+	src/sc.h
+
+2015-09-09  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc_dmatrix: Update comments.
+
+2015-09-09  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc_dmatrix: Remove unused code.
+
+2015-07-29  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc_dmatrix: Add work space for integers (even though it does not
+	really belong here).  Conflicts:         src/sc_dmatrix.h
+
+2015-07-29  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc_dmatrix: Use memory alignment for multi-threaded work space
+	allocations.  Conflicts:         src/sc_dmatrix.h
+
+2015-07-28  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc_dmatrix: Add asserts.
+
+2015-09-09  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc_dmatrix: Add comments to multithreaded workspace.
+
+2015-07-28  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc_dmatrix: Add work space allocations with multithreading
+	support.
+
+2015-09-09  Johann Rudi <johann@ices.utexas.edu>
+
+	* : test_dmatrix: Add tests for scale & shift, dotmultiply & add.
+
+2015-06-22  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc_dmatrix: Add function for combined scale & shift. Add
+	function for combined dotmultiply & add.  Conflicts:
+	src/sc_dmatrix.h
+
+2015-09-10  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : added configure item for posix memalign
+
+2015-09-01  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : shmem: fix shared->bgq typos, add a necessary barrier  We can't
+	read the window id from the start of the array before the gather has
+	finished
+
+2015-08-21  Toby Isaac <tisaac@ices.utexas.edu>
+
+	Merge branch 'use-realloc' into tisaac/v1.2-proposed  *
+	use-realloc:   added sc_mempool_init and sc_mempool_reset   update
+	debug sc_array_resize when not using realloc   bring back
+	SC_USE_REALLOC
+
+2015-08-21  Toby Isaac <tisaac@ices.utexas.edu>
+
+	Merge branch 'ti/pu' into tisaac/v1.2-proposed  * ti/pu:   added
+	sc_memory_status   Added .gitignore
+
+2015-08-21  Toby Isaac <tisaac@ices.utexas.edu>
+
+	Merge branch 'tisaac/mpi' into tisaac/v1.2-proposed  *
+	tisaac/mpi: (50 commits)   mpi: small shmem cleanups.   Update
+	authors   C++ errors and warnings   Bugfix on shmem pointer type
+	Comments/indent   test_node_comm.c: fix no-mpi build   fix mpi-free
+	build   fix sc_shmem_types order   shmem: fix bad cpp variable name
+	Makefile.am: more verbose dist-hook warning   Makefile.am: fix
+	dist-hook variables   sc_mpi.m4: remove unneeded am conditionals
+	shmem: protect against uninitialized statics   add package to
+	sc_shmem_free   sc_shmem_array -> sc_shmem   indent   added
+	sc_shmem_array_type_to_string   add node comm info to statistics at
+	start up   added _ENABLE_COMMSHARED   sc_mpi.m4: automatically check
+	for winshared   ...
+
+2015-08-21  Toby Isaac <tisaac@ices.utexas.edu>
+
+	Merge branch 'use-realloc-old' into tisaac/v1.2-proposed  *
+	use-realloc-old:   added sc_mempool_init() and sc_mempool_reset()
+	update debug sc_array_resize when not using realloc   bring back
+	SC_USE_REALLOC   sc_blas/lapack: Modify BLAS & LAPACK library calls
+	on BGQ.   sc: Modify output.   sc_keyvalue: Fix trailing comma in
+	enumerator.   sc_blas/lapack: BG/Q fix of naming convention for
+	blas/lapack functions.   sc: Add size of [m|c|re]alloc in error
+	output.
+
+2015-08-21  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : fix branches file
+
+2015-08-21  Toby Isaac <tisaac@ices.utexas.edu>
+
+	Merge remote-tracking branch 'github/tisaac/feature-stats-has'
+	into tisaac/v1.2-proposed  * github/tisaac/feature-stats-has:
+	sc_statistics: added sc_statistics_has
+
+2015-08-21  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : my notes on branches
+
+2015-08-21  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : add list of proposed branches for v1.2  I'll go through and add
+	my notes to them.
+
+2015-08-21  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : mpi: small shmem cleanups.  -Use the subcomm copy function that
+	was accidentally unused before -Rename _shared to _bgq, to reflect
+	how specific it is.
+
+2015-07-16  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : sc_statistics: added sc_statistics_has  a simple wrapper, but at
+	least the user doesn't have to know keyvalue syntax.
+
+2015-07-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into mpi
+
+2015-07-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update authors
+
+2015-07-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : C++ errors and warnings
+
+2015-07-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Bugfix on shmem pointer type
+
+2015-07-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Comments/indent
+
+2015-07-06  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : test_node_comm.c: fix no-mpi build
+
+2015-07-06  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : fix mpi-free build
+
+2015-07-06  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : fix sc_shmem_types order
+
+2015-07-06  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : shmem: fix bad cpp variable name
+
+2015-07-06  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Makefile.am: more verbose dist-hook warning
+
+2015-07-06  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Makefile.am: fix dist-hook variables  We were writing the
+	version to $(distdir)/.tarball-version but checking
+	@top_srcdir@/.tarbal-version: switches to using just $(distdir)
+
+2015-07-06  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : sc_mpi.m4: remove unneeded am conditionals
+
+2015-07-05  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : shmem: protect against uninitialized statics
+
+2015-07-05  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : add package to sc_shmem_free
+
+2015-07-05  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : sc_shmem_array -> sc_shmem
+
+2015-07-05  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : indent
+
+2015-07-05  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : added sc_shmem_array_type_to_string
+
+2015-07-05  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : add node comm info to statistics at start up
+
+2015-07-04  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : added _ENABLE_COMMSHARED
+
+2015-07-04  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : sc_mpi.m4: automatically check for winshared
+
+2015-07-04  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : automatically try to attach shared memory communicators
+
+2015-07-04  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : added MPI-3 shared memory comm calculation
+
+2015-07-04  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : correct mpi node comm attachment
+
+2015-07-03  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : sc_shem_array passing basic tests
+
+2015-07-03  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : rewrite node_comm test: broken
+
+2015-07-03  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : moved shmem_array to its own files
+
+2015-07-03  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : start converting allgather_final to shmem_array
+
+2015-07-03  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : fix typo
+
+2015-07-03  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : make sc_allgather_final defaults configurable
+
+2015-07-03  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : sc_allgather_final_scan tests passing
+
+2015-01-16  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix typo
+
+2015-01-12  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Add sc_MPI_Scan, sc_MPI_Exscan
+
+2015-07-03  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : added sc_allgather_final_scan tests
+
+2015-07-03  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : bgq memory syncs in sc_allgather_final routines
+
+2015-07-02  Toby Isaac <tisaac@ices.utexas.edu>
+
+	Merge remote-tracking branch 'origin/bgq' into sc-allgather  *
+	origin/bgq:   lapack: fix SC_ prefix   BUG FOUND - We should not use
+	ESSL   Blas and Lapack for BGQ.   Memory alignment for BG/Q
+	sc_blas/lapack: Modify BLAS & LAPACK library calls on BGQ.
+	sc_blas/lapack: BG/Q fix of naming convention for blas/lapack
+	functions.
+
+2015-07-02  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : lapack: fix SC_ prefix
+
+2015-04-07  Cristiano Malossi <acm@zurich.ibm.com>
+
+	* : BUG FOUND - We should not use ESSL
+
+2015-04-01  Cristiano Malossi <acm@zurich.ibm.com>
+
+	* : Blas and Lapack for BGQ.
+
+2015-04-01  Cristiano Malossi <acm@zurich.ibm.com>
+
+	* : Memory alignment for BG/Q
+
+2015-02-26  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc_blas/lapack: Modify BLAS & LAPACK library calls on BGQ.
+
+2014-08-15  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc_blas/lapack: BG/Q fix of naming convention for blas/lapack
+	functions.
+
+2015-07-02  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : sc_allgather: added final_scan varieties
+
+2015-07-01  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : sc_allgather_final: _window implementation passes simple test
+
+2015-07-01  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : sc_allgather_final: first pass at _window implementation
+
+2015-07-01  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : sc_mpi.m4: added win_allocate_shared test
+
+2015-07-01  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : added shared memory space allgather_final
+
+2015-07-01  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : started sc_allgather_final interface
+
+2015-07-01  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : sc_mpi: added sc_mpi_comm_get_node_comms()
+
+2015-07-01  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : sc_mpi_comm_attach_node_comms() seems to work
+
+2015-07-01  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : test:add sc_test_node_comm
+
+2015-07-01  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : sc_mpi: added sc_mpi_comm_attach_node_comms()  The attached
+	communicators will be queried by some allgather wrappers to see if
+	they can be reduce the total per node memory used.
+
+2015-06-01  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add sc_intpow64
+
+2015-06-01  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Implement power routines for integers
+
+2015-05-28  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add sc_refcount_init_invalid
+
+2015-05-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add refcount_is_last
+
+2015-05-26  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Work on reference counter interface
+
+2015-05-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'refcount' into develop
+
+2015-05-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Expose sc_package_lock and unlock in sc.h
+
+2015-05-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fixup thread safety in sc_refcount
+
+2015-05-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove package identifier from refcount
+
+2015-05-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Expose sc_package_lock and unlock in sc.h
+
+2015-05-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Go through refcount files
+
+2015-05-20  Johannes Holke <s6joholk@uni-bonn.de>
+
+	* : indent
+
+2015-05-20  Johannes Holke <s6joholk@uni-bonn.de>
+
+	* : implemented thread save macros for refcount
+
+2015-05-20  Johannes Holke <s6joholk@uni-bonn.de>
+
+	* : transferred refcount.{c,h} from con4m
+
+2015-03-25  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : added sc_mempool_init() and sc_mempool_reset()
+
+2015-03-25  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : update debug sc_array_resize when not using realloc
+
+2015-03-25  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : bring back SC_USE_REALLOC
+
+2015-03-25  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : added sc_mempool_init and sc_mempool_reset
+
+2015-03-25  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : update debug sc_array_resize when not using realloc
+
+2015-03-25  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : bring back SC_USE_REALLOC
+
+2015-03-02  Toby Isaac <tisaac@ices.utexas.edu>
+
+	Merge remote-tracking branch 'johann/next' into develop
+
+2015-02-26  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc_blas/lapack: Modify BLAS & LAPACK library calls on BGQ.
+
+2015-02-24  Toby Isaac <tisaac@ices.utexas.edu>
+
+	Merge branch 'tisaac/johann/gmg' into develop
+
+2015-02-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Simplify callback option
+
+2015-02-10  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Change default option spacing
+
+2015-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add sc_options_set_spacing
+
+2015-01-30  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Rename sc_string functions
+
+2015-01-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add two functions to sc_string
+
+2015-01-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make sc_options opaque and doxygen-clean
+
+2015-01-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make sc_keyvalue opaque and document the API
+
+2015-01-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Include only .h files in a doxygen run
+
+2015-01-28  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc: Modify output.
+
+2015-01-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : White space and some sc_bint_t replace on dmatrix
+
+2015-01-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add a couple dmatrix view functions
+
+2015-01-26  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Tweak spacing in sc_options usage
+
+2015-01-19  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add opaque string buffer for appending to
+
+2015-01-19  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Be more consistent in appending to strings
+
+2015-01-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Clean up options usage message
+
+2015-01-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add sc_options_destroy_deep
+
+2015-01-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Expect proper calling of sc_options_add_keyvalue
+
+2015-01-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add to options examples
+
+2015-01-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add sc_option_add_keyvalue
+
+2015-01-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add sc_keyvalue_get_int_check
+
+2015-01-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add sc_package_set_verbosity
+
+2015-01-16  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'sc-scan' into develop
+
+2015-01-16  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix typo
+
+2015-01-12  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Add sc_MPI_Scan, sc_MPI_Exscan
+
+2014-12-31  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add returns and docs to some sc_list functions  Specifically,
+	the functions     sc_list_prepend, sc_list_append, sc_list_insert
+	now return the link object that has been inserted.
+
+2014-11-26  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add dmatrix_solve_transpose_inplace
+
+2014-11-26  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add SC_LAPACK_DGESV
+
+2014-11-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Clarify documentation on array_init_view/data
+
+2014-11-19  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add SC_TAG_FIRST
+
+2014-11-19  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add SC_TAG_LAST and secure tag numbers
+
+2014-11-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Write sc_unique_counter files
+
+2014-11-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add sc_mempool_new_zero_and_persist constructor
+
+2014-10-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Improve compatibility of blas/lapack_nonimplemented
+
+2014-10-19  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge 'toby/develop' for sc_MPI_Alltoall
+
+2014-10-14  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : mpi: added sc_MPI_Alltoall
+
+2014-10-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge libsc-0.5 branch for posterity
+
+2014-10-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'master' into libsc-0.5  This is an override with
+	v1.1 to prepare merging back into master. The tree matches exactly
+	with v1.1.  Conflicts:         Makefile.am         README
+	config/sc_blas.m4         config/sc_include.m4
+	config/sc_lapack.m4         config/sc_mpi.m4         configure.ac
+	example/options/options.c         scindent         src/sc.c
+	src/sc.h         src/sc_c99_functions.h         src/sc_containers.h
+	src/sc_dmatrix.c         src/sc_dmatrix.h         src/sc_functions.h
+	src/sc_getopt.c         src/sc_getopt.h         src/sc_mpi_dummy.c
+	src/sc_mpi_dummy.h         src/sc_options.c         src/sc_options.h
+	src/sc_statistics.h         test/test_dmatrix.c
+
+2014-10-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix a warning with --pedantic
+
+2014-10-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix false negative in lapack config
+
+2014-10-07  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc_keyvalue: Fix trailing comma in enumerator.
+
+2014-08-27  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : sc_blas.m4: fix false negative in blas config  SC_BLAS_LINK does
+	not set sc_blas_ok=yes on success, we have to set that first and
+	then let it set sc_blas_ok=no if it fails.
+
+2014-08-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add issue on make lint and friends
+
+2014-08-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove sc_c99_functions.h
+
+2014-08-26  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update AUTHORS
+
+2014-08-22  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Change contact email to p4est@librelist.com
+
+2014-08-22  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Workaround AX_PREFIX_CONFIG_H issue  It seems that
+	AX_PREFIX_CONFIG_H does not catch the case when there are space
+	between # and define.  One such situation arises when calling
+	AC_C_BIGENDIAN with no arguments.  We now call it with an argument
+	and create our own define with a different name.
+
+2014-08-15  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc_blas/lapack: BG/Q fix of naming convention for blas/lapack
+	functions.
+
+2014-08-11  Johann Rudi <johann@ices.utexas.edu>
+
+	* : sc: Add size of [m|c|re]alloc in error output.
+
+2014-07-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Close bug on sc_options range checks
+
+2014-07-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add double range checking to sc_options
+
+2014-07-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Cleanup sc_iniparser routines
+
+2014-07-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update issue on iniparser range checks
+
+2014-07-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Introduce range checks for int in sc_options
+
+2014-07-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Complete support for size_t in sc_options
+
+2014-07-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update to iniparser 3.1
+
+2014-07-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add preload.ini file
+
+2014-07-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Move some Makefile.am code down
+
+2014-07-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Install two example .ini files
+
+2014-07-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add Johannes Holke to AUTHORS
+
+2014-07-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Generate a doxygen tag file
+
+2014-07-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge fortran 90 support
+
+2014-07-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Run doxygen (v1.8.6) -u Doxyfile.in
+
+2014-07-07  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update README file
+
+2014-07-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove style sheet and go with default
+
+2014-07-02  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Bump version numbers in bugs
+
+2014-07-01  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : some doxygenation
+
+2014-07-01  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Close an issue on sc_sort
+
+2014-07-01  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove sc_object and example/vehicles
+
+2014-07-01  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Try for gindent in scindent
+
+2014-06-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Whitespace
+
+2014-06-27  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : removed further white spaces
+
+2014-06-27  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : Removed some white spaces
+
+2014-06-26  Johannes Holke <holke@ins.uni-bonn.de>
+
+	* : added Fortran90 support
+
+2014-06-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update ax_prefix_config_h.m4
+
+2014-05-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add thanks-to to AUTHORS
+
+2014-05-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge pull request #5 from tamiko/fix_soname  Set soname of the
+	p4est library to the current version
+
+2014-05-02  Matthias Maier <matthias.maier@iwr.uni-heidelberg.de>
+
+	* : Set soname of libsc to the current version
+
+2014-04-21  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : bitshift 1LL in SC_ROUNDUP2_64
+
+2014-04-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add maximum line to statistics summary
+
+2014-04-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Lock sc_logv and error output
+
+2014-04-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add some pthread error checks
+
+2014-04-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make the conditional variable example work
+
+2014-04-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Replace pthread_cancel with pthread_exit mechanism
+
+2014-04-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Start an example on pthread condition variables
+
+2014-04-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Print package number in sc_check_abort_thread
+
+2014-04-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update sc.c for thread-safe error checking
+
+2014-04-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Duplicate communicator before pthread_create
+
+2014-04-02  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Some rewording in mpi configure
+
+2014-04-01  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove leftover comments
+
+2014-04-01  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add configure logic for --disable-mpithread
+
+2014-04-01  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix typo and MPI_Init_thread dummy in sc_mpi
+
+2014-03-31  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Use SC_ABORT instead of sc_abort_collective
+
+2014-03-31  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Extend configure warning messages
+
+2014-03-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Test MPI communicator with MPI_THREAD_MULTIPLE
+
+2014-03-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Create test program for pthreads
+
+2014-03-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make sc.c thread safe
+
+2014-03-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Write configure check for POSIX threads
+
+2014-03-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into simplify
+
+2014-03-04  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add sc_options_add_size_t function
+
+2014-03-04  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Typecast and comment on ranges in sc_options
+
+2014-03-04  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add issue on upgrading iniparser library
+
+2014-03-04  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add some configure checks
+
+2014-03-04  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Change contact email for libsc
+
+2014-02-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Guard sc_log_print_summary against option error
+
+2014-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Comment fix
+
+2014-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Clean up blas/lapack name space
+
+2014-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Clean up sc_allgather name space
+
+2014-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Enable gather and reduce code for non-MPI build
+
+2014-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Allow sc_MPI_Wait calls with NULL requests
+
+2014-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Cleanly wrap MPI
+
+2014-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix sort prefix in Doxyfile
+
+2014-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add ENABLE_ to mpi defines/conditionals
+
+2014-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Provide ENABLE_ and WITH_ defines
+
+2014-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into simplify
+
+2014-02-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Edit Makefile
+
+2014-02-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Change mainpage file suffix to dox
+
+2014-02-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add MPI_Init_thread wrapper
+
+2014-02-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Exclude two macros from documentation
+
+2014-02-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Use some formatting in main page
+
+2014-02-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add doxygen configuration
+
+2014-02-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add PACKAGE_PREFIX automake variable
+
+2014-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Clarify MPI option help string
+
+2014-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Enable MPI I/O by default
+
+2014-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix duplicate AC_DEFINE in sc_mpi.m4
+
+2014-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into simplify
+
+2014-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Support lua 5.2
+
+2014-02-08  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Be more helpful with EXECUTE_ASSERT output
+
+2014-01-28  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add macros to eliminate warnings without debug
+
+2014-01-28  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix log indent for unregistered packages
+
+2014-01-28  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Export the log_indent_package function
+
+2014-01-24  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : only change log indent for registered packages
+
+2014-01-24  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : added log_indent
+
+2014-01-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge branch 'develop' into simplify
+
+2014-01-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Adapt git-version-gen to new git submodules
+
+2014-01-14  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Move git-version-gen and git2cl into build-aux
+
+2014-01-14  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update portability README
+
+2014-01-14  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Minor change to final message format
+
+2014-01-12  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Don't use redundant top_builddir in sc_package.m4
+
+2014-01-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add general macro SC_ME_AS_SUBPACKAGE
+
+2014-01-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Edit sc_mpi.m4 for portability
+
+2014-01-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Edit sc_package.m4 for portability
+
+2014-01-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Edit sc_lapack.m4 for portability
+
+2014-01-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Edit sc_blas.m4 for portability
+
+2014-01-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Edit sc_include.m4 for portability
+
+2014-01-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add some files on shell script portability
+
+2014-01-10  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : sc_containers: handle zero-length permutations
+
+2014-01-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Follow convention from automake docs
+
+2014-01-11  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Accommodate for glibtoolize on macs
+
+2014-01-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Use m4 package prefix in final messages
+
+2014-01-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Edit toplevel Makefile
+
+2014-01-06  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make SC_CHECK_INSTALL error messages more useful
+
+2014-01-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Save subpackge source string in file
+
+2014-01-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add macro for subpackage use
+
+2014-01-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add to Makefile template
+
+2014-01-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove obsolete libraries from Makefile.sc.mk
+
+2014-01-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Reinstate configure argument variables
+
+2014-01-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Extend sc_package.m4
+
+2014-01-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Clean up variables for compilers and flags
+
+2014-01-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Put toplevel library checks into sc_include
+
+2014-01-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Configure clarifications
+
+2014-01-04  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove obsolete script
+
+2014-01-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Directly add fortran libraries to LIBS
+
+2014-01-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Test link lapack without and with (BLAS_)FLIBS
+
+2014-01-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Test link blas without and with FLIBS
+
+2014-01-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : White space
+
+2014-01-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Move blas/lapack configuration into a macro
+
+2014-01-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Activate simplifed blas/lapack tests
+
+2014-01-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Check long long byte sizes
+
+2014-01-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : One bug and some tweaks to sc_lapack.m4
+
+2014-01-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Taking out SC_CUDA for the time being
+
+2014-01-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Tweak sc_mpi.m4
+
+2013-12-30  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Deactivate sc_array_pqueue functions for now
+
+2013-12-30  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make sc_array_truncate non-inline
+
+2013-12-30  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Disallow sc_array_truncate for views
+
+2013-12-19  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : lib_LIBRARIES is no longer used
+
+2013-11-13  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : added sc_array_truncate
+
+2013-11-13  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : sc_containers.h: grammar
+
+2013-10-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Rearrange variable echo in configure.ac
+
+2013-10-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Always do full F77/CXX checking
+
+2013-10-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Choose sensible fortran compiler for non-MPI
+
+2013-10-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Pass F77 option to SC_MPI_CONFIG
+
+2013-10-24  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : The builtin logic was flawed
+
+2013-10-22  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove unused ARG_WITH_YES macros
+
+2013-10-22  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove obsolete ARG_NOT_GIVEN_DEFAULT
+
+2013-10-22  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Adopt parallel test harness of automake >= 1.12  If lower
+	automake versions are used, the tests do not use mpirun anymore.  We
+	could have forced 1.12 in AM_INIT_AUTOMAKE, but then this might
+	inconvience the casual developer.  tl;dr: If you want mpirun -np 2
+	in tests, upgrade your automake.
+
+2013-10-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Whitespace
+
+2013-10-21  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Really abort when zlib is not found
+
+2013-10-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update AUTHORS since lua, zlib are gone
+
+2013-10-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove builtin lua in favor of configure checks
+
+2013-10-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Check for adler32_combine in zlib
+
+2013-10-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add SC_CHECK_LIB macro
+
+2013-10-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Rely on libtool for static/shared build
+
+2013-10-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove external zlib in tests too
+
+2013-10-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove some leftover zlib files
+
+2013-10-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove builtin zlib
+
+2013-10-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove shell override of configure options
+
+2013-10-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove unneeded LDADD_STATIC variable
+
+2013-10-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update configure
+
+2013-10-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Rely on libtool for static/shared libraries
+
+2013-10-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Adapt libtoolize commandline, remove --force
+
+2013-09-19  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update email address
+
+2013-08-20  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Option temp
+
+2013-08-16  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add S. Weischer to AUTHORS
+
+2013-08-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge remote-tracking branch 'sweischer/master' into cbdev
+
+2013-08-07  Sarah Weischer <s.weischer@gmx.de>
+
+	* : bug fix bitonic sort
+
+2013-07-23  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Whitespace
+
+2013-07-04  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix same warnings in tests
+
+2013-07-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Enable sort test and comment on bug
+
+2013-07-03  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix warnings
+
+2013-05-02  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Reenable -o in scindent
+
+2013-04-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Indent
+
+2013-04-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make scindent more robust
+
+2013-04-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove barely used workaround code
+
+2013-04-11  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : added sc_memory_status
+
+2013-04-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge Toby's autotools edits into develop
+
+2013-04-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	Merge Sarah's sort fix into develop
+
+2013-04-11  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : added sc_memory_status
+
+2013-04-05  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Added .gitignore
+
+2013-04-05  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : sc_trilinos.m4: use ac logging macros
+
+2013-04-05  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Uses ac macros for configure logging
+
+2013-04-05  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Make it possible to avoid building static libraries
+
+2013-03-27  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : configure.ac: allow silent make rules
+
+2013-03-27  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : configure.ac: added AM_PROG_AR
+
+2013-02-22  Sarah <sarah@ubuntu.(none)>
+
+	* : Bitonic Sort Bug Fix
+
+2012-12-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Return proper hash value
+
+2012-12-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Use sc_hash_function_string in keyvalue
+
+2012-12-15  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Write string hash function
+
+2012-12-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Correct doc on sc_bsearch_range
+
+2012-11-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Replace sprintf with snprintf
+
+2012-10-15  Toby Isaac <tisaac@ices.utexas.edu>
+
+	Merge remote branch 'james/pu' into ti/pu
+
+2012-09-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Update AUTHORS
+
+2012-09-18  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Minor edits to packages
+
+2012-09-12  Adrian Seyboldt <adrian.seyboldt@gmail.com>
+
+	* : return correct package_id in sc_package_register
+
+2012-09-12  Adrian Seyboldt <adrian.seyboldt@gmail.com>
+
+	* : allocate memory dynamically for sc_packages
+
+2012-08-30  Adrian Seyboldt <adrian.seyboldt@gmail.com>
+
+	* : add copyright statement
+
+2012-08-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add sc_dmatrix_memory_used
+
+2012-08-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Prepare use of _sc_const
+
+2012-08-27  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Complete initialization in sc_stats_init
+
+2012-08-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Remove rescrict keyword from sc_amr
+
+2012-08-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Revert to ax_prefix_config.m4
+
+2012-08-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Use ax_split_version.m4
+
+2012-07-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Allow sink/source write/read after complete
+
+2012-07-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Comment fix
+
+2012-04-23  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : lint error
+
+2012-07-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Allow NULL data buffer for sc_io_source_read
+
+2012-07-17  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make error condition easier to understand
+
+2012-06-19  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add sc_int8_compare
+
+2012-06-19  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Guard int comparison against overflow
+
+2012-06-19  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add sc_bsearch_range
+
+2012-06-19  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Tweaks to sc_search_lower_bound
+
+2012-04-16  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Introduce error code/api for sc_io_sink and source
+
+2012-04-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Start work on sc_io_source API
+
+2012-04-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Updates on sink functionality
+
+2012-04-13  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add SC_ARRAY_BYTE_ALLOC
+
+2012-04-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add some docs to libb64.h
+
+2012-04-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix off by one in base64_decode_value
+
+2012-04-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make base64_decode_value static inline char
+
+2012-04-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Rename IO_SINK to IO_TYPE
+
+2012-04-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Work on test_io_sink
+
+2012-04-09  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Write sc_io_sink_flush
+
+2012-04-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix test
+
+2012-04-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Indent
+
+2012-04-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Start working on sc_io_sink
+
+2012-04-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Audit write memory access in sc_io.c
+
+2012-04-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Add some docs on encode functions to libb64.h
+
+2012-04-05  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Make base64_encode_value static inline
+
+2012-03-29  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Comment typo
+
+2012-03-26  James Martin <jmartin@ices.utexas.edu>
+
+	* : Update sc_srand and add sc_srand_time
+
+2011-12-13  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Added sc_dmatrix_pow
+
+2011-12-13  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Added sc_dmatrix_shift
+
+2011-10-11  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Get flags from trilinos export makefiles
+
+2012-02-06  Carsten Burstedde <burstedde@ins.uni-bonn.de>
+
+	* : Fix funny indent
+
+2011-07-25  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add sc_ranges_decode function
+
+2011-07-25  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Make procs a const pointer and edit docs
+
+2011-07-24  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Reinstate the MPI logic in sc.c
+
+2011-07-15  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Retire abort handlers and use MPI_COMM_WORLD
+
+2011-06-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Change argument sequence for sc_notify_merge
+
+2011-06-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Call end the groupsize
+
+2011-06-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Make sc_notify work for mpisize not a power of 2
+
+2011-06-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Only verify output array in debug mode
+
+2011-06-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Isolate sc_notify_merge function
+
+2011-06-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add sc_test_notify
+
+2011-06-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Write sc_notify_allgather
+
+2011-06-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Start sc_notify files for powers of 2
+
+2011-06-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add dummy for MPI_Wait
+
+2011-06-19  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add tag for notify_recursive
+
+2011-06-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Write sc_array_copy and sc_array_is_equal
+
+2011-06-03  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Ignore procs without data in sc_stats_compute.
+
+2011-06-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Some modifications to sc_rand functions
+
+2011-06-07  James Martin <jmartin@ices.utexas.edu>
+
+	* : Added functions for generating random numbers for uniform [0,1]
+	or std normal distributions
+
+2011-06-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove C++ style comments
+
+2011-06-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Make both array_resize versions reset on count 0
+
+2011-06-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Change array_push_bytes to array_push_count
+
+2011-05-30  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Indent
+
+2011-05-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Safeguard against zero matrix sizes
+
+2011-05-27  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add sc_array_position
+
+2011-05-27  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove override load and save
+
+2011-05-27  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Provide special case in dmatrix_multiply
+
+2011-05-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Don't call DGEMM with zero matrix sizes
+
+2011-04-19  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix warning
+
+2011-04-19  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix warnings
+
+2011-04-19  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Update bugs
+
+2011-04-19  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix warnings
+
+2011-04-19  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Added sc_array_permute
+
+2011-03-28  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Added keyvalue_foreach
+
+2011-02-15  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Added sc_dmatrix_resize_in_place
+
+2011-02-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Extend test for zero dmatrix size
+
+2011-02-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Allow zero sizes in dmatrix BLAS functions
+
+2011-02-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Update AUTHORS
+
+2011-02-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Rename and tweak some dmatrix functions
+
+2011-02-07  Tan Bui <tanbui@ices.utexas.edu>
+
+	* : add componentwise squareroot, absolute, <=, >=
+
+2011-02-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Change names of two dmatrix functions
+
+2011-02-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add dmatrix getsign, greater/lessthan, dotdivide
+
+2011-02-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Clarify some comments
+
+2011-02-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix VTK compression for one block
+
+2011-01-27  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add NSF disclaimer
+
+2010-12-24  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Write a bunch of polynom functions
+
+2010-12-24  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add add-type functions and some const
+
+2010-12-23  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Implement some polynom functions
+
+2010-12-23  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Start polynom files
+
+2010-12-16  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Fixed declaration of lapack dlaic1
+
+2010-12-16  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Fixed an error in declaration of lapack dtrsm
+
+2010-12-16  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Added "not implemented" to recently added lapack
+
+2010-12-16  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Added sing.val. estimation to lapack header
+
+2010-12-15  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Added triangular solve (dtrsm) to lapack header
+
+2010-11-10  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Safeguard against NULL this_prefix in sc_options
+
+2010-11-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : AM Conditionals cannot be inside an if
+
+2010-10-22  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Added statistics accumulation.
+
+2010-10-20  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Fixed bspline periodic length computations.
+
+2010-10-18  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Added some periodic B-spline functions.
+
+2010-10-13  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add sc_dmatrix_new_view_offset
+
+2010-10-12  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add casts
+
+2010-10-06  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Make string lengths size_t
+
+2010-10-05  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Added suboptions to sc_options.
+
+2010-09-15  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Added am_conditional for trilinos version.
+
+2010-09-02  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Fixed error where MPIIO was always on with MPI.
+
+2010-07-30  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove conflict with C++. This hack should go away
+
+2010-07-30  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Change LAPACK setup
+
+2010-07-30  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Change BLAS test from run to link
+
+2010-07-05  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add sys/types header.
+
+2010-07-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Simplify MPI configure logic.
+
+2010-07-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Change identification log message
+
+2010-07-18  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add bug an AC_ARG CPP macro name.
+
+2010-07-18  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Link lua and luac with static lua.
+
+2010-07-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add a comment.
+
+2010-07-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix docs in sc_include.m4.
+
+2010-07-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add memory_used functions to sc_containers.
+
+2010-06-17  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Don't die in sc_cuda.m4 without enable_shared.
+
+2010-06-06  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Compile lua and luac when dlopen is found.
+
+2010-05-17  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add notice in AUTHORS about config scripts.
+
+2010-05-17  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Rename license approval file.
+
+2010-05-17  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add official UT license approval.
+
+2010-05-12  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Be more specific on license version in NEWS.
+
+2010-05-12  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Enable load/save semantics for option callbacks.
+
+2010-05-12  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add non-argument callback option to example.
+
+2010-05-12  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add counter for called options.
+
+2010-05-11  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Correct zlib version in AUTHORS.
+
+2010-05-11  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Update toplevel directory.
+
+2010-05-11  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add official UT license stub to test.
+
+2010-05-11  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add official UT license stub to example.
+
+2010-05-11  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove matrixmultiply example.
+
+2010-05-11  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove sc_complex.
+
+2010-05-11  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Use official UT license stub in src.
+
+2010-05-11  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove complex constructor emulatien.
+
+2010-05-11  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove code from libgfortran.
+
+2010-05-10  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Change to LGPL 2.1 in main directory.
+
+2010-05-10  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remova prac5 cuda example.
+
+2010-05-06  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Make sc_reduce compile with openmpi.
+
+2010-04-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add sc_warp_print function.
+
+2010-04-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Extern C and comment fixes on sc_warp.
+
+2010-03-18  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Better check for trilinos version.
+
+2010-03-16  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add missing m4 files to distribution.
+
+2010-03-16  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Use WITH and ENABLE in automake conditionals.
+
+2010-03-16  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add ML to sc_trilinos.m4.
+
+2010-03-16  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add configure logic for trilinos 9 and 10.
+
+2010-03-16  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Update zlib to 1.2.4 and enable builtin.
+
+2010-03-16  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix C++ compile.
+
+2010-03-16  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Indentation.
+
+2010-03-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add all-to-all shortcut to sc_reduce.
+
+2010-03-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Test multiple fields in sc_reduce.
+
+2010-03-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add SUM to sc_reduce and test.
+
+2010-03-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add MIN operation to sc_reduce and test.
+
+2010-03-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix reduce for non-mpi and add missing data types.
+
+2010-03-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Cleanup reduce implementation.
+
+2010-03-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Implement both reduce and allreduce.
+
+2010-02-28  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : First working reduce for MAX only.
+
+2010-02-28  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Start test_reduce.
+
+2010-02-28  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Begin reduce implementation.
+
+2010-02-27  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add seach_bias function and test.
+
+2010-03-14  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add prefix to sc_cuda.m4.
+
+2010-03-14  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Only print NVCC variables when enabled.
+
+2010-03-14  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Remove dependence on the CUDA SDK  It turns out that this
+	example does not really depend on the cuda SDK.  Thus we remove the
+	inclusion of the header file.  This is also nice because CUDA 2.3
+	does not seem to have this header file.
+
+2010-03-13  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Create cuda configure logic and example for non-shared build.
+
+2010-03-12  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Make splint ignore complex.h.
+
+2010-03-12  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add more macros to sc_complex.h.
+
+2010-03-12  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Documentation update on sc_mpi.m4.
+
+2010-03-12  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove tgmath from sc_complex.h and fix test.
+
+2010-02-28  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Implement sc_search_lower_bound64.
+
+2010-02-27  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Start sc_search files.
+
+2010-02-20  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Address warnings.
+
+2010-02-20  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix Makefile.am for shared and builtin libraries.
+
+2010-01-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Unassign bugs.
+
+2010-01-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add log level ESSENTIAL.
+
+2009-12-08  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Make lint not worry about log functions.
+
+2009-12-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add noreturn attribute to C++ prototype.
+
+2009-12-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add bug on option callback.
+
+2009-12-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Print "Arguments: none" if there are none.
+
+2009-12-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add statistics variables indexed by name.
+
+2009-12-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Some more comments on keyvalue.
+
+2009-11-27  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add warp_write function.
+
+2009-11-27  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Write sc_warp files for adaptive tree bisection.
+
+2009-11-27  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add 1D function inversion by regula falsi.
+
+2009-11-27  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add suffix 3 to 3D sc_functions.
+
+2009-11-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Unregister packages in reverse order.
+
+2009-11-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove infinite loop through assertions within logs.
+
+2009-11-19  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add convenience function for collective abort.
+
+2009-11-19  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Tweaks to abort semantics.
+
+2009-11-19  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Clarify some comments.
+
+2009-11-11  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add abort macros with fixed number of arguments.
+
+2009-11-19  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Close bug on shared library builds.
+
+2009-11-19  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Use error log level and remove remaining printf.
+
+2009-11-19  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Introduce error log level.
+
+2009-11-18  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Copy all delegates on deep object copy.
+
+2009-11-18  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Make delegate_index take a size_t and actually use it.
+
+2009-11-18  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add object application data pointer.
+
+2009-11-11  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Use some F macros in logging example.
+
+2009-11-11  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Rename internal log macros.
+
+2009-11-11  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Always compile logging fallback functions.
+
+2009-11-16  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix potential warning.
+
+2009-11-03  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Initialize sc_dmatrix data to NaN in debug mode  This change is
+	done to help find bugs when uninitialized sc_dmatrices are used.
+
+2009-10-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Reenable library dependencies.
+
+2009-10-16  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix lint warnings.
+
+2009-10-16  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Minor update to AUTHORS file.
+
+2009-10-14  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Create an M4 file for shared library support.
+
+2009-10-13  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Enable dynamic linking in libsc.
+
+2009-10-13  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add libtool to autotools logic.
+
+2009-10-06  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add to sc_test_array.
+
+2009-10-06  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Update some comments in sc_containers.h.
+
+2009-10-06  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Change ALLOC_ZERO to ALLOC for sc_containers.
+
+2009-10-06  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add array_new_size and array_init_size functions.
+
+2009-10-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Hopefully last minor change to sc_complex.h.
+
+2009-10-09  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Make fabs typesafe  This replaces the fabs macro with a inline
+	function.
+
+2009-10-09  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Don't include the std namespace  Make sc a good neighbor and not
+	include the std namespace by default.
+
+2009-10-08  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Edit sc_complex.h for convention and lint.
+
+2009-10-08  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add sc_complex.h  This allows for complex arithmetic in C99 and
+	C++ using a common subset of functionality.
+
+2009-10-08  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add an issue for complex arithmetic in C99 and C++
+
+2009-10-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix warning by rename to struct sc_object_search_context.
+
+2009-10-08  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove --with-lint from README.
+
+2009-10-08  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add James to Thanks To section.
+
+2009-10-08  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Update policy documents.
+
+2009-10-08  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix warning on test_keyvalue.
+
+2009-10-08  James Martin <jmartin@ices.utexas.edu>
+
+	* : Removed sc_object_get_data --- force user to register data
+	before lookup/search
+
+2009-10-08  James Martin <jmartin@ices.utexas.edu>
+
+	* : Initial error_policies.txt
+
+2009-10-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fixes to sc_object.
+
+2009-10-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Always pass the match object to object methods.
+
+2009-10-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Overhaul sc_object.
+
+2009-10-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Move sc_object contents around.
+
+2009-10-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add two bug reports.
+
+2009-10-06  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix sc_keyvalue_unset and sc_test_keyvalue.
+
+2009-10-06  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix a C++ warning.
+
+2009-10-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Close bug on keyvalue.
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : keyvalue_unset returns SC_KEYVALUE_ENTRY_NONE if not found
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : Usage comment for keyvalue_new[fv] moved closer to prototypes
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : keyvalue_newf calls keyvalue_new initially
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : Removed outdated comment
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : Whitespace modifications in makefile (tabs -> spaces)
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : Added sc_{init,finalize} to test_keyvalue
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : New interface to keyvalue_unset to mimic that of keyvalue_exists
+
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : sc_keyvalue_exist -> sc_keyvalue_exists
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : args -> kv
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : Added sc_keyvalue_new
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : sc_keyvalue_new -> sc_keyvalue_newf
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : sc_keyvalue_new_va -> sc_keyvalue_newv
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : keyvalue_set_pointer takes void * instead of char *
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : added #ifdef SC_DEBUG to non production code
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : keyvalue test includes unset and exist routines
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : sc_keyvalue_unset routine added
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : Naming convention: sc_object_value -> sc_keyvalue_entry
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : Added test for sc_keyvalue functionality.
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : Implementation of sc_keyvalue_set routines
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : Naming convention: sc_keyvalue_int -> sc_keyvalue_get_int, etc
+
+2009-10-02  James Martin <jmartin@ices.utexas.edu>
+
+	* : Naming convention: sc_object_arguments -> sc_keyvalue
+
+2009-10-01  James Martin <jmartin@ices.utexas.edu>
+
+	* : Initial Separation of sc_keyvalue.[ch] from sc_object.[ch]
+
+2009-10-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Make libsc compile with a C++ compiler.
+
+2009-10-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Change log handler API and add more log function variants.
+
+2009-09-30  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix and extend sc_abort_verbose functions.
+
+2009-09-30  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix warnings.
+
+2009-09-30  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add bug on isolating sc_keyvalue implementation.
+
+2009-09-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Use prefix in ENABLE_MPI environment variables.
+
+2009-09-27  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add sc_object_dup function.
+
+2009-09-27  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add sc_object_copy method.
+
+2009-09-27  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Documentation and cosmetics.
+
+2009-09-26  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add mpi_comm_dup and _free to dummies.
+
+2009-09-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Replace bool with int throughout.
+
+2009-09-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix indentation of sc.c.
+
+2009-09-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add extern C to sc_object.
+
+2009-09-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Make object_arguments take a default value.
+
+2009-09-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Change pointer character from v to p.
+
+2009-09-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove some debug output from sc_object.
+
+2009-09-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix up object hash functions.
+
+2009-09-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix lint warning.
+
+2009-09-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Use quoted includes for vehicle example.
+
+2009-09-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Integrate sc_object and vehicles into libsc.
+
+2009-09-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add license stub to sc_object and vehicle example.
+
+2009-09-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Boats should have names.
+
+2009-09-02  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Adapt boat class.
+
+2009-09-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Implement sc_object_new_from_klass_values.
+
+2009-09-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Use object arguments for initialization.
+
+2009-09-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add object arguments.
+
+2009-09-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Implement shared klass data.
+
+2009-09-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add delegate_index function.
+
+2009-09-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Change tuned_car accelerate to use another lookup.
+
+2009-09-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add matched object to delegate_lookup API.
+
+2009-09-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Enhance flexibility of object recursion.
+
+2009-09-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : First version of tuned car.
+
+2009-09-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Change get_type to is_type.
+
+2009-09-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Make car implement interface vehicle.
+
+2009-09-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Make initialize and finalize chain up to delegates.
+
+2009-09-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add sc_object_recursion_init convenience function.
+
+2009-09-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Extend sc_object_recursion to collect all matches.
+
+2009-09-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Adapt to current libsc.
+
+2009-07-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add object data.
+
+2009-07-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Implement remaining function and remove object system files.
+
+2009-07-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add recursive meta function that handles circles.
+
+2009-07-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix up is_type and get_type.
+
+2009-07-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Use per-object hash table instead of object system.
+
+2009-06-30  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Make the very basics of object and car work.
+
+2009-06-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Start working on delegates.
+
+2009-06-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Use CCGO_LIBSC_ETC environment variable in Makefile.
+
+2009-06-17  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add a virtual method to tuned car, chain initialize and
+	finalize.
+
+2009-06-17  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Postfix virtual and interface methods, add car_wheelsize.
+
+2009-06-17  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Split sc object and object system.
+
+2009-06-16  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Improve docs and error checks.
+
+2009-06-16  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add tuned car and reinstate nonvirtual prototypes.
+
+2009-06-16  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add sc_object_method_override.
+
+2009-06-16  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add vehicle interface and polymorph boat and car.
+
+2009-06-16  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Start object method registration.
+
+2009-06-16  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add first car and boat implementation.
+
+2009-06-16  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Start second demo on sc object system.
+
+2009-08-14  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add assertion on array_split type.
+
+2009-08-14  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Also resize array for num_types == 0.
+
+2009-08-13  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Added sc_split_array.
+
+2009-08-11  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Bump up the version - libsc-0.5 is unmaintained now.
+
+2009-08-11  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add vararg version of sc_flops_shot.
+
+2009-08-11  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix missing seconds update in snapshot.
+
+2009-08-05  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Enable matrixget return values.
+
+2009-08-05  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Use flops snapshot in matrixmultiply.
+
+2009-08-05  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add snapshot capability to flops.
+
+2009-08-05  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add wall-clock time to sc_flops.
+
+2009-08-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove old timings and use sc_flops.
+
+2009-08-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Rename sc_statinfo functions to sc_stats.
+
+2009-08-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Separate stats and flops, change flops API.
+
+2009-08-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Reformatting in sc_mpi.m4.
+
+2009-07-28  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Provide optional MPI CXX configure logic.
+
+2009-07-31  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Squish more warnings.
+
+2009-07-31  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Create sc_abort_verbose functions with noreturn.
+
+2009-07-31  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Make LOGF macro nicer.
+
+2009-07-31  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Take care of warnings.
+
+2009-07-31  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Clean up CHECK_ABORT macros, add SC_ABORT_NOT_REACHED.
+
+2009-07-30  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Only trace global messages for rank 0.
+
+2009-07-30  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Change sc_set_log_defaults API.
+
+2009-07-30  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Move sc_init log message after trace file initialization.
+
+2009-07-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Reduce hard log prio for debug to TRACE.
+
+2009-07-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Enable trace file by environment variable.
+
+2009-07-28  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add shared library feature request
+
+2009-07-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix some warnings.
+
+2009-07-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Improve some messages.
+
+2009-07-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add bug on priority queue verification.
+
+2009-07-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Commit bug on C99 conformance.
+
+2009-07-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add thanks to Toby in AUTHORS.
+
+2009-07-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Indent workaround and assertion added.
+
+2009-07-20  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Combined resize_view and resize, documentation.
+
+2009-07-15  Toby Isaac <tisaac@ices.utexas.edu>
+
+	* : Added init and resize functions for views.
+
+2009-06-25  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Turn do while macros into expressions.
+
+2009-06-25  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add prototypes that C99 doesn't provide.
+
+2009-06-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Initialize unused option item member pointers.
+
+2009-04-27  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Remove cast between function and variable pointers  It should be
+	noted that variable and function pointers do not need to have the
+	same size.  Thus we can not safely cast between them.
+
+2009-04-27  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add cast to fix lint warning  This might not be the best idea
+	because it will hide errors induced when the type of
+	sc_statinfo_mpifunc changes.  It does shut up splint so that is why
+	I am committing it.
+
+2009-04-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix lint warning.
+
+2009-04-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add arbitrary order derivative evaluation.
+
+2009-04-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Minor cleanup of sc_bspline.
+
+2009-04-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add derivative checks to bspline example.
+
+2009-04-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add faster spline first derivative computation.
+
+2009-04-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fixes to bspline files.
+
+2009-04-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove const warning in sc_mpi_write.
+
+2009-04-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix bug in sc_dmatrix_resize.
+
+2009-04-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Move sc_darray functions into sc_dmatrix.
+
+2009-04-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add test for NaN for double array and dmatrix.
+
+2009-03-31  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Reinstate realloc workaround, option now --enable-realloc.
+
+2009-03-24  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add SC_EPS defines.
+
+2009-03-23  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Include M_* defines
+
+2009-03-20  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Make splint allow fixed size array arguments.
+
+2009-03-17  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove intransparent enforcement of semicolon after macro.
+
+2009-02-18  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Use memmove for sc_dmatrix_copy
+
+2009-02-12  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Increased C++ friendliness.  Vararg macros still die.
+
+2009-02-12  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add sc_package.m4 macros for easier submodule inclusion.
+
+2009-02-12  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Tweaks to package determination macros.
+
+2009-02-12  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove autoconf quote workaround and LINK variable.
+
+2009-02-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Extend BLAS and LAPACK macros with package prefix.
+
+2009-02-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Extending some builtin and install path macros.
+
+2009-02-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Renamed internal ax_ shell variables.
+
+2009-02-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Renamed the ACX_MPI macro and friends to SC_MPI etc.
+
+2009-02-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Renamed acx_blas and acx_lapack macro files and variables.
+
+2009-02-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Renamed acx_with_lint to sc_prog_lint.
+
+2009-02-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Renamed ax_prefix_config_h.m4.
+
+2009-02-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Renamed ax_c_version and ax_c_check_flags.
+
+2009-02-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Pipe stale version error message to stderr.
+
+2009-02-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Install libsc m4 files in aclocal directory.
+
+2009-02-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Using automake prefixes instead of hand-written install targets.
+
+
+2009-02-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fixed typos in ax_c_version macros.
+
+2009-02-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove restrict autoconf macro (is included in AC 2.58).
+
+2009-02-05  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Make every header file include sc.h automatically.
+
+2009-02-05  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Run a search and replace to generate Makefile.sc.mk.
+
+2009-02-05  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Create a Makefile.sc.mk that can be included to use libsc.
+
+2009-02-05  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove the ELIDE_CODE check in getopt and obstack.
+
+2009-02-05  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Move builtin configure macros into their own file.
+
+2009-02-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Adapted AUTHORS file.
+
+2009-02-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Copy original obstack header into sc_builtin subdirectory.
+
+2009-02-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Copy original getopt headers into sc_builtin directory.
+
+2009-02-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Create test for the builtin third-party software.
+
+2009-02-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Move exported zlib headers into sc_builtin subdirectory.
+
+2009-02-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add and export lua header files.
+
+2009-02-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Compiling builtin lua if necessary.
+
+2009-02-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Copied lua 5.1.4 into lua subdirectory.
+
+2009-02-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove remaining EOF comments.
+
+2009-02-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added bspline example.
+
+2009-02-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added sc_zconf.h and sc_zlib.h again, updated configure logic.
+
+2009-02-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added forgotten git2cl script to EXTRA_DIST and fix Makefile.am.
+
+
+2009-02-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Closed last bug for 0.6 release.
+
+2009-02-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Change sc_init API.  Backtrace and signal catching now optional.
+
+
+2009-02-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fixed a non-debug warning.
+
+2009-02-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Unassigned bug on the still broken parallel sort.
+
+2009-02-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix another splint warning (with a reason).
+
+2009-02-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Indent sc_bspline files.
+
+2009-01-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Implement caching of knot intervals.
+
+2009-01-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Straightened B-Spline API and added arc length parametrization.
+
+
+2009-01-26  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Wrote B-spline derivative evaluation.
+
+2009-01-26  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Isolated binary search for knot interval.
+
+2009-01-26  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : The workspace can be allocated externally now.
+
+2009-01-26  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added binary search for correct knot interval.
+
+2009-01-26  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Wrote evaluate function for uniform knot vector.
+
+2009-01-26  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Started evaluation function.
+
+2009-01-26  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added computation of uniform knot vector.
+
+2009-01-26  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added two more parameters.
+
+2009-01-23  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Started sc_bspline files.
+
+2009-02-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Replaced some BLAS calls with simple optimizable C loops.
+
+2009-02-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Renamed one and added another dmatrix view function.
+
+2009-02-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Always compile blas, lapack and dmatrix.
+
+2009-02-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix a splint warning.
+
+2009-02-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fixed some warnings.
+
+2009-02-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Closed bug on the configure options.
+
+2009-02-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Create SC_ARG_WITH_BUILTIN configure macros.
+
+2009-02-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Test for getopt and include builtin if necessary.
+
+2009-02-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Test for obstack and include builtin if necessary.
+
+2009-02-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Revert to unmodified zlib. Configure switch can be used to omit
+	check.
+
+2009-02-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Don't replace allgather by default any more.
+
+2009-02-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Straightened out some MPI dummy functions.
+
+2009-01-23  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove resize_realloc workaround and fix realloc with alignment.
+
+
+2009-01-23  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : MPI I/O is now disabled by default.
+
+2009-01-23  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Make splint the default static code checker.
+
+2009-01-23  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added sc_dmatrix_resize function.
+
+2009-01-23  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Minor update on dmatrix.h.
+
+2009-01-13  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove code obsoleted by array views.
+
+2009-01-13  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added array and data views.
+
+2009-01-13  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Define sc_line_* variables only when needed.
+
+2008-11-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added sc_array_is_sorted function.
+
+2008-11-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Removed MPI_COMM_NULL checks.
+
+2008-11-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added size_t cast into SC_ALLOC_ZERO macro.
+
+2008-11-27  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added second sort function hand-crafted for np=3.
+
+2008-11-27  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Some more assertions in sort.
+
+2008-11-26  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add Tim Warburton's matrix-matrix multiply test.
+
+2008-11-24  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fix invalid free in test_sort.
+
+2008-11-23  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remove output and verification if test_sort is used for timing.
+
+
+2008-11-23  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added verification and optional count argument to test_sort.
+
+2008-11-23  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Completed parallel sort.
+
+2008-11-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Wrote bitonic merge. Comparison and exchange still missing.
+
+2008-11-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Wrote bitonic sort. Bitonic merge still missing.
+
+2008-11-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added test program for parallel sort.
+
+2008-11-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Small addition to comparison functions.
+
+2008-11-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added the sc_psort prototype.
+
+2008-11-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Started sc_sort files for parallel sorting.
+
+2008-11-23  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Converted sc_allgather to predefined tags.
+
+2008-11-23  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added Gatherv, Allgatherv and predefined tags to sc_mpi.
+
+2008-11-23  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added MPI_Waitsome and MPI_UNDEFINED to MPI dummies.
+
+2008-11-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Make the sc_allgather files GPL as well and update a header.
+
+2008-11-14  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Escape the overridden Makefile variables.
+
+2008-11-14  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Restricting printed defines to overridden ones.
+
+2008-11-14  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add version info to sc_init  This will be replaced in the future
+	by a configure time string of all of the options.
+
+2008-11-13  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Configure load/save of environment controlled arguments.
+
+2008-11-13  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : MPI configuration: move compile/link tests behind AC_PROC_CC.
+
+2008-11-13  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Do memory alignment cycle through cache lines.
+
+2008-11-13  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Optionally align memory on page boundaries.
+
+2008-11-12  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Deleting cache variables for BLAS and LAPACK tests.
+
+2008-11-10  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Tweaked option parser output.
+
+2008-11-10  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Cosmetic changes.
+
+2008-11-10  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added callback option type.
+
+2008-11-10  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added bug about backtrace and signal semantics.
+
+2008-11-10  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Avoid caching of BLAS and LAPACK test
+
+2008-11-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added MPI recv, probe, iprobe and get_count dummy functions.
+
+2008-11-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Removed whitespace errors.
+
+2008-11-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added bug to unify the configure logic for builtin packages.
+
+2008-11-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Implemented argument load functionality.
+
+2008-11-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added the sc_options_save function.
+
+2008-11-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added an options.ini file to play around with.
+
+2008-11-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Removed FILE style output in *_print functions.
+
+2008-11-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Removed sc_root_stdout and sc_root_stderr variables.
+
+2008-11-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Make the option parser use libsc logging facilities.
+
+2008-11-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added sc_mpi_write function using MPI I/O.
+
+2008-11-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Minor configure fix.
+
+2008-11-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Made mpi and mpiio config logic work in (hopefully) all cases.
+
+2008-11-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Cleaned up configure logic (no functional change).
+
+2008-11-06  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Allow MPI I/O to be disabled
+
+2008-11-06  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Check for MPI I/O
+
+2008-11-06  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added SC_SQR macro.
+
+2008-11-06  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Made test_pqueue use the sc logging facilities.
+
+2008-11-06  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added a test for the sc_array_bsearch functions.
+
+2008-11-06  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added sc_array_bsearch_range function.
+
+2008-11-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added the doc directory to distribution.
+
+2008-11-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Passing binary flag to fopen for compatibility.
+
+2008-10-31  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added the bugs directory to the distribution.
+
+2008-10-29  Carsten Burstedde <carsten@dhcp-67-22.ices.utexas.edu>
+
+	* : Added bug report to use libsc logging in sc_options.
+
+2008-10-29  Carsten Burstedde <carsten@dhcp-67-22.ices.utexas.edu>
+
+	* : Made it work with the openmpi on the mac.
+
+2008-10-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Moved git2cl into the config subdirectory.
+
+2008-10-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added two ax_c_ macro files from mangll.
+
+2008-10-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Restricted 64bit MPI types to MPI_LONG_LONG_INT.
+
+2008-10-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Changed the default install path to local.
+
+2008-10-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Looked at the llvm warnings.
+
+2008-10-29  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Include git version numbering from gnulib
+
+2008-10-28  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Turn off included getopt_long by default  Only include sc's
+	getopt if the system doesn't provide it.
+
+2008-10-28  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Replace the depreciated git-log with git log
+
+2008-10-17  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fixed bug typo.
+
+2008-10-17  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Cleaned up some lint warnings.
+
+2008-10-17  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add two bugs
+
+2008-10-17  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Initialized ditz bug tracking system.
+
+2008-10-17  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Moved sc_mpi_dummy to sc_mpi and removed conditional compiles.
+
+2008-10-17  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Renamed sc_vtk.{c,h} to sc_io.{c,h} and added sc_fread and
+	sc_fwrite.
+
+2008-10-08  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Removed nonsensical extern C from .c file.
+
+2008-10-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remvoe superfluous semicolon warning by ugly prototype hack.
+
+2008-10-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Removed some warnings on the option example.
+
+2008-10-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added extern C macros.
+
+2008-10-03  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Allow the disabling of the options parser
+
+2008-10-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Bumped up the version to 0.5.4.
+
+2008-10-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Remvoe superfluous semicolon warning by ugly prototype hack.
+
+2008-10-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Removed some warnings on the option example.
+
+2008-10-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added extern C macros.
+
+2008-10-03  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Allow the disabling of the options parser
+
+2008-08-27  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fixes to the statistics summary and papi initialization.
+
+2008-08-25  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added a dirty state flag to statistics variables.
+
+2008-08-24  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Added a dummy MPI_Send.
+
+2008-08-24  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Enabled allgather replacement by default.
+
+2008-08-24  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Made allgather replacement fast on odd mpi sizes.
+
+2008-08-24  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Moved sc_mpi_dummy into sc and fixed test_allgather.
+
+2008-08-23  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add MPI_Allgather replacement code.
+
+2008-08-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : More corrections on logging including ranges API.
+
+2008-08-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added restrict keyword to sc_amr routines.
+
+2008-08-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Passing a package id into statistics functions.
+
+2008-08-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fixed bug in sc_amr_coarsen_specify.
+
+2008-08-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Aligned refinement and coarsening binary search functions.
+
+2008-08-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Worked on the coarsening threshold implementation.
+
+2008-08-18  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Started the sc_amr files for adaptive mesh refinement control.
+
+2008-08-18  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Initializing papi counters to zero if not enabled.
+
+2008-08-18  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Using a long integer for the statistics counter.
+
+2008-08-18  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added float.h include directive.
+
+2008-08-18  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Made test_dmatrix_pool compile without blas.
+
+2008-08-17  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Clean up papi calls.
+
+2008-08-17  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Change papi so that start and stop are inclusive.  The semantic
+	for sc_flopinfo_start and sc_flopinfo_stop are changed so that
+	sc_flopinfo_start (fi);   ... flop work   sc_flopinfo_stop (fi);
+	will only time the work in between start and stop.
+
+2008-08-15  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Wrote sc_dmatrix_pool routines.
+
+2008-08-15  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Documentation update.
+
+2008-08-15  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Renamed sc_generic_abort and changed log prefix.
+
+2008-08-10  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fixed two splint problems.
+
+2008-08-10  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Update papi to work on ranger.
+
+2008-08-09  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add a papi configure switch.
+
+2008-08-08  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added path autoconf macros and bootstrap comments.
+
+2008-08-07  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Do not rename macros starting with a lowercase letter.  For now
+	do not rename macros which start with a lowercase letter.  This is
+	done to keep the restrict macro from being replaced.
+
+2008-08-07  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add a check and replacement for the restrict keyword.
+
+2008-08-06  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fixed a warning.
+
+2008-08-05  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added adaptive ranges computation.
+
+2008-08-03  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added sc_array_index_int16 function.
+
+2008-08-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added various integer comparison functions.
+
+2008-08-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Add a generic MPI aware abort handler callback.
+
+2008-08-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Enhanced SC_ARG macros.  Added --with-mpitest[=DRIVER] option.
+
+2008-08-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Removed some warnings for non-debug.
+
+2008-08-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Put some comment lines into sc_mpi_dummy.
+
+2008-08-01  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add MPI_Irecv, MPI_Isend, and MPI_Waitall.  This also adds the
+	types and defines needed for these functions.
+
+2008-08-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added two functions and two sleep calls.  Functions added:
+	sc_array_push_bytes, sc_hash_array_is_valid. The sleep (1) calls are
+	added to the SC_ABORT macros.
+
+2008-07-30  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fixed lint warning and added assertion.
+
+2008-07-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added hash_foreach and hash_array_lookup.
+
+2008-07-28  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added sc_ranges and slightly changed sc_statistics API.
+
+2008-07-25  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add intmax_t.
+
+2008-07-24  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Moved gfortran and g77 to the front of AC_PROG_F77.
+
+2008-07-24  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added AC_PROG_F77 only when F77 libraries need to be found.
+
+2008-07-24  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added run tests for BLAS and LAPACK configure magic.
+
+2008-07-24  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added element counter to recycle array.
+
+2008-07-21  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Renamed mempool_reset to mempool_truncate and ran indent.
+
+2008-07-20  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Changed hash_array_insert API and added recycle array functions.
+
+
+2008-07-18  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added sc_hash_array_rip function.
+
+2008-07-17  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Changed hash API and added hash_array lookup function.
+
+2008-07-17  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Renamed hash_reset to hash_truncate. Added hash_array templates.
+
+
+2008-07-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Bumped up the version to 0.5.3.
+
+2008-07-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Backported a splint fix.
+
+2008-07-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Defining MPI_UNSIGNED_LONG_LONG if not existing.
+
+2008-06-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Made make distcheck work.
+
+2008-06-20  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Minor internal symmetrization of memory allocation.
+
+2008-06-19  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Fix a possible leak of the data.  If n==0 and m==0 make sure
+	that free will be called on data.  We do this by allocating a place
+	to store data.
+
+2008-06-19  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Make sc_dmatrix use const.
+
+2008-07-01  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Defining MPI_UNSIGNED_LONG_LONG if not existing.
+
+2008-06-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Made make distcheck work.
+
+2008-06-20  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Minor internal symmetrization of memory allocation.
+
+2008-06-19  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Fix a possible leak of the data.  If n==0 and m==0 make sure
+	that free will be called on data.  We do this by allocating a place
+	to store data.
+
+2008-06-19  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Make sc_dmatrix use const.
+
+2008-06-16  carsten <carsten@ices.utexas.edu>
+
+	* : Disabled variadic macros and C99 prototypes for C++.
+
+2008-06-16  carsten <carsten@ices.utexas.edu>
+
+	* : Use environment variable override for mpi, blas, lapack options.
+
+
+2008-06-16  carsten <carsten@ices.utexas.edu>
+
+	* : Enable configure option override by environment variable.
+
+2008-06-16  carsten <carsten@ices.utexas.edu>
+
+	* : Bump up the version to 0.5.2.
+
+2008-06-16  carsten <carsten@ices.utexas.edu>
+
+	* : Disabled variadic macros and C99 prototypes for C++.
+
+2008-06-16  carsten <carsten@ices.utexas.edu>
+
+	* : Use environment variable override for mpi, blas, lapack options.
+
+
+2008-06-16  carsten <carsten@ices.utexas.edu>
+
+	* : Enable configure option override by environment variable.
+
+2008-06-13  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Removed a warning showing in the no-mpi case.
+
+2008-06-13  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Removed a warning showing in the no-mpi case.
+
+2008-06-11  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Disable the dmatrix test if BLAS and LAPACK are not used.
+
+2008-06-11  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Bump up the version to 0.5.1.
+
+2008-06-11  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Disable the dmatrix test if BLAS and LAPACK are not used.
+
+2008-06-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Ported the vtk encoding functions from p4est.
+
+2008-06-06  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Some fixes to release 0.5.0.
+
+2008-06-06  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add a matrix ldivide and support functions.
+
+2008-06-06  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add rdivide.  This adds a limited version of rdivide.
+
+2008-06-05  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Updates on obsolete autoconf magic.
+
+2008-06-04  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Provide alternate autoconf --with macros.
+
+2008-06-02  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Made some hash functions return booleans.
+
+2008-05-30  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add a dot divide command.
+
+2008-05-30  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added a strtoll prototype when splint is used.
+
+2008-05-30  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Use sc_bint_t for the dmatrix integer type.  The was already
+	done for sc_dmatrix.c.
+
+2008-05-30  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Test for the specific trans values instead of a range.  This is
+	done to work around the fact that the conversion of enums to
+	integers is not well defined in C.
+
+2008-05-30  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Moved test_pqueue from p4est to sc and made splint happy.
+
+2008-05-30  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fixed warnings on integer types.
+
+2008-05-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fixed some warnings.
+
+2008-05-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Made the memory counters package specific.
+
+2008-05-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Some fixes/additions on provided functions.
+
+2008-05-29  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add  a dmatrix dot multiply.
+
+2008-05-28  carsten <carsten@ices.utexas.edu>
+
+	* : Added MPI data types and the MPI_Bcast function to sc_mpi_dummy.
+
+
+2008-05-28  carsten <carsten@ices.utexas.edu>
+
+	* : Wrote package and new libsc log handling.
+
+2008-05-28  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Made the c99 functions compile with Intel and more conforming to
+	libsc.
+
+2008-05-28  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : A few non-functional macro updates.
+
+2008-05-28  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Wrap the double precision version of STEV from LAPACK.
+
+2008-05-28  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add a AUTHORS note about the c99 functions coming from
+	libgfortan.
+
+2008-05-28  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : All bool parameters will not be checked with a=={true,false},
+
+2008-05-28  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Fix the dmatrix reshape funtion.  A new set of row pointers
+	needs to be allocated when a reshape happens.
+
+2008-05-28  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add support for creating dmatrix views.  This is a very
+	simplistic way of handling matrix views.
+
+2008-05-27  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Provide a tgamma function if it doesn't exist.
+
+2008-05-27  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fixed splint and the last sticky obstack warning.
+
+2008-05-27  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add in a lapack wrapper for sstev.
+
+2008-05-27  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Make the use of column vectors explicit.
+
+2008-05-27  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Worked on blas and lapack autoconf. Added some MPI defines.
+
+2008-05-26  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Integrated signal and abort handler from p4est.
+
+2008-05-26  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added bzero macro to sc.h.
+
+2008-05-26  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added the AVL tree code from p4est.
+
+2008-05-26  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Enforcing inclusion of sc.h in header files.
+
+2008-05-26  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Always include necessary headers, fixed some lint warnings.
+
+2008-05-26  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Changed default prefix to PWD/install.
+
+2008-05-26  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Using prefixed shell variable in autoconf option macros.
+
+2008-05-25  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Changed prefix handling for some macros.
+
+2008-05-25  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Checking BLAS autoconf twice, without and with F77 macros.
+
+2008-05-23  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Using prefixed defines in sc_config.h.
+
+2008-05-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Made some array and mempool functions static inline.
+
+2008-05-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Prepared sc version 0.5. Added an assertion on the log priority.
+
+
+2008-05-22  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Moved the public zlib headers to src/sc_{zlib,zconf}.h.
+
+2008-05-19  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add the indent pre-commit hook.
+
+2008-05-19  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fixed one splint warning.
+
+2008-05-12  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Made zlib.h zconf.h installed headers since they are included in
+	sc.h.
+
+2008-05-12  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Copied rhea_functions -> sc_functions.
+
+2008-05-12  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Pulled in rhea_measure -> sc_statistics, wrapped MPI_Wtime.
+
+2008-05-12  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added some error checks on conflicting include files.
+
+2008-05-12  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Moved sc_dummympi to sc_mpi_dummy and renamed some defines.
+
+2008-05-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added some basic mpi functions. Using logging in options
+	example.
+
+2008-05-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : These are the actual empty dummy mpi files.
+
+2008-05-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fixed some defines and initialized dummy mpi code.
+
+2008-05-09  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Wrote the logging mechanism.
+
+2008-05-09  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add a few more blas checks.
+
+2008-05-08  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Disabled the F77 checks with an if test.
+
+2008-05-08  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added missing licence information to sc_blas.c.
+
+2008-05-08  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added an option to disable BLAS related code.
+
+2008-05-08  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added zlib to the library.
+
+2008-05-08  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added INDENT-ON at the end of files to avoid indent bugs.
+
+2008-05-08  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Remove conflict marker.
+
+2008-05-08  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add BLAS wrappers and the dmatrix class.
+
+2008-05-08  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added INDENT-OFF to sc_getopt* files.
+
+2008-05-08  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fixed typo in Makefile.am.
+
+2008-05-08  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added libb64 from p4est and removed splint warnings.
+
+2008-05-08  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Copied getopt from GNU C Library 2.7 and adapted it for sc.
+
+2008-05-08  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added obstack code from p4est and made it optional.
+
+2008-05-08  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Renamed sc_memory to sc_containers.
+
+2008-05-08  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Make ChangeLog a .PHONY target.  This will cause the ChangeLog
+	to be generated every time even if a ChangeLog exists.
+
+2008-05-07  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Make some LINT_FLAGS splint specific.
+
+2008-05-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Fixed splint for iniparser, removed sc_config.h from dist.
+
+2008-05-07  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add LINT checking of the src code.  To enable lint checking pass
+	--with-lint to configure.
+
+2008-05-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Made getopt_long and obstack_free required functions.
+
+2008-05-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Minor fixes on includes.
+
+2008-05-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Removed gnulib from the sc library.
+
+2008-05-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added option parsing from p4est, with example.
+
+2008-05-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added iniparser to non-recursive build.
+
+2008-05-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Made src build non-recursive.
+
+2008-05-07  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added git2cl to ChangeLog magic.
+
+2008-05-07  Lucas C Wilcox <lucasw@ices.utexas.edu>
+
+	* : Add the automatic generation of the ChangeLog.  This should
+	generate a ChangeLog when running make dist.  I borrowed the idea
+	from libX11's base Makefile.am.
+
+2008-05-05  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added abort and backtrace functionality, and gnulib string
+	module.
+
+2008-05-05  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Grabbed malloc and friends from p4est. They abort on error now.
+
+
+2008-05-05  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Adapted p4est_memory and made splint work on everything.
+
+2008-05-05  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Changed license comment to SC Library.
+
+2008-05-05  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Slightly rearranged configure script.
+
+2008-04-30  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Played around more with gnulib and splint.
+
+2008-04-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Compiling a dummy library.
+
+2008-04-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Added gnulib support to sc.
+
+2008-04-29  Carsten Burstedde <carsten@ices.utexas.edu>
+
+	* : Made a skeleton of sc configure and compile ok.
+

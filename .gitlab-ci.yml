@@ -69,4 +69,4 @@ pages:
     paths:
     - public
   only:
-    - master
+    - masterxx
