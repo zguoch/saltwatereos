@@ -129,19 +129,25 @@
         <Element index="0" value="1"/>
         <Domain name="bool" id="14570.AllowDuplicateScalars.bool"/>
       </Property>
-      <Property name="Annotations" id="14570.Annotations" number_of_elements="12">
+      <Property name="Annotations" id="14570.Annotations" number_of_elements="18">
         <Element index="0" value="0"/>
-        <Element index="1" value="0"/>
-        <Element index="2" value="2"/>
-        <Element index="3" value="2"/>
-        <Element index="4" value="4"/>
-        <Element index="5" value="4"/>
-        <Element index="6" value="6"/>
-        <Element index="7" value="6"/>
-        <Element index="8" value="7"/>
-        <Element index="9" value="7"/>
-        <Element index="10" value="999"/>
-        <Element index="11" value="Contain phase boundary"/>
+        <Element index="1" value="L"/>
+        <Element index="2" value="1"/>
+        <Element index="3" value="V+L (X=0)"/>
+        <Element index="4" value="2"/>
+        <Element index="5" value="V"/>
+        <Element index="6" value="3"/>
+        <Element index="7" value="L+H"/>
+        <Element index="8" value="4"/>
+        <Element index="9" value="V+H"/>
+        <Element index="10" value="5"/>
+        <Element index="11" value="V+L+H"/>
+        <Element index="12" value="6"/>
+        <Element index="13" value="V+L (L)"/>
+        <Element index="14" value="7"/>
+        <Element index="15" value="V+L (V)"/>
+        <Element index="16" value="999"/>
+        <Element index="17" value="Contain phase boundary"/>
       </Property>
       <Property name="AnnotationsInitialized" id="14570.AnnotationsInitialized" number_of_elements="1">
         <Element index="0" value="1"/>
@@ -193,42 +199,54 @@
         <Element index="0" value="0"/>
         <Domain name="bool" id="14570.HSVWrap.bool"/>
       </Property>
-      <Property name="IndexedColors" id="14570.IndexedColors" number_of_elements="18">
-        <Element index="0" value="0.6509803921568628"/>
-        <Element index="1" value="0.807843137254902"/>
-        <Element index="2" value="0.8901960784313725"/>
+      <Property name="IndexedColors" id="14570.IndexedColors" number_of_elements="27">
+        <Element index="0" value="0.6666666666666666"/>
+        <Element index="1" value="1"/>
+        <Element index="2" value="1"/>
         <Element index="3" value="0.12156862745098039"/>
         <Element index="4" value="0.47058823529411764"/>
         <Element index="5" value="0.7058823529411765"/>
-        <Element index="6" value="0.6980392156862745"/>
-        <Element index="7" value="0.8745098039215686"/>
-        <Element index="8" value="0.5411764705882353"/>
-        <Element index="9" value="0.2"/>
-        <Element index="10" value="0.6274509803921569"/>
-        <Element index="11" value="0.17254901960784313"/>
-        <Element index="12" value="0.984313725490196"/>
-        <Element index="13" value="0.6039215686274509"/>
-        <Element index="14" value="0.6"/>
-        <Element index="15" value="0.8901960784313725"/>
-        <Element index="16" value="0.10196078431372549"/>
-        <Element index="17" value="0.10980392156862745"/>
+        <Element index="6" value="1"/>
+        <Element index="7" value="0"/>
+        <Element index="8" value="1"/>
+        <Element index="9" value="0"/>
+        <Element index="10" value="0.6666666666666666"/>
+        <Element index="11" value="1"/>
+        <Element index="12" value="0.6666666666666666"/>
+        <Element index="13" value="0.6666666666666666"/>
+        <Element index="14" value="1"/>
+        <Element index="15" value="1"/>
+        <Element index="16" value="1"/>
+        <Element index="17" value="0"/>
+        <Element index="18" value="0"/>
+        <Element index="19" value="1"/>
+        <Element index="20" value="0"/>
+        <Element index="21" value="0"/>
+        <Element index="22" value="0.6666666666666666"/>
+        <Element index="23" value="0"/>
+        <Element index="24" value="1"/>
+        <Element index="25" value="0"/>
+        <Element index="26" value="0"/>
       </Property>
       <Property name="IndexedLookup" id="14570.IndexedLookup" number_of_elements="1">
         <Element index="0" value="1"/>
         <Domain name="bool" id="14570.IndexedLookup.bool"/>
       </Property>
-      <Property name="IndexedOpacities" id="14570.IndexedOpacities" number_of_elements="6">
+      <Property name="IndexedOpacities" id="14570.IndexedOpacities" number_of_elements="9">
         <Element index="0" value="1"/>
         <Element index="1" value="1"/>
         <Element index="2" value="1"/>
         <Element index="3" value="1"/>
         <Element index="4" value="1"/>
         <Element index="5" value="1"/>
+        <Element index="6" value="1"/>
+        <Element index="7" value="1"/>
+        <Element index="8" value="1"/>
       </Property>
       <Property name="NanColor" id="14570.NanColor" number_of_elements="3">
-        <Element index="0" value="1"/>
-        <Element index="1" value="1"/>
-        <Element index="2" value="0.6"/>
+        <Element index="0" value="0"/>
+        <Element index="1" value="0"/>
+        <Element index="2" value="0"/>
       </Property>
       <Property name="NanOpacity" id="14570.NanOpacity" number_of_elements="1">
         <Element index="0" value="1"/>
@@ -3694,13 +3712,13 @@
         <Element index="0" value="1"/>
       </Property>
       <Property name="Position" id="14677.Position" number_of_elements="2">
-        <Element index="0" value="0.8877762430939228"/>
-        <Element index="1" value="0.16293532338308456"/>
+        <Element index="0" value="0.947974217311234"/>
+        <Element index="1" value="0.1156716417910445"/>
         <Domain name="range" id="14677.Position.range"/>
       </Property>
       <Property name="PositionInfo" id="14677.PositionInfo" number_of_elements="2">
-        <Element index="0" value="0.8877762430939228"/>
-        <Element index="1" value="0.16293532338308456"/>
+        <Element index="0" value="0.947974217311234"/>
+        <Element index="1" value="0.1156716417910445"/>
       </Property>
       <Property name="RangeLabelFormat" id="14677.RangeLabelFormat" number_of_elements="1">
         <Element index="0" value="%-#6.1e"/>
@@ -3718,7 +3736,7 @@
         <Domain name="bool" id="14677.ReverseLegend.bool"/>
       </Property>
       <Property name="ScalarBarLength" id="14677.ScalarBarLength" number_of_elements="1">
-        <Element index="0" value="0.32999999999999974"/>
+        <Element index="0" value="0.3300000000000004"/>
       </Property>
       <Property name="ScalarBarThickness" id="14677.ScalarBarThickness" number_of_elements="1">
         <Element index="0" value="16"/>
@@ -4493,9 +4511,11 @@
         <Element index="0" value="1"/>
         <Domain name="range" id="14680.ValueRenderingMode.range"/>
       </Property>
-      <Property name="ValueRenderingModeGet" id="14680.ValueRenderingModeGet"/>
+      <Property name="ValueRenderingModeGet" id="14680.ValueRenderingModeGet" number_of_elements="1">
+        <Element index="0" value="2"/>
+      </Property>
       <Property name="ViewSize" id="14680.ViewSize" number_of_elements="2">
-        <Element index="0" value="3112"/>
+        <Element index="0" value="2172"/>
         <Element index="1" value="1608"/>
       </Property>
       <Property name="ViewTime" id="14680.ViewTime" number_of_elements="1">
@@ -4519,29 +4539,29 @@
         <Element index="0" value="0"/>
       </Property>
       <Property name="CameraFocalPoint" id="14680.CameraFocalPoint" number_of_elements="3">
-        <Element index="0" value="0.5696758501418395"/>
-        <Element index="1" value="0.479441659053493"/>
+        <Element index="0" value="0.5740353272029063"/>
+        <Element index="1" value="0.5317553837862942"/>
         <Element index="2" value="0"/>
       </Property>
       <Property name="CameraFocalPointInfo" id="14680.CameraFocalPointInfo" number_of_elements="3">
-        <Element index="0" value="0.5696758501418395"/>
-        <Element index="1" value="0.479441659053493"/>
+        <Element index="0" value="0.5740353272029063"/>
+        <Element index="1" value="0.5317553837862942"/>
         <Element index="2" value="0"/>
       </Property>
       <Property name="CameraParallelScale" id="14680.CameraParallelScale" number_of_elements="1">
-        <Element index="0" value="0.5841699261829453"/>
+        <Element index="0" value="0.48278506296111157"/>
       </Property>
       <Property name="CameraParallelScaleInfo" id="14680.CameraParallelScaleInfo" number_of_elements="1">
-        <Element index="0" value="0.5841699261829453"/>
+        <Element index="0" value="0.48278506296111157"/>
       </Property>
       <Property name="CameraPosition" id="14680.CameraPosition" number_of_elements="3">
-        <Element index="0" value="0.5696758501418395"/>
-        <Element index="1" value="0.479441659053493"/>
+        <Element index="0" value="0.5740353272029063"/>
+        <Element index="1" value="0.5317553837862942"/>
         <Element index="2" value="10000"/>
       </Property>
       <Property name="CameraPositionInfo" id="14680.CameraPositionInfo" number_of_elements="3">
-        <Element index="0" value="0.5696758501418395"/>
-        <Element index="1" value="0.479441659053493"/>
+        <Element index="0" value="0.5740353272029063"/>
+        <Element index="1" value="0.5317553837862942"/>
         <Element index="2" value="10000"/>
       </Property>
       <Property name="CameraViewAngle" id="14680.CameraViewAngle" number_of_elements="1">
