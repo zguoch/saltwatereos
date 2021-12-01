@@ -37,7 +37,7 @@ int phaseRegion_quadr_func(double x_ref, double y_ref, double xmin = 0, double x
     }
     return region;
 }
-int phaseRegion_sin_func(double x_ref, double y_ref, double xmin = 0, double xmax = 2*PI, double ymin =-1, double ymax = 1)
+int phaseRegion_sin_func(double x_ref, double y_ref, double xmin = 0, double xmax = 2*PI, double ymin =-1, double ymax = 2)
 {
     // convert coordinate x of reference system to physical system
     double lenx = xmax - xmin;
@@ -61,27 +61,42 @@ int phaseRegion_sin_func(double x_ref, double y_ref, double xmin = 0, double xma
 
 static int refine_fn (p4est_t * p4est, p4est_topidx_t which_tree, p4est_quadrant_t * q)
 {
-    if(q->level > MAX_Level_Refine)return 0;
-
-    // quadrant的中心点坐标
-    double c[3], min[3], max[3];
-    double xmin, xmax, ymin, ymax, xc, yc;
+    bool need_refine = false;
     p4est_qcoord_t      half_length = P4EST_QUADRANT_LEN (q->level) / 2;
-    // p4est_qcoord_to_vertex (p4est->connectivity, which_tree, q->x + half_length, q->y + half_length, c);
-    p4est_qcoord_to_vertex (p4est->connectivity, which_tree, q->x + half_length*2, q->y + half_length*2, max);
-    p4est_qcoord_to_vertex (p4est->connectivity, which_tree, q->x, q->y, min);
-    // 计算二次函数的值: ((x-0.5)/0.5)^2
-    xmin = min[0], xmax = max[0];
-    ymin = min[1], ymax = max[1];
-    // 计算此quadrant的四个顶点的phase index， 如果全部相等且不为0（0表示在函数曲线的边界上，其实这个判断只是逻辑上需要）则需要细化
-    int region1 = phaseRegion_sin_func(xmin, ymin);
-    int region2 = phaseRegion_sin_func(xmax, ymin);
-    int region3 = phaseRegion_sin_func(xmin, ymax);
-    int region4 = phaseRegion_sin_func(xmax, ymax);
-    if( !((region1 == region2) && (region1 == region3) && (region1 == region4)) ) //如果函数点落到此quadrant里面则细化: 这是个比较困难的问题，如何判断函数曲线穿过该cell，需要寻找一个更聪明的办法解决之！
+    p4est_qcoord_t      length = P4EST_QUADRANT_LEN (q->level);
+    const int num_sample_x =10; //最简单的情况就是只取xmin, xmax作为采样点判断这些采样点的函数计算返回值(flat)是否全部相等.但是有时候会有漏掉的情况，所以可以考虑在这里加密采样
+    const int num_sample_y =2;
+    double dx_qua = P4EST_QUADRANT_LEN (q->level) / (num_sample_x - 1.0);
+    double dy_qua = P4EST_QUADRANT_LEN (q->level) / (num_sample_y - 1.0);
+    double x_qua, x_ref, y_qua, y_ref;
+    double xyz_tmp[3];
+    int regionIndex[num_sample_x*num_sample_y];
+    for (int iy = 0; iy < num_sample_y; iy++)
     {
-        return 1;
+        y_qua = q->y + dy_qua*iy;
+        for (int ix = 0; ix < num_sample_x; ix++)
+        {
+            x_qua = q->x + dx_qua*ix;
+            p4est_qcoord_to_vertex (p4est->connectivity, which_tree, x_qua, y_qua, xyz_tmp);
+            regionIndex[iy*num_sample_x + ix] = phaseRegion_sin_func(xyz_tmp[0], xyz_tmp[1]);
+        }
     }
+    // ========== 1. refinement check for phase index ============
+    bool isSame_phaseIndex = true;
+    for (int i = 1; i < num_sample_x*num_sample_y; i++)
+    {
+        isSame_phaseIndex = (isSame_phaseIndex && (regionIndex[0] == regionIndex[i]));
+    }
+    if(!isSame_phaseIndex) //如果采样点的phase index全相等，则不refine；否则refine
+    {
+        need_refine = true;
+    }else
+    {
+        need_refine = false;
+    }
+
+    if(q->level > MAX_Level_Refine) return 0; //maximum-level control
+    if(need_refine) return 1;
 
     return 0;
 }

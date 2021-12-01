@@ -1,7 +1,7 @@
 /**
  * @file step5.cpp
  * @author Zhikui Guo (zguo@geomar.de)
- * @brief 尝试对H2ONaCl的二位相图进行自适应网格细化，并且输出phase id。X=0.032, T in [1, 1000] C, P in [5, 500] bar
+ * @brief search quad id according to coordinate T,P,X
  * @version 0.1
  * @date 2021-11-30
  * 
@@ -10,6 +10,8 @@
  */
 #include <p4est_vtk.h> //用于输出vtk格式
 #include <p4est_extended.h> //用于直接调用p4est_new_ext函数创建tree
+#include <p4est_search.h>
+#include <p4est_bits.h>
 #include "H2ONaCl.H"  //加入H2ONaCl动态库头文件
 H2ONaCl::cH2ONaCl eos;
 
@@ -27,6 +29,46 @@ struct FIELD_DATA
     bool need_refine_Rho;
 };
 
+// search quad id according to coordinate
+p4est_locidx_t search_quad(const p4est_t * p4est, p4est_topidx_t which_tree, p4est_quadrant_t* A, int level, uint64_t id)
+{
+  p4est_quadrant_set_morton (A, level, id);
+  A->p.piggy3.which_tree = which_tree;
+  A->p.piggy3.local_num = -1;
+  p4est_locidx_t Al = -1;
+  /* Find quadrant numbers if existing */
+  for (p4est_locidx_t jt = p4est->first_local_tree; jt <= p4est->last_local_tree; ++jt) 
+  {
+    size_t              zz;
+    p4est_tree_t       *tree = p4est_tree_array_index (p4est->trees, jt);
+    p4est_quadrant_t   *quad;
+    sc_array_t         *tquadrants = &tree->quadrants;
+    cout<<"tree: "<<jt<<", elem_count: "<<tquadrants->elem_count<<endl;
+    for (zz = 0; zz < tquadrants->elem_count; ++zz) 
+    {
+      // cout<<"Al: "<<Al<<endl;
+      quad = p4est_quadrant_array_index (tquadrants, zz);
+      if (A->p.piggy3.which_tree == jt && !p4est_quadrant_compare (quad, A)) 
+      {
+        Al = tree->quadrants_offset + (p4est_locidx_t) zz;
+        cout<<"*****Al: "<<Al<<endl;
+        return Al;
+        // P4EST_VERBOSEF ("*****Searching for A at %lld\n", (long long) Al);
+      }
+    }
+  }
+  return -1;
+}
+int TP2quad(const p4est_t * p4est, p4est_topidx_t which_tree, double T_C, double p_bar, double X = 3.2, double Tmin = 1, double Tmax = 700, double pmin = 5, double pmax = 400)
+{
+  uint64_t id_quad_uniform = 0;
+  p4est_locidx_t      jt, Al;
+  p4est_quadrant_t quad;
+  p4est_quadrant_t* A = &quad;
+  P4EST_QUADRANT_INIT (A);
+  search_quad(p4est, which_tree, A, 3, 24);
+  return 0;
+}
 int phaseRegion_quadr_func(double x_ref, double y_ref, double xmin = 0, double xmax = 1, double ymin =0, double ymax = 0.25)
 {
     // convert coordinate x of reference system to physical system
@@ -175,7 +217,7 @@ static int refine_fn (p4est_t * p4est, p4est_topidx_t which_tree, p4est_quadrant
 
     if(q->level > MAX_Level_Refine) return 0; //maximum-level control
     if(data->need_refine) return 1;
-    if(data->need_refine_Rho) return 1;
+    // if(data->need_refine_Rho) return 1;
 
     return 0;
 }
@@ -188,7 +230,7 @@ static void fillPointData(p4est_iter_volume_info_t * info, void *user_data)
   sc_array_t          *coord_vector = (sc_array_t *) (user_data_ptr[2]);
   // cell field
   sc_array_t          *coord_phaseIndex_cell = (sc_array_t *) (user_data_ptr[3]);
-  sc_array_t          *coord_y_cell = (sc_array_t *) (user_data_ptr[4]);
+  sc_array_t          *quad_id = (sc_array_t *) (user_data_ptr[4]);
   sc_array_t          *coord_vector_cell = (sc_array_t *) (user_data_ptr[5]);
 
   p4est_t            *p4est = info->p4est;
@@ -200,7 +242,7 @@ static void fillPointData(p4est_iter_volume_info_t * info, void *user_data)
   double              this_c;
   double              *this_c_ptr;
   double              *this_phaseIndex_ptr, *this_Rho_ptr, *this_coord_vector_ptr;
-  double              *this_phaseIndex_cell_ptr, *this_y_cell_ptr, *this_coord_vector_cell_ptr;
+  double              *this_phaseIndex_cell_ptr, *this_quad_id_ptr, *this_coord_vector_cell_ptr;
   int                 i, j;
   double              xyz[3];
   double              midpoint[3];
@@ -210,11 +252,11 @@ static void fillPointData(p4est_iter_volume_info_t * info, void *user_data)
   // cell data
   p4est_qcoord_to_vertex (p4est->connectivity, which_tree, q->x + half_length, q->y + half_length, midpoint);
   this_phaseIndex_cell_ptr = (double *) sc_array_index (coord_phaseIndex_cell, local_id);
-  this_y_cell_ptr = (double *) sc_array_index (coord_y_cell, local_id);
+  this_quad_id_ptr = (double *) sc_array_index (quad_id, local_id);
   this_coord_vector_cell_ptr = (double *) sc_array_index (coord_vector_cell, local_id*3);
   this_phaseIndex_cell_ptr[0] = data->phaseRegion_cell;//phaseRegion_H2ONaCl_constantX(midpoint[0], midpoint[1]); //midpoint[0];
   if(data->need_refine) this_phaseIndex_cell_ptr[0] = -1; //the smallest cell but still need refine, for this quadrant maybe just call function directally calculate everything rather than interpolate from lookuptable
-  this_y_cell_ptr[0] = midpoint[1];
+  this_quad_id_ptr[0] = local_id;
   this_coord_vector_cell_ptr[0] = midpoint[0];
   this_coord_vector_cell_ptr[1] = midpoint[1];
   this_coord_vector_cell_ptr[2] = midpoint[2];
@@ -247,7 +289,7 @@ static void write2vtk (p4est_t * p4est, string filename="step6")
   sc_array_t         *coord_vector;  //vector field
   // cell field
   sc_array_t         *coord_phaseIndex_cell;  //scalar
-  sc_array_t         *coord_y_cell;  //scalar
+  sc_array_t         *quad_id;  //scalar
   sc_array_t         *coord_vector_cell;  //vector field
   p4est_vtk_context_t *context;
 
@@ -258,10 +300,10 @@ static void write2vtk (p4est_t * p4est, string filename="step6")
   Rho = sc_array_new_size (sizeof (double), numquads * P4EST_CHILDREN);
   coord_vector = sc_array_new_size (sizeof (double), numquads * P4EST_CHILDREN * 3); //vector field must have 3 component, explained in p4est_vtk_write_cell_dataf
   coord_phaseIndex_cell = sc_array_new_size (sizeof (double), numquads); //create array of the point data: corner(vertex) number always equal to children number (dim-related)
-  coord_y_cell = sc_array_new_size (sizeof (double), numquads);
+  quad_id = sc_array_new_size (sizeof (double), numquads);
   coord_vector_cell = sc_array_new_size (sizeof (double), numquads * 3);
   // package the pointer of field array to a pointer array and send the pointer array to p4est_iterate
-  sc_array_t *fieldArray_ptr[]={phaseIndex, Rho, coord_vector, coord_phaseIndex_cell, coord_y_cell, coord_vector_cell}; //two scalar field and 1 vector field
+  sc_array_t *fieldArray_ptr[]={phaseIndex, Rho, coord_vector, coord_phaseIndex_cell, quad_id, coord_vector_cell}; //two scalar field and 1 vector field
   // fill data, option 1: use the iterator; option 2: loop every tree and quadrant of a tree
   p4est_iterate (p4est, NULL,   /* we don't need any ghost quadrants for this loop */
                  (void *) fieldArray_ptr,     /* pass in u_interp so that we can fill it */
@@ -283,7 +325,7 @@ static void write2vtk (p4est_t * p4est, string filename="step6")
                                         2,      /* there is no custom cell scalar data. */
                                         1,      /* there is no custom cell vector data. */
                                         "phaseIndex", coord_phaseIndex_cell,
-                                        "midpoint_y", coord_y_cell,
+                                        "quad_id", quad_id,
                                         "coord_vector", coord_vector_cell,
                                         context);       /* mark the end of the variable cell data. */
   SC_CHECK_ABORT (context != NULL, P4EST_STRING "_vtk: Error writing cell data");
@@ -305,12 +347,12 @@ static void write2vtk (p4est_t * p4est, string filename="step6")
   sc_array_destroy (Rho);
   sc_array_destroy (coord_vector);
   sc_array_destroy (coord_phaseIndex_cell); 
-  sc_array_destroy (coord_y_cell);
+  sc_array_destroy (quad_id);
   sc_array_destroy (coord_vector_cell);
 }
 int main()
 {
-    int level_init = 6; // will create a initial mesh with (2^dim)^(level_init) quadrants
+    int level_init = 0; // will create a initial mesh with (2^dim)^(level_init) quadrants
     int  recursive;
     int retval = 0;
     FIELD_DATA field_data;
@@ -320,35 +362,16 @@ int main()
     // refine 
     recursive = 1;
     p4est_refine (p4est, recursive, refine_fn, NULL);
-    
+    p4est_balance (p4est, P4EST_CONNECT_FACE, NULL); //need a init function to fill data
+    // search point 
+    TP2quad(p4est, 0, 200, 200); //200deg.C 200bar
+
     // write quadrant to vtu file
     // p4est_vtk_write_file (p4est, NULL, "step6");
-    write2vtk(p4est,"step6"); //Use customized output function
+    write2vtk(p4est,"step7"); //Use customized output function
 
-    // write to p4est format
-    p4est_save ("step6.p4est", p4est, 1);
-    // p4est_save_ext("step6.p4est", p4est, 1, 0);
-    // test load p4est format
-    // int level_init = 6; // will create a initial mesh with (2^dim)^(level_init) quadrants
-    // int  recursive;
-    FIELD_DATA field_data_new;
-    p4est_connectivity_t *conn_new = p4est_connectivity_new_unitsquare ();
-    sc_MPI_Comm         mpicomm = sc_MPI_COMM_WORLD;
-    p4est_t *p4est_new = p4est_load("step6.p4est", mpicomm, sizeof(FIELD_DATA), 1, NULL, &conn_new);
-    // ======== save, load connectivity and compare ===========
-    // retval = p4est_connectivity_save ("step6.conn", conn);
-    // SC_CHECK_ABORT (retval == 0, "connectivity_save failed");
-    // p4est_connectivity_t *conn_new = p4est_connectivity_load ("step6.conn", NULL);
-    // SC_CHECK_ABORT (p4est_connectivity_is_equal (conn, conn_new),
-    //               "load/save connectivity mismatch A");
-    // =========================================================
-    // write the new forest
-    write2vtk(p4est_new,"step6_new"); //Use customized output function
-    
     /* Destroy the p4est and the connectivity structure. */
     p4est_destroy (p4est);
     p4est_connectivity_destroy (conn);
-    // p4est_destroy (p4est_new);
-    p4est_connectivity_destroy (conn_new);
     return 0;
 }
