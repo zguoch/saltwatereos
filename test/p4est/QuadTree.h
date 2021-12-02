@@ -20,7 +20,7 @@ struct Quadrant
     USER_DATA           *user_data;
 };
 
-enum NeedRefine {NeedRefine_NoNeed, NeedRefine_PB_L2V, NeedRefine_PB_V2VL_L, NeedRefine_PB_V2VL_V, NeedRefine_PB_others, NeedRefine_Rho};
+enum NeedRefine {NeedRefine_NoNeed, NeedRefine_PhaseBoundary, NeedRefine_Rho, NeedRefine_H};
 template <int dim>
 struct FIELD_DATA
 {
@@ -47,7 +47,6 @@ class cForest
 {
 
 private:
-    int     m_num_children;
     size_t  m_data_size;
     double m_xyz_min[3];
     double m_xyz_max[3];
@@ -58,9 +57,11 @@ private:
     void release_children(Quadrant<dim,USER_DATA>* quad);
     void getLeaves(vector<Quadrant<dim,USER_DATA>* >& leaves, Quadrant<dim,USER_DATA>* quad);
     void refine(Quadrant<dim,USER_DATA>* quad, bool (*is_refine)(cForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level));
-    
+    void write_vtk_cellData(ofstream* fout, string type, string name, string format);
 public:
     int     m_max_level;
+    int     m_num_children;
+    double RMSD_Rho_min, RMSD_H_min;  //Property refinement criterion 
     void get_quadrant_physical_length(int level, double physical_length[3]);
     void refine(bool (*is_refine)(cForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level));
     void write_to_vtk(string filename, bool write_data=true, bool isNormalizeXYZ=true);

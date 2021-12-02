@@ -6,7 +6,9 @@ cForest<dim,USER_DATA>::cForest(double xyz_min[3], double xyz_max[3], int max_le
 :
 m_num_children(1<<dim),
 m_data_size(data_size),
-m_max_level(max_level)
+m_max_level(max_level),
+RMSD_Rho_min(5),
+RMSD_H_min(1000)
 {
     double length_forest = (1<<MAX_FOREST_LEVEL);
     for (size_t i = 0; i < 3; i++)
@@ -77,8 +79,6 @@ void cForest<dim,USER_DATA>::init_Root(Quadrant<dim,USER_DATA>& quad)
 template <int dim, typename USER_DATA>
 void cForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, bool (*is_refine)(cForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level))
 {
-    // if(quad->level > m_max_level)return;
-
     if(is_refine(this, quad, m_max_level))
     {
         // if no children, create children
@@ -174,22 +174,85 @@ void cForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_data, bool
     fout<<"    <Piece NumberOfPoints=\""<<num_points<<"\" NumberOfCells=\""<<num_cells<<"\">"<<endl;
     // write point data 
     fout<<"      <PointData>"<<endl;
+    // ---------- . phase index
+    fout<<"        <DataArray type=\"Int32\" Name=\"phaseIndex\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->phaseRegion_point[j];}}
+    fout<<"\n        </DataArray>"<<endl;
+    // ---------- . Rho
+    fout<<"        <DataArray type=\"Float32\" Name=\"rho\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Rho;}}
+    fout<<"\n        </DataArray>"<<endl;
+    // ---------- . Rho_l
+    fout<<"        <DataArray type=\"Float32\" Name=\"rho_l\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Rho_l;}}
+    fout<<"\n        </DataArray>"<<endl;
+    // ---------- . Rho_v
+    fout<<"        <DataArray type=\"Float32\" Name=\"rho_v\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Rho_v;}}
+    fout<<"\n        </DataArray>"<<endl;
+    // ---------- . Rho_h
+    fout<<"        <DataArray type=\"Float32\" Name=\"rho_h\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Rho_h;}}
+    fout<<"\n        </DataArray>"<<endl;
+    // ---------- . H
+    fout<<"        <DataArray type=\"Float32\" Name=\"H\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].H;}}
+    fout<<"\n        </DataArray>"<<endl;
+    // ---------- . H_l
+    fout<<"        <DataArray type=\"Float32\" Name=\"H_l\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].H_l;}}
+    fout<<"\n        </DataArray>"<<endl;
+    // ---------- . H_v
+    fout<<"        <DataArray type=\"Float32\" Name=\"H_v\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].H_v;}}
+    fout<<"\n        </DataArray>"<<endl;
+    // ---------- . H_h
+    fout<<"        <DataArray type=\"Float32\" Name=\"H_h\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].H_h;}}
+    fout<<"\n        </DataArray>"<<endl;
+    // ---------- . X
+    fout<<"        <DataArray type=\"Float32\" Name=\"X\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].X_wt;}}
+    fout<<"\n        </DataArray>"<<endl;
+    // ---------- . X_l
+    fout<<"        <DataArray type=\"Float32\" Name=\"X_l\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].X_l;}}
+    fout<<"\n        </DataArray>"<<endl;
+    // ---------- . X_v
+    fout<<"        <DataArray type=\"Float32\" Name=\"X_v\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].X_v;}}
+    fout<<"\n        </DataArray>"<<endl;
+    // ---------- . Mu
+    fout<<"        <DataArray type=\"Float32\" Name=\"Mu\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Mu;}}
+    fout<<"\n        </DataArray>"<<endl;
+    // ---------- . Mu_l
+    fout<<"        <DataArray type=\"Float32\" Name=\"Mu_l\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Mu_l;}}
+    fout<<"\n        </DataArray>"<<endl;
+    // ---------- . Mu_v
+    fout<<"        <DataArray type=\"Float32\" Name=\"Mu_v\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Mu_v;}}
+    fout<<"\n        </DataArray>"<<endl;
+    // ----------
     fout<<"      </PointData>"<<endl;
     // write cell data 
     fout<<"      <CellData>"<<endl;
-    fout<<"        <DataArray type=\"Int32\" Name=\"phaseIndex\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">"<<endl;
-    fout<<"        "<<endl;
-    for (size_t i = 0; i < leaves.size(); i++)
-    {
-        fout<<" "<<leaves[i]->user_data->phaseRegion_cell;
-    }
-    fout<<endl;
-    fout<<"        </DataArray>"<<endl;
+    // ---------- 1. phase index
+    fout<<"        <DataArray type=\"Int32\" Name=\"phaseIndex\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ fout<<" "<<leaves[i]->user_data->phaseRegion_cell;}
+    fout<<"\n        </DataArray>"<<endl;
+    // ---------- 2. need refine
+    fout<<"        <DataArray type=\"Int32\" Name=\"needRefine\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ fout<<" "<<leaves[i]->user_data->need_refine;}
+    fout<<"\n        </DataArray>"<<endl;
+    // ----------
+    
     fout<<"      </CellData>"<<endl;
     // write points
     fout<<"      <Points>"<<endl;
     fout<<"        <DataArray type=\"Float32\" Name=\"Position\" NumberOfComponents=\"3\" format=\"ascii\" RangeMin=\"0.008838834896540746\" RangeMax=\"1.4053746938907843\">"<<endl;
-    double scale=0;
+    double scale=0; //scale = 0.001, keep some space between each quadrant
     double physical_length[3] ={m_xyz_max[0] - m_xyz_min[0], m_xyz_max[1] - m_xyz_min[1], m_xyz_max[2] - m_xyz_min[2]};
     for (size_t i = 0; i < num_cells; i++)
     {
@@ -297,7 +360,9 @@ bool refine_fn(cForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, in
     if(quad->isHasChildren) return true; //if a quad has children, of course it need refine, but we don't need do anything at here, just return true.
 
     USER_DATA       *data = (USER_DATA *) quad->user_data;
-    bool need_refine = false;
+    bool need_refine_phaseBoundary  = false;
+    bool need_refine_Rho            = false;
+    bool need_refine_H              = false;
     double physical_length[3];
     forest->get_quadrant_physical_length(quad->level, physical_length);
     const int num_sample_x =2; //最简单的情况就是只取xmin, xmax作为采样点判断这些采样点的函数计算返回值(flat)是否全部相等.但是有时候会有漏掉的情况，所以可以考虑在这里加密采样
@@ -313,9 +378,7 @@ bool refine_fn(cForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, in
         for (int ix = 0; ix < num_sample_x; ix++)
         {
             x_qua = quad->xyz[0] + dx_qua*ix;
-            // regionIndex[iy*num_sample_x + ix] = phaseRegion_sin_func(x_qua, y_qua); 
             regionIndex[iy*num_sample_x + ix] = phaseRegion_H2ONaCl_constantX(x_qua, y_qua);
-            // cout<<"***** "<<phaseRegion_H2ONaCl_constantX(x_qua, y_qua)<<endl;
         }
     }
     // ========== 1. refinement check for phase index ============
@@ -324,12 +387,12 @@ bool refine_fn(cForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, in
     {
         isSame_phaseIndex = (isSame_phaseIndex && (regionIndex[0] == regionIndex[i]));
     }
-    if(!isSame_phaseIndex) //如果采样点的phase index全相等，则不refine；否则refine
+    if(!isSame_phaseIndex) //if phase indices of all sample points are equal, do not refine; otherwise do refine
     {
-        need_refine = true;
+        need_refine_phaseBoundary = true;
     }else
     {
-        need_refine = false;
+        need_refine_phaseBoundary = false;
     }
     // ========================================================
     // calculate properties: four vertices and one midpoint
@@ -343,21 +406,46 @@ bool refine_fn(cForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, in
     data->phaseRegion_point[2] = regionIndex[num_sample_x*num_sample_y-num_sample_x];
     data->phaseRegion_point[3] = regionIndex[num_sample_x*num_sample_y-1];
     data->phaseRegion_cell     = phaseRegion_H2ONaCl_constantX(quad->xyz[0] + physical_length[0]/2.0, quad->xyz[1] + physical_length[1]/2.0);
-    
     // set some special indicator if cell need refine
-    if(need_refine)
+    if(need_refine_phaseBoundary)
     {
         data->phaseRegion_cell = H2ONaCl::MixPhaseRegion;
-        data->need_refine = NeedRefine_PB_L2V; //\todo use enum to mark it to different phase boundaries
-
+        data->need_refine = NeedRefine_PhaseBoundary;
     }else
     {
         data->need_refine = NeedRefine_NoNeed;
     }
 
-    // return refine indicator
+    // ========== 2. refinement check for Rho ===================== \todo maybe use another criterion
+    double mean_Rho = data->prop_cell.Rho;
+    for(int i=0;i<forest->m_num_children;i++)mean_Rho += data->prop_point[i].Rho;
+    mean_Rho = mean_Rho / (forest->m_num_children + 1); // vertices data + one midpoint data
+    double RMSD_Rho = pow(data->prop_cell.Rho - mean_Rho, 2.0);
+    for(int i=0;i<forest->m_num_children;i++)RMSD_Rho += pow(data->prop_point[i].Rho - mean_Rho, 2.0);
+    RMSD_Rho = sqrt(RMSD_Rho/(forest->m_num_children + 1));
+    if(RMSD_Rho > forest->RMSD_Rho_min)
+    {
+        need_refine_Rho = true;
+        if(data->need_refine == NeedRefine_NoNeed) data->need_refine = NeedRefine_Rho;
+    }
+    // // ========== 3. refinement check for H enthalpy ===================== \todo maybe use another criterion
+    // double mean_H = data->prop_cell.H;
+    // for(int i=0;i<forest->m_num_children;i++)mean_H += data->prop_point[i].H;
+    // mean_H = mean_H / (forest->m_num_children + 1); // vertices data + one midpoint data
+    // double RMSD_H = pow(data->prop_cell.H - mean_H, 2.0);
+    // for(int i=0;i<forest->m_num_children;i++)RMSD_H += pow(data->prop_point[i].H - mean_H, 2.0);
+    // RMSD_H = sqrt(RMSD_H/(forest->m_num_children + 1));
+    // if(RMSD_H > forest->RMSD_H_min)
+    // {
+    //     need_refine_H = true;
+    //     if(data->need_refine == NeedRefine_NoNeed) data->need_refine = NeedRefine_H;
+    // }
+
+    // ============ return refine indicator ===========
     if(quad->level > forest->m_max_level)return false;
-    if(need_refine)return true;
+    if(need_refine_phaseBoundary)return true;
+    if(need_refine_Rho) return true;
+    if(need_refine_H) return true;
 
     return false;
 }
@@ -374,7 +462,7 @@ int main()
 {
     // double xyzmin[3] = {0,-2,0};
     // double xyzmax[3] = {2*3.141592653, 1.5, 100};
-    double xyzmin[3] = {1,5, 0};
+    double xyzmin[3] = {2,5, 0};
     double xyzmax[3] = {700, 400, 0};
 
     int max_level = 12;
