@@ -28,7 +28,7 @@ include_directories(${SWEOS_INCLUDE_DIR})
 link_directories(${SWEOS_LIB_DIR})
 aux_source_directory(. SRC_MAIN)
 
-list(APPEND Examples step1 step2 step3 step4 step5 step6 step7 QuadTree)
+list(APPEND Examples step1 step2 step3 step4 step5 step6 step7)
 foreach(example IN LISTS Examples)
     message(STATUS "example ${example}")
     add_executable(${example}  ${example}.cpp)
