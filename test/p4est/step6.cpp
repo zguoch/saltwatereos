@@ -15,7 +15,7 @@ H2ONaCl::cH2ONaCl eos;
 
 #include <iostream>
 using namespace std;
-#define MAX_Level_Refine 6
+#define MAX_Level_Refine 12
 #define PI 3.141592653
 
 struct FIELD_DATA
@@ -82,7 +82,6 @@ int phaseRegion_H2ONaCl_constantX(double x_ref, double y_ref, double X = 3.2, do
     H2ONaCl::PhaseRegion phaseregion=eos.findPhaseRegion(T_C, p_bar, eos.Wt2Mol(X/100.0),xl,xv);
     // cout<<phaseregion<<": "<<eos.m_phaseRegion_name[phaseregion].c_str()<<endl;
     // printf("T: %f C, P: %f bar, X: %f wt%% NaCl %f mol fraction\nphase region: %s xl: %f wt%% %f mol fraction, xv: %f wt%% %f mol fraction \n", T, P, X,eos.Wt2Mol(X/100.0),eos.m_phaseRegion_name[phaseregion].c_str(), eos.Mol2Wt(xl)*100.0, xl, eos.Mol2Wt(xv)*100.0, xv);
-
     return phaseregion;
 }
 void calProp_H2ONaCl(H2ONaCl::PROP_H2ONaCl& prop,double x_ref, double y_ref, double X = 3.2, double Tmin = 1, double Tmax = 700, double pmin = 5, double pmax = 400)
@@ -146,6 +145,7 @@ static int refine_fn (p4est_t * p4est, p4est_topidx_t which_tree, p4est_quadrant
     data->phaseRegion_point[2] = regionIndex[num_sample_x*num_sample_y-num_sample_x];
     data->phaseRegion_point[3] = regionIndex[num_sample_x*num_sample_y-1];
     data->phaseRegion_cell     = phaseRegion_H2ONaCl_constantX(xyzc[0], xyzc[1]);
+    
     // ========== 1. refinement check for Rho =====================
     // 如果梯度大于某个值则细化
     double threshold = 50;
@@ -165,12 +165,12 @@ static int refine_fn (p4est_t * p4est, p4est_topidx_t which_tree, p4est_quadrant
     //     data->need_refine_Rho = true;
         
     // }
-    if(MSE_Rho > 10)
-    {
-        data->need_refine_Rho = true;
-    }else{
-        data->need_refine_Rho = false;
-    }
+    // if(MSE_Rho > 10)
+    // {
+    //     data->need_refine_Rho = true;
+    // }else{
+    //     data->need_refine_Rho = false;
+    // }
     // ============================================================
 
     if(q->level > MAX_Level_Refine) return 0; //maximum-level control
@@ -310,7 +310,7 @@ static void write2vtk (p4est_t * p4est, string filename="step6")
 }
 int main()
 {
-    int level_init = 6; // will create a initial mesh with (2^dim)^(level_init) quadrants
+    int level_init = 4; // will create a initial mesh with (2^dim)^(level_init) quadrants
     int  recursive;
     int retval = 0;
     FIELD_DATA field_data;
@@ -325,30 +325,30 @@ int main()
     // p4est_vtk_write_file (p4est, NULL, "step6");
     write2vtk(p4est,"step6"); //Use customized output function
 
-    // write to p4est format
-    p4est_save ("step6.p4est", p4est, 1);
-    // p4est_save_ext("step6.p4est", p4est, 1, 0);
-    // test load p4est format
-    // int level_init = 6; // will create a initial mesh with (2^dim)^(level_init) quadrants
-    // int  recursive;
-    FIELD_DATA field_data_new;
-    p4est_connectivity_t *conn_new = p4est_connectivity_new_unitsquare ();
-    sc_MPI_Comm         mpicomm = sc_MPI_COMM_WORLD;
-    p4est_t *p4est_new = p4est_load("step6.p4est", mpicomm, sizeof(FIELD_DATA), 1, NULL, &conn_new);
-    // ======== save, load connectivity and compare ===========
-    // retval = p4est_connectivity_save ("step6.conn", conn);
-    // SC_CHECK_ABORT (retval == 0, "connectivity_save failed");
-    // p4est_connectivity_t *conn_new = p4est_connectivity_load ("step6.conn", NULL);
-    // SC_CHECK_ABORT (p4est_connectivity_is_equal (conn, conn_new),
-    //               "load/save connectivity mismatch A");
-    // =========================================================
-    // write the new forest
-    write2vtk(p4est_new,"step6_new"); //Use customized output function
+    // // write to p4est format
+    // p4est_save ("step6.p4est", p4est, 1);
+    // // p4est_save_ext("step6.p4est", p4est, 1, 0);
+    // // test load p4est format
+    // // int level_init = 6; // will create a initial mesh with (2^dim)^(level_init) quadrants
+    // // int  recursive;
+    // FIELD_DATA field_data_new;
+    // p4est_connectivity_t *conn_new = p4est_connectivity_new_unitsquare ();
+    // sc_MPI_Comm         mpicomm = sc_MPI_COMM_WORLD;
+    // p4est_t *p4est_new = p4est_load("step6.p4est", mpicomm, sizeof(FIELD_DATA), 1, NULL, &conn_new);
+    // // ======== save, load connectivity and compare ===========
+    // // retval = p4est_connectivity_save ("step6.conn", conn);
+    // // SC_CHECK_ABORT (retval == 0, "connectivity_save failed");
+    // // p4est_connectivity_t *conn_new = p4est_connectivity_load ("step6.conn", NULL);
+    // // SC_CHECK_ABORT (p4est_connectivity_is_equal (conn, conn_new),
+    // //               "load/save connectivity mismatch A");
+    // // =========================================================
+    // // write the new forest
+    // write2vtk(p4est_new,"step6_new"); //Use customized output function
     
     /* Destroy the p4est and the connectivity structure. */
     p4est_destroy (p4est);
     p4est_connectivity_destroy (conn);
     // p4est_destroy (p4est_new);
-    p4est_connectivity_destroy (conn_new);
+    // p4est_connectivity_destroy (conn_new);
     return 0;
 }

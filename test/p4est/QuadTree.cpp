@@ -15,9 +15,9 @@ m_max_level(max_level)
         m_xyz_min[i] = xyz_min[i];
         length_scale[i] = (m_xyz_max[i] - m_xyz_min[i])/length_forest;
     }
-    
     init_Root(m_root);
 }
+
 template <int dim, typename USER_DATA> 
 cForest<dim,USER_DATA>::~cForest()
 {
@@ -38,6 +38,7 @@ void cForest<dim,USER_DATA>::release_children(Quadrant<dim,USER_DATA>* quad)
             }else
             {
                 delete quad->children[i];
+                quad->children[i] = NULL;
             }
         }
         
@@ -76,7 +77,7 @@ void cForest<dim,USER_DATA>::init_Root(Quadrant<dim,USER_DATA>& quad)
 template <int dim, typename USER_DATA>
 void cForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, bool (*is_refine)(cForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level))
 {
-    if(quad->level >= m_max_level)return;
+    // if(quad->level > m_max_level)return;
 
     if(is_refine(this, quad, m_max_level))
     {
@@ -131,7 +132,6 @@ void cForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, bool (*is_ref
             refine(quad->children[i], is_refine);
         }
     }
-    
 }
 
 template <int dim, typename USER_DATA>
@@ -155,15 +155,9 @@ void cForest<dim,USER_DATA>::getLeaves(vector<Quadrant<dim,USER_DATA>* >& leaves
     }
 }
 
-template <int dim, typename USER_DATA>
-void cForest<dim,USER_DATA>::write_to_vtk(const Quadrant<dim,USER_DATA>* quad)
-{
-
-}
-
 // ASCII version
 template <int dim, typename USER_DATA>
-void cForest<dim,USER_DATA>::write_to_vtk(string filename)
+void cForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_data, bool isNormalizeXYZ)
 {
     vector<Quadrant<dim,USER_DATA>* > leaves;
     getLeaves(leaves, &m_root);
@@ -183,11 +177,20 @@ void cForest<dim,USER_DATA>::write_to_vtk(string filename)
     fout<<"      </PointData>"<<endl;
     // write cell data 
     fout<<"      <CellData>"<<endl;
+    fout<<"        <DataArray type=\"Int32\" Name=\"phaseIndex\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">"<<endl;
+    fout<<"        "<<endl;
+    for (size_t i = 0; i < leaves.size(); i++)
+    {
+        fout<<" "<<leaves[i]->user_data->phaseRegion_cell;
+    }
+    fout<<endl;
+    fout<<"        </DataArray>"<<endl;
     fout<<"      </CellData>"<<endl;
     // write points
     fout<<"      <Points>"<<endl;
     fout<<"        <DataArray type=\"Float32\" Name=\"Position\" NumberOfComponents=\"3\" format=\"ascii\" RangeMin=\"0.008838834896540746\" RangeMax=\"1.4053746938907843\">"<<endl;
-    
+    double scale=0;
+    double physical_length[3] ={m_xyz_max[0] - m_xyz_min[0], m_xyz_max[1] - m_xyz_min[1], m_xyz_max[2] - m_xyz_min[2]};
     for (size_t i = 0; i < num_cells; i++)
     {
         length_ref_cell = 1<<(MAX_FOREST_LEVEL - leaves[i]->level);
@@ -196,10 +199,20 @@ void cForest<dim,USER_DATA>::write_to_vtk(string filename)
             length_cell[j] = length_scale[j] * length_ref_cell;
         }
         fout<<"        ";
-        fout<<" "<<leaves[i]->xyz[0]                 <<" "<<leaves[i]->xyz[1]                <<" "<<leaves[i]->xyz[2]; //Lower left
-        fout<<" "<<leaves[i]->xyz[0] + length_cell[0]<<" "<<leaves[i]->xyz[1]                <<" "<<leaves[i]->xyz[2]; //lower right
-        fout<<" "<<leaves[i]->xyz[0]                 <<" "<<leaves[i]->xyz[1] + length_cell[1]<<" "<<leaves[i]->xyz[2]; //upper left
-        fout<<" "<<leaves[i]->xyz[0] + length_cell[0]<<" "<<leaves[i]->xyz[1] + length_cell[1]<<" "<<leaves[i]->xyz[2]; //upper right
+        if (isNormalizeXYZ)
+        {
+            fout<<" "<<(leaves[i]->xyz[0]                    + physical_length[0]*scale - m_xyz_min[0])/(m_xyz_max[0] - m_xyz_min[0])<<" "<<(leaves[i]->xyz[1]                  + physical_length[1]*scale - m_xyz_min[1])/(m_xyz_max[1] - m_xyz_min[1])<<" "<<leaves[i]->xyz[2]; //Lower left
+            fout<<" "<<(leaves[i]->xyz[0] + length_cell[0]   - physical_length[0]*scale - m_xyz_min[0])/(m_xyz_max[0] - m_xyz_min[0])<<" "<<(leaves[i]->xyz[1]                  + physical_length[1]*scale - m_xyz_min[1])/(m_xyz_max[1] - m_xyz_min[1])<<" "<<leaves[i]->xyz[2]; //lower right
+            fout<<" "<<(leaves[i]->xyz[0]                    + physical_length[0]*scale - m_xyz_min[0])/(m_xyz_max[0] - m_xyz_min[0])<<" "<<(leaves[i]->xyz[1] + length_cell[1] - physical_length[1]*scale - m_xyz_min[1])/(m_xyz_max[1] - m_xyz_min[1])<<" "<<leaves[i]->xyz[2]; //upper left
+            fout<<" "<<(leaves[i]->xyz[0] + length_cell[0]   - physical_length[0]*scale - m_xyz_min[0])/(m_xyz_max[0] - m_xyz_min[0])<<" "<<(leaves[i]->xyz[1] + length_cell[1] - physical_length[1]*scale - m_xyz_min[1])/(m_xyz_max[1] - m_xyz_min[1])<<" "<<leaves[i]->xyz[2]; //upper right
+        }else
+        {
+            fout<<" "<<leaves[i]->xyz[0]                    + physical_length[0]*scale<<" "<<leaves[i]->xyz[1]                  + physical_length[1]*scale<<" "<<leaves[i]->xyz[2]; //Lower left
+            fout<<" "<<leaves[i]->xyz[0] + length_cell[0]   - physical_length[0]*scale<<" "<<leaves[i]->xyz[1]                  + physical_length[1]*scale<<" "<<leaves[i]->xyz[2]; //lower right
+            fout<<" "<<leaves[i]->xyz[0]                    + physical_length[0]*scale<<" "<<leaves[i]->xyz[1] + length_cell[1] - physical_length[1]*scale<<" "<<leaves[i]->xyz[2]; //upper left
+            fout<<" "<<leaves[i]->xyz[0] + length_cell[0]   - physical_length[0]*scale<<" "<<leaves[i]->xyz[1] + length_cell[1] - physical_length[1]*scale<<" "<<leaves[i]->xyz[2]; //upper right
+        }
+        
         fout<<endl;
     }
     fout<<"        </DataArray>"<<endl;
@@ -265,19 +278,32 @@ int phaseRegion_sin_func(double x, double y)
     return region;
 }
 
+int phaseRegion_H2ONaCl_constantX(double T_C, double p_bar, double X = 3.2)
+{
+    double xv, xl;
+    H2ONaCl::PhaseRegion phaseregion=eos.findPhaseRegion(T_C, p_bar, eos.Wt2Mol(X/100.0),xl,xv);
+
+    return phaseregion;
+}
+
+void calProp_H2ONaCl_consX(H2ONaCl::PROP_H2ONaCl& prop, double T_C, double p_bar, double X = 3.2)
+{
+    prop = eos.prop_pTX(p_bar*1E5, T_C+273.15, X/100.0);
+}
+
 template <int dim, typename USER_DATA>
 bool refine_fn(cForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level)
 {
-    // FIELD_DATA       *data = (FIELD_DATA *) q->p.user_data;
-    // p4est_qcoord_t      half_length = P4EST_QUADRANT_LEN (q->level) / 2;
-    // p4est_qcoord_t      length = P4EST_QUADRANT_LEN (q->level);
+    if(quad->isHasChildren) return true; //if a quad has children, of course it need refine, but we don't need do anything at here, just return true.
+
+    USER_DATA       *data = (USER_DATA *) quad->user_data;
     bool need_refine = false;
     double physical_length[3];
     forest->get_quadrant_physical_length(quad->level, physical_length);
     const int num_sample_x =2; //最简单的情况就是只取xmin, xmax作为采样点判断这些采样点的函数计算返回值(flat)是否全部相等.但是有时候会有漏掉的情况，所以可以考虑在这里加密采样
     const int num_sample_y =2;
     double dx_qua = physical_length[0] / (num_sample_x - 1.0);
-    double dy_qua = physical_length[0] / (num_sample_y - 1.0);
+    double dy_qua = physical_length[1] / (num_sample_y - 1.0);
     double x_qua, x_ref, y_qua, y_ref;
     double xyz_tmp[3];
     int regionIndex[num_sample_x*num_sample_y];
@@ -287,7 +313,9 @@ bool refine_fn(cForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, in
         for (int ix = 0; ix < num_sample_x; ix++)
         {
             x_qua = quad->xyz[0] + dx_qua*ix;
-            regionIndex[iy*num_sample_x + ix] = phaseRegion_sin_func(x_qua, y_qua); //phaseRegion_H2ONaCl_constantX(xyz_tmp[0], xyz_tmp[1]);
+            // regionIndex[iy*num_sample_x + ix] = phaseRegion_sin_func(x_qua, y_qua); 
+            regionIndex[iy*num_sample_x + ix] = phaseRegion_H2ONaCl_constantX(x_qua, y_qua);
+            // cout<<"***** "<<phaseRegion_H2ONaCl_constantX(x_qua, y_qua)<<endl;
         }
     }
     // ========== 1. refinement check for phase index ============
@@ -303,33 +331,63 @@ bool refine_fn(cForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, in
     {
         need_refine = false;
     }
+    // ========================================================
+    // calculate properties: four vertices and one midpoint
+    calProp_H2ONaCl_consX(data->prop_point[0], quad->xyz[0],                      quad->xyz[1]);                         //xmin,ymin
+    calProp_H2ONaCl_consX(data->prop_point[1], quad->xyz[0] + physical_length[0], quad->xyz[1]);                         //xmax,ymin
+    calProp_H2ONaCl_consX(data->prop_point[2], quad->xyz[0],                      quad->xyz[1] + physical_length[1]);    //xmin,ymax
+    calProp_H2ONaCl_consX(data->prop_point[3], quad->xyz[0] + physical_length[0], quad->xyz[1] + physical_length[1]);    //xmax,ymax
+    calProp_H2ONaCl_consX(data->prop_cell, quad->xyz[0] + physical_length[0]/2.0, quad->xyz[1] + physical_length[1]/2.0); //xc,yc
+    data->phaseRegion_point[0] = regionIndex[0]; //phase index
+    data->phaseRegion_point[1] = regionIndex[num_sample_x-1];
+    data->phaseRegion_point[2] = regionIndex[num_sample_x*num_sample_y-num_sample_x];
+    data->phaseRegion_point[3] = regionIndex[num_sample_x*num_sample_y-1];
+    data->phaseRegion_cell     = phaseRegion_H2ONaCl_constantX(quad->xyz[0] + physical_length[0]/2.0, quad->xyz[1] + physical_length[1]/2.0);
+    
+    // set some special indicator if cell need refine
+    if(need_refine)
+    {
+        data->phaseRegion_cell = H2ONaCl::MixPhaseRegion;
+        data->need_refine = NeedRefine_PB_L2V; //\todo use enum to mark it to different phase boundaries
 
-    if(quad->level >= forest->m_max_level)return false;
+    }else
+    {
+        data->need_refine = NeedRefine_NoNeed;
+    }
+
+    // return refine indicator
+    if(quad->level > forest->m_max_level)return false;
     if(need_refine)return true;
 
     return false;
 }
 
 template <int dim, typename USER_DATA>
-bool refine_latest(cForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level)
+bool refine_uniform(cForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level)
 {
-    if(quad->level <= 4)return true;
+    if(quad->level <= 3)return true;
 
     return false;
 }
+
 int main()
 {
-    double xyzmin[3] = {0,-2,0};
-    double xyzmax[3] = {2*3.141592653, 1.5, 100};
-    typedef double type_user_data;
-    int max_level = 12;
-    cForest<2, type_user_data> forest(xyzmin, xyzmax, max_level, sizeof(type_user_data));
+    // double xyzmin[3] = {0,-2,0};
+    // double xyzmax[3] = {2*3.141592653, 1.5, 100};
+    double xyzmin[3] = {1,5, 0};
+    double xyzmax[3] = {700, 400, 0};
 
+    int max_level = 12;
+    const int dim =2;
+    cForest<dim, FIELD_DATA<dim> > forest(xyzmin, xyzmax, max_level, sizeof(FIELD_DATA<dim>));
     // refine 
-    // forest.refine_uniform(4);
-    forest.refine(refine_latest);
+    forest.refine(refine_uniform);
     forest.refine(refine_fn);
+    
     forest.write_to_vtk("quadTree.vtu");
 
+    // std::string dummy;
+    // std::cout << "Enter to continue..." << std::endl;
+    // std::getline(std::cin, dummy);
     return 0;
 }

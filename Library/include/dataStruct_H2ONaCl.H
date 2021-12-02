@@ -24,8 +24,8 @@ namespace H2ONaCl
     // enum CELL_TYPES_VTK{VTK_EMPTY, VTK_VERTEX, VTK_POLY_VERTEX, VTK_LINE, VTK_POLY_LINE, VTK_TRIANGLE, VTK_TRIANGLE_STRIP,
     //                     VTK_POLYGON, VTK_PIXEL, VTK_QUAD, VTK_TETRA, VTK_VOXEL, VTK_HEXAHEDRON, VTK_WEDGE, VTK_PYRAMID};
     // define index of region
-    enum PhaseRegion {SinglePhase_L, TwoPhase_L_V_X0, SinglePhase_V, 
-                    TwoPhase_L_H, TwoPhase_V_H, ThreePhase_V_L_H, TwoPhase_V_L_L, TwoPhase_V_L_V, UnknownPhaseRegion};
+    enum PhaseRegion {MixPhaseRegion=-1, SinglePhase_L, TwoPhase_L_V_X0, SinglePhase_V, 
+                    TwoPhase_L_H, TwoPhase_V_H, ThreePhase_V_L_H, TwoPhase_V_L_L, TwoPhase_V_L_V, UnknownPhaseRegion}; //MixPhaseRegion is used in AMR lookup table
                     
     typedef std::map<int,std::string> MAP_PHASE_REGION;
 
