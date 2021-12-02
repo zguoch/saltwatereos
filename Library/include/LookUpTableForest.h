@@ -19,6 +19,8 @@ namespace LOOKUPTABLE_FOREST
         bool                isHasChildren;
         Quadrant            *children[1<<dim]; //2^dim
         USER_DATA           *user_data;
+        // DEBUG
+        int index = -1;
     };
 
     enum NeedRefine {NeedRefine_NoNeed, NeedRefine_PhaseBoundary, NeedRefine_Rho, NeedRefine_H};
@@ -59,10 +61,12 @@ namespace LOOKUPTABLE_FOREST
         void getLeaves(vector<Quadrant<dim,USER_DATA>* >& leaves, Quadrant<dim,USER_DATA>* quad);
         void refine(Quadrant<dim,USER_DATA>* quad, bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level));
         void write_vtk_cellData(ofstream* fout, string type, string name, string format);
+        void searchQuadrant(Quadrant<dim,USER_DATA>* quad_source, Quadrant<dim,USER_DATA> *&quad_target, double x_ref, double y_ref, double z_ref);
     public:
         int     m_max_level;
         int     m_num_children;
         double RMSD_Rho_min, RMSD_H_min;  //Property refinement criterion 
+        int searchQuadrant(double x, double y, double z);
         void get_quadrant_physical_length(int level, double physical_length[3]);
         void refine(bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level));
         void write_to_vtk(string filename, bool write_data=true, bool isNormalizeXYZ=true);

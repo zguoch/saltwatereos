@@ -122,8 +122,8 @@ bool refine_fn(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>
     // ============ return refine indicator ===========
     if(quad->level > forest->m_max_level)return false;
     if(need_refine_phaseBoundary)return true;
-    if(need_refine_Rho) return true;
-    if(need_refine_H) return true;
+    // if(need_refine_Rho) return true;
+    // if(need_refine_H) return true;
 
     return false;
 }
@@ -139,18 +139,19 @@ bool refine_uniform(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_
 int main()
 {
     double xyzmin[3] = {2,5, 0};
-    double xyzmax[3] = {700, 400, 0};
+    double xyzmax[3] = {700, 400, 1};
 
-    int max_level = 6;
+    int max_level = 2;
     const int dim =2;
-    // LOOKUPTABLE_FOREST::testforest<2> ff;
     LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> > forest(xyzmin, xyzmax, max_level, sizeof(LOOKUPTABLE_FOREST::FIELD_DATA<dim>));
     // refine 
-    forest.refine(refine_uniform);
+    // forest.refine(refine_uniform);
     forest.refine(refine_fn);
     
-    forest.write_to_vtk("quadTree.vtu");
+    forest.write_to_vtk("lookuptable.vtu");
 
+    int ind_targetLeaf = forest.searchQuadrant(360,110,3.2);
+    cout<<ind_targetLeaf<<endl;
     // // std::string dummy;
     // // std::cout << "Enter to continue..." << std::endl;
     // // std::getline(std::cin, dummy);

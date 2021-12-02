@@ -149,6 +149,7 @@ void LookUpTableForest<dim,USER_DATA>::getLeaves(vector<Quadrant<dim,USER_DATA>*
         }
     }else
     {
+        quad->index = leaves.size();
         leaves.push_back(quad);
     }
 }
@@ -244,6 +245,10 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
     fout<<"        <DataArray type=\"Int32\" Name=\"needRefine\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
     for (size_t i = 0; i < leaves.size(); i++){ fout<<" "<<leaves[i]->user_data->need_refine;}
     fout<<"\n        </DataArray>"<<endl;
+    // ---------- DEBUG. leaf index
+    fout<<"        <DataArray type=\"Int32\" Name=\"quadIndex\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ fout<<" "<<leaves[i]->index;}
+    fout<<"\n        </DataArray>"<<endl;
     // ----------
     
     fout<<"      </CellData>"<<endl;
@@ -320,4 +325,35 @@ void LookUpTableForest<dim,USER_DATA>::get_quadrant_physical_length(int level, d
     {
         physical_length[i] = length_scale[i] * length_ref;
     }
+}
+
+template <int dim, typename USER_DATA>
+void LookUpTableForest<dim,USER_DATA>::searchQuadrant(Quadrant<dim,USER_DATA> *quad_source, Quadrant<dim,USER_DATA> *&quad_target, double x_ref, double y_ref, double z_ref)
+{
+    if(!quad_source->isHasChildren)
+    {
+        quad_target = quad_source;
+        return;
+    }else
+    {
+        int length_child = 1<<(MAX_FOREST_LEVEL - quad_source->children[0]->level); //any of a child to access the child level number, e.g., 0
+        int childID_x = x_ref/length_child;
+        int childID_y = y_ref/length_child;
+        searchQuadrant(quad_source->children[childID_y*2 + childID_x], quad_target,
+            childID_x == 1 ? x_ref - length_child : x_ref, 
+            childID_y == 1 ? y_ref - length_child : y_ref, 
+            z_ref
+            );
+    }
+}
+
+template <int dim, typename USER_DATA>
+int LookUpTableForest<dim,USER_DATA>::searchQuadrant(double x, double y, double z)
+{
+    double x_ref = (x - m_xyz_min[0])/length_scale[0];
+    double y_ref = (y - m_xyz_min[1])/length_scale[1];
+    double z_ref = (z - m_xyz_min[2])/length_scale[2];
+    Quadrant<dim,USER_DATA>* targetLeaf;
+    searchQuadrant(&m_root, targetLeaf, x_ref, y_ref, z_ref);
+    return targetLeaf->index;
 }
