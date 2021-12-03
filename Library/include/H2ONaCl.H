@@ -19,6 +19,7 @@ using namespace std;
 #include "H2O.H"
 #include "NaCl.H"
 #include "dataStruct_H2ONaCl.H"
+#include "LookUpTableForest.h"
 
 #define USE_PROST 1  
 
@@ -400,6 +401,21 @@ namespace H2ONaCl
          * @param nP data points in P axis
          */
         void writePhaseSurface_XHP(double scale_X=1, double scale_H=1.0/HMAX, double scale_P=1.0/1000, string outpath="./", H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nP=500);
+    public:
+        LOOKUPTABLE_FOREST::LookUpTableForest<2, LOOKUPTABLE_FOREST::FIELD_DATA<2> >* m_lut_PTX; //lookup table in PTX space
+        // ======== create, save and load AMR lookup table =====
+        /**
+         * @brief Create a LUT 2D object in PTX space. Create different 2D LUT according to type and  xy limits, then access through member variable m_lut_PTX
+         * 
+         * @param type 
+         * @param xy_min 
+         * @param xy_max 
+         * @param z 
+         */
+        void createLUT_2D_PTX(std::string type, double xy_min[2], double xy_max[2], double z, int min_level = 4, int max_level = 6, string filename_vtu="");
+        void destroyLUT_2D_PTX();
+        int test_a;
+        // ========
     private:
         inline double Xwt2Xmol(double X){return (X/NaCl::MolarMass)/(X/NaCl::MolarMass+(1-X)/H2O::MolarMass);};
         void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);

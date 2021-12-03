@@ -5,6 +5,9 @@ project(test_swEOS LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# set compiler flag
+add_definitions("-Wno-array-bounds") # turn off this array bound check warning at this moment, this warning accurs at where dim!=3
+
 # 1. set path of SWEOS library, which can be downloaded from https://github.com/zguoch/saltwatereos/releases according to your OS
 set(SWEOS_DIR "${PROJECT_SOURCE_DIR}/../../Library" CACHE FILEPATH "Main path of SWEOS library")
 if(EXISTS ${SWEOS_DIR})
@@ -19,7 +22,7 @@ aux_source_directory(. SRC_MAIN)
 include_directories(${SWEOS_DIR}/include)
 link_directories(${SWEOS_DIR}/lib)
 
-list(APPEND Examples main test_LookUpTableForest)
+list(APPEND Examples main test_LookUpTableForest test_H2ONaCl_LUT)
 foreach(example IN LISTS Examples)
     message(STATUS "example ${example}")
     add_executable(${example}  ${example}.cpp)

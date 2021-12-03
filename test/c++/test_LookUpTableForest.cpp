@@ -1,4 +1,5 @@
-#include "LookUpTableForest.h"
+// #include "LookUpTableForest.h"
+#include "H2ONaCl.H"
 using namespace LOOKUPTABLE_FOREST;
 H2ONaCl::cH2ONaCl eos;
 
@@ -106,23 +107,23 @@ bool refine_fn(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>
         need_refine_Rho = true;
         if(data->need_refine == NeedRefine_NoNeed) data->need_refine = NeedRefine_Rho;
     }
-    // // ========== 3. refinement check for H enthalpy ===================== \todo maybe use another criterion
-    // double mean_H = data->prop_cell.H;
-    // for(int i=0;i<forest->m_num_children;i++)mean_H += data->prop_point[i].H;
-    // mean_H = mean_H / (forest->m_num_children + 1); // vertices data + one midpoint data
-    // double RMSD_H = pow(data->prop_cell.H - mean_H, 2.0);
-    // for(int i=0;i<forest->m_num_children;i++)RMSD_H += pow(data->prop_point[i].H - mean_H, 2.0);
-    // RMSD_H = sqrt(RMSD_H/(forest->m_num_children + 1));
-    // if(RMSD_H > forest->RMSD_H_min)
-    // {
-    //     need_refine_H = true;
-    //     if(data->need_refine == NeedRefine_NoNeed) data->need_refine = NeedRefine_H;
-    // }
+    // ========== 3. refinement check for H enthalpy ===================== \todo maybe use another criterion
+    double mean_H = data->prop_cell.H;
+    for(int i=0;i<forest->m_num_children;i++)mean_H += data->prop_point[i].H;
+    mean_H = mean_H / (forest->m_num_children + 1); // vertices data + one midpoint data
+    double RMSD_H = pow(data->prop_cell.H - mean_H, 2.0);
+    for(int i=0;i<forest->m_num_children;i++)RMSD_H += pow(data->prop_point[i].H - mean_H, 2.0);
+    RMSD_H = sqrt(RMSD_H/(forest->m_num_children + 1));
+    if(RMSD_H > forest->RMSD_H_min)
+    {
+        need_refine_H = true;
+        if(data->need_refine == NeedRefine_NoNeed) data->need_refine = NeedRefine_H;
+    }
 
     // ============ return refine indicator ===========
     if(quad->level > forest->m_max_level)return false;
     if(need_refine_phaseBoundary)return true;
-    // if(need_refine_Rho) return true;
+    if(need_refine_Rho) return true;
     // if(need_refine_H) return true;
 
     return false;
@@ -139,15 +140,15 @@ bool refine_uniform(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_
 int main()
 {
     clock_t start, end;
-    double xyzmin[3] = {2,5, 0};
+    double xyzmin[3] = {2,5, 0}; //T[deg.C], p[bar]
     double xyzmax[3] = {700, 400, 1};
 
-    int max_level = 2;
+    int max_level = 12;
     const int dim =2;
     LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> > forest(xyzmin, xyzmax, max_level, sizeof(LOOKUPTABLE_FOREST::FIELD_DATA<dim>));
     // refine 
     start = clock();
-    // forest.refine(refine_uniform);
+    forest.refine(refine_uniform);
     forest.refine(refine_fn);
     cout<<"Refinement end: "<<(double)(clock()-start)/CLOCKS_PER_SEC<<" s"<<endl;
     
@@ -159,15 +160,15 @@ int main()
     start = clock();
     Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
     int n_randSample = 1E7;
-    // for (size_t i = 0; i < n_randSample; i++)
-    // {
-    //     double T_C = (rand()/(double)RAND_MAX)*(xyzmax[0] - xyzmin[0]) + xyzmin[0];
-    //     double p_bar = (rand()/(double)RAND_MAX)*(xyzmax[1] - xyzmin[1]) + xyzmin[1];
-    //     // int ind_targetLeaf = forest.searchQuadrant(T_C, p_bar, 0);
-    //     forest.searchQuadrant(targetLeaf, T_C, p_bar, 0);
-    //     // cout<<"T_C: "<<T_C<<", p_bar: "<<p_bar<<", index: "<<ind_targetLeaf<<endl;
-    //     // cout<<eos.getPhaseRegionName(targetLeaf->user_data->phaseRegion_cell)<<endl;
-    // }
+    for (size_t i = 0; i < n_randSample; i++)
+    {
+        double T_C = (rand()/(double)RAND_MAX)*(xyzmax[0] - xyzmin[0]) + xyzmin[0];
+        double p_bar = (rand()/(double)RAND_MAX)*(xyzmax[1] - xyzmin[1]) + xyzmin[1];
+        // int ind_targetLeaf = forest.searchQuadrant(T_C, p_bar, 0);
+        forest.searchQuadrant(targetLeaf, T_C, p_bar, 0);
+        // cout<<"T_C: "<<T_C<<", p_bar: "<<p_bar<<", index: "<<ind_targetLeaf<<endl;
+        // cout<<eos.getPhaseRegionName(targetLeaf->user_data->phaseRegion_cell)<<endl;
+    }
     // forest.searchQuadrant(targetLeaf, 200, 300, 0);
     // cout<<targetLeaf->level<<endl;
     cout<<"Search "<<n_randSample<<" points: "<<(double)(clock()-start)/CLOCKS_PER_SEC<<" s"<<endl;

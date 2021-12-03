@@ -1,4 +1,6 @@
 #include "H2ONaCl.H"
+#include "H2ONaCl_LUT_RefineFuncI.H"
+
 // using namespace H2ONaCl;
 namespace H2ONaCl
 {
@@ -10,13 +12,15 @@ namespace H2ONaCl
     // m_number(1),
     m_Cr(init_Cr()),
     m_f(init_f()),
-    m_colorPrint(false)
+    m_colorPrint(false),
+    m_lut_PTX(NULL)
     {
         init_PhaseRegionName();
         createTable4_Driesner2007a(m_tab4_Driesner2007a);
     }
     cH2ONaCl::~cH2ONaCl()
     {
+        destroyLUT_2D_PTX();
     }
 
     f_STRUCT cH2ONaCl:: init_f()
@@ -4338,5 +4342,26 @@ namespace H2ONaCl
         default:
             break;
         }
+    }
+
+    void cH2ONaCl::createLUT_2D_PTX(std::string type, double xy_min[2], double xy_max[2], double constZ, int min_level, int max_level, string filename_vtu)
+    {
+        clock_t start = clock();
+        STATUS("Creating 2D lookup table ...");
+        const int dim =2;
+        m_lut_PTX = new LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> > (xy_min, xy_max, constZ, max_level, sizeof(LOOKUPTABLE_FOREST::FIELD_DATA<dim>), this);
+        // refine
+        m_lut_PTX->set_min_level(min_level);
+        // m_lut_PTX->refine(refine_uniform);
+
+        m_lut_PTX->refine(RefineFunc_PTX_consX);
+        STATUS_time("Lookup table refinement done", clock() - start);
+        // write to vtk
+        if(filename_vtu!="") m_lut_PTX->write_to_vtk(filename_vtu);
+    }
+
+    void cH2ONaCl::destroyLUT_2D_PTX()
+    {
+        if(!m_lut_PTX) delete m_lut_PTX;
     }
 }

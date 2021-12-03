@@ -18,6 +18,8 @@ else()
     set(CMAKE_CXX_STANDARD 11)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
+# set compiler flag
+add_definitions("-Wno-array-bounds") # turn off this array bound check warning at this moment, this warning accurs at where dim!=3
 
 set(SWEOS_MAJOR_VERSION 1)
 set(SWEOS_MINOR_VERSION 7)
