@@ -412,9 +412,9 @@ namespace H2ONaCl
          * @param xy_max 
          * @param z 
          */
-        void createLUT_2D_PTX(std::string type, double xy_min[2], double xy_max[2], double z, int min_level = 4, int max_level = 6, string filename_vtu="");
+        void createLUT_2D_PTX(std::string type, double xy_min[2], double xy_max[2], double constZ, int min_level = 4, int max_level = 6, string filename_vtu="");
+        void createLUT_2D_PTX(std::string type, double xmin, double xmax, double ymin, double ymax, double constZ, int min_level = 4, int max_level = 6, string filename_vtu="");
         void destroyLUT_2D_PTX();
-        int test_a;
         // ========
     private:
         inline double Xwt2Xmol(double X){return (X/NaCl::MolarMass)/(X/NaCl::MolarMass+(1-X)/H2O::MolarMass);};

@@ -35,6 +35,7 @@ if(Build_API_MultiLanguage)
         install(TARGETS ${specie} DESTINATION ${INSTALL_PYTHON_API_PYTHON})
         file(GLOB files_install
             "${CMAKE_CURRENT_SOURCE_DIR}/*.py"
+            "${CMAKE_CURRENT_SOURCE_DIR}/*.pvsm"
         )
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${specie}.py DESTINATION ${INSTALL_PYTHON_API_PYTHON})
         install(FILES ${files_install} DESTINATION ${INSTALL_PYTHON_API_PYTHON})

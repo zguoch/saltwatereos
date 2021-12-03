@@ -1,3 +1,4 @@
+import numpy as np 
 from pyswEOS import H2ONaCl
 from pyswEOS import H2O
 water=H2O.cH2O()
@@ -18,3 +19,14 @@ prop=sw.prop_pHX(100E5, 2E6, 0.5)
 print(prop.T,sw.getPhaseRegionName(prop.Region))
 prop=sw.prop_pTX(100E5, 100+273.15, 0.5)
 print(prop.H,sw.getPhaseRegionName(prop.Region))
+
+# 6. test lookup table
+# 6.1 create lookup table
+dim =2
+xmin, ymin = 1 + 273.15, 5E5 #T [K], P[Pa]
+xmax, ymax = 700 + 273.15, 400E5
+X_wt = 0.032 #wt% NaCl [0,1]
+min_level = 4
+max_level = 7
+sw.createLUT_2D_PTX("constX", xmin,xmax, ymin,ymax, X_wt, min_level, max_level, "lookuptable.vtu")
+# sw.createLUT_2D_PTX("constX", TP_min, TP_max, X_wt, min_level, max_level, "lut_PTX.vtu");

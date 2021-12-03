@@ -4352,7 +4352,7 @@ namespace H2ONaCl
         m_lut_PTX = new LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> > (xy_min, xy_max, constZ, max_level, sizeof(LOOKUPTABLE_FOREST::FIELD_DATA<dim>), this);
         // refine
         m_lut_PTX->set_min_level(min_level);
-        // m_lut_PTX->refine(refine_uniform);
+        m_lut_PTX->refine(refine_uniform);
 
         m_lut_PTX->refine(RefineFunc_PTX_consX);
         STATUS_time("Lookup table refinement done", clock() - start);
@@ -4363,5 +4363,11 @@ namespace H2ONaCl
     void cH2ONaCl::destroyLUT_2D_PTX()
     {
         if(!m_lut_PTX) delete m_lut_PTX;
+    }
+    void cH2ONaCl::createLUT_2D_PTX(std::string type, double xmin, double xmax, double ymin, double ymax, double constZ, int min_level, int max_level, string filename_vtu)
+    {
+        double xy_min[2] = {xmin, ymin};
+        double xy_max[2] = {xmax, ymax};
+        createLUT_2D_PTX(type, xy_min, xy_max, constZ, min_level,max_level, filename_vtu);
     }
 }

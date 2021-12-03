@@ -67,11 +67,11 @@ bool RefineFunc_PTX_consX(LOOKUPTABLE_FOREST::LookUpTableForest<dim,USER_DATA>* 
     }
     // ========================================================
     // calculate properties: four vertices and one midpoint
-    data->prop_point[0] = eosPointer->prop_pTX(quad->xyz[1],quad->xyz[0],                                                       forest->m_constZ);      //xmin,ymin
-    data->prop_point[1] = eosPointer->prop_pTX(quad->xyz[1],quad->xyz[0] + physical_length[0],                                  forest->m_constZ);      //xmax,ymin
-    data->prop_point[2] = eosPointer->prop_pTX(quad->xyz[1] + physical_length[1], quad->xyz[0],                                  forest->m_constZ);      //xmin,ymax
-    data->prop_point[3] = eosPointer->prop_pTX(quad->xyz[1] + physical_length[1], quad->xyz[0] + physical_length[0],       quad->xyz[1] + physical_length[1],      forest->m_constZ);      //xmax,ymax
-    data->prop_cell     = eosPointer->prop_pTX(quad->xyz[1] + physical_length[1]/2.0, quad->xyz[0] + physical_length[0]/2.0,     forest->m_constZ);      //xc,yc
+    data->prop_point[0] = eosPointer->prop_pTX(quad->xyz[1],                            quad->xyz[0],                           forest->m_constZ);      //xmin,ymin
+    data->prop_point[1] = eosPointer->prop_pTX(quad->xyz[1],                            quad->xyz[0] + physical_length[0],      forest->m_constZ);      //xmax,ymin
+    data->prop_point[2] = eosPointer->prop_pTX(quad->xyz[1] + physical_length[1],       quad->xyz[0],                           forest->m_constZ);      //xmin,ymax
+    data->prop_point[3] = eosPointer->prop_pTX(quad->xyz[1] + physical_length[1],       quad->xyz[0] + physical_length[0],      forest->m_constZ);      //xmax,ymax
+    data->prop_cell     = eosPointer->prop_pTX(quad->xyz[1] + physical_length[1]/2.0,   quad->xyz[0] + physical_length[0]/2.0,  forest->m_constZ);      //xc,yc
     data->phaseRegion_point[0] = regionIndex[0]; //phase index
     data->phaseRegion_point[1] = regionIndex[num_sample_x-1];
     data->phaseRegion_point[2] = regionIndex[num_sample_x*num_sample_y-num_sample_x];
@@ -94,11 +94,11 @@ bool RefineFunc_PTX_consX(LOOKUPTABLE_FOREST::LookUpTableForest<dim,USER_DATA>* 
     double RMSD_Rho = pow(data->prop_cell.Rho - mean_Rho, 2.0);
     for(int i=0;i<forest->m_num_children;i++)RMSD_Rho += pow(data->prop_point[i].Rho - mean_Rho, 2.0);
     RMSD_Rho = sqrt(RMSD_Rho/(forest->m_num_children + 1));
-    // if(RMSD_Rho > forest->RMSD_Rho_min)
-    // {
-    //     need_refine_Rho = true;
-    //     if(data->need_refine == LOOKUPTABLE_FOREST::NeedRefine_NoNeed) data->need_refine = LOOKUPTABLE_FOREST::NeedRefine_Rho;
-    // }
+    if(RMSD_Rho > forest->RMSD_Rho_min)
+    {
+        need_refine_Rho = true;
+        if(data->need_refine == LOOKUPTABLE_FOREST::NeedRefine_NoNeed) data->need_refine = LOOKUPTABLE_FOREST::NeedRefine_Rho;
+    }
     // // ========== 3. refinement check for H enthalpy ===================== \todo maybe use another criterion
     // double mean_H = data->prop_cell.H;
     // for(int i=0;i<forest->m_num_children;i++)mean_H += data->prop_point[i].H;
@@ -115,7 +115,7 @@ bool RefineFunc_PTX_consX(LOOKUPTABLE_FOREST::LookUpTableForest<dim,USER_DATA>* 
     // ============ return refine indicator ===========
     if(quad->level > forest->m_max_level)return false;
     if(need_refine_phaseBoundary)return true;
-    // if(need_refine_Rho) return true;
+    if(need_refine_Rho) return true;
     // if(need_refine_H) return true;
 
     return false;

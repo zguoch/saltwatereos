@@ -134,7 +134,9 @@
         "shared_mutex": "cpp",
         "span": "cpp",
         "__bits": "c",
-        "semaphore": "c"
+        "semaphore": "c",
+        "__functional_base_03": "c",
+        "filesystem": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled",
     "restructuredtext.linter.disabled": true,
