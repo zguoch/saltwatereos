@@ -4362,7 +4362,11 @@ namespace H2ONaCl
 
     void cH2ONaCl::destroyLUT_2D_PTX()
     {
-        if(!m_lut_PTX) delete m_lut_PTX;
+        if(!m_lut_PTX) 
+        {
+            delete m_lut_PTX;
+            m_lut_PTX = NULL;
+        }
     }
     void cH2ONaCl::createLUT_2D_PTX(std::string type, double xmin, double xmax, double ymin, double ymax, double constZ, int min_level, int max_level, string filename_vtu)
     {

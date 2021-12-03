@@ -5,6 +5,8 @@ H2ONaCl::cH2ONaCl eos;
 int main()
 {
     int ind = 0;
+    std::string dummy;
+
     clock_t start = clock();
     H2ONaCl::cH2ONaCl eos;
     const int dim =2;
@@ -13,6 +15,7 @@ int main()
     double X_wt = 0.032; //wt% NaCl [0,1]
     int min_level = 4;
     int max_level = 7;
+
     eos.createLUT_2D_PTX("constX", TP_min, TP_max, X_wt, min_level, max_level, "lut_PTX.vtu");
     
     STATUS("Start search ... ");
@@ -37,4 +40,10 @@ int main()
     // // forest.searchQuadrant(targetLeaf, 200, 300, 0);
     // // cout<<targetLeaf->level<<endl;
     STATUS_time("Searching done", clock() - start);
+
+    // eos.destroyLUT_2D_PTX();
+    // eos.m_lut_PTX->destroy();
+
+    // std::cout << "Enter to continue..." << std::endl;
+    // std::getline(std::cin, dummy);
 }

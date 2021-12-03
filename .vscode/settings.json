@@ -136,7 +136,8 @@
         "__bits": "c",
         "semaphore": "c",
         "__functional_base_03": "c",
-        "filesystem": "c"
+        "filesystem": "c",
+        "__functional_03": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled",
     "restructuredtext.linter.disabled": true,

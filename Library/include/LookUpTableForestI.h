@@ -57,6 +57,7 @@ void LookUpTableForest<dim,USER_DATA>::release_children(Quadrant<dim,USER_DATA>*
             {
                 delete quad->children[i];
                 quad->children[i] = NULL;
+                quad->isHasChildren = false;
             }
         }
         
@@ -78,6 +79,10 @@ void LookUpTableForest<dim,USER_DATA>::release_quadrant_data(Quadrant<dim,USER_D
     }else if (quad->user_data)
     {
         delete quad->user_data;
+        quad->user_data = NULL;
+    }else
+    {
+        return;
     }
 }
 
