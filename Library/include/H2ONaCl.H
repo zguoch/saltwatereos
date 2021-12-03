@@ -6,7 +6,7 @@
 #include<cmath>
 #include<vector>
 using namespace std;
-
+#include <stdlib.h>
 // #include "omp.h"
 // chose use which library to calculate water properties
 // if H2ONaCl class is called by swift on ios platform, we change to use PROST to calculate water properties

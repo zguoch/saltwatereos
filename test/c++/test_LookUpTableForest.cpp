@@ -19,7 +19,7 @@ int phaseRegion_sin_func(double x, double y)
     return region;
 }
 
-int phaseRegion_H2ONaCl_constantX(double T_C, double p_bar, double X = 3.2)
+H2ONaCl::PhaseRegion phaseRegion_H2ONaCl_constantX(double T_C, double p_bar, double X = 3.2)
 {
     double xv, xl;
     H2ONaCl::PhaseRegion phaseregion=eos.findPhaseRegion(T_C, p_bar, eos.Wt2Mol(X/100.0),xl,xv);
@@ -49,7 +49,7 @@ bool refine_fn(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>
     double dy_qua = physical_length[1] / (num_sample_y - 1.0);
     double x_qua, x_ref, y_qua, y_ref;
     double xyz_tmp[3];
-    int regionIndex[num_sample_x*num_sample_y];
+    H2ONaCl::PhaseRegion regionIndex[num_sample_x*num_sample_y];
     for (int iy = 0; iy < num_sample_y; iy++)
     {
         y_qua = quad->xyz[1] + dy_qua*iy;
@@ -138,6 +138,7 @@ bool refine_uniform(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_
 
 int main()
 {
+    clock_t start, end;
     double xyzmin[3] = {2,5, 0};
     double xyzmax[3] = {700, 400, 1};
 
@@ -145,13 +146,32 @@ int main()
     const int dim =2;
     LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> > forest(xyzmin, xyzmax, max_level, sizeof(LOOKUPTABLE_FOREST::FIELD_DATA<dim>));
     // refine 
+    start = clock();
     // forest.refine(refine_uniform);
     forest.refine(refine_fn);
+    cout<<"Refinement end: "<<(double)(clock()-start)/CLOCKS_PER_SEC<<" s"<<endl;
     
+    start = clock();
     forest.write_to_vtk("lookuptable.vtu");
-
-    int ind_targetLeaf = forest.searchQuadrant(360,110,3.2);
-    cout<<ind_targetLeaf<<endl;
+    cout<<"Write to vtk end: "<<(double)(clock()-start)/CLOCKS_PER_SEC<<" s"<<endl;
+    
+    cout<<"search start ..."<<endl;
+    start = clock();
+    Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
+    int n_randSample = 1E7;
+    // for (size_t i = 0; i < n_randSample; i++)
+    // {
+    //     double T_C = (rand()/(double)RAND_MAX)*(xyzmax[0] - xyzmin[0]) + xyzmin[0];
+    //     double p_bar = (rand()/(double)RAND_MAX)*(xyzmax[1] - xyzmin[1]) + xyzmin[1];
+    //     // int ind_targetLeaf = forest.searchQuadrant(T_C, p_bar, 0);
+    //     forest.searchQuadrant(targetLeaf, T_C, p_bar, 0);
+    //     // cout<<"T_C: "<<T_C<<", p_bar: "<<p_bar<<", index: "<<ind_targetLeaf<<endl;
+    //     // cout<<eos.getPhaseRegionName(targetLeaf->user_data->phaseRegion_cell)<<endl;
+    // }
+    // forest.searchQuadrant(targetLeaf, 200, 300, 0);
+    // cout<<targetLeaf->level<<endl;
+    cout<<"Search "<<n_randSample<<" points: "<<(double)(clock()-start)/CLOCKS_PER_SEC<<" s"<<endl;
+    
     // // std::string dummy;
     // // std::cout << "Enter to continue..." << std::endl;
     // // std::getline(std::cin, dummy);

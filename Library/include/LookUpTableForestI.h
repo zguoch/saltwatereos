@@ -158,6 +158,7 @@ void LookUpTableForest<dim,USER_DATA>::getLeaves(vector<Quadrant<dim,USER_DATA>*
 template <int dim, typename USER_DATA>
 void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_data, bool isNormalizeXYZ)
 {
+    Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
     vector<Quadrant<dim,USER_DATA>* > leaves;
     getLeaves(leaves, &m_root);
     int num_points_per_cell = 1<<dim;
@@ -264,6 +265,7 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
         {
             length_cell[j] = length_scale[j] * length_ref_cell;
         }
+        // ---------
         fout<<"        ";
         if (isNormalizeXYZ)
         {
@@ -339,12 +341,25 @@ void LookUpTableForest<dim,USER_DATA>::searchQuadrant(Quadrant<dim,USER_DATA> *q
         int length_child = 1<<(MAX_FOREST_LEVEL - quad_source->children[0]->level); //any of a child to access the child level number, e.g., 0
         int childID_x = x_ref/length_child;
         int childID_y = y_ref/length_child;
+        // some time if the input point at the upper right corner point, the childID_x==2, or childID_y==2, so need to make it to 1
+        childID_x = childID_x >=2 ? 1 : childID_x;
+        childID_y = childID_y >=2 ? 1 : childID_y;
+        // cout<<"  childID_x: "<<childID_x<<", childID_y: "<<childID_y<<", level: "<<quad_source->level<<endl;
         searchQuadrant(quad_source->children[childID_y*2 + childID_x], quad_target,
             childID_x == 1 ? x_ref - length_child : x_ref, 
             childID_y == 1 ? y_ref - length_child : y_ref, 
             z_ref
             );
     }
+}
+
+template <int dim, typename USER_DATA>
+void LookUpTableForest<dim,USER_DATA>::searchQuadrant(Quadrant<dim,USER_DATA> *&targetLeaf, double x, double y, double z)
+{
+    double x_ref = (x - m_xyz_min[0])/length_scale[0];
+    double y_ref = (y - m_xyz_min[1])/length_scale[1];
+    double z_ref = (z - m_xyz_min[2])/length_scale[2];
+    searchQuadrant(&m_root, targetLeaf, x_ref, y_ref, z_ref);
 }
 
 template <int dim, typename USER_DATA>

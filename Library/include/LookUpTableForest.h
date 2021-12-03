@@ -28,11 +28,11 @@ namespace LOOKUPTABLE_FOREST
     struct FIELD_DATA
     {
         // point data field
-        int phaseRegion_point[1<<dim];
+        H2ONaCl::PhaseRegion phaseRegion_point[1<<dim];
         H2ONaCl::PROP_H2ONaCl prop_point[1<<dim]; // properties at vertiex
         // cell data field
         NeedRefine need_refine; // indicator of what kind of the need-refined quad position (phase boundary), or what kind of properties need to refine
-        int phaseRegion_cell;
+        H2ONaCl::PhaseRegion phaseRegion_cell;
         H2ONaCl::PROP_H2ONaCl prop_cell; // properties at midpoint as cell value (for vtk output)
     };
 
@@ -48,7 +48,6 @@ namespace LOOKUPTABLE_FOREST
     template <int dim, typename USER_DATA> 
     class LookUpTableForest
     {
-
     private:
         size_t  m_data_size;
         double m_xyz_min[3];
@@ -67,6 +66,7 @@ namespace LOOKUPTABLE_FOREST
         int     m_num_children;
         double RMSD_Rho_min, RMSD_H_min;  //Property refinement criterion 
         int searchQuadrant(double x, double y, double z);
+        void searchQuadrant(Quadrant<dim,USER_DATA> *&targetLeaf, double x, double y, double z);
         void get_quadrant_physical_length(int level, double physical_length[3]);
         void refine(bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level));
         void write_to_vtk(string filename, bool write_data=true, bool isNormalizeXYZ=true);
