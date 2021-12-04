@@ -83,7 +83,7 @@ include_directories(src include)
 add_subdirectory(src)
 add_subdirectory(swig/H2O)
 add_subdirectory(swig/NaCl)
-#add_subdirectory(swig/H2ONaCl)
+#add_subdirectory(swig/H2ONaCl) # \todo python swig can not pass the openmp function, comment this API generation before having a solution
 
 # install path 
 INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/include )

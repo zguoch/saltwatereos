@@ -16,6 +16,7 @@ namespace H2ONaCl
     m_lut_PTX_2D(NULL),
     m_lut_PTX_3D(NULL)
     {
+        set_num_threads(omp_get_max_threads() > 8 ? 8 : 1);
         init_PhaseRegionName();
         createTable4_Driesner2007a(m_tab4_Driesner2007a);
     }
@@ -23,6 +24,14 @@ namespace H2ONaCl
     {
         destroyLUT();
     }
+    void set_num_threads(int num_threads)
+    {
+        omp_set_num_threads(num_threads);
+    };
+    int get_num_threads()
+    {
+        return omp_get_num_threads();
+    };
 
     f_STRUCT cH2ONaCl:: init_f()
     {

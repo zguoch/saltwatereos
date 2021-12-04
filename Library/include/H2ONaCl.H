@@ -405,6 +405,8 @@ namespace H2ONaCl
          */
         void writePhaseSurface_XHP(double scale_X=1, double scale_H=1.0/HMAX, double scale_P=1.0/1000, string outpath="./", H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nP=500);
     public:
+        void set_num_threads(int num_threads);
+        int get_num_threads();
         LOOKUPTABLE_FOREST::LookUpTableForest<3, LOOKUPTABLE_FOREST::FIELD_DATA<3> >* m_lut_PTX_3D; //lookup table in PTX space
         
         LOOKUPTABLE_FOREST::LookUpTableForest<2, LOOKUPTABLE_FOREST::FIELD_DATA<2> >* m_lut_PTX_2D; //lookup table in PTX space
