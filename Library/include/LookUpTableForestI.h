@@ -377,10 +377,12 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
 
     ofstream fout(filename);
     // write head
+    STATUS("write header");
     fout<<"<VTKFile type=\"UnstructuredGrid\" version=\"1.0\" byte_order=\"LittleEndian\" header_type=\"UInt64\">"<<endl;
     fout<<"  <UnstructuredGrid>"<<endl;
     fout<<"    <Piece NumberOfPoints=\""<<num_points<<"\" NumberOfCells=\""<<num_cells<<"\">"<<endl;
     // write point data 
+    STATUS("write point data");
     fout<<"      <PointData>"<<endl;
     // ---------- . phase index
     fout<<"        <DataArray type=\"Int32\" Name=\"phaseIndex\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
@@ -445,6 +447,7 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
     // ----------
     fout<<"      </PointData>"<<endl;
     // write cell data 
+    STATUS("write cell data");
     fout<<"      <CellData>"<<endl;
     // ---------- 1. phase index
     fout<<"        <DataArray type=\"Int32\" Name=\"phaseIndex\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
@@ -462,6 +465,7 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
     
     fout<<"      </CellData>"<<endl;
     // write points
+    STATUS("write points (xyz)");
     fout<<"      <Points>"<<endl;
     fout<<"        <DataArray type=\"Float32\" Name=\"Position\" NumberOfComponents=\"3\" format=\"ascii\" RangeMin=\"0.008838834896540746\" RangeMax=\"1.4053746938907843\">"<<endl;
     double scale=0; //scale = 0.001, keep some space between each quadrant
@@ -496,6 +500,7 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
     fout<<"        </DataArray>"<<endl;
     fout<<"      </Points>"<<endl;
     // write cells
+    STATUS("write cells");
     fout<<"      <Cells>"<<endl;
     fout<<"        <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\" RangeMin=\"0\" RangeMax=\""<<num_cells-1<<"\">"<<endl;
     fout<<"        ";
