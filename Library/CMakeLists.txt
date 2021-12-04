@@ -83,7 +83,7 @@ include_directories(src include)
 add_subdirectory(src)
 add_subdirectory(swig/H2O)
 add_subdirectory(swig/NaCl)
-add_subdirectory(swig/H2ONaCl)
+#add_subdirectory(swig/H2ONaCl)
 
 # install path 
 INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/include )

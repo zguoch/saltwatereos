@@ -14,7 +14,7 @@ void createTable()
     double TP_max[2] = {700 + 273.15, 400E5};
     double X_wt = 0.2; //wt% NaCl [0,1]
     int min_level = 4;
-    int max_level = 13;
+    int max_level = 7;
 
     eos.createLUT_2D_PTX("constX", TP_min, TP_max, X_wt, min_level, max_level, "lut_PTX.vtu");
     
@@ -84,10 +84,10 @@ void load_binary(string filename)
 int main()
 {
     // 1. 
-    // createTable();
+    createTable();
 
     // 2. 
-    load_binary("lut_TPX_13.bin");
+    // load_binary("lut_TPX_13.bin");
 
     // destroy by hand
     // eos.destroyLUT_2D_PTX();

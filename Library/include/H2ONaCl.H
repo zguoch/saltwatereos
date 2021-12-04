@@ -21,7 +21,7 @@ using namespace std;
 #include "dataStruct_H2ONaCl.H"
 #include "LookUpTableForest.h"
 #include "omp.h"
-#include <ctime>
+
 #define USE_PROST 1  
 
 #ifdef USE_PROST

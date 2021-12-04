@@ -25,6 +25,7 @@ using namespace std;
     #include "stdfunc.H"
     #include "dataStruct_H2ONaCl.H"
     #include "LookUpTableForest.h"
+    #include "omp.h"
     #define USE_PROST 1
 %}
 namespace H2ONaCl

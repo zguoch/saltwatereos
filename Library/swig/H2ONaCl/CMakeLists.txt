@@ -1,3 +1,33 @@
+# Using OpenMP
+include_directories(/usr/local/include)
+find_package(OpenMP REQUIRED)
+if(APPLE)
+    set(CMAKE_C_COMPILER clang)
+    set(CMAKE_CXX_COMPILER clang++)
+
+    if(CMAKE_C_COMPILER_ID MATCHES "Clang\$")
+        set(OpenMP_C_FLAGS "-Xpreprocessor -fopenmp")
+        set(OpenMP_C_LIB_NAMES "omp")
+        set(OpenMP_omp_LIBRARY omp)
+    endif()
+
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang\$")
+        set(OpenMP_CXX_FLAGS "-Xpreprocessor -fopenmp")
+        set(OpenMP_CXX_LIB_NAMES "omp")
+        set(OpenMP_omp_LIBRARY omp)
+    endif()
+endif()
+if(OPENMP_FOUND)
+    message("OPENMP FOUND")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+endif()
+#windows vs2017 doesn't need opm library link 
+set(LIBomp "")
+if (APPLE)
+  set(LIBomp "omp")
+endif()
 
 # ================== whether build wrapper for other language, e.g. python, tcl =====================
 option(Build_API_MultiLanguage "whether build API for other langulages" ON)
@@ -7,7 +37,7 @@ file(GLOB PROST_SRC "${PROJECT_SOURCE_DIR}/src/PROST/*.c")
 file(GLOB SWEOS_SRC "${PROJECT_SOURCE_DIR}/src/*.cpp")
 set(API_SRC ${PROST_SRC} ${SWEOS_SRC})
 if(Build_API_MultiLanguage)
-    FIND_PACKAGE(SWIG REQUIRED)  
+    FIND_PACKAGE(SWIG REQUIRED) 
     INCLUDE(${SWIG_USE_FILE})  
     include_directories("${PROJECT_SOURCE_DIR}/include")
     SET_SOURCE_FILES_PROPERTIES(${specie}.i PROPERTIES CPLUSPLUS ON)
@@ -15,6 +45,9 @@ if(Build_API_MultiLanguage)
     if (APPLE)
         # set ( CMAKE_C_FLAGS "-flat_namespace") # important
         set (CMAKE_CXX_FLAGS "-flat_namespace") # important
+        #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+        #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+        #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
     endif()
     # ------ 1. python ------------------
     option(Build_API_Python "whether build API for Python" ON)
@@ -29,7 +62,8 @@ if(Build_API_MultiLanguage)
         swig_add_library(${specie}
         LANGUAGE python
         SOURCES ${specie}.i ${API_SRC})
-        SWIG_LINK_LIBRARIES(${specie} ${PYTHON_LIBRARIES})
+        SWIG_LINK_LIBRARIES(${specie} ${PYTHON_LIBRARIES} ${LIBomp})
+        target_link_libraries(${specie} ${LIBomp})
         # install 
         set(INSTALL_PYTHON_API_PYTHON ${PROJECT_SOURCE_DIR}/API/python/pyswEOS)
         install(TARGETS ${specie} DESTINATION ${INSTALL_PYTHON_API_PYTHON})

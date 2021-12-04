@@ -39,7 +39,7 @@ buildPages:
     paths:
     - public
   only:
-    - master
+    - masterxx
 
 latex:
   image: laurenss/texlive-full
@@ -54,7 +54,7 @@ latex:
     - public
   when: on_success
   only:
-    - master
+    - masterxx
 
 pages:
   image: python:3.7-alpine
@@ -69,4 +69,4 @@ pages:
     paths:
     - public
   only:
-    - final
+    - masterxx

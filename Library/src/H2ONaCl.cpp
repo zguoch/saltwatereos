@@ -4354,8 +4354,16 @@ namespace H2ONaCl
         // refine
         m_lut_PTX_2D->set_min_level(min_level);
         m_lut_PTX_2D->refine(refine_uniform);
-
-        m_lut_PTX_2D->refine(RefineFunc_PTX_consX);
+        // parallel refine
+        #pragma omp parallel //shared(n)
+        {
+            #pragma omp single
+            {
+                printf("Parallel process refinement, using %d threads\n", omp_get_num_threads());
+                m_lut_PTX_2D->refine(RefineFunc_PTX_consX);
+            }
+        }
+        // m_lut_PTX_2D->refine(RefineFunc_PTX_consX);
         STATUS_time("Lookup table refinement done", clock() - start);
         
     }
