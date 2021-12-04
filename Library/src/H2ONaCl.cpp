@@ -13,10 +13,11 @@ namespace H2ONaCl
     m_Cr(init_Cr()),
     m_f(init_f()),
     m_colorPrint(false),
+    m_num_threads(0),
     m_lut_PTX_2D(NULL),
     m_lut_PTX_3D(NULL)
     {
-        set_num_threads(omp_get_max_threads() > 8 ? 8 : 1);
+        // set_num_threads(omp_get_max_threads() > 8 ? 8 : 1);
         init_PhaseRegionName();
         createTable4_Driesner2007a(m_tab4_Driesner2007a);
     }
@@ -24,15 +25,7 @@ namespace H2ONaCl
     {
         destroyLUT();
     }
-    void set_num_threads(int num_threads)
-    {
-        omp_set_num_threads(num_threads);
-    };
-    int get_num_threads()
-    {
-        return omp_get_num_threads();
-    };
-
+    
     f_STRUCT cH2ONaCl:: init_f()
     {
         f_STRUCT f={
@@ -4364,11 +4357,15 @@ namespace H2ONaCl
         m_lut_PTX_2D->set_min_level(min_level);
         m_lut_PTX_2D->refine(refine_uniform);
         // parallel refine
+        if(m_num_threads==0)
+        {
+            ERROR("Please call the member function set_num_threads(num_threads) to set the threads number first.");
+        }
         #pragma omp parallel //shared(n)
         {
             #pragma omp single
             {
-                printf("Parallel process refinement, using %d threads\n", omp_get_num_threads());
+                printf("Parallel process refinement, using %d threads\n", m_num_threads);
                 m_lut_PTX_2D->refine(RefineFunc_PTX_consX);
             }
         }

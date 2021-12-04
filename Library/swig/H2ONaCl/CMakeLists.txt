@@ -34,7 +34,7 @@ option(Build_API_MultiLanguage "whether build API for other langulages" ON)
 set(specie "H2ONaCl")
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/PROST)
 file(GLOB PROST_SRC "${PROJECT_SOURCE_DIR}/src/PROST/*.c")
-file(GLOB SWEOS_SRC "${PROJECT_SOURCE_DIR}/src/*.cpp")
+file(GLOB SWEOS_SRC "${PROJECT_SOURCE_DIR}/src/H2ONaCl.cpp" "${PROJECT_SOURCE_DIR}/src/H2O.cpp" "${PROJECT_SOURCE_DIR}/src/NaCl.cpp" "${PROJECT_SOURCE_DIR}/src/Polynomial.cpp" "${PROJECT_SOURCE_DIR}/src/PolynomialRootFinder.cpp")
 set(API_SRC ${PROST_SRC} ${SWEOS_SRC})
 if(Build_API_MultiLanguage)
     FIND_PACKAGE(SWIG REQUIRED) 
@@ -45,9 +45,6 @@ if(Build_API_MultiLanguage)
     if (APPLE)
         # set ( CMAKE_C_FLAGS "-flat_namespace") # important
         set (CMAKE_CXX_FLAGS "-flat_namespace") # important
-        #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-        #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-        #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
     endif()
     # ------ 1. python ------------------
     option(Build_API_Python "whether build API for Python" ON)
@@ -59,11 +56,12 @@ if(Build_API_MultiLanguage)
             INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
             SET(CMAKE_SWIG_FLAGS "")
         endif(PYTHONLIBS_FOUND)
+        link_directories(/usr/local/lib)
         swig_add_library(${specie}
         LANGUAGE python
         SOURCES ${specie}.i ${API_SRC})
         SWIG_LINK_LIBRARIES(${specie} ${PYTHON_LIBRARIES} ${LIBomp})
-        target_link_libraries(${specie} ${LIBomp})
+
         # install 
         set(INSTALL_PYTHON_API_PYTHON ${PROJECT_SOURCE_DIR}/API/python/pyswEOS)
         install(TARGETS ${specie} DESTINATION ${INSTALL_PYTHON_API_PYTHON})
