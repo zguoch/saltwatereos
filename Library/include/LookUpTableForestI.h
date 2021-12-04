@@ -39,6 +39,13 @@ void LookUpTableForest<dim,USER_DATA>::init(double xyz_min[dim], double xyz_max[
 template <int dim, typename USER_DATA> 
 LookUpTableForest<dim,USER_DATA>::~LookUpTableForest()
 {
+    destory();
+}
+
+template <int dim, typename USER_DATA> 
+void LookUpTableForest<dim,USER_DATA>::destory()
+{
+    // cout<<"destroy forest"<<endl;
     release_quadrant_data(&m_root);
     release_children(&m_root);
 }
@@ -95,6 +102,40 @@ void LookUpTableForest<dim,USER_DATA>::init_Root(Quadrant<dim,USER_DATA>& quad)
     quad.level  = 0;
     quad.isHasChildren = false;
     if(m_data_size!=0) quad.user_data = new USER_DATA;  //only allocate memory if it is a leaf, this will be released when a quadrent is refined.
+}
+
+template <int dim, typename USER_DATA> 
+void LookUpTableForest<dim,USER_DATA>::write_forest(FILE* fpout, Quadrant<dim,USER_DATA>* quad, bool isWriteData)
+{
+    fwrite(quad, sizeof(Quadrant<dim,USER_DATA>), 1, fpout); //write all quads
+    cout<<"write, level: "<<quad->level<<", index: "<<quad->index<<endl;
+    if(quad->isHasChildren)
+    {
+        for (int i = 0; i < m_num_children; i++)
+        {
+            write_forest(fpout, quad->children[i], isWriteData);
+        }
+    }else
+    {
+        fwrite(quad->user_data, sizeof(USER_DATA), 1, fpout);
+    }
+}
+
+template <int dim, typename USER_DATA> 
+void LookUpTableForest<dim,USER_DATA>::write_to_binary(string filename, bool isWriteData)
+{
+    int dim0 = dim;
+    FILE* fpout = NULL;
+    fpout = fopen(filename.c_str(), "wb");
+    if(fpout == NULL)ERROR("Open file failed: "+filename);
+    fwrite(&dim0, sizeof(int), 1, fpout);
+    fwrite(m_xyz_min, sizeof(double), dim, fpout);
+    fwrite(m_xyz_max, sizeof(double), dim, fpout);
+    fwrite(&m_max_level, sizeof(int), 1, fpout);
+    // recursion write forest and data
+    write_forest(fpout, &m_root, isWriteData);
+    // close file
+    fclose(fpout);
 }
 
 template <int dim, typename USER_DATA>

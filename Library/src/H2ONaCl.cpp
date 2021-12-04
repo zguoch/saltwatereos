@@ -4362,8 +4362,9 @@ namespace H2ONaCl
 
     void cH2ONaCl::destroyLUT_2D_PTX()
     {
-        if(!m_lut_PTX) 
+        if(m_lut_PTX) 
         {
+            m_lut_PTX->destory();
             delete m_lut_PTX;
             m_lut_PTX = NULL;
         }

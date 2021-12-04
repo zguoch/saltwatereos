@@ -36,9 +36,6 @@ namespace LOOKUPTABLE_FOREST
         H2ONaCl::PROP_H2ONaCl prop_cell; // properties at midpoint as cell value (for vtk output)
     };
 
-
-    // typedef template <int dim, typename USER_DATA> bool (*refine_func)(Quadrant<dim,USER_DATA>* quad);
-
     /**
      * @brief Pass dimension and data type to the class
      * 
@@ -62,6 +59,7 @@ namespace LOOKUPTABLE_FOREST
         void write_vtk_cellData(ofstream* fout, string type, string name, string format);
         void searchQuadrant(Quadrant<dim,USER_DATA>* quad_source, Quadrant<dim,USER_DATA> *&quad_target, double x_ref, double y_ref, double z_ref);
         void init(double xyz_min[dim], double xyz_max[dim], int max_level, size_t data_size, void* eosPointer);
+        void write_forest(FILE* fpout, Quadrant<dim,USER_DATA>* quad, bool write_data);
     public:
         void    *m_eosPointer;  //pass pointer of EOS object (e.g., the pointer of a object of cH2ONaCl class) to the forest through construct function, this will give access of EOS stuff in the refine call back function, e.g., calculate phase index and properties
         double  m_constZ;         // only valid when dim==2, i.e., 2D case, the constant value of third dimension, e.g. in T-P space with constant X.
@@ -70,11 +68,13 @@ namespace LOOKUPTABLE_FOREST
         int     m_num_children;
         double RMSD_Rho_min, RMSD_H_min;  //Property refinement criterion 
         inline void set_min_level(int min_level){m_min_level = min_level;};
+        Quadrant<dim,USER_DATA>* get_root(){return &m_root;};
         int searchQuadrant(double x, double y, double z);
         void searchQuadrant(Quadrant<dim,USER_DATA> *&targetLeaf, double x, double y, double z);
         void get_quadrant_physical_length(int level, double physical_length[dim]);
         void refine(bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level));
         void write_to_vtk(string filename, bool write_data=true, bool isNormalizeXYZ=true);
+        void write_to_binary(string filename, bool write_data=true);
         /**
          * @brief Construct a new Look Up Table Forest object. This is always used to create a 3D table
          * xyz would be corresponding to TPX or PHX. Note that the unit of T is K, unit of P is Pa, unit of X is wt% NaCl (e.g., seawater is 0.032), unit of H is J/kg. The same as H2ONaCl::cH2ONaCl::prop_pTX and The same as H2ONaCl::cH2ONaCl::prop_pHX
@@ -96,6 +96,7 @@ namespace LOOKUPTABLE_FOREST
          * @param pointer 
          */
         LookUpTableForest(double xyz_min[dim], double xyz_max[dim], double constZ, int max_level, size_t data_size, void* pointer=NULL); //2D case
+        void destory();
         ~LookUpTableForest();
     };
 

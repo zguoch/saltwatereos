@@ -28,7 +28,7 @@
 
 #define STATUS(info) std::cout<<"--  "<<COLOR_GREEN<<info<<COLOR_DEFAULT<<std::endl;
 #define STATUS_time(info, time_taken) std::cout<<"--  "<<COLOR_GREEN<<info<<", time: "<<(double)(time_taken)/CLOCKS_PER_SEC<<" s"<<COLOR_DEFAULT<<std::endl;
-#define ERROR(info) std::cout<<"--  "<<COLOR_RED<<info<<COLOR_DEFAULT<<std::endl; exit(0);
-#define ASSERT(expression, info) std::cout<<"--  "<<COLOR_RED<<info<<COLOR_DEFAULT<<std::endl; assert(expression);
+#define ERROR(info) {std::cout<<"--  "<<COLOR_RED<<info<<COLOR_DEFAULT<<std::endl; exit(0);}
+#define ASSERT(expression, info) {std::cout<<"--  "<<COLOR_RED<<info<<COLOR_DEFAULT<<std::endl; assert(expression);}
 
 #endif
