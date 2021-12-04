@@ -94,7 +94,7 @@ bool RefineFunc_PTX_consX(LOOKUPTABLE_FOREST::LookUpTableForest<dim,USER_DATA>* 
     double RMSD_Rho = pow(data->prop_cell.Rho - mean_Rho, 2.0);
     for(int i=0;i<forest->m_num_children;i++)RMSD_Rho += pow(data->prop_point[i].Rho - mean_Rho, 2.0);
     RMSD_Rho = sqrt(RMSD_Rho/(forest->m_num_children + 1));
-    if(RMSD_Rho > forest->RMSD_Rho_min)
+    if(RMSD_Rho > forest->m_RMSD_RefineCriterion.Rho)
     {
         need_refine_Rho = true;
         if(data->need_refine == LOOKUPTABLE_FOREST::NeedRefine_NoNeed) data->need_refine = LOOKUPTABLE_FOREST::NeedRefine_Rho;
@@ -106,7 +106,7 @@ bool RefineFunc_PTX_consX(LOOKUPTABLE_FOREST::LookUpTableForest<dim,USER_DATA>* 
     // double RMSD_H = pow(data->prop_cell.H - mean_H, 2.0);
     // for(int i=0;i<forest->m_num_children;i++)RMSD_H += pow(data->prop_point[i].H - mean_H, 2.0);
     // RMSD_H = sqrt(RMSD_H/(forest->m_num_children + 1));
-    // if(RMSD_H > forest->RMSD_H_min)
+    // if(RMSD_H > forest->m_RMSD_RefineCriterion.H)
     // {
     //     need_refine_H = true;
     //     if(data->need_refine == LOOKUPTABLE_FOREST::NeedRefine_NoNeed) data->need_refine = LOOKUPTABLE_FOREST::NeedRefine_H;

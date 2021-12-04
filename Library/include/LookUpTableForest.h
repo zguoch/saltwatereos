@@ -24,6 +24,17 @@ namespace LOOKUPTABLE_FOREST
     };
 
     enum NeedRefine {NeedRefine_NoNeed, NeedRefine_PhaseBoundary, NeedRefine_Rho, NeedRefine_H};
+    /**
+     * @brief Property refinement criterion, minimum RMSD of a quadran, if the RMSD of a property in a quadran grater than this criterion, it will be refined.
+     * 
+     */
+    struct RMSD_RefineCriterion
+    {
+        double Rho;
+        double H;
+    };
+    
+
     template <int dim>
     struct FIELD_DATA
     {
@@ -49,7 +60,7 @@ namespace LOOKUPTABLE_FOREST
         size_t  m_data_size;
         double m_xyz_min[dim];
         double m_xyz_max[dim];
-        double length_scale[dim]; /**< The reference space is a square or a cube with length=2^{MAX_FOREST_LEVEL}, so the length scale in x,y,z axis is calculated as, e.g. length_scale[0] = (m_xyz_max[0] - m_xyz_min[0])/length, so the length of a quadrant is len_quad = 2^{MAX_FOREST_LEVEL - level}, so its real length in x-axis is len_quad*length_scale[0] */
+        double m_length_scale[dim]; /**< The reference space is a square or a cube with length=2^{MAX_FOREST_LEVEL}, so the length scale in x,y,z axis is calculated as, e.g. length_scale[0] = (m_xyz_max[0] - m_xyz_min[0])/length, so the length of a quadrant is len_quad = 2^{MAX_FOREST_LEVEL - level}, so its real length in x-axis is len_quad*length_scale[0] */
         Quadrant<dim,USER_DATA> m_root;
         void init_Root(Quadrant<dim,USER_DATA>& quad);
         void release_quadrant_data(Quadrant<dim,USER_DATA>* quad);
@@ -59,14 +70,15 @@ namespace LOOKUPTABLE_FOREST
         void write_vtk_cellData(ofstream* fout, string type, string name, string format);
         void searchQuadrant(Quadrant<dim,USER_DATA>* quad_source, Quadrant<dim,USER_DATA> *&quad_target, double x_ref, double y_ref, double z_ref);
         void init(double xyz_min[dim], double xyz_max[dim], int max_level, size_t data_size, void* eosPointer);
-        void write_forest(FILE* fpout, Quadrant<dim,USER_DATA>* quad, bool write_data);
+        void write_forest(FILE* fpout, Quadrant<dim,USER_DATA>* quad, bool is_write_data);
+        void read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, bool is_read_data);
     public:
-        void    *m_eosPointer;  //pass pointer of EOS object (e.g., the pointer of a object of cH2ONaCl class) to the forest through construct function, this will give access of EOS stuff in the refine call back function, e.g., calculate phase index and properties
+        void    *m_eosPointer;      //pass pointer of EOS object (e.g., the pointer of a object of cH2ONaCl class) to the forest through construct function, this will give access of EOS stuff in the refine call back function, e.g., calculate phase index and properties
         double  m_constZ;         // only valid when dim==2, i.e., 2D case, the constant value of third dimension, e.g. in T-P space with constant X.
         int     m_min_level;
         int     m_max_level;
         int     m_num_children;
-        double RMSD_Rho_min, RMSD_H_min;  //Property refinement criterion 
+        RMSD_RefineCriterion m_RMSD_RefineCriterion;
         inline void set_min_level(int min_level){m_min_level = min_level;};
         Quadrant<dim,USER_DATA>* get_root(){return &m_root;};
         int searchQuadrant(double x, double y, double z);
@@ -74,7 +86,9 @@ namespace LOOKUPTABLE_FOREST
         void get_quadrant_physical_length(int level, double physical_length[dim]);
         void refine(bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level));
         void write_to_vtk(string filename, bool write_data=true, bool isNormalizeXYZ=true);
-        void write_to_binary(string filename, bool write_data=true);
+        void write_to_binary(string filename, bool is_write_data=true);
+        void read_from_binary(string filename, bool is_read_data=true);
+        int get_dim_from_binary(string filename);
         /**
          * @brief Construct a new Look Up Table Forest object. This is always used to create a 3D table
          * xyz would be corresponding to TPX or PHX. Note that the unit of T is K, unit of P is Pa, unit of X is wt% NaCl (e.g., seawater is 0.032), unit of H is J/kg. The same as H2ONaCl::cH2ONaCl::prop_pTX and The same as H2ONaCl::cH2ONaCl::prop_pHX
@@ -84,7 +98,7 @@ namespace LOOKUPTABLE_FOREST
          * @param data_size 
          * @param pointer 
          */
-        LookUpTableForest(double xyz_min[dim], double xyz_max[dim], int max_level, size_t data_size, void* pointer=NULL); //3D case
+        LookUpTableForest(double xyz_min[dim], double xyz_max[dim], int max_level, size_t data_size, void* eosPointer=NULL); //3D case
         /**
          * @brief Construct a new Look Up Table Forest object. This is always used to create a 2D table
          * xyz would be corresponding to TPX or PHX. Note that the unit of T is K, unit of P is Pa, unit of X is wt% NaCl (e.g., seawater is 0.032), unit of H is J/kg. The same as H2ONaCl::cH2ONaCl::prop_pTX and The same as H2ONaCl::cH2ONaCl::prop_pHX
@@ -95,7 +109,8 @@ namespace LOOKUPTABLE_FOREST
          * @param data_size 
          * @param pointer 
          */
-        LookUpTableForest(double xyz_min[dim], double xyz_max[dim], double constZ, int max_level, size_t data_size, void* pointer=NULL); //2D case
+        LookUpTableForest(double xyz_min[dim], double xyz_max[dim], double constZ, int max_level, size_t data_size, void* eosPointer=NULL); //2D case
+        LookUpTableForest(string filename, void* pointer=NULL); //load from exist binary file
         void destory();
         ~LookUpTableForest();
     };

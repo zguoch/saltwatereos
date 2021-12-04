@@ -16,6 +16,16 @@ m_constZ(constZ)
 }
 
 template <int dim, typename USER_DATA> 
+LookUpTableForest<dim,USER_DATA>::LookUpTableForest(string filename, void* eosPointer)
+{
+    m_eosPointer = eosPointer;
+    m_num_children = 1<<dim;
+    m_data_size = sizeof(USER_DATA);
+
+    read_from_binary(filename);
+}
+
+template <int dim, typename USER_DATA> 
 void LookUpTableForest<dim,USER_DATA>::init(double xyz_min[dim], double xyz_max[dim], int max_level, size_t data_size, void* eosPointer)
 {
     m_eosPointer = eosPointer;
@@ -23,15 +33,15 @@ void LookUpTableForest<dim,USER_DATA>::init(double xyz_min[dim], double xyz_max[
     m_data_size = data_size;
     m_min_level = 0;
     m_max_level = max_level;
-    RMSD_Rho_min = 5;
-    RMSD_H_min = 1000;
+    m_RMSD_RefineCriterion.Rho  = 5;
+    m_RMSD_RefineCriterion.H    = 1000;
 
     double length_forest = (1<<MAX_FOREST_LEVEL);
     for (size_t i = 0; i < dim; i++)
     {
         m_xyz_max[i] = xyz_max[i];
         m_xyz_min[i] = xyz_min[i];
-        length_scale[i] = (m_xyz_max[i] - m_xyz_min[i])/length_forest;
+        m_length_scale[i] = (m_xyz_max[i] - m_xyz_min[i])/length_forest;
     }
     init_Root(m_root);
 }
@@ -108,7 +118,7 @@ template <int dim, typename USER_DATA>
 void LookUpTableForest<dim,USER_DATA>::write_forest(FILE* fpout, Quadrant<dim,USER_DATA>* quad, bool isWriteData)
 {
     fwrite(quad, sizeof(Quadrant<dim,USER_DATA>), 1, fpout); //write all quads
-    cout<<"write, level: "<<quad->level<<", index: "<<quad->index<<endl;
+    // cout<<"write, level: "<<quad->level<<", index: "<<quad->index<<endl;
     if(quad->isHasChildren)
     {
         for (int i = 0; i < m_num_children; i++)
@@ -124,18 +134,88 @@ void LookUpTableForest<dim,USER_DATA>::write_forest(FILE* fpout, Quadrant<dim,US
 template <int dim, typename USER_DATA> 
 void LookUpTableForest<dim,USER_DATA>::write_to_binary(string filename, bool isWriteData)
 {
+    STATUS("Write lookup table to binary file ...");
     int dim0 = dim;
     FILE* fpout = NULL;
     fpout = fopen(filename.c_str(), "wb");
     if(fpout == NULL)ERROR("Open file failed: "+filename);
-    fwrite(&dim0, sizeof(int), 1, fpout);
-    fwrite(m_xyz_min, sizeof(double), dim, fpout);
-    fwrite(m_xyz_max, sizeof(double), dim, fpout);
-    fwrite(&m_max_level, sizeof(int), 1, fpout);
+    // write header
+    fwrite(&dim0,       sizeof(int),    1,      fpout);
+    fwrite(m_xyz_min,   sizeof(double), dim,    fpout);
+    fwrite(m_xyz_max,   sizeof(double), dim,    fpout);
+    fwrite(&m_constZ,    sizeof(double), dim,    fpout);
+    fwrite(m_length_scale,  sizeof(double), dim, fpout);
+    fwrite(&m_min_level,    sizeof(int), 1, fpout);
+    fwrite(&m_max_level,    sizeof(int), 1, fpout);
+    fwrite(&m_RMSD_RefineCriterion, sizeof(RMSD_RefineCriterion), 1, fpout);
     // recursion write forest and data
     write_forest(fpout, &m_root, isWriteData);
     // close file
     fclose(fpout);
+    STATUS("Writting lookup table to binary file done.");
+}
+
+template <int dim, typename USER_DATA> 
+void LookUpTableForest<dim,USER_DATA>::read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, bool is_read_data)
+{
+    fread(quad, sizeof(Quadrant<dim,USER_DATA>), 1, fpin); //write all quads
+    // cout<<"read, level: "<<quad->level<<", index: "<<quad->index<<", child: "<<quad->isHasChildren<<endl;
+
+    if(quad->isHasChildren)
+    {
+        for (int i = 0; i < m_num_children; i++)
+        {
+            quad->children[i] = new Quadrant<dim,USER_DATA>;
+            read_forest(fpin, quad->children[i], is_read_data);
+        }
+    }else
+    {
+        quad->user_data = new USER_DATA;
+        fread(quad->user_data, sizeof(USER_DATA), 1, fpin);
+        return;
+    }
+}
+
+template <int dim, typename USER_DATA> 
+void LookUpTableForest<dim,USER_DATA>::read_from_binary(string filename, bool is_read_data)
+{
+    STATUS("Read lookup table from binary file ...");
+    FILE* fpin = NULL;
+    fpin = fopen(filename.c_str(), "rb");
+    if(!fpin)ERROR("Open file failed: "+filename);
+    int dim0;
+    fread(&dim0, sizeof(dim0), 1, fpin);
+    if(dim0 != dim)
+    {
+        cout<<"-- Dimension in the file is "<<dim0<<", but the temperate argument <dim> is "<<dim<<endl;
+        ERROR("Dimension is not consistent, maybe change the template argument <dim>");
+        fclose(fpin);
+    }
+    // write header
+    fread(m_xyz_min,        sizeof(double), dim, fpin);
+    fread(m_xyz_max,        sizeof(double), dim, fpin);
+    fread(&m_constZ,         sizeof(double), dim, fpin);
+    fread(m_length_scale,   sizeof(double), dim, fpin);
+    fread(&m_min_level,     sizeof(int), 1, fpin);
+    fread(&m_max_level,     sizeof(int), 1, fpin);
+    fread(&m_RMSD_RefineCriterion, sizeof(RMSD_RefineCriterion), 1, fpin);
+    // recursion read forest and data
+    read_forest(fpin, &m_root, is_read_data);
+    // close file
+    fclose(fpin);
+    STATUS("Reading lookup table file done");
+}
+
+template <int dim, typename USER_DATA> 
+int LookUpTableForest<dim,USER_DATA>::get_dim_from_binary(string filename)
+{
+    FILE* fpin = NULL;
+    fpin = fopen(filename.c_str(), "rb");
+    if(!fpin)ERROR("Open file failed: "+filename);
+    int dim0;
+    fread(&dim0, sizeof(dim0), 1, fpin);
+    fclose(fpin);
+    return dim0;
 }
 
 template <int dim, typename USER_DATA>
@@ -158,14 +238,14 @@ void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, boo
             quad->children[0]->isHasChildren = false;
             // 2nd child: lower right
             quad->children[1] = new Quadrant<dim,USER_DATA>;
-            quad->children[1]->xyz[0] = quad->xyz[0] + length_child*length_scale[0];
+            quad->children[1]->xyz[0] = quad->xyz[0] + length_child*m_length_scale[0];
             quad->children[1]->xyz[1] = quad->xyz[1];
             quad->children[1]->level  = quad->children[0]->level;
             quad->children[1]->isHasChildren = false;
             // 3th child: upper left
             quad->children[2] = new Quadrant<dim,USER_DATA>;
             quad->children[2]->xyz[0] = quad->xyz[0];
-            quad->children[2]->xyz[1] = quad->xyz[1] + length_child*length_scale[1];
+            quad->children[2]->xyz[1] = quad->xyz[1] + length_child*m_length_scale[1];
             quad->children[2]->level  = quad->children[0]->level;
             quad->children[2]->isHasChildren = false;
             // 4th child: upper right
@@ -194,7 +274,7 @@ void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, boo
                 quad->children[4] = new Quadrant<dim,USER_DATA>;
                 quad->children[4]->xyz[0] = quad->xyz[0];
                 quad->children[4]->xyz[1] = quad->xyz[1];
-                quad->children[4]->xyz[2] = quad->xyz[2] + length_child*length_scale[2]; // only calculate once
+                quad->children[4]->xyz[2] = quad->xyz[2] + length_child*m_length_scale[2]; // only calculate once
                 quad->children[4]->level  = quad->children[0]->level;
                 quad->children[4]->isHasChildren = false;
                 // 6th child: lower right
@@ -375,7 +455,7 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
         length_ref_cell = 1<<(MAX_FOREST_LEVEL - leaves[i]->level);
         for (int j = 0; j < 3; j++)
         {
-            length_cell[j] = length_scale[j] * length_ref_cell;
+            length_cell[j] = m_length_scale[j] * length_ref_cell;
         }
         // ---------
         fout<<"        ";
@@ -438,7 +518,7 @@ void LookUpTableForest<dim,USER_DATA>::get_quadrant_physical_length(int level, d
     int length_ref = 1<<(MAX_FOREST_LEVEL - level);
     for (int i = 0; i < dim; i++)
     {
-        physical_length[i] = length_scale[i] * length_ref;
+        physical_length[i] = m_length_scale[i] * length_ref;
     }
 }
 
@@ -473,18 +553,18 @@ template <int dim, typename USER_DATA>
 void LookUpTableForest<dim,USER_DATA>::searchQuadrant(Quadrant<dim,USER_DATA> *&targetLeaf, double x, double y, double z)
 {
     // NOTE that do not use for loop in the recursion, it will slow down the calculation
-    double x_ref = (x - m_xyz_min[0])/length_scale[0];
-    double y_ref = (y - m_xyz_min[1])/length_scale[1];
-    double z_ref = dim == 3 ? (z - m_xyz_min[2])/length_scale[2] : 0;
+    double x_ref = (x - m_xyz_min[0])/m_length_scale[0];
+    double y_ref = (y - m_xyz_min[1])/m_length_scale[1];
+    double z_ref = dim == 3 ? (z - m_xyz_min[2])/m_length_scale[2] : 0;
     searchQuadrant(&m_root, targetLeaf, x_ref, y_ref, z_ref);
 }
 
 template <int dim, typename USER_DATA>
 int LookUpTableForest<dim,USER_DATA>::searchQuadrant(double x, double y, double z)
 {
-    double x_ref = (x - m_xyz_min[0])/length_scale[0];
-    double y_ref = (y - m_xyz_min[1])/length_scale[1];
-    double z_ref = dim == 3 ? (z - m_xyz_min[2])/length_scale[2] : 0;
+    double x_ref = (x - m_xyz_min[0])/m_length_scale[0];
+    double y_ref = (y - m_xyz_min[1])/m_length_scale[1];
+    double z_ref = dim == 3 ? (z - m_xyz_min[2])/m_length_scale[2] : 0;
     Quadrant<dim,USER_DATA>* targetLeaf;
     searchQuadrant(&m_root, targetLeaf, x_ref, y_ref, z_ref);
     return targetLeaf->index;
