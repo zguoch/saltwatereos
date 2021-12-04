@@ -13,14 +13,15 @@ namespace H2ONaCl
     m_Cr(init_Cr()),
     m_f(init_f()),
     m_colorPrint(false),
-    m_lut_PTX(NULL)
+    m_lut_PTX_2D(NULL),
+    m_lut_PTX_3D(NULL)
     {
         init_PhaseRegionName();
         createTable4_Driesner2007a(m_tab4_Driesner2007a);
     }
     cH2ONaCl::~cH2ONaCl()
     {
-        destroyLUT_2D_PTX();
+        destroyLUT();
     }
 
     f_STRUCT cH2ONaCl:: init_f()
@@ -4349,24 +4350,40 @@ namespace H2ONaCl
         clock_t start = clock();
         STATUS("Creating 2D lookup table ...");
         const int dim =2;
-        m_lut_PTX = new LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> > (xy_min, xy_max, constZ, max_level, sizeof(LOOKUPTABLE_FOREST::FIELD_DATA<dim>), this);
+        m_lut_PTX_2D = new LookUpTableForest_2D (xy_min, xy_max, constZ, max_level, this);
         // refine
-        m_lut_PTX->set_min_level(min_level);
-        m_lut_PTX->refine(refine_uniform);
+        m_lut_PTX_2D->set_min_level(min_level);
+        m_lut_PTX_2D->refine(refine_uniform);
 
-        m_lut_PTX->refine(RefineFunc_PTX_consX);
+        m_lut_PTX_2D->refine(RefineFunc_PTX_consX);
         STATUS_time("Lookup table refinement done", clock() - start);
-        // write to vtk
-        if(filename_vtu!="") m_lut_PTX->write_to_vtk(filename_vtu);
+        
     }
 
-    void cH2ONaCl::destroyLUT_2D_PTX()
+    void cH2ONaCl::save_to_vtk(string filename)
     {
-        if(m_lut_PTX) 
+        
+        m_lut_PTX_2D->write_to_vtk(filename);
+    }
+
+    void cH2ONaCl::save_to_binary(string filename)
+    {
+        m_lut_PTX_2D->write_to_binary(filename);
+    }
+
+    void cH2ONaCl::destroyLUT()
+    {
+        if(m_lut_PTX_2D) 
         {
-            m_lut_PTX->destory();
-            delete m_lut_PTX;
-            m_lut_PTX = NULL;
+            m_lut_PTX_2D->destory();
+            delete m_lut_PTX_2D;
+            m_lut_PTX_2D = NULL;
+        }
+        if(m_lut_PTX_3D) 
+        {
+            m_lut_PTX_3D->destory();
+            delete m_lut_PTX_3D;
+            m_lut_PTX_3D = NULL;
         }
     }
     void cH2ONaCl::createLUT_2D_PTX(std::string type, double xmin, double xmax, double ymin, double ymax, double constZ, int min_level, int max_level, string filename_vtu)
@@ -4374,5 +4391,30 @@ namespace H2ONaCl
         double xy_min[2] = {xmin, ymin};
         double xy_max[2] = {xmax, ymax};
         createLUT_2D_PTX(type, xy_min, xy_max, constZ, min_level,max_level, filename_vtu);
+    }
+
+    H2ONaCl::PROP_H2ONaCl cH2ONaCl::searchLUT_2D_PTX(double x, double y)
+    {
+        LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *targetLeaf = NULL;
+        m_lut_PTX_2D->searchQuadrant(targetLeaf, x, y, m_lut_PTX_2D->m_constZ);
+        // \todo  ======此处加入quad的双线性插值求出properties的值或者对于need refine的quad直接调用准确函数进行直接计算，然后将结果返回
+        return targetLeaf->user_data->prop_cell;
+    }
+
+    void cH2ONaCl::loadLUT_PTX(string filename)
+    {
+        int dim = LOOKUPTABLE_FOREST::get_dim_from_binary(filename);
+        switch (dim)
+        {
+        case 2:
+            m_lut_PTX_2D = (LookUpTableForest_2D*)(new LookUpTableForest_2D(filename, this));
+            break;
+        case 3:
+            m_lut_PTX_3D = (LookUpTableForest_3D*)(new LookUpTableForest_3D(filename, this));
+            break;
+        default:
+            break;
+        }
+        
     }
 }

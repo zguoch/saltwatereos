@@ -47,6 +47,8 @@ namespace H2ONaCl
     double const P_max_LVH  = 390.14744433796; /**< Maximum pressure of L+V+H region, [bar] */
     double const T_Pmax_LVH = 594.63244000000; /**< Temperature at that P_max_LVH */
     // ===========================================================================
+    typedef LOOKUPTABLE_FOREST::LookUpTableForest<2, LOOKUPTABLE_FOREST::FIELD_DATA<2> > LookUpTableForest_2D;
+    typedef LOOKUPTABLE_FOREST::LookUpTableForest<3, LOOKUPTABLE_FOREST::FIELD_DATA<3> > LookUpTableForest_3D;
 
     /**
      * @brief EOS and thermodynamic properties of \f$H_2O-NaCl\f$ system. 
@@ -402,10 +404,12 @@ namespace H2ONaCl
          */
         void writePhaseSurface_XHP(double scale_X=1, double scale_H=1.0/HMAX, double scale_P=1.0/1000, string outpath="./", H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nP=500);
     public:
-        LOOKUPTABLE_FOREST::LookUpTableForest<2, LOOKUPTABLE_FOREST::FIELD_DATA<2> >* m_lut_PTX; //lookup table in PTX space
+        LOOKUPTABLE_FOREST::LookUpTableForest<3, LOOKUPTABLE_FOREST::FIELD_DATA<3> >* m_lut_PTX_3D; //lookup table in PTX space
+        
+        LOOKUPTABLE_FOREST::LookUpTableForest<2, LOOKUPTABLE_FOREST::FIELD_DATA<2> >* m_lut_PTX_2D; //lookup table in PTX space
         // ======== create, save and load AMR lookup table =====
         /**
-         * @brief Create a LUT 2D object in PTX space. Create different 2D LUT according to type and  xy limits, then access through member variable m_lut_PTX
+         * @brief Create a LUT 2D object in PTX space. Create different 2D LUT according to type and  xy limits, then access through member variable m_lut_PTX_2D
          * 
          * @param type 
          * @param xy_min 
@@ -414,7 +418,11 @@ namespace H2ONaCl
          */
         void createLUT_2D_PTX(std::string type, double xy_min[2], double xy_max[2], double constZ, int min_level = 4, int max_level = 6, string filename_vtu="");
         void createLUT_2D_PTX(std::string type, double xmin, double xmax, double ymin, double ymax, double constZ, int min_level = 4, int max_level = 6, string filename_vtu="");
-        void destroyLUT_2D_PTX();
+        H2ONaCl::PROP_H2ONaCl searchLUT_2D_PTX(double x, double y);
+        void destroyLUT();
+        void loadLUT_PTX(string filename);
+        void save_to_vtk(string filename);
+        void save_to_binary(string filename);
         // ========
     private:
         inline double Xwt2Xmol(double X){return (X/NaCl::MolarMass)/(X/NaCl::MolarMass+(1-X)/H2O::MolarMass);};

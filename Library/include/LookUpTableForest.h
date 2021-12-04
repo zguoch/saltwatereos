@@ -47,6 +47,16 @@ namespace LOOKUPTABLE_FOREST
         H2ONaCl::PROP_H2ONaCl prop_cell; // properties at midpoint as cell value (for vtk output)
     };
 
+    inline int get_dim_from_binary(string filename)
+    {
+        FILE* fpin = NULL;
+        fpin = fopen(filename.c_str(), "rb");
+        if(!fpin)ERROR("Open file failed: "+filename);
+        int dim0;
+        fread(&dim0, sizeof(dim0), 1, fpin);
+        fclose(fpin);
+        return dim0;
+    }
     /**
      * @brief Pass dimension and data type to the class
      * 
@@ -88,7 +98,6 @@ namespace LOOKUPTABLE_FOREST
         void write_to_vtk(string filename, bool write_data=true, bool isNormalizeXYZ=true);
         void write_to_binary(string filename, bool is_write_data=true);
         void read_from_binary(string filename, bool is_read_data=true);
-        int get_dim_from_binary(string filename);
         /**
          * @brief Construct a new Look Up Table Forest object. This is always used to create a 3D table
          * xyz would be corresponding to TPX or PHX. Note that the unit of T is K, unit of P is Pa, unit of X is wt% NaCl (e.g., seawater is 0.032), unit of H is J/kg. The same as H2ONaCl::cH2ONaCl::prop_pTX and The same as H2ONaCl::cH2ONaCl::prop_pHX
@@ -98,7 +107,7 @@ namespace LOOKUPTABLE_FOREST
          * @param data_size 
          * @param pointer 
          */
-        LookUpTableForest(double xyz_min[dim], double xyz_max[dim], int max_level, size_t data_size, void* eosPointer=NULL); //3D case
+        LookUpTableForest(double xyz_min[dim], double xyz_max[dim], int max_level, void* eosPointer=NULL); //3D case
         /**
          * @brief Construct a new Look Up Table Forest object. This is always used to create a 2D table
          * xyz would be corresponding to TPX or PHX. Note that the unit of T is K, unit of P is Pa, unit of X is wt% NaCl (e.g., seawater is 0.032), unit of H is J/kg. The same as H2ONaCl::cH2ONaCl::prop_pTX and The same as H2ONaCl::cH2ONaCl::prop_pHX
@@ -109,7 +118,7 @@ namespace LOOKUPTABLE_FOREST
          * @param data_size 
          * @param pointer 
          */
-        LookUpTableForest(double xyz_min[dim], double xyz_max[dim], double constZ, int max_level, size_t data_size, void* eosPointer=NULL); //2D case
+        LookUpTableForest(double xyz_min[dim], double xyz_max[dim], double constZ, int max_level, void* eosPointer=NULL); //2D case
         LookUpTableForest(string filename, void* pointer=NULL); //load from exist binary file
         void destory();
         ~LookUpTableForest();

@@ -412,7 +412,8 @@ namespace H2ONaCl
          */
         void writePhaseSurface_XHP(double scale_X=1, double scale_H=1.0/HMAX, double scale_P=1.0/PMAX, string outpath="./", H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nP=200);
     public:
-        LOOKUPTABLE_FOREST::LookUpTableForest<2, LOOKUPTABLE_FOREST::FIELD_DATA<2> >* m_lut_PTX; //lookup table in PTX space
+        LOOKUPTABLE_FOREST::LookUpTableForest<2, LOOKUPTABLE_FOREST::FIELD_DATA<2> >* m_lut_PTX_2D; //lookup table in PTX space
+        LOOKUPTABLE_FOREST::LookUpTableForest<3, LOOKUPTABLE_FOREST::FIELD_DATA<3> >* m_lut_PTX_3D;
         // ======== create, save and load AMR lookup table =====
         /**
          * @brief Create a LUT 2D object in PTX space. Create different 2D LUT according to type and  xy limits, then access through member variable m_lut_PTX
@@ -423,8 +424,13 @@ namespace H2ONaCl
          * @param z 
          */
         void createLUT_2D_PTX(std::string type, double xy_min[2], double xy_max[2], double z, int min_level = 4, int max_level = 6, string filename_vtu="");
-        void destroyLUT_2D_PTX();
         void createLUT_2D_PTX(std::string type, double xmin, double xmax, double ymin, double ymax, double z, int min_level = 4, int max_level = 6, string filename_vtu="");
+        H2ONaCl::PROP_H2ONaCl searchLUT_2D_PTX(double x, double y);
+        void destroyLUT();
+        void loadLUT_PTX(string filename);
+        void save_to_vtk(string filename);
+        void save_to_binary(string filename);
+        
     private:
         inline double Xwt2Xmol(double X){return (X/NaCl::MolarMass)/(X/NaCl::MolarMass+(1-X)/H2O::MolarMass);};
         void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);

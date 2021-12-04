@@ -1,18 +1,18 @@
 
 template <int dim, typename USER_DATA> 
-LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], int max_level, size_t data_size, void* eosPointer)
+LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], int max_level, void* eosPointer)
 :
 m_constZ(0) //this is not used in 3D table
 {
-    init(xyz_min, xyz_max, max_level, data_size, eosPointer);
+    init(xyz_min, xyz_max, max_level, sizeof(USER_DATA), eosPointer);
 }
 
 template <int dim, typename USER_DATA> 
-LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], double constZ, int max_level, size_t data_size, void* eosPointer)
+LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], double constZ, int max_level, void* eosPointer)
 :
 m_constZ(constZ)
 {
-    init(xyz_min, xyz_max, max_level, data_size, eosPointer);
+    init(xyz_min, xyz_max, max_level, sizeof(USER_DATA), eosPointer);
 }
 
 template <int dim, typename USER_DATA> 
@@ -204,18 +204,6 @@ void LookUpTableForest<dim,USER_DATA>::read_from_binary(string filename, bool is
     // close file
     fclose(fpin);
     STATUS("Reading lookup table file done");
-}
-
-template <int dim, typename USER_DATA> 
-int LookUpTableForest<dim,USER_DATA>::get_dim_from_binary(string filename)
-{
-    FILE* fpin = NULL;
-    fpin = fopen(filename.c_str(), "rb");
-    if(!fpin)ERROR("Open file failed: "+filename);
-    int dim0;
-    fread(&dim0, sizeof(dim0), 1, fpin);
-    fclose(fpin);
-    return dim0;
 }
 
 template <int dim, typename USER_DATA>

@@ -14,7 +14,7 @@ int main()
     double TP_max[2] = {700 + 273.15, 400E5};
     double X_wt = 0.2; //wt% NaCl [0,1]
     int min_level = 4;
-    int max_level = 12;
+    int max_level = 5;
 
     eos.createLUT_2D_PTX("constX", TP_min, TP_max, X_wt, min_level, max_level, "lut_PTX.vtu");
     
@@ -27,7 +27,7 @@ int main()
         double T_K = (rand()/(double)RAND_MAX)*(TP_max[0] - TP_min[0]) + TP_min[0];
         double p_Pa = (rand()/(double)RAND_MAX)*(TP_max[1] - TP_min[1]) + TP_min[1];
         // int ind_targetLeaf = forest.searchQuadrant(T_C, p_bar, 0);
-        eos.m_lut_PTX->searchQuadrant(targetLeaf, T_K, p_Pa, X_wt);
+        eos.m_lut_PTX_2D->searchQuadrant(targetLeaf, T_K, p_Pa, X_wt);
         // cout<<"T_C: "<<T_K - 273.15<<", p_bar: "<<p_Pa/1E5<<", index: "<<targetLeaf->index<<endl;
         // cout<<eos.getPhaseRegionName(targetLeaf->user_data->phaseRegion_cell)<<endl;
         // compare to directally calculation
@@ -42,14 +42,16 @@ int main()
     STATUS_time("Searching done", clock() - start);
 
     // ======= test write to binary =====
-    // write_binary(eos, TP_min, TP_max, max_level);
-    // call member of forest class
-    eos.m_lut_PTX->write_to_binary("lut_TPX.bin");
+    // eos.m_lut_PTX->write_to_binary("lut_TPX.bin");
 
     // test load exist binary file to construct AMR LUT forest
     const int dim_in = 2; 
     LOOKUPTABLE_FOREST::LookUpTableForest<dim_in, LOOKUPTABLE_FOREST::FIELD_DATA<dim_in> > forest("lut_TPX.bin");
-    forest.write_to_vtk("load_write.vtu");
+    // forest.write_to_vtk("load_write.vtu");
+
+    // load binary from EOS obj
+    H2ONaCl::cH2ONaCl eos2;
+
 
     // destroy by hand
     // eos.destroyLUT_2D_PTX();
