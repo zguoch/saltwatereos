@@ -2870,9 +2870,9 @@ namespace H2ONaCl
         double d[11] = {8E-05, 1E-05, -1.37125E-07, 9.46822E-10, -3.50549E-12, 6.57369E-15, 
                         -4.89423E-18, 7.77761E-2, 2.7042E-4, -4.244821E-07, 2.580872E-10};
         // copy 
-        memcpy(table4.c, c, sizeof(double)*14);
-        memcpy(table4.cA, cA, sizeof(double)*11);
-        memcpy(table4.d, d, sizeof(double)*11);
+        std::memcpy(table4.c, c, sizeof(double)*14);
+        std::memcpy(table4.cA, cA, sizeof(double)*11);
+        std::memcpy(table4.d, d, sizeof(double)*11);
     }
     /**
      * - Pressure
