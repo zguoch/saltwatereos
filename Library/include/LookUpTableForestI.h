@@ -475,7 +475,7 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
     for (int i = 0; i < num_cells; i++)
     {
         length_ref_cell = 1<<(MAX_FOREST_LEVEL - leaves[i]->level);
-        for (int j = 0; j < 3; j++)
+        for (int j = 0; j < dim; j++)
         {
             length_cell[j] = m_length_scale[j] * length_ref_cell;
         }

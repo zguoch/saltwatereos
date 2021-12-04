@@ -154,7 +154,7 @@ int main()
     clock_t start, end;
     double xyzmin[3] = {2,5, 0}; //T[deg.C], p[bar]
     double xyzmax[3] = {700, 400, 1};
-    int max_level = 12;
+    int max_level = 6;
     const int dim =2;
     LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> > forest(xyzmin, xyzmax, max_level);
     // refine 
