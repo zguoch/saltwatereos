@@ -1,5 +1,5 @@
 # 0. CMake Minimum version
-cmake_minimum_required (VERSION 2.12)
+cmake_minimum_required(VERSION 3.3...3.12 FATAL_ERROR)
 if (POLICY CMP0086)
   # cmake warns if loaded from a min-3.0-required parent dir, so silence the warning:
   cmake_policy(SET CMP0086 NEW)
@@ -11,13 +11,45 @@ if (POLICY CMP0042)
   cmake_policy(SET CMP0042 NEW)
 endif()
 
-project(eosH2ONaCl CXX C)
+project(eosH2ONaCl LANGUAGES CXX C)
 # project(${PROJECT_NAME} LANGUAGES CXX)
 if(${CMAKE_VERSION} VERSION_LESS "3.3") 
 else()
     set(CMAKE_CXX_STANDARD 11)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
+
+# Using OpenMP
+include_directories(/usr/local/include)
+find_package(OpenMP REQUIRED)
+if(APPLE)
+    set(CMAKE_C_COMPILER clang)
+    set(CMAKE_CXX_COMPILER clang++)
+
+    if(CMAKE_C_COMPILER_ID MATCHES "Clang\$")
+        set(OpenMP_C_FLAGS "-Xpreprocessor -fopenmp")
+        set(OpenMP_C_LIB_NAMES "omp")
+        set(OpenMP_omp_LIBRARY omp)
+    endif()
+
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang\$")
+        set(OpenMP_CXX_FLAGS "-Xpreprocessor -fopenmp")
+        set(OpenMP_CXX_LIB_NAMES "omp")
+        set(OpenMP_omp_LIBRARY omp)
+    endif()
+endif()
+if(OPENMP_FOUND)
+    message("OPENMP FOUND")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+endif()
+#windows vs2017 doesn't need opm library link 
+set(LIBomp "")
+if (APPLE)
+  set(LIBomp "omp")
+endif()
+
 # set compiler flag
 add_definitions("-Wno-array-bounds") # turn off this array bound check warning at this moment, this warning accurs at where dim!=3
 
@@ -55,11 +87,13 @@ add_subdirectory(swig/H2ONaCl)
 
 # install path 
 INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/include )
+link_directories(/usr/local/lib)
 FILE(GLOB SC_FILES "${PROJECT_SOURCE_DIR}/src/PROST/*.c" "${PROJECT_SOURCE_DIR}/src/PROST/*.h" "${PROJECT_SOURCE_DIR}/src/*.H" "${PROJECT_SOURCE_DIR}/src/*.cpp")
 
 add_library (${PROJECT_NAME}  ${SC_FILES} )
 # add_library(water STATIC src/H2O.cpp)
-target_link_libraries(${PROJECT_NAME})
+message(STATUS "OMP lib: ${LIBomp}")
+target_link_libraries(${PROJECT_NAME} ${LIBomp})
 install (TARGETS ${PROJECT_NAME} DESTINATION ${PROJECT_SOURCE_DIR}/lib)
 
 message(STATUS "")

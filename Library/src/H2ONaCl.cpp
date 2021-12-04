@@ -2901,7 +2901,7 @@ namespace H2ONaCl
      * 
      * \image html HaliteCriticalCurves.svg "Critical pressure and composition." width=50%. 
      * Critical pressure (a,b) and composition (c,d) as function of temperature. (a,c) Full range, (b,d) the region just above the critical temperature of water
-     * \todo Critical pressure calculated by Eq. 5a is different (up to 9 bar) from boiling curve of pure water.
+     * \warning Critical pressure calculated by Eq. 5a is different (up to 9 bar) from boiling curve of pure water. The physical meaning would be the same, but due to some numerical reason, they are not completely same.
      */
     void cH2ONaCl::P_X_Critical(double T, double& P_crit, double& X_crit)
     {

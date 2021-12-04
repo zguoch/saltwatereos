@@ -209,7 +209,10 @@ void LookUpTableForest<dim,USER_DATA>::read_from_binary(string filename, bool is
 template <int dim, typename USER_DATA>
 void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level))
 {
+    // printf("refine calculation on thread %d \n", omp_get_thread_num());
+    // 
     // NOTE that do not use for loop in the recursion, it will slow down the calculation
+    
     if(is_refine(this, quad, m_max_level))
     {
         // if no children, create children
@@ -301,10 +304,37 @@ void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, boo
             quad->isHasChildren = true;
         }
 
-        for (int i = 0; i < m_num_children; i++)
-        {
-            refine(quad->children[i], is_refine);
-        }
+        // for (int i = 0; i < m_num_children; i++)
+        // {
+            #pragma omp task shared(is_refine) //firstprivate(quad, m_max_level) //
+            refine(quad->children[0], is_refine);
+
+            #pragma omp task shared(is_refine) //firstprivate(quad, m_max_level)
+            refine(quad->children[1], is_refine);
+
+            #pragma omp task shared(is_refine) //firstprivate(quad, m_max_level)
+            refine(quad->children[2], is_refine);
+
+            #pragma omp task shared(is_refine) //firstprivate(quad, m_max_level)
+            refine(quad->children[3], is_refine);
+
+            if(dim==3)
+            {
+                #pragma omp task shared(is_refine)
+                refine(quad->children[4], is_refine);
+
+                #pragma omp task shared(is_refine)
+                refine(quad->children[5], is_refine);
+
+                #pragma omp task shared(is_refine)
+                refine(quad->children[6], is_refine);
+
+                #pragma omp task shared(is_refine)
+                refine(quad->children[7], is_refine);
+            }
+
+            #pragma omp taskwait
+        // }
     }
 }
 

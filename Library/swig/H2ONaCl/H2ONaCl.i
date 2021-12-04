@@ -430,7 +430,7 @@ namespace H2ONaCl
         void loadLUT_PTX(string filename);
         void save_to_vtk(string filename);
         void save_to_binary(string filename);
-        
+
     private:
         inline double Xwt2Xmol(double X){return (X/NaCl::MolarMass)/(X/NaCl::MolarMass+(1-X)/H2O::MolarMass);};
         void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);

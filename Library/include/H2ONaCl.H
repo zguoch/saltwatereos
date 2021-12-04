@@ -20,7 +20,8 @@ using namespace std;
 #include "NaCl.H"
 #include "dataStruct_H2ONaCl.H"
 #include "LookUpTableForest.h"
-
+#include "omp.h"
+#include <ctime>
 #define USE_PROST 1  
 
 #ifdef USE_PROST
@@ -423,6 +424,9 @@ namespace H2ONaCl
         void loadLUT_PTX(string filename);
         void save_to_vtk(string filename);
         void save_to_binary(string filename);
+        // test template, python API
+        // template<int dimm>
+        void test_template(){cout<<"template arg: "<<3<<endl;};
         // ========
     private:
         inline double Xwt2Xmol(double X){return (X/NaCl::MolarMass)/(X/NaCl::MolarMass+(1-X)/H2O::MolarMass);};

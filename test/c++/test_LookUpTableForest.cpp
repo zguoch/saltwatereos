@@ -1,5 +1,6 @@
 // #include "LookUpTableForest.h"
 #include "H2ONaCl.H"
+#include <omp.h>
 using namespace LOOKUPTABLE_FOREST;
 H2ONaCl::cH2ONaCl eos;
 
@@ -34,10 +35,8 @@ void calProp_H2ONaCl_consX(H2ONaCl::PROP_H2ONaCl& prop, double T_C, double p_bar
 }
 
 template <int dim, typename USER_DATA>
-bool refine_fn(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level)
+bool calRefine(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level)
 {
-    if(quad->isHasChildren) return true; //if a quad has children, of course it need refine, but we don't need do anything at here, just return true.
-    
     USER_DATA       *data = (USER_DATA *) quad->user_data;
     bool need_refine_phaseBoundary  = false;
     bool need_refine_Rho            = false;
@@ -94,7 +93,6 @@ bool refine_fn(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>
     {
         data->need_refine = NeedRefine_NoNeed;
     }
-
     // ========== 2. refinement check for Rho ===================== \todo maybe use another criterion
     double mean_Rho = data->prop_cell.Rho;
     for(int i=0;i<forest->m_num_children;i++)mean_Rho += data->prop_point[i].Rho;
@@ -130,6 +128,20 @@ bool refine_fn(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>
 }
 
 template <int dim, typename USER_DATA>
+bool refine_fn(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level)
+{
+    if(quad->isHasChildren) return true; //if a quad has children, of course it need refine, but we don't need do anything at here, just return true.
+    bool needRefine = false;
+    // #pragma omp task shared(needRefine) firstprivate(forest, quad, max_level)
+    needRefine = calRefine(forest, quad, max_level);
+
+    // #pragma omp taskwait
+// cout<<"Run on thread: "<<omp_get_thread_num()<<", need refine: "<<needRefine<<endl;
+    return needRefine;
+    return false;
+}
+
+template <int dim, typename USER_DATA>
 bool refine_uniform(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level)
 {
     if(quad->level <= 3)return true;
@@ -142,16 +154,27 @@ int main()
     clock_t start, end;
     double xyzmin[3] = {2,5, 0}; //T[deg.C], p[bar]
     double xyzmax[3] = {700, 400, 1};
-
     int max_level = 12;
     const int dim =2;
-    LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> > forest(xyzmin, xyzmax, max_level, sizeof(LOOKUPTABLE_FOREST::FIELD_DATA<dim>));
+    LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> > forest(xyzmin, xyzmax, max_level);
     // refine 
     start = clock();
+    int num_threads = 8;
+    omp_set_num_threads(num_threads);
     forest.refine(refine_uniform);
-    forest.refine(refine_fn);
-    cout<<"Refinement end: "<<(double)(clock()-start)/CLOCKS_PER_SEC<<" s"<<endl;
-    
+    #pragma omp parallel //shared(n)
+    {
+        #pragma omp single
+        {
+            printf("Parallel process refinement, using %d threads\n", omp_get_num_threads());
+            // printf ("fib(%d) = %d\n", n, fib(n));
+            forest.refine(refine_fn);
+        }
+    }
+    // forest.refine(refine_fn);
+    // the clock return all the cpu runing time
+    cout<<"Refinement end : "<<((double)(clock()-start)/CLOCKS_PER_SEC)/num_threads<<" s"<<endl;
+
     start = clock();
     forest.write_to_vtk("lookuptable.vtu");
     cout<<"Write to vtk end: "<<(double)(clock()-start)/CLOCKS_PER_SEC<<" s"<<endl;
