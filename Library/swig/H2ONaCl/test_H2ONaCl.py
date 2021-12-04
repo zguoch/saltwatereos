@@ -1,5 +1,6 @@
 import numpy as np 
 import random
+import time
 from pyswEOS import H2ONaCl
 from pyswEOS import H2O
 water=H2O.cH2O()
@@ -38,14 +39,17 @@ sw.loadLUT_PTX("test.bin")
 # sw.save_to_vtk("test_out.vtu")
 
 # 6.3 lookup 
+start = time.process_time()
 ind = 0
-for i in range(0, int(1E4)):
+for i in range(0, int(1E6)):
     T_K     = (random.random())*(xmax - xmin) + xmin
     p_Pa    = (random.random())*(ymax - ymin) + ymin
     # print(T_K, p_Pa)
     prop    = sw.searchLUT_2D_PTX(T_K, p_Pa)
-    prop2   = sw.prop_pTX(p_Pa, T_K, X_wt)
-    # print(prop.Region, prop2.Region)
-    if(prop.Region != prop2.Region):
-        print('diff %d: %d'%(ind, prop.Region))
-        ind += 1
+    # prop2   = sw.prop_pTX(p_Pa, T_K, X_wt)
+    # # print(prop.Region, prop2.Region)
+    # if(prop.Region != prop2.Region):
+    #     # print('diff %d: %d'%(ind, prop.Region))
+    #     ind += 1
+stop = time.process_time()
+print("Search, elapsed time: %.2f, %d need refine" % (stop - start, ind))
