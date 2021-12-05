@@ -1,5 +1,5 @@
-#ifndef QUADTREE
-#define QUADTREE
+#ifndef LOOKUPTABLEFOREST
+#define LOOKUPTABLEFOREST
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -34,7 +34,7 @@ namespace LOOKUPTABLE_FOREST
         double H;
     };
     
-
+    // add data struct definition for different system, e.g., H2ONaCl. Actually we can move this data type definition to H2ONaCl.H, because LookUpTableForest class never care about this data type definite, it just accept whatever data type through template argument. But for the TCL API, if move this to other place, it will cause some compiling errors. So keep it here before finding better solution.
     template <int dim>
     struct FIELD_DATA
     {
@@ -88,6 +88,7 @@ namespace LOOKUPTABLE_FOREST
         int     m_min_level;
         int     m_max_level;
         int     m_num_children;
+        // double  m_physical_length_quad[MAX_FOREST_LEVEL][dim]; //Optimization: store the length of quad in each dimension as a member data of the forest, therefore don't need to calculate length of quad, just access this 2D array according to the quad level. 
         RMSD_RefineCriterion m_RMSD_RefineCriterion;
         inline void set_min_level(int min_level){m_min_level = min_level;};
         Quadrant<dim,USER_DATA>* get_root(){return &m_root;};

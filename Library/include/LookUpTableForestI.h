@@ -43,6 +43,16 @@ void LookUpTableForest<dim,USER_DATA>::init(double xyz_min[dim], double xyz_max[
         m_xyz_min[i] = xyz_min[i];
         m_length_scale[i] = (m_xyz_max[i] - m_xyz_min[i])/length_forest;
     }
+    // made a simple test, it doesn't speed up in this way.
+    // init length of quad at every level
+    // for (int i = 0; i < MAX_FOREST_LEVEL; i++)
+    // {
+    //     for (int j = 0; j < dim; j++)
+    //     {
+    //         m_physical_length_quad[i][j] = (1<<(MAX_FOREST_LEVEL-i))*m_length_scale[j];
+    //     }
+    // }
+
     init_Root(m_root);
 }
 
@@ -366,7 +376,7 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
 {
     clock_t start = clock();
     STATUS("Write to vtu file starting ...");
-    Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
+    Quadrant<dim,USER_DATA> *targetLeaf = NULL;
     vector<Quadrant<dim,USER_DATA>* > leaves;
     getLeaves(leaves, &m_root);
     int num_points_per_cell = 1<<dim;

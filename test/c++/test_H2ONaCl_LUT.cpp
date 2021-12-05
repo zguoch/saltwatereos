@@ -9,14 +9,16 @@ void createTable()
 
     clock_t start = clock();
     H2ONaCl::cH2ONaCl eos;
+    H2ONaCl::PROP_H2ONaCl prop_cal, prop_lookup;
     const int dim =2;
     double TP_min[2] = {1 + 273.15, 5E5}; //T [K], P[Pa]
     double TP_max[2] = {700 + 273.15, 400E5};
     double X_wt = 0.2; //wt% NaCl [0,1]
     int min_level = 4;
-    int max_level = 7;
+    int max_level = 9;
 
-    eos.createLUT_2D_PTX("constX", TP_min, TP_max, X_wt, min_level, max_level, "lut_PTX.vtu");
+    eos.createLUT_2D_PTX("constX", TP_min, TP_max, X_wt, min_level, max_level);
+    eos.save_lut_to_vtk("lut_PTX.vtu");
     
     STATUS("Start search ... ");
     start = clock();
@@ -27,14 +29,22 @@ void createTable()
         double T_K = (rand()/(double)RAND_MAX)*(TP_max[0] - TP_min[0]) + TP_min[0];
         double p_Pa = (rand()/(double)RAND_MAX)*(TP_max[1] - TP_min[1]) + TP_min[1];
         // int ind_targetLeaf = forest.searchQuadrant(T_C, p_bar, 0);
-        eos.m_lut_PTX_2D->searchQuadrant(targetLeaf, T_K, p_Pa, X_wt);
+        // eos.m_lut_PTX_2D->searchQuadrant(targetLeaf, T_K, p_Pa, X_wt);
+        eos.searchLUT_2D_PTX(prop_lookup,T_K, p_Pa);
+        // prop_cal = eos.prop_pTX(p_Pa, T_K, X_wt);
+        // H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion(T_K - 273.15, p_Pa/1E5, eos.Wt2Mol(X_wt));
         // cout<<"T_C: "<<T_K - 273.15<<", p_bar: "<<p_Pa/1E5<<", index: "<<targetLeaf->index<<endl;
         // cout<<eos.getPhaseRegionName(targetLeaf->user_data->phaseRegion_cell)<<endl;
         // compare to directally calculation
         // H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion(T_K - 273.15, p_Pa/1E5, eos.Wt2Mol(X_wt));
         // if(targetLeaf->user_data->phaseRegion_cell != phaseRegion_cal)
+        // if(prop_lookup.Region != phaseRegion_cal)
         // {
-        //     cout<<"Need refine point "<<ind++<<": "<<targetLeaf->user_data->need_refine<<endl;
+        //     cout<<"Need refine point "<<ind++<<": ";
+        //     cout<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<endl;
+        // }else
+        // {
+        //     // cout<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<", err: "<<prop_cal.Rho-prop_lookup.Rho<<endl;
         // }
     }
     // // forest.searchQuadrant(targetLeaf, 200, 300, 0);
@@ -42,16 +52,18 @@ void createTable()
     STATUS_time("Searching done", clock() - start);
 
     // ======= test write to binary =====
-    eos.save_to_binary("lut_TPX_"+std::to_string(max_level)+".bin");
+    eos.save_lut_to_binary("lut_TPX_"+std::to_string(max_level)+".bin");
 }
 void load_binary(string filename)
 {
+    int ind = 0;
     clock_t start = clock();
     const int dim = 2; 
     // LOOKUPTABLE_FOREST::LookUpTableForest<dim_in, LOOKUPTABLE_FOREST::FIELD_DATA<dim_in> > forest(filename);
     // load binary from EOS obj
     H2ONaCl::cH2ONaCl eos;
-    eos.loadLUT_PTX("test.bin");
+    H2ONaCl::PROP_H2ONaCl prop_cal, prop_lookup;
+    eos.loadLUT_PTX(filename);
     
     double TP_min[2] = {1 + 273.15, 5E5}; //T [K], P[Pa]
     double TP_max[2] = {700 + 273.15, 400E5};
@@ -66,15 +78,24 @@ void load_binary(string filename)
         double T_K = (rand()/(double)RAND_MAX)*(TP_max[0] - TP_min[0]) + TP_min[0];
         double p_Pa = (rand()/(double)RAND_MAX)*(TP_max[1] - TP_min[1]) + TP_min[1];
         // int ind_targetLeaf = forest.searchQuadrant(T_C, p_bar, 0);
-        eos.m_lut_PTX_2D->searchQuadrant(targetLeaf, T_K, p_Pa, X_wt);
-        // eos.searchLUT_2D_PTX(T_K, p_Pa);
+        // eos.m_lut_PTX_2D->searchQuadrant(targetLeaf, T_K, p_Pa, X_wt);
+        eos.searchLUT_2D_PTX(prop_lookup,T_K, p_Pa);
+        // prop_cal = eos.prop_pTX(p_Pa, T_K, X_wt);
+        // H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion(T_K - 273.15, p_Pa/1E5, eos.Wt2Mol(X_wt));
         // cout<<"T_C: "<<T_K - 273.15<<", p_bar: "<<p_Pa/1E5<<", index: "<<targetLeaf->index<<endl;
         // cout<<eos.getPhaseRegionName(targetLeaf->user_data->phaseRegion_cell)<<endl;
         // compare to directally calculation
         // H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion(T_K - 273.15, p_Pa/1E5, eos.Wt2Mol(X_wt));
         // if(targetLeaf->user_data->phaseRegion_cell != phaseRegion_cal)
+        // if(prop_lookup.Region != phaseRegion_cal)
         // {
-        //     cout<<"Need refine point "<<ind++<<": "<<targetLeaf->user_data->need_refine<<endl;
+        //     cout<<"Need refine point "<<ind++<<": ";
+        //     // cout<<prop_cal.Rho<<"  ";
+        //     cout<<prop_lookup.Rho<<endl;
+        // }
+        // else
+        // {
+        //     // cout<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<", err: "<<prop_cal.Rho-prop_lookup.Rho<<endl;
         // }
     }
     // // forest.searchQuadrant(targetLeaf, 200, 300, 0);
@@ -84,10 +105,10 @@ void load_binary(string filename)
 int main()
 {
     // 1. 
-    createTable();
+    // createTable();
 
     // 2. 
-    // load_binary("lut_TPX_13.bin");
+    load_binary("lut_TPX_13.bin");
 
     // destroy by hand
     // eos.destroyLUT_2D_PTX();

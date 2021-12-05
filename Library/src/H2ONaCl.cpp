@@ -13,7 +13,7 @@ namespace H2ONaCl
     m_Cr(init_Cr()),
     m_f(init_f()),
     m_colorPrint(false),
-    m_num_threads(0),
+    m_num_threads(1),
     m_lut_PTX_2D(NULL),
     m_lut_PTX_3D(NULL)
     {
@@ -4357,30 +4357,26 @@ namespace H2ONaCl
         m_lut_PTX_2D->set_min_level(min_level);
         m_lut_PTX_2D->refine(refine_uniform);
         // parallel refine
-        if(m_num_threads==0)
-        {
-            ERROR("Please call the member function set_num_threads(num_threads) to set the threads number first.");
-        }
         #pragma omp parallel //shared(n)
         {
             #pragma omp single
             {
-                printf("Parallel process refinement, using %d threads\n", m_num_threads);
+                printf("Do refinement using %d threads.\n", m_num_threads);
                 m_lut_PTX_2D->refine(RefineFunc_PTX_consX);
             }
         }
         // m_lut_PTX_2D->refine(RefineFunc_PTX_consX);
-        STATUS_time("Lookup table refinement done", clock() - start);
+        STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
         
     }
 
-    void cH2ONaCl::save_to_vtk(string filename)
+    void cH2ONaCl::save_lut_to_vtk(string filename)
     {
         
         m_lut_PTX_2D->write_to_vtk(filename);
     }
 
-    void cH2ONaCl::save_to_binary(string filename)
+    void cH2ONaCl::save_lut_to_binary(string filename)
     {
         m_lut_PTX_2D->write_to_binary(filename);
     }
@@ -4407,12 +4403,29 @@ namespace H2ONaCl
         createLUT_2D_PTX(type, xy_min, xy_max, constZ, min_level,max_level, filename_vtu);
     }
 
-    H2ONaCl::PROP_H2ONaCl cH2ONaCl::searchLUT_2D_PTX(double x, double y)
+    void cH2ONaCl::searchLUT_2D_PTX(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)
     {
         LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *targetLeaf = NULL;
         m_lut_PTX_2D->searchQuadrant(targetLeaf, x, y, m_lut_PTX_2D->m_constZ);
         // \todo  ======此处加入quad的双线性插值求出properties的值或者对于need refine的quad直接调用准确函数进行直接计算，然后将结果返回
-        return targetLeaf->user_data->prop_cell;
+        if(targetLeaf->user_data->need_refine)
+        {
+            prop = prop_pTX(y, x, m_lut_PTX_2D->m_constZ);
+        }
+        else
+        {
+            double physical_length[2]; //physical length of the quad
+            m_lut_PTX_2D->get_quadrant_physical_length(targetLeaf->level, physical_length);
+            double Rho_vertices[4] = {
+                targetLeaf->user_data->prop_point[0].Rho, 
+                targetLeaf->user_data->prop_point[1].Rho,
+                targetLeaf->user_data->prop_point[2].Rho,
+                targetLeaf->user_data->prop_point[3].Rho
+                };
+            double xy[2] = {x, y};
+            INTERPOLATION::bilinear<2> (targetLeaf->xyz, physical_length, Rho_vertices, xy, prop.Rho);
+            prop.Region = targetLeaf->user_data->phaseRegion_cell;
+        }
     }
 
     void cH2ONaCl::loadLUT_PTX(string filename)

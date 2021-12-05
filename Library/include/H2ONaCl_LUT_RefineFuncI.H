@@ -33,6 +33,7 @@ bool RefineFunc_PTX_consX(LOOKUPTABLE_FOREST::LookUpTableForest<dim,USER_DATA>* 
     bool need_refine_phaseBoundary  = false;
     bool need_refine_Rho            = false;
     bool need_refine_H              = false;
+    // const double* physical_length = forest->m_physical_length_quad[quad->level];
     double physical_length[3];
     forest->get_quadrant_physical_length(quad->level, physical_length);
     const int num_sample_x =2; //if want to make more safe check, could increase this number to generate more sample points, for most of cases, the default value 2 is enough.

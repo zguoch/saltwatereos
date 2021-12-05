@@ -15,6 +15,7 @@ using namespace std;
 // solve roots of general polynomial
 // This code comes from https://www.codeproject.com/Articles/674149/A-Real-Polynomial-Class-with-Root-Finder
 #include "Polynomial.h"
+#include "interpolation.h"
 // #include "Fluid.H"
 #include "H2O.H"
 #include "NaCl.H"
@@ -422,11 +423,11 @@ namespace H2ONaCl
          */
         void createLUT_2D_PTX(std::string type, double xy_min[2], double xy_max[2], double constZ, int min_level = 4, int max_level = 6, string filename_vtu="");
         void createLUT_2D_PTX(std::string type, double xmin, double xmax, double ymin, double ymax, double constZ, int min_level = 4, int max_level = 6, string filename_vtu="");
-        H2ONaCl::PROP_H2ONaCl searchLUT_2D_PTX(double x, double y);
+        void searchLUT_2D_PTX(H2ONaCl::PROP_H2ONaCl& prop, double x, double y);
         void destroyLUT();
         void loadLUT_PTX(string filename);
-        void save_to_vtk(string filename);
-        void save_to_binary(string filename);
+        void save_lut_to_vtk(string filename);
+        void save_lut_to_binary(string filename);
         // test template, python API
         // template<int dimm>
         void test_template(){cout<<"template arg: "<<3<<endl;};

@@ -41,6 +41,8 @@ bool calRefine(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>
     bool need_refine_phaseBoundary  = false;
     bool need_refine_Rho            = false;
     bool need_refine_H              = false;
+    // test this, it doesn't speed up when using precalculated physical_length of each quad
+    // const double* physical_length = forest->m_physical_length_quad[quad->level];
     double physical_length[3];
     forest->get_quadrant_physical_length(quad->level, physical_length);
     const int num_sample_x =2; //最简单的情况就是只取xmin, xmax作为采样点判断这些采样点的函数计算返回值(flat)是否全部相等.但是有时候会有漏掉的情况，所以可以考虑在这里加密采样
@@ -154,12 +156,12 @@ int main()
     clock_t start, end;
     double xyzmin[3] = {2,5, 0}; //T[deg.C], p[bar]
     double xyzmax[3] = {700, 400, 1};
-    int max_level = 6;
+    int max_level = 10;
     const int dim =2;
     LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> > forest(xyzmin, xyzmax, max_level);
     // refine 
     start = clock();
-    int num_threads = 8;
+    int num_threads = 1;
     omp_set_num_threads(num_threads);
     forest.refine(refine_uniform);
     #pragma omp parallel //shared(n)
