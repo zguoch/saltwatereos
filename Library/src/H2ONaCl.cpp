@@ -4426,7 +4426,7 @@ namespace H2ONaCl
         prop.Region = targetLeaf->user_data->phaseRegion_cell;
     }
 
-    void cH2ONaCl::searchLUT_2D_PTX(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)
+    LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::searchLUT_2D_PTX(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)
     {
         LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *targetLeaf = NULL;
         m_lut_PTX_2D->searchQuadrant(targetLeaf, x, y, m_lut_PTX_2D->m_constZ);
@@ -4439,6 +4439,15 @@ namespace H2ONaCl
             double xy[2] = {x, y};
             interp_quad_prop(targetLeaf, prop, xy);
         }
+        return targetLeaf;
+    }
+
+    // for python API
+    H2ONaCl::PROP_H2ONaCl cH2ONaCl::searchLUT_2D_PTX(double x, double y)
+    {
+        H2ONaCl::PROP_H2ONaCl prop;
+        searchLUT_2D_PTX(prop, x, y);
+        return prop;
     }
 
     void cH2ONaCl::loadLUT_PTX(string filename)

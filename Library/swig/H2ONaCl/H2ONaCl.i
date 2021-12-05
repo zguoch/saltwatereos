@@ -19,6 +19,7 @@ using namespace std;
 %apply double *OUTPUT { double& T, double& P };
 %apply double *OUTPUT { double& n1, double& n2 };
 %apply std::vector<double> *OUTPUT {std::vector<double>& P_crit, std::vector<double>& X_crit};
+%apply H2ONaCl::PROP_H2ONaCl *OUTPUT {H2ONaCl::PROP_H2ONaCl& prop};
 %{
     // #define SWIG_FILE_WITH_INIT
     #include "H2ONaCl.H"
@@ -426,7 +427,7 @@ namespace H2ONaCl
          */
         void createLUT_2D_PTX(std::string type, double xy_min[2], double xy_max[2], double z, int min_level = 4, int max_level = 6, string filename_vtu="");
         void createLUT_2D_PTX(std::string type, double xmin, double xmax, double ymin, double ymax, double z, int min_level = 4, int max_level = 6, string filename_vtu="");
-        void searchLUT_2D_PTX(H2ONaCl::PROP_H2ONaCl& prop, double x, double y);
+        H2ONaCl::PROP_H2ONaCl searchLUT_2D_PTX(double x, double y);
         void destroyLUT();
         void loadLUT_PTX(string filename);
         void save_lut_to_vtk(string filename);

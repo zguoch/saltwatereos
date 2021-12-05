@@ -423,7 +423,9 @@ namespace H2ONaCl
          */
         void createLUT_2D_PTX(std::string type, double xy_min[2], double xy_max[2], double constZ, int min_level = 4, int max_level = 6, string filename_vtu="");
         void createLUT_2D_PTX(std::string type, double xmin, double xmax, double ymin, double ymax, double constZ, int min_level = 4, int max_level = 6, string filename_vtu="");
-        void searchLUT_2D_PTX(H2ONaCl::PROP_H2ONaCl& prop, double x, double y);
+        // void searchLUT_2D_PTX(H2ONaCl::PROP_H2ONaCl& prop, double x, double y);
+        LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *searchLUT_2D_PTX(H2ONaCl::PROP_H2ONaCl& prop, double x, double y);
+        H2ONaCl::PROP_H2ONaCl searchLUT_2D_PTX(double x, double y); //for python API
         void destroyLUT();
         void loadLUT_PTX(string filename);
         void save_lut_to_vtk(string filename);

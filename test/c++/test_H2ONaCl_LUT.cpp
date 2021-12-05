@@ -74,31 +74,40 @@ void load_binary(string filename)
     STATUS("Start search ... ");
     start = clock();
     LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
-    int n_randSample = 1E7;
+    int n_randSample = 1E5;
     for (size_t i = 0; i < n_randSample; i++)
     {
         double T_K = (rand()/(double)RAND_MAX)*(TP_max[0] - TP_min[0]) + TP_min[0];
         double p_Pa = (rand()/(double)RAND_MAX)*(TP_max[1] - TP_min[1]) + TP_min[1];
         // int ind_targetLeaf = forest.searchQuadrant(T_C, p_bar, 0);
         // eos.m_lut_PTX_2D->searchQuadrant(targetLeaf, T_K, p_Pa, X_wt);
-        eos.searchLUT_2D_PTX(prop_lookup,T_K, p_Pa);
-        // prop_cal = eos.prop_pTX(p_Pa, T_K, X_wt);
-        // H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion(T_K - 273.15, p_Pa/1E5, eos.Wt2Mol(X_wt));
+        targetLeaf = eos.searchLUT_2D_PTX(prop_lookup,T_K, p_Pa); 
+        prop_cal = eos.prop_pTX(p_Pa, T_K, X_wt);
+        H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion(T_K - 273.15, p_Pa/1E5, eos.Wt2Mol(X_wt));
         // cout<<"T_C: "<<T_K - 273.15<<", p_bar: "<<p_Pa/1E5<<", index: "<<targetLeaf->index<<endl;
         // cout<<eos.getPhaseRegionName(targetLeaf->user_data->phaseRegion_cell)<<endl;
         // compare to directally calculation
         // H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion(T_K - 273.15, p_Pa/1E5, eos.Wt2Mol(X_wt));
         // if(targetLeaf->user_data->phaseRegion_cell != phaseRegion_cal)
-        // if(prop_lookup.Region != phaseRegion_cal)
-        // {
-        //     cout<<"Need refine point "<<ind++<<": ";
-        //     // cout<<prop_cal.Rho<<"  ";
-        //     cout<<prop_lookup.Rho<<endl;
-        // }
-        // else
-        // {
-        //     // cout<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<", err: "<<prop_cal.Rho-prop_lookup.Rho<<endl;
-        // }
+        if(prop_lookup.Region != phaseRegion_cal)
+        {
+            // cout<<"Need refine point "<<ind++<<": ";
+            // cout<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<endl;
+        }else
+        {
+            double err = prop_cal.Rho-prop_lookup.Rho;
+            if(fabs(err)>0.5)
+            {
+                cout<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<", err: "<<err<<endl;
+                cout<<"  "<<targetLeaf->user_data->prop_point[0].Rho
+                    <<"  "<<targetLeaf->user_data->prop_point[1].Rho
+                    <<"  "<<targetLeaf->user_data->prop_point[2].Rho
+                    <<"  "<<targetLeaf->user_data->prop_point[3].Rho
+                    <<"  "<<targetLeaf->user_data->prop_cell.Rho
+                    <<", level: "<<targetLeaf->level<<", refine: "<<targetLeaf->user_data->need_refine
+                    <<endl;
+            }
+        }
     }
     // // forest.searchQuadrant(targetLeaf, 200, 300, 0);
     // // cout<<targetLeaf->level<<endl;
@@ -110,7 +119,7 @@ int main()
     createTable();
 
     // 2. 
-    // load_binary("lut_TPX_13.bin");
+    load_binary("lut_TPX_7.bin");
 
     // destroy by hand
     // eos.destroyLUT_2D_PTX();
