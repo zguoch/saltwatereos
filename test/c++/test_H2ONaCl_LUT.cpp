@@ -15,7 +15,7 @@ void createTable()
     double TP_max[2] = {700 + 273.15, 400E5};
     double X_wt = 0.2; //wt% NaCl [0,1]
     int min_level = 4;
-    int max_level = 9;
+    int max_level = 7;
 
     eos.createLUT_2D_PTX("constX", TP_min, TP_max, X_wt, min_level, max_level);
     eos.save_lut_to_vtk("lut_PTX.vtu");
@@ -31,21 +31,23 @@ void createTable()
         // int ind_targetLeaf = forest.searchQuadrant(T_C, p_bar, 0);
         // eos.m_lut_PTX_2D->searchQuadrant(targetLeaf, T_K, p_Pa, X_wt);
         eos.searchLUT_2D_PTX(prop_lookup,T_K, p_Pa);
-        // prop_cal = eos.prop_pTX(p_Pa, T_K, X_wt);
-        // H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion(T_K - 273.15, p_Pa/1E5, eos.Wt2Mol(X_wt));
+        prop_cal = eos.prop_pTX(p_Pa, T_K, X_wt);
+        H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion(T_K - 273.15, p_Pa/1E5, eos.Wt2Mol(X_wt));
         // cout<<"T_C: "<<T_K - 273.15<<", p_bar: "<<p_Pa/1E5<<", index: "<<targetLeaf->index<<endl;
         // cout<<eos.getPhaseRegionName(targetLeaf->user_data->phaseRegion_cell)<<endl;
         // compare to directally calculation
         // H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion(T_K - 273.15, p_Pa/1E5, eos.Wt2Mol(X_wt));
         // if(targetLeaf->user_data->phaseRegion_cell != phaseRegion_cal)
-        // if(prop_lookup.Region != phaseRegion_cal)
-        // {
-        //     cout<<"Need refine point "<<ind++<<": ";
-        //     cout<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<endl;
-        // }else
-        // {
-        //     // cout<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<", err: "<<prop_cal.Rho-prop_lookup.Rho<<endl;
-        // }
+        if(prop_lookup.Region != phaseRegion_cal)
+        {
+            // cout<<"Need refine point "<<ind++<<": ";
+            // cout<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<endl;
+        }else
+        {
+            double err = prop_cal.Rho-prop_lookup.Rho;
+            if(fabs(err)>0.5)
+            cout<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<", err: "<<err<<endl;
+        }
     }
     // // forest.searchQuadrant(targetLeaf, 200, 300, 0);
     // // cout<<targetLeaf->level<<endl;
@@ -105,10 +107,10 @@ void load_binary(string filename)
 int main()
 {
     // 1. 
-    // createTable();
+    createTable();
 
     // 2. 
-    load_binary("lut_TPX_13.bin");
+    // load_binary("lut_TPX_13.bin");
 
     // destroy by hand
     // eos.destroyLUT_2D_PTX();

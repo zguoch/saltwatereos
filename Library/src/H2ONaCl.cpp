@@ -4403,28 +4403,41 @@ namespace H2ONaCl
         createLUT_2D_PTX(type, xy_min, xy_max, constZ, min_level,max_level, filename_vtu);
     }
 
+    template<int dim>
+    void cH2ONaCl::interp_quad_prop(LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf, H2ONaCl::PROP_H2ONaCl& prop, const double xyz[dim])
+    {
+        double physical_length[dim]; //physical length of the quad
+        double coeff[dim][2];
+        double values_at_vertices[m_lut_PTX_2D->m_num_children];
+        m_lut_PTX_2D->get_quadrant_physical_length(targetLeaf->level, physical_length);
+        get_coeff_bilinear<dim> (targetLeaf->xyz, physical_length, xyz, coeff);
+        // Rho
+        for (int i = 0; i < m_lut_PTX_2D->m_num_children; i++){
+            values_at_vertices[i] = targetLeaf->user_data->prop_point[i].Rho;
+        }
+        bilinear_cal<dim>(coeff, values_at_vertices, prop.Rho);
+        // H
+        for (int i = 0; i < m_lut_PTX_2D->m_num_children; i++){
+            values_at_vertices[i] = targetLeaf->user_data->prop_point[i].H;
+        }
+        bilinear_cal<dim>(coeff, values_at_vertices, prop.H);
+
+        // phase region
+        prop.Region = targetLeaf->user_data->phaseRegion_cell;
+    }
+
     void cH2ONaCl::searchLUT_2D_PTX(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)
     {
         LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *targetLeaf = NULL;
         m_lut_PTX_2D->searchQuadrant(targetLeaf, x, y, m_lut_PTX_2D->m_constZ);
-        // \todo  ======此处加入quad的双线性插值求出properties的值或者对于need refine的quad直接调用准确函数进行直接计算，然后将结果返回
         if(targetLeaf->user_data->need_refine)
         {
             prop = prop_pTX(y, x, m_lut_PTX_2D->m_constZ);
         }
         else
         {
-            double physical_length[2]; //physical length of the quad
-            m_lut_PTX_2D->get_quadrant_physical_length(targetLeaf->level, physical_length);
-            double Rho_vertices[4] = {
-                targetLeaf->user_data->prop_point[0].Rho, 
-                targetLeaf->user_data->prop_point[1].Rho,
-                targetLeaf->user_data->prop_point[2].Rho,
-                targetLeaf->user_data->prop_point[3].Rho
-                };
             double xy[2] = {x, y};
-            INTERPOLATION::bilinear<2> (targetLeaf->xyz, physical_length, Rho_vertices, xy, prop.Rho);
-            prop.Region = targetLeaf->user_data->phaseRegion_cell;
+            interp_quad_prop(targetLeaf, prop, xy);
         }
     }
 
