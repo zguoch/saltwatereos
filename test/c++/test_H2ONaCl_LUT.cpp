@@ -179,9 +179,9 @@ void createTable_TPX()
     eos.set_num_threads(8);
     H2ONaCl::PROP_H2ONaCl prop_cal, prop_lookup;
     const int dim =3;
-    double Tmin = 1 +273.15, Tmax = 1000+273.15, Xmin = 1E-5, Xmax = 0.99999, Pmin = 5E5, Pmax = 2000E5;
-    int min_level = 4;
-    int max_level = 8;
+    double Tmin = 1 +273.15, Tmax = 1000+273.15, Xmin = 0.1, Xmax = 0.99999, Pmin = 5E5, Pmax = 2000E5;
+    int min_level = 2;
+    int max_level = 5;
 
     eos.createLUT_3D_TPX(Tmin, Tmax, Pmin, Pmax, Xmin, Xmax, min_level, max_level);
     eos.m_lut_PTX_3D->write_to_vtk("lut_TPX.vtu");
@@ -231,7 +231,8 @@ void load_binary(string filename)
     // LOOKUPTABLE_FOREST::LookUpTableForest<dim_in, LOOKUPTABLE_FOREST::FIELD_DATA<dim_in> > forest(filename);
     // load binary from EOS obj
     eos.loadLUT_PTX(filename);
-    
+    eos.m_lut_PTX_3D->write_to_vtk("lut_TPX.vtu");
+    exit(0);
     double Tmin = 1 +273.15, Tmax = 1000+273.15, Xmin = 1E-5, Xmax = 0.99999, Pmin = 5E5, Pmax = 2000E5;
 
     STATUS("Start search ... ");
