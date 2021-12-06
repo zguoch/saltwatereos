@@ -127,7 +127,7 @@ void createTable_constT_XP(double constT)
     double Xmin = 1E-5, Xmax = 0.99999, Pmin = 5E5, Pmax = 800E5;
     // double constT = 100+273.15; //K
     int min_level = 4;
-    int max_level = 7;
+    int max_level = 10;
 
     // eos.createLUT_2D_TPX(XT_min, XT_max, constP, LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH, min_level, max_level);
     eos.createLUT_2D_TPX(Xmin, Xmax, Pmin, Pmax, constT, LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP, min_level, max_level);
@@ -167,7 +167,7 @@ void createTable_constT_XP(double constT)
     STATUS_time("Searching done", clock() - start);
 
     // // ======= test write to binary =====
-    // eos.save_lut_to_binary("lut_TPX_"+std::to_string(max_level)+".bin");
+    eos.save_lut_to_binary("lut_constT_XP.bin");
 }
 void createTable_TPX()
 {
@@ -184,8 +184,8 @@ void createTable_TPX()
     int max_level = 5;
 
     eos.createLUT_3D_TPX(Tmin, Tmax, Pmin, Pmax, Xmin, Xmax, min_level, max_level);
-    eos.m_lut_PTX_3D->write_to_vtk("lut_TPX.vtu");
-    eos.m_lut_PTX_3D->write_to_binary("lut_TPX.bin");
+    eos.save_lut_to_vtk("lut_TPX.vtu");
+    eos.save_lut_to_binary("lut_TPX.bin");
     // STATUS("Start search ... ");
     // start = clock();
     // LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
@@ -231,7 +231,7 @@ void load_binary(string filename)
     // LOOKUPTABLE_FOREST::LookUpTableForest<dim_in, LOOKUPTABLE_FOREST::FIELD_DATA<dim_in> > forest(filename);
     // load binary from EOS obj
     eos.loadLUT_PTX(filename);
-    eos.m_lut_PTX_3D->write_to_vtk("lut_TPX.vtu");
+    eos.save_lut_to_vtk("lut_TPX.vtu");
     exit(0);
     double Tmin = 1 +273.15, Tmax = 1000+273.15, Xmin = 1E-5, Xmax = 0.99999, Pmin = 5E5, Pmax = 2000E5;
 
@@ -245,7 +245,7 @@ void load_binary(string filename)
         double p_Pa = (rand()/(double)RAND_MAX)*(Pmax - Pmin) + Pmin;
         double X_wt = (rand()/(double)RAND_MAX)*(Xmax - Xmin) + Xmin;
         // int ind_targetLeaf = forest.searchQuadrant(T_C, p_bar, 0);
-        eos.m_lut_PTX_3D->searchQuadrant(targetLeaf, T_K, p_Pa, X_wt);
+        // eos.m_lut_PTX_3D->searchQuadrant(targetLeaf, T_K, p_Pa, X_wt);
         // targetLeaf = eos.searchLUT_2D_PTX(prop_lookup,T_K, p_Pa); 
         // prop_cal = eos.prop_pTX(p_Pa, T_K, X_wt);
         H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion_pTX(p_Pa, T_K, X_wt);
@@ -284,11 +284,11 @@ int main()
     // 1. 
     // createTable_constX_TP();
     // createTable_constP_XT();
-    // createTable_constT_XP(500+273.15);
-    createTable_TPX();
+    createTable_constT_XP(500+273.15);
+    // createTable_TPX();
 
     // 2. 
-    load_binary("lut_TPX.bin");
+    // load_binary("lut_constT_XP.bin");
 
     // destroy by hand
     // eos.destroyLUT_2D_PTX();

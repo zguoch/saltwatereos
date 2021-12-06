@@ -437,10 +437,8 @@ namespace H2ONaCl
         int m_num_threads;
         void set_num_threads(int num_threads);
         int get_num_threads();
-        LOOKUPTABLE_FOREST::LookUpTableForest<3, LOOKUPTABLE_FOREST::FIELD_DATA<3> >* m_lut_PTX_3D; //lookup table in PTX space
-        
-        LOOKUPTABLE_FOREST::LookUpTableForest<2, LOOKUPTABLE_FOREST::FIELD_DATA<2> >* m_lut_PTX_2D; //lookup table in PTX space
-        // ======== create, save and load AMR lookup table =====
+        int m_dim_lut;
+        void *m_pLUT;
         /**
          * @brief Create a LUT 2D object in PTX space. Create different 2D LUT according to type and  xy limits, then access through member variable m_lut_PTX_2D
          * 

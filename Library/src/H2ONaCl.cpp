@@ -14,8 +14,8 @@ namespace H2ONaCl
     m_f(init_f()),
     m_colorPrint(false),
     m_num_threads(1),
-    m_lut_PTX_2D(NULL),
-    m_lut_PTX_3D(NULL)
+    m_dim_lut(0),
+    m_pLUT(NULL)
     {
         // set_num_threads(omp_get_max_threads() > 8 ? 8 : 1);
         init_PhaseRegionName();
@@ -4355,73 +4355,85 @@ namespace H2ONaCl
 
     void cH2ONaCl::createLUT_2D_TPX(double xy_min[2], double xy_max[2], double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, int min_level, int max_level)
     {
+        destroyLUT(); //destroy lut pointer and release all data before create a new one.
         clock_t start = clock();
         STATUS("Creating 2D lookup table ...");
-        const int dim =2;
-        m_lut_PTX_2D = new LookUpTableForest_2D (xy_min, xy_max, constZ, const_which_var, LOOKUPTABLE_FOREST::EOS_SPACE_TPX, max_level, this);
+        // const int dim =2;
+        m_dim_lut = 2;
+        LookUpTableForest_2D* tmp_lut_PTX_2D = new LookUpTableForest_2D (xy_min, xy_max, constZ, const_which_var, LOOKUPTABLE_FOREST::EOS_SPACE_TPX, max_level, this);
+        m_pLUT = tmp_lut_PTX_2D;
         // refine
-        m_lut_PTX_2D->set_min_level(min_level);
-        m_lut_PTX_2D->refine(refine_uniform);
+        tmp_lut_PTX_2D->set_min_level(min_level);
+        tmp_lut_PTX_2D->refine(refine_uniform);
         // parallel refine
         #pragma omp parallel //shared(n)
         {
             #pragma omp single
             {
                 printf("Do refinement using %d threads.\n", m_num_threads);
-                m_lut_PTX_2D->refine(RefineFunc_PTX);
+                tmp_lut_PTX_2D->refine(RefineFunc_PTX);
             }
         }
-        // m_lut_PTX_2D->refine(RefineFunc_PTX);
         STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
-        
     }
 
     void cH2ONaCl::createLUT_3D_TPX(double xyz_min[3], double xyz_max[3], int min_level, int max_level)
     {
+        destroyLUT(); //destroy LUT pointer and release all related data if it exists.
         clock_t start = clock();
         STATUS("Creating 3D lookup table ...");
-        const int dim =3;
-        m_lut_PTX_3D = new LookUpTableForest_3D (xyz_min, xyz_max, LOOKUPTABLE_FOREST::EOS_SPACE_TPX, max_level, this);
+        m_dim_lut = 3;
+        LookUpTableForest_3D* tmp_lut_PTX_3D = new LookUpTableForest_3D (xyz_min, xyz_max, LOOKUPTABLE_FOREST::EOS_SPACE_TPX, max_level, this);
+        m_pLUT = tmp_lut_PTX_3D;
         // refine
-        m_lut_PTX_3D->set_min_level(min_level);
-        m_lut_PTX_3D->refine(refine_uniform);
+        tmp_lut_PTX_3D->set_min_level(min_level);
+        tmp_lut_PTX_3D->refine(refine_uniform);
         // parallel refine
         #pragma omp parallel //shared(n)
         {
             #pragma omp single
             {
                 printf("Do refinement using %d threads.\n", m_num_threads);
-                m_lut_PTX_3D->refine(RefineFunc_PTX);
+                tmp_lut_PTX_3D->refine(RefineFunc_PTX);
             }
         }
-        // m_lut_PTX_2D->refine(RefineFunc_PTX);
         STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
     }
 
     void cH2ONaCl::save_lut_to_vtk(string filename)
     {
-        
-        m_lut_PTX_2D->write_to_vtk(filename);
+        if(m_pLUT)
+        {
+            if(m_dim_lut==2)((LookUpTableForest_2D*)m_pLUT)->write_to_vtk(filename);
+            else ((LookUpTableForest_3D*)m_pLUT)->write_to_vtk(filename);
+        }
     }
 
     void cH2ONaCl::save_lut_to_binary(string filename)
     {
-        m_lut_PTX_2D->write_to_binary(filename);
+        if(m_pLUT)
+        {
+            if(m_dim_lut==2)((LookUpTableForest_2D*)m_pLUT)->write_to_binary(filename);
+            else ((LookUpTableForest_3D*)m_pLUT)->write_to_binary(filename);
+        }
     }
 
     void cH2ONaCl::destroyLUT()
     {
-        if(m_lut_PTX_2D) 
+        if(m_pLUT)
         {
-            m_lut_PTX_2D->destory();
-            delete m_lut_PTX_2D;
-            m_lut_PTX_2D = NULL;
-        }
-        if(m_lut_PTX_3D) 
-        {
-            m_lut_PTX_3D->destory();
-            delete m_lut_PTX_3D;
-            m_lut_PTX_3D = NULL;
+            if(m_dim_lut==2)
+            {
+                // static_cast<LookUpTableForest_2D*>(m_lut)->destory();
+                ((LookUpTableForest_2D *)m_pLUT)->destory();
+                delete ((LookUpTableForest_2D *)m_pLUT);
+            }else
+            {
+                ((LookUpTableForest_3D *)m_pLUT)->destory();
+                delete ((LookUpTableForest_3D *)m_pLUT);
+            }
+            m_pLUT = NULL;
+            m_dim_lut = 0;
         }
     }
     void cH2ONaCl::createLUT_2D_TPX(double xmin, double xmax, double ymin, double ymax, double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, int min_level, int max_level)
@@ -4441,18 +4453,19 @@ namespace H2ONaCl
     template<int dim>
     void cH2ONaCl::interp_quad_prop(LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf, H2ONaCl::PROP_H2ONaCl& prop, const double xyz[dim])
     {
+        LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> >* tmp_lut = (LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> >*)m_pLUT;
         double physical_length[dim]; //physical length of the quad
         double coeff[dim][2];
-        double values_at_vertices[m_lut_PTX_2D->m_num_children];
-        m_lut_PTX_2D->get_quadrant_physical_length(targetLeaf->level, physical_length);
+        double values_at_vertices[tmp_lut->m_num_children];
+        tmp_lut->get_quadrant_physical_length(targetLeaf->level, physical_length);
         get_coeff_bilinear<dim> (targetLeaf->xyz, physical_length, xyz, coeff);
         // Rho
-        for (int i = 0; i < m_lut_PTX_2D->m_num_children; i++){
+        for (int i = 0; i < tmp_lut->m_num_children; i++){
             values_at_vertices[i] = targetLeaf->user_data->prop_point[i].Rho;
         }
         bilinear_cal<dim>(coeff, values_at_vertices, prop.Rho);
         // H
-        for (int i = 0; i < m_lut_PTX_2D->m_num_children; i++){
+        for (int i = 0; i < tmp_lut->m_num_children; i++){
             values_at_vertices[i] = targetLeaf->user_data->prop_point[i].H;
         }
         bilinear_cal<dim>(coeff, values_at_vertices, prop.H);
@@ -4463,21 +4476,22 @@ namespace H2ONaCl
 
     LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::searchLUT_2D_PTX(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)
     {
-        // cout<<"constZ: "<<m_lut_PTX_2D->m_constZ<<", y: "<<y<<", x: "<<x<<endl;
+        LookUpTableForest_2D* tmp_lut = (LookUpTableForest_2D*)m_pLUT; // make temporary copy of the pointer
+        // cout<<"constZ: "<<tmp_lut->m_constZ<<", y: "<<y<<", x: "<<x<<endl;
         LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *targetLeaf = NULL;
-        m_lut_PTX_2D->searchQuadrant(targetLeaf, x, y, m_lut_PTX_2D->m_constZ);
+        tmp_lut->searchQuadrant(targetLeaf, x, y, tmp_lut->m_constZ);
         if(targetLeaf->user_data->need_refine)
         {
-            switch (m_lut_PTX_2D->m_const_which_var)
+            switch (tmp_lut->m_const_which_var)
             {
             case LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP:
-                prop = prop_pTX(y, x, m_lut_PTX_2D->m_constZ);
+                prop = prop_pTX(y, x, tmp_lut->m_constZ);
                 break;
             case LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH:
-                prop = prop_pTX(m_lut_PTX_2D->m_constZ, y, x);
+                prop = prop_pTX(tmp_lut->m_constZ, y, x);
                 break;
             case LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP:
-                prop = prop_pTX(y, m_lut_PTX_2D->m_constZ, x);
+                prop = prop_pTX(y, tmp_lut->m_constZ, x);
                 break;
             default:
                 ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::searchLUT_2D_PTX(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)");
@@ -4488,7 +4502,7 @@ namespace H2ONaCl
         else
         {
             double xy[2] = {x, y};
-            interp_quad_prop(targetLeaf, prop, xy);
+            interp_quad_prop<2>(targetLeaf, prop, xy);
         }
         return targetLeaf;
     }
@@ -4503,16 +4517,19 @@ namespace H2ONaCl
 
     void cH2ONaCl::loadLUT_PTX(string filename)
     {
-        int dim = LOOKUPTABLE_FOREST::get_dim_from_binary(filename);
-        switch (dim)
+        destroyLUT(); //destroy LUT if it already exists.
+        m_dim_lut = LOOKUPTABLE_FOREST::get_dim_from_binary(filename);
+        
+        switch (m_dim_lut)
         {
         case 2:
-            m_lut_PTX_2D = (LookUpTableForest_2D*)(new LookUpTableForest_2D(filename, this));
+            m_pLUT = (LookUpTableForest_2D*)(new LookUpTableForest_2D(filename, this));
             break;
         case 3:
-            m_lut_PTX_3D = (LookUpTableForest_3D*)(new LookUpTableForest_3D(filename, this));
+            m_pLUT = (LookUpTableForest_3D*)(new LookUpTableForest_3D(filename, this));
             break;
         default:
+            ERROR("The dim in the binary file is neither 2 nor 3, it is not a valid LUT file: "+filename);
             break;
         }
         
