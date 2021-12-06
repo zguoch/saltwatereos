@@ -23,7 +23,17 @@ namespace LOOKUPTABLE_FOREST
         int index = -1;
     };
     enum EOS_SPACE {EOS_SPACE_TPX, EOS_SPACE_HPX};
-    enum CONST_WHICH_VAR {CONST_NO, CONST_TorH, CONST_P, CONST_X}; //only used for 2D case, CONST_NO means 3D
+    /**
+     * @brief For 2D case, define which variable is constant and the variable order of xy.
+     * 
+     */
+    enum CONST_WHICH_VAR 
+    {
+        CONST_NO_VAR_TorHPX,     /**< No constant variable, 3D case. The x, y, z represents T/H, P, and X, respectively. T or H is specified by EOS_SPACE*/
+        CONST_TorH_VAR_XP,      /**< Constant temperature T or specific enthalpy H, x represents salinity X and y represents pressure P. T or H is specified by EOS_SPACE */
+        CONST_P_VAR_XTorH,      /**< Constant pressure P, x represents salinity X and y represents temperature T or specific enthalpy H. T or H is specified by EOS_SPACE */
+        CONST_X_VAR_TorHP       /**< Constant salinity X, x represents temperature T or specific enthalpy H, and y represents pressure P. T or H is specified by EOS_SPACE */
+    }; //only used for 2D case, CONST_NO means 3D
     enum NeedRefine {NeedRefine_NoNeed, NeedRefine_PhaseBoundary, NeedRefine_Rho, NeedRefine_H};
     /**
      * @brief Property refinement criterion, minimum RMSD of a quadran, if the RMSD of a property in a quadran grater than this criterion, it will be refined.

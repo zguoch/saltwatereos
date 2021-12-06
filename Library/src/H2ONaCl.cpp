@@ -4358,7 +4358,7 @@ namespace H2ONaCl
         clock_t start = clock();
         STATUS("Creating 2D lookup table ...");
         const int dim =2;
-        m_lut_PTX_2D = new LookUpTableForest_2D (xy_min, xy_max, constZ, LOOKUPTABLE_FOREST::CONST_X, LOOKUPTABLE_FOREST::EOS_SPACE_TPX, max_level, this);
+        m_lut_PTX_2D = new LookUpTableForest_2D (xy_min, xy_max, constZ, LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH, LOOKUPTABLE_FOREST::EOS_SPACE_TPX, max_level, this);
         // refine
         m_lut_PTX_2D->set_min_level(min_level);
         m_lut_PTX_2D->refine(refine_uniform);

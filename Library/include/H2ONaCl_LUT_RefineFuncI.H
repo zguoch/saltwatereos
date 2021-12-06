@@ -40,31 +40,114 @@ bool RefineFunc_PTX_consX(LOOKUPTABLE_FOREST::LookUpTableForest<dim,USER_DATA>* 
     double dy_physical_quad = physical_length_quad[1] / (num_sample_y - 1.0);
     double x_physical_quad, y_physical_quad;
     H2ONaCl::PhaseRegion regionIndex[num_sample_x*num_sample_y];
-    for (int iy = 0; iy < num_sample_y; iy++)
+    switch (forest->m_const_which_var)
     {
-        y_physical_quad = quad->xyz[1] + dy_physical_quad*iy;
-        for (int ix = 0; ix < num_sample_x; ix++)
+    case LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP:
         {
-            x_physical_quad = quad->xyz[0] + dx_physical_quad*ix;
-            // cout<<"T_C: "<<x_physical_quad-273.15<<", p_bar: "<<y_physical_quad/1E5<<", x_wt: "<<forest->m_constZ*100<<endl;
-            // regionIndex[iy*num_sample_x + ix] = eosPointer->findPhaseRegion(x_physical_quad - 273.15, y_physical_quad /1E5, forest->m_constZ); //note that the unit of T,P,X is deg.C, bar, and mol fraction in this function
-            regionIndex[iy*num_sample_x + ix] = eosPointer->findPhaseRegion_pTX(y_physical_quad, x_physical_quad, forest->m_constZ);
+            for (int iy = 0; iy < num_sample_y; iy++)
+            {
+                y_physical_quad = quad->xyz[1] + dy_physical_quad*iy;
+                for (int ix = 0; ix < num_sample_x; ix++)
+                {
+                    x_physical_quad = quad->xyz[0] + dx_physical_quad*ix;
+                    regionIndex[iy*num_sample_x + ix] = eosPointer->findPhaseRegion_pTX(y_physical_quad, x_physical_quad, forest->m_constZ);
+                }
+            }
+            // ========================================================
+            // calculate properties: four vertices and one midpoint
+            data->prop_point[0] = eosPointer->prop_pTX(quad->xyz[1],                                quad->xyz[0],                               forest->m_constZ);      //xmin,ymin
+            data->prop_point[1] = eosPointer->prop_pTX(quad->xyz[1],                                quad->xyz[0] + physical_length_quad[0],     forest->m_constZ);      //xmax,ymin
+            data->prop_point[2] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0],                               forest->m_constZ);      //xmin,ymax
+            data->prop_point[3] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0] + physical_length_quad[0],     forest->m_constZ);      //xmax,ymax
+            data->prop_cell     = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1]/2.0,  quad->xyz[0] + physical_length_quad[0]/2.0, forest->m_constZ);      //xc,yc
+            data->phaseRegion_point[0] = regionIndex[0]; //phase index
+            data->phaseRegion_point[1] = regionIndex[num_sample_x-1];
+            data->phaseRegion_point[2] = regionIndex[num_sample_x*num_sample_y-num_sample_x];
+            data->phaseRegion_point[3] = regionIndex[num_sample_x*num_sample_y-1];
+            data->phaseRegion_cell     = eosPointer->findPhaseRegion_pTX(quad->xyz[1] + physical_length_quad[1]/2.0, quad->xyz[0] + physical_length_quad[0]/2.0, forest->m_constZ); 
         }
+        break;
+    case LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP:
+        {
+            for (int iy = 0; iy < num_sample_y; iy++)
+            {
+                y_physical_quad = quad->xyz[1] + dy_physical_quad*iy;
+                for (int ix = 0; ix < num_sample_x; ix++)
+                {
+                    x_physical_quad = quad->xyz[0] + dx_physical_quad*ix;
+                    regionIndex[iy*num_sample_x + ix] = eosPointer->findPhaseRegion_pTX(y_physical_quad, forest->m_constZ, x_physical_quad);
+                }
+            }
+            // ========================================================
+            // calculate properties: four vertices and one midpoint
+            data->prop_point[0] = eosPointer->prop_pTX(quad->xyz[1],                                forest->m_constZ,   quad->xyz[0]);                                  //xmin,ymin
+            data->prop_point[1] = eosPointer->prop_pTX(quad->xyz[1],                                forest->m_constZ,   quad->xyz[0] + physical_length_quad[0]);        //xmax,ymin
+            data->prop_point[2] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      forest->m_constZ,   quad->xyz[0]);                                  //xmin,ymax
+            data->prop_point[3] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      forest->m_constZ,   quad->xyz[0] + physical_length_quad[0]);        //xmax,ymax
+            data->prop_cell     = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1]/2.0,  forest->m_constZ,   quad->xyz[0] + physical_length_quad[0]/2.0);    //xc,yc
+            data->phaseRegion_point[0] = regionIndex[0]; //phase index
+            data->phaseRegion_point[1] = regionIndex[num_sample_x-1];
+            data->phaseRegion_point[2] = regionIndex[num_sample_x*num_sample_y-num_sample_x];
+            data->phaseRegion_point[3] = regionIndex[num_sample_x*num_sample_y-1];
+            data->phaseRegion_cell     = eosPointer->findPhaseRegion_pTX(quad->xyz[1] + physical_length_quad[1]/2.0, forest->m_constZ, quad->xyz[0] + physical_length_quad[0]/2.0); 
+        }
+        break;
+    case LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH:
+        {
+            for (int iy = 0; iy < num_sample_y; iy++)
+            {
+                y_physical_quad = quad->xyz[1] + dy_physical_quad*iy;
+                for (int ix = 0; ix < num_sample_x; ix++)
+                {
+                    x_physical_quad = quad->xyz[0] + dx_physical_quad*ix;
+                    regionIndex[iy*num_sample_x + ix] = eosPointer->findPhaseRegion_pTX(forest->m_constZ, y_physical_quad, x_physical_quad);
+                }
+            }
+            // ========================================================
+            // calculate properties: four vertices and one midpoint
+            data->prop_point[0] = eosPointer->prop_pTX(forest->m_constZ, quad->xyz[1],                               quad->xyz[0]);                                  //xmin,ymin
+            data->prop_point[1] = eosPointer->prop_pTX(forest->m_constZ, quad->xyz[1],                               quad->xyz[0] + physical_length_quad[0]);        //xmax,ymin
+            data->prop_point[2] = eosPointer->prop_pTX(forest->m_constZ, quad->xyz[1] + physical_length_quad[1],     quad->xyz[0]);                                  //xmin,ymax
+            data->prop_point[3] = eosPointer->prop_pTX(forest->m_constZ, quad->xyz[1] + physical_length_quad[1],     quad->xyz[0] + physical_length_quad[0]);        //xmax,ymax
+            data->prop_cell     = eosPointer->prop_pTX(forest->m_constZ, quad->xyz[1] + physical_length_quad[1]/2.0, quad->xyz[0] + physical_length_quad[0]/2.0);    //xc,yc
+            data->phaseRegion_point[0] = regionIndex[0]; //phase index
+            data->phaseRegion_point[1] = regionIndex[num_sample_x-1];
+            data->phaseRegion_point[2] = regionIndex[num_sample_x*num_sample_y-num_sample_x];
+            data->phaseRegion_point[3] = regionIndex[num_sample_x*num_sample_y-1];
+            data->phaseRegion_cell     = eosPointer->findPhaseRegion_pTX(forest->m_constZ, quad->xyz[1] + physical_length_quad[1]/2.0,  quad->xyz[0] + physical_length_quad[0]/2.0); 
+        }
+        break;
+    case LOOKUPTABLE_FOREST::CONST_NO_VAR_TorHPX: //3D case, the dim must be 3, because it has been checked in the forest construct function
+        {
+            for (int iy = 0; iy < num_sample_y; iy++)
+            {
+                y_physical_quad = quad->xyz[1] + dy_physical_quad*iy;
+                for (int ix = 0; ix < num_sample_x; ix++)
+                {
+                    x_physical_quad = quad->xyz[0] + dx_physical_quad*ix;
+                    regionIndex[iy*num_sample_x + ix] = eosPointer->findPhaseRegion_pTX(y_physical_quad, x_physical_quad, forest->m_constZ);
+                }
+            }
+            // ========================================================
+            // calculate properties: four vertices and one midpoint
+            data->prop_point[0] = eosPointer->prop_pTX(quad->xyz[1],                                quad->xyz[0],                               quad->xyz[2]);      //xmin,ymin
+            data->prop_point[1] = eosPointer->prop_pTX(quad->xyz[1],                                quad->xyz[0] + physical_length_quad[0],     quad->xyz[2]);      //xmax,ymin
+            data->prop_point[2] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0],                               quad->xyz[2]);      //xmin,ymax
+            data->prop_point[3] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0] + physical_length_quad[0],     quad->xyz[2]);      //xmax,ymax
+            data->prop_cell     = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1]/2.0,  quad->xyz[0] + physical_length_quad[0]/2.0, quad->xyz[2]);      //xc,yc
+            data->phaseRegion_point[0] = regionIndex[0]; //phase index
+            data->phaseRegion_point[1] = regionIndex[num_sample_x-1];
+            data->phaseRegion_point[2] = regionIndex[num_sample_x*num_sample_y-num_sample_x];
+            data->phaseRegion_point[3] = regionIndex[num_sample_x*num_sample_y-1];
+            data->phaseRegion_cell     = eosPointer->findPhaseRegion_pTX(quad->xyz[1] + physical_length_quad[1]/2.0, quad->xyz[0] + physical_length_quad[0]/2.0, forest->m_constZ); 
+        }
+        break;
+    default:
+        ERROR("It is impossible! The forest->m_const_which_var is not one of CONST_X_VAR_TorHP, CONST_TorH_VAR_XP, CONST_P_VAR_XTorH and CONST_NO");
+        break;
     }
-    // ========================================================
-    // calculate properties: four vertices and one midpoint
-    data->prop_point[0] = eosPointer->prop_pTX(quad->xyz[1],                            quad->xyz[0],                           forest->m_constZ);      //xmin,ymin
-    data->prop_point[1] = eosPointer->prop_pTX(quad->xyz[1],                            quad->xyz[0] + physical_length_quad[0],      forest->m_constZ);      //xmax,ymin
-    data->prop_point[2] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],       quad->xyz[0],                           forest->m_constZ);      //xmin,ymax
-    data->prop_point[3] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],       quad->xyz[0] + physical_length_quad[0],      forest->m_constZ);      //xmax,ymax
-    data->prop_cell     = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1]/2.0,   quad->xyz[0] + physical_length_quad[0]/2.0,  forest->m_constZ);      //xc,yc
-    data->phaseRegion_point[0] = regionIndex[0]; //phase index
-    data->phaseRegion_point[1] = regionIndex[num_sample_x-1];
-    data->phaseRegion_point[2] = regionIndex[num_sample_x*num_sample_y-num_sample_x];
-    data->phaseRegion_point[3] = regionIndex[num_sample_x*num_sample_y-1];
-    data->phaseRegion_cell     = eosPointer->findPhaseRegion_pTX(quad->xyz[1] + physical_length_quad[1]/2.0, quad->xyz[0] + physical_length_quad[0]/2.0, forest->m_constZ); //note that the unit of T,P,X is deg.C, bar, and mol fraction in this function
     
-    // ========== 1. refinement check for phase index ============
+    // ========== 1. refinement check for phase boundary ============
     bool isSame_phaseIndex = true;
     for (int i = 1; i < num_sample_x*num_sample_y; i++)
     {

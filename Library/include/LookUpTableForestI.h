@@ -4,7 +4,7 @@ LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double 
 :
 m_constZ(xyz_min[dim-1]), //make this compatible with 2D case in the refine function.
 m_EOS_space_type(eos_space_type),
-m_const_which_var(CONST_NO)
+m_const_which_var(CONST_NO_VAR_TorHPX)
 {
     if(dim!=3)ERROR("This construct function only support dim=3, if you want do 2D table, please specify constZ and const_which_var! Note that there is no 1D support!");
     init(xyz_min, xyz_max, max_level, sizeof(USER_DATA), eosPointer);

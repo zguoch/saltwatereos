@@ -270,10 +270,13 @@ def XT_P0(P0=300, Xmin=1E-5, Xmax=0.999999, Tmin=1, Tmax=1000, nX=100, nT=100,
     T=np.linspace(Tmin,Tmax,400)
     XX_XT,TT_XT=np.meshgrid(X,T)
     HH_XT=np.zeros_like(XX_XT)
+    Rho_XT=np.zeros_like(XX_XT)
     dataname_T='T_p%.0fMPa_H_X'%(P0/10)
     dataname_H='H_p%.0fMPa_H_X'%(P0/10)
+    dataname_Rho='Rho_p%.0fMPa_H_X'%(P0/10)
     datafile_T='%s/%s.dat'%(datapath,dataname_T)
     datafile_H='%s/%s.dat'%(datapath,dataname_H)
+    datafile_Rho = '%s/%s.dat'%(datapath,dataname_Rho)
     calculate=False
     fpout_T,fpout_H=None,None
     if(os.path.exists(datafile_T)):
@@ -281,14 +284,17 @@ def XT_P0(P0=300, Xmin=1E-5, Xmax=0.999999, Tmin=1, Tmax=1000, nX=100, nT=100,
         if(data.shape==TT_XH.shape):
             TT_XH=np.loadtxt(datafile_T)
             HH_XT=np.loadtxt(datafile_H)
+            Rho_XT=np.loadtxt(datafile_Rho)
         else:
             calculate=True
             fpout_T=open(datafile_T,'w')
             fpout_H=open(datafile_H,'w')
+            fpout_Rho=open(datafile_Rho,'w')
     else:
         calculate=True
         fpout_T=open(datafile_T,'w')
         fpout_H=open(datafile_H,'w')
+        fpout_Rho=open(datafile_Rho,'w')
     if(calculate):
         for i in range(0,len(H)):
             for j in range(0,len(X)):
@@ -301,13 +307,16 @@ def XT_P0(P0=300, Xmin=1E-5, Xmax=0.999999, Tmin=1, Tmax=1000, nX=100, nT=100,
             fpout_T.write('\n')
             print('Progress %d/%d'%(i,len(H)))
         fpout_T.close()
-        for i in range(0,len(T)):
-            for j in range(0,len(X)):
-                prop=sw.prop_pTX(P0*1E5, T[i]+273.15, X[j])
+        for i in range(0,XX_XT.shape[0]):
+            for j in range(0,XX_XT.shape[1]):
+                prop=sw.prop_pTX(P0*1E5, TT_XT[i,j]+273.15, XX_XT[i,j])
                 fpout_H.write('%.6E '%(prop.H))
+                fpout_Rho.write('%.6E '%(prop.Rho))
             fpout_H.write('\n')
+            fpout_Rho.write('\n')
             print('Progress %d/%d'%(i,len(H)))
         fpout_H.close()
+        fpout_Rho.close()
     # plot Temperature contour
     levels_c=np.array([500, 600, 700, 800, 900])
     CS=ax_H.contour(XX_XH,HH_XH,TT_XH,levels=levels_c,colors='k',linewidths=0.5)
@@ -330,6 +339,8 @@ def XT_P0(P0=300, Xmin=1E-5, Xmax=0.999999, Tmin=1, Tmax=1000, nX=100, nT=100,
     levels_c=np.arange(0.2,1.0,0.2)
     CS=ax_T.contour(XX_XT, TT_XT, HH_XT/1E6, levels=levels_c,colors=['r','k','r','k','r','k','r','k','r','k'],linewidths=0.5)
     ax_H.clabel(CS, inline=True, fmt='%.1f MJ/kg', fontsize=9,manual=getManualClabel(CS,levels_c,'x',0.5))
+    # ---plot Rho
+    ax_T.contourf(XX_XT, TT_XT, Rho_XT, levels=50, cmap='rainbow')
     # ---------------------------------
     
 
