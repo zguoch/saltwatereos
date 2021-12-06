@@ -4474,7 +4474,7 @@ namespace H2ONaCl
         prop.Region = targetLeaf->user_data->phaseRegion_cell;
     }
 
-    LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::searchLUT_2D_PTX(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)
+    LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)
     {
         LookUpTableForest_2D* tmp_lut = (LookUpTableForest_2D*)m_pLUT; // make temporary copy of the pointer
         // cout<<"constZ: "<<tmp_lut->m_constZ<<", y: "<<y<<", x: "<<x<<endl;
@@ -4494,7 +4494,7 @@ namespace H2ONaCl
                 prop = prop_pTX(y, tmp_lut->m_constZ, x);
                 break;
             default:
-                ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::searchLUT_2D_PTX(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)");
+                ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)");
                 break;
             }
             
@@ -4508,11 +4508,31 @@ namespace H2ONaCl
     }
 
     // for python API
-    H2ONaCl::PROP_H2ONaCl cH2ONaCl::searchLUT_2D_PTX(double x, double y)
+    H2ONaCl::PROP_H2ONaCl cH2ONaCl::lookup(double x, double y)
     {
         H2ONaCl::PROP_H2ONaCl prop;
-        searchLUT_2D_PTX(prop, x, y);
+        lookup(prop, x, y);
         return prop;
+    }
+
+    LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y, double z)
+    {
+        if(m_dim_lut!=3)ERROR("The dim of the LUT is not 3, but you call the 3D lookup function");
+
+        LookUpTableForest_3D* tmp_lut = (LookUpTableForest_3D*)m_pLUT; // make temporary copy of the pointer
+        // cout<<"T: "<<x<<", P: "<<y<<", X: "<<z<<endl;
+        LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > *targetLeaf = NULL;
+        tmp_lut->searchQuadrant(targetLeaf, x, y, z);
+        if(targetLeaf->user_data->need_refine)
+        {
+            prop = prop_pTX(y, x, z); //For 3D case, the order of x,y,z MUST BE TorH, p, X.
+        }
+        else
+        {
+            double xyz[3] = {x, y, z};
+            interp_quad_prop<3>(targetLeaf, prop, xyz);
+        }
+        return targetLeaf;
     }
 
     void cH2ONaCl::loadLUT_PTX(string filename)

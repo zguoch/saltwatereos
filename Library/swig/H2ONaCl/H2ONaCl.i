@@ -427,7 +427,7 @@ namespace H2ONaCl
          */
         void createLUT_2D_TPX(double xy_min[2], double xy_max[2], double z, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, int min_level = 4, int max_level = 6);
         void createLUT_2D_TPX(double xmin, double xmax, double ymin, double ymax, double z, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, int min_level = 4, int max_level = 6);
-        H2ONaCl::PROP_H2ONaCl searchLUT_2D_PTX(double x, double y);
+        H2ONaCl::PROP_H2ONaCl lookup(double x, double y);
         void destroyLUT();
         void loadLUT_PTX(string filename);
         void save_lut_to_vtk(string filename);
