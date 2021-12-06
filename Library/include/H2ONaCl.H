@@ -53,6 +53,24 @@ namespace H2ONaCl
     typedef LOOKUPTABLE_FOREST::LookUpTableForest<3, LOOKUPTABLE_FOREST::FIELD_DATA<3> > LookUpTableForest_3D;
 
     /**
+     * @brief Check the criterion of a property and determine if need to refine.
+     * 
+     */
+    #define CHECK_REFINE_PROP_RMSD(PROP) \
+    { \
+        double mean_Rho = data->prop_cell.PROP; \
+        for(int i=0;i<forest->m_num_children;i++)mean_Rho += data->prop_point[i].PROP; \
+        mean_Rho = mean_Rho / (forest->m_num_children + 1);  \
+        double RMSD_Rho = pow(data->prop_cell.PROP - mean_Rho, 2.0); \
+        for(int i=0;i<forest->m_num_children;i++)RMSD_Rho += pow(data->prop_point[i].PROP - mean_Rho, 2.0); \
+        RMSD_Rho = sqrt(RMSD_Rho/(forest->m_num_children + 1)); \
+        if(RMSD_Rho > forest->m_RMSD_RefineCriterion.PROP) \
+        { \
+            data->need_refine = LOOKUPTABLE_FOREST::NeedRefine_##PROP; \
+        } \
+    }
+
+    /**
      * @brief EOS and thermodynamic properties of \f$H_2O-NaCl\f$ system. 
      * 
      * This implementation is based published references \cite Driesner2007Part1, \cite Driesner2007Part2 and \cite Klyukin2020. 
@@ -83,6 +101,7 @@ namespace H2ONaCl
          * @return H2ONaCl::PhaseRegion 
          */
         PhaseRegion findRegion(const double T, const double P, const double X, double& Xl_all, double& Xv_all);
+        
         void calcRho(int reg, double T_in, double P_in, double X_l, double X_v, double& Rho_l, double& Rho_v, double& Rho_h, 
                         double& V_l_out, double& V_v_out, double& T_star_l_out, double& T_star_v_out, double& n1_v_out, double& n2_v_out);
         /**
@@ -395,6 +414,15 @@ namespace H2ONaCl
         PhaseRegion findPhaseRegion(const double T_c, const double P_bar, const double X_wt, double& Xl_all, double& Xv_all);
         PhaseRegion findPhaseRegion(const double T_c, const double P_bar, const double X_wt);
         /**
+         * @brief This function has the same variable order and unit as prop_pTX.
+         * 
+         * @param p_Pa
+         * @param T_K 
+         * @param X_wt 
+         * @return PhaseRegion 
+         */
+        PhaseRegion findPhaseRegion_pTX(double p_Pa, double T_K, double X_wt);
+        /**
          * @brief Write VLH phase boundary surface in PHX space to VTU file
          * 
          * @param scale_X scale of X, default is 1
@@ -421,8 +449,8 @@ namespace H2ONaCl
          * @param xy_max 
          * @param z 
          */
-        void createLUT_2D_PTX(std::string type, double xy_min[2], double xy_max[2], double constZ, int min_level = 4, int max_level = 6, string filename_vtu="");
-        void createLUT_2D_PTX(std::string type, double xmin, double xmax, double ymin, double ymax, double constZ, int min_level = 4, int max_level = 6, string filename_vtu="");
+        void createLUT_2D_TPX(std::string type, double xy_min[2], double xy_max[2], double constZ, int min_level = 4, int max_level = 6, string filename_vtu="");
+        void createLUT_2D_TPX(std::string type, double xmin, double xmax, double ymin, double ymax, double constZ, int min_level = 4, int max_level = 6, string filename_vtu="");
         // void searchLUT_2D_PTX(H2ONaCl::PROP_H2ONaCl& prop, double x, double y);
         LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *searchLUT_2D_PTX(H2ONaCl::PROP_H2ONaCl& prop, double x, double y);
         H2ONaCl::PROP_H2ONaCl searchLUT_2D_PTX(double x, double y); //for python API

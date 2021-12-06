@@ -425,8 +425,8 @@ namespace H2ONaCl
          * @param xy_max 
          * @param z 
          */
-        void createLUT_2D_PTX(std::string type, double xy_min[2], double xy_max[2], double z, int min_level = 4, int max_level = 6, string filename_vtu="");
-        void createLUT_2D_PTX(std::string type, double xmin, double xmax, double ymin, double ymax, double z, int min_level = 4, int max_level = 6, string filename_vtu="");
+        void createLUT_2D_TPX(std::string type, double xy_min[2], double xy_max[2], double z, int min_level = 4, int max_level = 6, string filename_vtu="");
+        void createLUT_2D_TPX(std::string type, double xmin, double xmax, double ymin, double ymax, double z, int min_level = 4, int max_level = 6, string filename_vtu="");
         H2ONaCl::PROP_H2ONaCl searchLUT_2D_PTX(double x, double y);
         void destroyLUT();
         void loadLUT_PTX(string filename);

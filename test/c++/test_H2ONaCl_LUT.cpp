@@ -9,6 +9,7 @@ void createTable()
 
     clock_t start = clock();
     H2ONaCl::cH2ONaCl eos;
+    eos.set_num_threads(8);
     H2ONaCl::PROP_H2ONaCl prop_cal, prop_lookup;
     const int dim =2;
     double TP_min[2] = {1 + 273.15, 5E5}; //T [K], P[Pa]
@@ -17,7 +18,7 @@ void createTable()
     int min_level = 4;
     int max_level = 7;
 
-    eos.createLUT_2D_PTX("constX", TP_min, TP_max, X_wt, min_level, max_level);
+    eos.createLUT_2D_TPX("constX", TP_min, TP_max, X_wt, min_level, max_level);
     eos.save_lut_to_vtk("lut_PTX.vtu");
     
     STATUS("Start search ... ");
@@ -119,7 +120,7 @@ int main()
     createTable();
 
     // 2. 
-    load_binary("lut_TPX_7.bin");
+    // load_binary("lut_TPX_7.bin");
 
     // destroy by hand
     // eos.destroyLUT_2D_PTX();

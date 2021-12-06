@@ -1,17 +1,23 @@
 
 template <int dim, typename USER_DATA> 
-LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], int max_level, void* eosPointer)
+LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], EOS_SPACE eos_space_type, int max_level, void* eosPointer)
 :
-m_constZ(0) //this is not used in 3D table
+m_constZ(xyz_min[dim-1]), //make this compatible with 2D case in the refine function.
+m_EOS_space_type(eos_space_type),
+m_const_which_var(CONST_NO)
 {
+    if(dim!=3)ERROR("This construct function only support dim=3, if you want do 2D table, please specify constZ and const_which_var! Note that there is no 1D support!");
     init(xyz_min, xyz_max, max_level, sizeof(USER_DATA), eosPointer);
 }
 
 template <int dim, typename USER_DATA> 
-LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], double constZ, int max_level, void* eosPointer)
+LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], double constZ, CONST_WHICH_VAR const_which_var, EOS_SPACE eos_space_type, int max_level, void* eosPointer)
 :
-m_constZ(constZ)
+m_constZ(constZ),
+m_EOS_space_type(eos_space_type),
+m_const_which_var(const_which_var)
 {
+    if(dim!=2)ERROR("This construct function only support dim=2, if you want do 3D table, please get rid of constZ and const_which_var! Note that there is no 1D support!");
     init(xyz_min, xyz_max, max_level, sizeof(USER_DATA), eosPointer);
 }
 
@@ -542,7 +548,7 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
     fout<<"  </UnstructuredGrid>"<<endl;
     fout<<"</VTKFile>"<<endl;
     fout.close();
-    STATUS_time("Write to vtu file done", clock()-start);
+    STATUS_time("Write to vtu file done: "+filename, clock()-start);
 }
 
 template <int dim, typename USER_DATA>

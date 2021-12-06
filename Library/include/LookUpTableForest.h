@@ -22,7 +22,8 @@ namespace LOOKUPTABLE_FOREST
         // DEBUG
         int index = -1;
     };
-
+    enum EOS_SPACE {EOS_SPACE_TPX, EOS_SPACE_HPX};
+    enum CONST_WHICH_VAR {CONST_NO, CONST_TorH, CONST_P, CONST_X}; //only used for 2D case, CONST_NO means 3D
     enum NeedRefine {NeedRefine_NoNeed, NeedRefine_PhaseBoundary, NeedRefine_Rho, NeedRefine_H};
     /**
      * @brief Property refinement criterion, minimum RMSD of a quadran, if the RMSD of a property in a quadran grater than this criterion, it will be refined.
@@ -88,6 +89,9 @@ namespace LOOKUPTABLE_FOREST
         int     m_min_level;
         int     m_max_level;
         int     m_num_children;
+        // int     m_index_TorH, m_index_P, m_index_X; //specify the index of variable T/H, P, X in the xyz array.
+        EOS_SPACE       m_EOS_space_type; //specify the EOS will be calculated in which space, TPX or HPX
+        CONST_WHICH_VAR m_const_which_var; 
         // double  m_physical_length_quad[MAX_FOREST_LEVEL][dim]; //Optimization: store the length of quad in each dimension as a member data of the forest, therefore don't need to calculate length of quad, just access this 2D array according to the quad level. 
         RMSD_RefineCriterion m_RMSD_RefineCriterion;
         inline void set_min_level(int min_level){m_min_level = min_level;};
@@ -101,25 +105,29 @@ namespace LOOKUPTABLE_FOREST
         void read_from_binary(string filename, bool is_read_data=true);
         /**
          * @brief Construct a new Look Up Table Forest object. This is always used to create a 3D table
-         * xyz would be corresponding to TPX or PHX. Note that the unit of T is K, unit of P is Pa, unit of X is wt% NaCl (e.g., seawater is 0.032), unit of H is J/kg. The same as H2ONaCl::cH2ONaCl::prop_pTX and The same as H2ONaCl::cH2ONaCl::prop_pHX
+         * xyz would be corresponding to TPX or PHX. Note that the unit of T is K, unit of P is Pa, unit of X is wt% NaCl (e.g., seawater is 0.032), unit of H is J/kg. The same as H2ONaCl::cH2ONaCl::prop_pTX and The same as H2ONaCl::cH2ONaCl::prop_pHX.
+         * For 3D case, the order of the variable MUST BE [T/H, p, X], T or H is specify by argument eos_space
+         * 
          * @param xyz_min 
          * @param xyz_max 
+         * @param eos_space 
          * @param max_level 
-         * @param data_size 
-         * @param pointer 
+         * @param eosPointer 
          */
-        LookUpTableForest(double xyz_min[dim], double xyz_max[dim], int max_level, void* eosPointer=NULL); //3D case
+        LookUpTableForest(double xyz_min[dim], double xyz_max[dim], EOS_SPACE eos_space, int max_level, void* eosPointer=NULL); //3D case
         /**
          * @brief Construct a new Look Up Table Forest object. This is always used to create a 2D table
-         * xyz would be corresponding to TPX or PHX. Note that the unit of T is K, unit of P is Pa, unit of X is wt% NaCl (e.g., seawater is 0.032), unit of H is J/kg. The same as H2ONaCl::cH2ONaCl::prop_pTX and The same as H2ONaCl::cH2ONaCl::prop_pHX
-         * @param xyz_min 
-         * @param xyz_max 
-         * @param constZ constant value of the third dimension, if want to create table in T-P space, constZ will be a constant value of salinity.
+         * xyz would be corresponding to TPX or PHX. Note that the unit of T is K, unit of P is Pa, unit of X is wt% NaCl (e.g., seawater is 0.032), unit of H is J/kg. 
+         * The same as H2ONaCl::cH2ONaCl::prop_pTX and The same as H2ONaCl::cH2ONaCl::prop_pHX.
+         * For 2D case, (1) if constant variable is X, xy order MUST BE T/H, P; (2) if constant variable is T/H, xy order MUST BE X, P; (3) if constant variable is P, xy order MUST BE X, T/H
+         * @param xy_min 
+         * @param xy_max 
+         * @param constZ 
+         * @param const_which_var 
          * @param max_level 
-         * @param data_size 
-         * @param pointer 
+         * @param eosPointer 
          */
-        LookUpTableForest(double xyz_min[dim], double xyz_max[dim], double constZ, int max_level, void* eosPointer=NULL); //2D case
+        LookUpTableForest(double xy_min[dim], double xy_max[dim], double constZ, CONST_WHICH_VAR const_which_var, EOS_SPACE eos_space, int max_level, void* eosPointer=NULL); //2D case
         LookUpTableForest(string filename, void* pointer=NULL); //load from exist binary file
         void destory();
         ~LookUpTableForest();

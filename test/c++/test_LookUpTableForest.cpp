@@ -156,9 +156,10 @@ int main()
     clock_t start, end;
     double xyzmin[3] = {2,5, 0}; //T[deg.C], p[bar]
     double xyzmax[3] = {700, 400, 1};
+    double constZ = 0.2;
     int max_level = 10;
     const int dim =2;
-    LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> > forest(xyzmin, xyzmax, max_level);
+    LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> > forest(xyzmin, xyzmax, constZ, LOOKUPTABLE_FOREST::CONST_X, LOOKUPTABLE_FOREST::EOS_SPACE_TPX, max_level);
     // refine 
     start = clock();
     int num_threads = 1;

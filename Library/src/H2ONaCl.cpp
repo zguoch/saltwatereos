@@ -1167,6 +1167,7 @@ namespace H2ONaCl
         }
         return region_ind;
     }
+    
     void cH2ONaCl:: fluidProp_crit_P(double P, double tol, double& T_2ph, 
                     double& Rho_l, double& h_l, double& h_v, double& dpd_l, 
                     double& dpd_v, double& Rho_v, double& Mu_l, double& Mu_v)
@@ -4029,6 +4030,11 @@ namespace H2ONaCl
         double Xl_all, Xv_all;
         return findRegion(T_c, P_bar*1E5, Xwt2Xmol(X_wt), Xl_all, Xv_all);
     }
+    PhaseRegion cH2ONaCl::findPhaseRegion_pTX(double p_Pa, double T_K, double X_wt)
+    {
+        double Xl_all, Xv_all;
+        return findRegion(T_K - 273.15, p_Pa, Xwt2Xmol(X_wt), Xl_all, Xv_all);
+    }
     void cH2ONaCl::writePhaseSurface_XHP(double scale_X, double scale_H, double scale_P, string outpath, H2ONaCl::fmtOutPutFile fmt, int nP)
     {
         double Pmin = PMIN; // bar
@@ -4347,12 +4353,12 @@ namespace H2ONaCl
         }
     }
 
-    void cH2ONaCl::createLUT_2D_PTX(std::string type, double xy_min[2], double xy_max[2], double constZ, int min_level, int max_level, string filename_vtu)
+    void cH2ONaCl::createLUT_2D_TPX(std::string type, double xy_min[2], double xy_max[2], double constZ, int min_level, int max_level, string filename_vtu)
     {
         clock_t start = clock();
         STATUS("Creating 2D lookup table ...");
         const int dim =2;
-        m_lut_PTX_2D = new LookUpTableForest_2D (xy_min, xy_max, constZ, max_level, this);
+        m_lut_PTX_2D = new LookUpTableForest_2D (xy_min, xy_max, constZ, LOOKUPTABLE_FOREST::CONST_X, LOOKUPTABLE_FOREST::EOS_SPACE_TPX, max_level, this);
         // refine
         m_lut_PTX_2D->set_min_level(min_level);
         m_lut_PTX_2D->refine(refine_uniform);
@@ -4396,11 +4402,11 @@ namespace H2ONaCl
             m_lut_PTX_3D = NULL;
         }
     }
-    void cH2ONaCl::createLUT_2D_PTX(std::string type, double xmin, double xmax, double ymin, double ymax, double constZ, int min_level, int max_level, string filename_vtu)
+    void cH2ONaCl::createLUT_2D_TPX(std::string type, double xmin, double xmax, double ymin, double ymax, double constZ, int min_level, int max_level, string filename_vtu)
     {
         double xy_min[2] = {xmin, ymin};
         double xy_max[2] = {xmax, ymax};
-        createLUT_2D_PTX(type, xy_min, xy_max, constZ, min_level,max_level, filename_vtu);
+        createLUT_2D_TPX(type, xy_min, xy_max, constZ, min_level,max_level, filename_vtu);
     }
 
     template<int dim>
