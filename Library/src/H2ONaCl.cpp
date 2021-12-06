@@ -4368,12 +4368,34 @@ namespace H2ONaCl
             #pragma omp single
             {
                 printf("Do refinement using %d threads.\n", m_num_threads);
-                m_lut_PTX_2D->refine(RefineFunc_PTX_consX);
+                m_lut_PTX_2D->refine(RefineFunc_PTX);
             }
         }
-        // m_lut_PTX_2D->refine(RefineFunc_PTX_consX);
+        // m_lut_PTX_2D->refine(RefineFunc_PTX);
         STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
         
+    }
+
+    void cH2ONaCl::createLUT_3D_TPX(double xyz_min[3], double xyz_max[3], int min_level, int max_level)
+    {
+        clock_t start = clock();
+        STATUS("Creating 3D lookup table ...");
+        const int dim =3;
+        m_lut_PTX_3D = new LookUpTableForest_3D (xyz_min, xyz_max, LOOKUPTABLE_FOREST::EOS_SPACE_TPX, max_level, this);
+        // refine
+        m_lut_PTX_3D->set_min_level(min_level);
+        // m_lut_PTX_3D->refine(refine_uniform);
+        // parallel refine
+        #pragma omp parallel //shared(n)
+        {
+            #pragma omp single
+            {
+                printf("Do refinement using %d threads.\n", m_num_threads);
+                m_lut_PTX_3D->refine(RefineFunc_PTX);
+            }
+        }
+        // m_lut_PTX_2D->refine(RefineFunc_PTX);
+        STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
     }
 
     void cH2ONaCl::save_lut_to_vtk(string filename)
@@ -4407,6 +4429,13 @@ namespace H2ONaCl
         double xy_min[2] = {xmin, ymin};
         double xy_max[2] = {xmax, ymax};
         createLUT_2D_TPX(xy_min, xy_max, constZ, const_which_var,  min_level, max_level);
+    }
+
+    void cH2ONaCl::createLUT_3D_TPX(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, int min_level, int max_level)
+    {
+        double xyz_min[3] = {xmin, ymin, zmin};
+        double xyz_max[3] = {xmax, ymax, zmax};
+        createLUT_3D_TPX(xyz_min, xyz_max,  min_level, max_level);
     }
 
     template<int dim>
