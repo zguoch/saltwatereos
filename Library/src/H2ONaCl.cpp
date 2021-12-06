@@ -4353,12 +4353,12 @@ namespace H2ONaCl
         }
     }
 
-    void cH2ONaCl::createLUT_2D_TPX(std::string type, double xy_min[2], double xy_max[2], double constZ, int min_level, int max_level, string filename_vtu)
+    void cH2ONaCl::createLUT_2D_TPX(double xy_min[2], double xy_max[2], double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, int min_level, int max_level)
     {
         clock_t start = clock();
         STATUS("Creating 2D lookup table ...");
         const int dim =2;
-        m_lut_PTX_2D = new LookUpTableForest_2D (xy_min, xy_max, constZ, LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH, LOOKUPTABLE_FOREST::EOS_SPACE_TPX, max_level, this);
+        m_lut_PTX_2D = new LookUpTableForest_2D (xy_min, xy_max, constZ, const_which_var, LOOKUPTABLE_FOREST::EOS_SPACE_TPX, max_level, this);
         // refine
         m_lut_PTX_2D->set_min_level(min_level);
         m_lut_PTX_2D->refine(refine_uniform);
@@ -4402,11 +4402,11 @@ namespace H2ONaCl
             m_lut_PTX_3D = NULL;
         }
     }
-    void cH2ONaCl::createLUT_2D_TPX(std::string type, double xmin, double xmax, double ymin, double ymax, double constZ, int min_level, int max_level, string filename_vtu)
+    void cH2ONaCl::createLUT_2D_TPX(double xmin, double xmax, double ymin, double ymax, double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, int min_level, int max_level)
     {
         double xy_min[2] = {xmin, ymin};
         double xy_max[2] = {xmax, ymax};
-        createLUT_2D_TPX(type, xy_min, xy_max, constZ, min_level,max_level, filename_vtu);
+        createLUT_2D_TPX(xy_min, xy_max, constZ, const_which_var,  min_level, max_level);
     }
 
     template<int dim>
@@ -4434,11 +4434,27 @@ namespace H2ONaCl
 
     LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::searchLUT_2D_PTX(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)
     {
+        // cout<<"constZ: "<<m_lut_PTX_2D->m_constZ<<", y: "<<y<<", x: "<<x<<endl;
         LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *targetLeaf = NULL;
         m_lut_PTX_2D->searchQuadrant(targetLeaf, x, y, m_lut_PTX_2D->m_constZ);
         if(targetLeaf->user_data->need_refine)
         {
-            prop = prop_pTX(y, x, m_lut_PTX_2D->m_constZ);
+            switch (m_lut_PTX_2D->m_const_which_var)
+            {
+            case LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP:
+                prop = prop_pTX(y, x, m_lut_PTX_2D->m_constZ);
+                break;
+            case LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH:
+                prop = prop_pTX(m_lut_PTX_2D->m_constZ, y, x);
+                break;
+            case LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP:
+                prop = prop_pTX(y, m_lut_PTX_2D->m_constZ, x);
+                break;
+            default:
+                ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::searchLUT_2D_PTX(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)");
+                break;
+            }
+            
         }
         else
         {

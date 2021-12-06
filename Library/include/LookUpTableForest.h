@@ -1,5 +1,5 @@
-#ifndef LOOKUPTABLEFOREST
-#define LOOKUPTABLEFOREST
+#ifndef LOOKUPTABLEFOREST_H
+#define LOOKUPTABLEFOREST_H
 #include <vector>
 #include <iostream>
 #include <fstream>
