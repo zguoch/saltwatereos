@@ -4384,7 +4384,7 @@ namespace H2ONaCl
         m_lut_PTX_3D = new LookUpTableForest_3D (xyz_min, xyz_max, LOOKUPTABLE_FOREST::EOS_SPACE_TPX, max_level, this);
         // refine
         m_lut_PTX_3D->set_min_level(min_level);
-        // m_lut_PTX_3D->refine(refine_uniform);
+        m_lut_PTX_3D->refine(refine_uniform);
         // parallel refine
         #pragma omp parallel //shared(n)
         {

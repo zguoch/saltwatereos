@@ -284,7 +284,7 @@ int main()
     // createTable_constX_TP();
     // createTable_constP_XT();
     // createTable_constT_XP(500+273.15);
-    // createTable_TPX();
+    createTable_TPX();
 
     // 2. 
     load_binary("lut_TPX.bin");
