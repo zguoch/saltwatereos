@@ -455,7 +455,7 @@ namespace H2ONaCl
         LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > *lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y, double z);
         H2ONaCl::PROP_H2ONaCl lookup(double x, double y); //for python API
         void destroyLUT();
-        void loadLUT_PTX(string filename);
+        void loadLUT(string filename);
         void save_lut_to_vtk(string filename);
         void save_lut_to_binary(string filename);
         template<int dim>

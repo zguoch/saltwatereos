@@ -4600,7 +4600,7 @@ namespace H2ONaCl
         return targetLeaf;
     }
 
-    void cH2ONaCl::loadLUT_PTX(string filename)
+    void cH2ONaCl::loadLUT(string filename)
     {
         destroyLUT(); //destroy LUT if it already exists.
         m_dim_lut = LOOKUPTABLE_FOREST::get_dim_from_binary(filename);
