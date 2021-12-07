@@ -22,7 +22,7 @@ namespace LOOKUPTABLE_FOREST
         // DEBUG
         int index = -1;
     };
-    enum EOS_SPACE {EOS_SPACE_TPX, EOS_SPACE_HPX};
+    
     /**
      * @brief For 2D case, define which variable is constant and the variable order of xy.
      * 
@@ -57,6 +57,14 @@ namespace LOOKUPTABLE_FOREST
         H2ONaCl::PhaseRegion phaseRegion_cell;
         H2ONaCl::PROP_H2ONaCl prop_cell; // properties at midpoint as cell value (for vtk output)
     };
+    /**
+     * @brief Use which variable to express energy
+     * 
+     */
+    enum EOS_ENERGY {
+        EOS_ENERGY_T, /**< TPX space */
+        EOS_ENERGY_H  /**< HPX space */
+        };
 
     inline int get_dim_from_binary(string filename)
     {
@@ -100,8 +108,8 @@ namespace LOOKUPTABLE_FOREST
         int     m_max_level;
         int     m_num_children;
         // int     m_index_TorH, m_index_P, m_index_X; //specify the index of variable T/H, P, X in the xyz array.
-        EOS_SPACE       m_EOS_space_type; //specify the EOS will be calculated in which space, TPX or HPX
         CONST_WHICH_VAR m_const_which_var; 
+        EOS_ENERGY m_TorH; 
         // double  m_physical_length_quad[MAX_FOREST_LEVEL][dim]; //Optimization: store the length of quad in each dimension as a member data of the forest, therefore don't need to calculate length of quad, just access this 2D array according to the quad level. 
         RMSD_RefineCriterion m_RMSD_RefineCriterion;
         inline void set_min_level(int min_level){m_min_level = min_level;};
@@ -120,11 +128,10 @@ namespace LOOKUPTABLE_FOREST
          * 
          * @param xyz_min 
          * @param xyz_max 
-         * @param eos_space 
          * @param max_level 
          * @param eosPointer 
          */
-        LookUpTableForest(double xyz_min[dim], double xyz_max[dim], EOS_SPACE eos_space, int max_level, void* eosPointer=NULL); //3D case
+        LookUpTableForest(double xyz_min[dim], double xyz_max[dim], EOS_ENERGY TorH, int max_level, void* eosPointer=NULL); //3D case
         /**
          * @brief Construct a new Look Up Table Forest object. This is always used to create a 2D table
          * xyz would be corresponding to TPX or PHX. Note that the unit of T is K, unit of P is Pa, unit of X is wt% NaCl (e.g., seawater is 0.032), unit of H is J/kg. 
@@ -137,7 +144,7 @@ namespace LOOKUPTABLE_FOREST
          * @param max_level 
          * @param eosPointer 
          */
-        LookUpTableForest(double xy_min[dim], double xy_max[dim], double constZ, CONST_WHICH_VAR const_which_var, EOS_SPACE eos_space, int max_level, void* eosPointer=NULL); //2D case
+        LookUpTableForest(double xy_min[dim], double xy_max[dim], double constZ, CONST_WHICH_VAR const_which_var, EOS_ENERGY TorH, int max_level, void* eosPointer=NULL); //2D case
         LookUpTableForest(string filename, void* pointer=NULL); //load from exist binary file
         void destory();
         ~LookUpTableForest();

@@ -447,10 +447,10 @@ namespace H2ONaCl
          * @param xy_max 
          * @param z 
          */
-        void createLUT_2D_TPX(double xy_min[2], double xy_max[2], double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, int min_level = 4, int max_level = 6);
-        void createLUT_2D_TPX(double xmin, double xmax, double ymin, double ymax, double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, int min_level = 4, int max_level = 6);
-        void createLUT_3D_TPX(double xyz_min[3], double xyz_max[3], int min_level = 4, int max_level = 6);
-        void createLUT_3D_TPX(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, int min_level = 4, int max_level = 6);
+        void createLUT_2D_TPX(double xy_min[2], double xy_max[2], double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6);
+        void createLUT_2D_TPX(double xmin, double xmax, double ymin, double ymax, double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6);
+        void createLUT_3D_TPX(double xyz_min[3], double xyz_max[3], LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6);
+        void createLUT_3D_TPX(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6);
         LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y);
         LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > *lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y, double z);
         H2ONaCl::PROP_H2ONaCl lookup(double x, double y); //for python API

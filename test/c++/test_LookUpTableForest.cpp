@@ -159,7 +159,7 @@ int main()
     double constZ = 0.2;
     int max_level = 10;
     const int dim =2;
-    LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> > forest(xyzmin, xyzmax, constZ, LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP, LOOKUPTABLE_FOREST::EOS_SPACE_TPX, max_level);
+    LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> > forest(xyzmin, xyzmax, constZ, LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP, LOOKUPTABLE_FOREST::EOS_ENERGY_T, max_level);
     // refine 
     start = clock();
     int num_threads = 1;

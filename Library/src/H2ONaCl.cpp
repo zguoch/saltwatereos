@@ -4353,50 +4353,84 @@ namespace H2ONaCl
         }
     }
 
-    void cH2ONaCl::createLUT_2D_TPX(double xy_min[2], double xy_max[2], double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, int min_level, int max_level)
+    void cH2ONaCl::createLUT_2D_TPX(double xy_min[2], double xy_max[2], double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level)
     {
         destroyLUT(); //destroy lut pointer and release all data before create a new one.
         clock_t start = clock();
         STATUS("Creating 2D lookup table ...");
         // const int dim =2;
         m_dim_lut = 2;
-        LookUpTableForest_2D* tmp_lut_PTX_2D = new LookUpTableForest_2D (xy_min, xy_max, constZ, const_which_var, LOOKUPTABLE_FOREST::EOS_SPACE_TPX, max_level, this);
+        LookUpTableForest_2D* tmp_lut_PTX_2D = new LookUpTableForest_2D (xy_min, xy_max, constZ, const_which_var, TorH, max_level, this);
         m_pLUT = tmp_lut_PTX_2D;
         // refine
         tmp_lut_PTX_2D->set_min_level(min_level);
         tmp_lut_PTX_2D->refine(refine_uniform);
         // parallel refine
-        #pragma omp parallel //shared(n)
+        if (tmp_lut_PTX_2D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_T)
         {
-            #pragma omp single
+            #pragma omp parallel //shared(n)
             {
-                printf("Do refinement using %d threads.\n", m_num_threads);
-                tmp_lut_PTX_2D->refine(RefineFunc_PTX);
+                #pragma omp single
+                {
+                    printf("Do refinement using %d threads.\n", m_num_threads);
+                    tmp_lut_PTX_2D->refine(RefineFunc_PTX);
+                }
             }
+        }else if(tmp_lut_PTX_2D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
+        {
+            #pragma omp parallel //shared(n)
+            {
+                #pragma omp single
+                {
+                    printf("Do refinement using %d threads.\n", m_num_threads);
+                    tmp_lut_PTX_2D->refine(RefineFunc_PHX);
+                }
+            }
+        }else
+        {
+            ERROR("The EOS space only support TPX and HPX!");
         }
+        
         STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
     }
 
-    void cH2ONaCl::createLUT_3D_TPX(double xyz_min[3], double xyz_max[3], int min_level, int max_level)
+    void cH2ONaCl::createLUT_3D_TPX(double xyz_min[3], double xyz_max[3], LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level)
     {
         destroyLUT(); //destroy LUT pointer and release all related data if it exists.
         clock_t start = clock();
         STATUS("Creating 3D lookup table ...");
         m_dim_lut = 3;
-        LookUpTableForest_3D* tmp_lut_PTX_3D = new LookUpTableForest_3D (xyz_min, xyz_max, LOOKUPTABLE_FOREST::EOS_SPACE_TPX, max_level, this);
+        LookUpTableForest_3D* tmp_lut_PTX_3D = new LookUpTableForest_3D (xyz_min, xyz_max, TorH, max_level, this);
         m_pLUT = tmp_lut_PTX_3D;
         // refine
         tmp_lut_PTX_3D->set_min_level(min_level);
         tmp_lut_PTX_3D->refine(refine_uniform);
         // parallel refine
-        #pragma omp parallel //shared(n)
+        if(tmp_lut_PTX_3D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_T)
         {
-            #pragma omp single
+            #pragma omp parallel //shared(n)
             {
-                printf("Do refinement using %d threads.\n", m_num_threads);
-                tmp_lut_PTX_3D->refine(RefineFunc_PTX);
+                #pragma omp single
+                {
+                    printf("Do refinement using %d threads.\n", m_num_threads);
+                    tmp_lut_PTX_3D->refine(RefineFunc_PTX);
+                }
             }
+        }else if (tmp_lut_PTX_3D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
+        {
+            #pragma omp parallel //shared(n)
+            {
+                #pragma omp single
+                {
+                    printf("Do refinement using %d threads.\n", m_num_threads);
+                    tmp_lut_PTX_3D->refine(RefineFunc_PHX);
+                }
+            }
+        }else
+        {
+            ERROR("The EOS space only support TPX and HPX!");
         }
+        
         STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
     }
 
@@ -4436,18 +4470,18 @@ namespace H2ONaCl
             m_dim_lut = 0;
         }
     }
-    void cH2ONaCl::createLUT_2D_TPX(double xmin, double xmax, double ymin, double ymax, double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, int min_level, int max_level)
+    void cH2ONaCl::createLUT_2D_TPX(double xmin, double xmax, double ymin, double ymax, double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level)
     {
         double xy_min[2] = {xmin, ymin};
         double xy_max[2] = {xmax, ymax};
-        createLUT_2D_TPX(xy_min, xy_max, constZ, const_which_var,  min_level, max_level);
+        createLUT_2D_TPX(xy_min, xy_max, constZ, const_which_var, TorH,  min_level, max_level);
     }
 
-    void cH2ONaCl::createLUT_3D_TPX(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, int min_level, int max_level)
+    void cH2ONaCl::createLUT_3D_TPX(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level)
     {
         double xyz_min[3] = {xmin, ymin, zmin};
         double xyz_max[3] = {xmax, ymax, zmax};
-        createLUT_3D_TPX(xyz_min, xyz_max,  min_level, max_level);
+        createLUT_3D_TPX(xyz_min, xyz_max, TorH,  min_level, max_level);
     }
 
     template<int dim>
@@ -4482,22 +4516,44 @@ namespace H2ONaCl
         tmp_lut->searchQuadrant(targetLeaf, x, y, tmp_lut->m_constZ);
         if(targetLeaf->user_data->need_refine)
         {
-            switch (tmp_lut->m_const_which_var)
+            if(tmp_lut->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_T)
             {
-            case LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP:
-                prop = prop_pTX(y, x, tmp_lut->m_constZ);
-                break;
-            case LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH:
-                prop = prop_pTX(tmp_lut->m_constZ, y, x);
-                break;
-            case LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP:
-                prop = prop_pTX(y, tmp_lut->m_constZ, x);
-                break;
-            default:
-                ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)");
-                break;
+                switch (tmp_lut->m_const_which_var)
+                {
+                case LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP:
+                    prop = prop_pTX(y, x, tmp_lut->m_constZ);
+                    break;
+                case LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH:
+                    prop = prop_pTX(tmp_lut->m_constZ, y, x);
+                    break;
+                case LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP:
+                    prop = prop_pTX(y, tmp_lut->m_constZ, x);
+                    break;
+                default:
+                    ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)");
+                    break;
+                }
+            }else if(tmp_lut->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
+            {
+                switch (tmp_lut->m_const_which_var)
+                {
+                case LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP:
+                    prop = prop_pHX(y, x, tmp_lut->m_constZ);
+                    break;
+                case LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH:
+                    prop = prop_pHX(tmp_lut->m_constZ, y, x);
+                    break;
+                case LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP:
+                    prop = prop_pHX(y, tmp_lut->m_constZ, x);
+                    break;
+                default:
+                    ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)");
+                    break;
+                }
+            }else
+            {
+                ERROR("The EOS space only support TPX and HPX!");
             }
-            
         }
         else
         {
@@ -4525,7 +4581,16 @@ namespace H2ONaCl
         tmp_lut->searchQuadrant(targetLeaf, x, y, z);
         if(targetLeaf->user_data->need_refine)
         {
-            prop = prop_pTX(y, x, z); //For 3D case, the order of x,y,z MUST BE TorH, p, X.
+            if(tmp_lut->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_T)
+            {
+                prop = prop_pTX(y, x, z); //For 3D case, the order of x,y,z MUST BE TorH, p, X.
+            }else if (tmp_lut->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
+            {
+                prop = prop_pTX(y, x, z); //For 3D case, the order of x,y,z MUST BE TorH, p, X.
+            }else
+            {
+                ERROR("The EOS space only support TPX and HPX!");
+            }
         }
         else
         {

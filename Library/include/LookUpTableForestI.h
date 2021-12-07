@@ -1,21 +1,21 @@
 
 template <int dim, typename USER_DATA> 
-LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], EOS_SPACE eos_space_type, int max_level, void* eosPointer)
+LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], EOS_ENERGY TorH, int max_level, void* eosPointer)
 :
 m_constZ(xyz_min[dim-1]), //make this compatible with 2D case in the refine function.
-m_EOS_space_type(eos_space_type),
-m_const_which_var(CONST_NO_VAR_TorHPX)
+m_const_which_var(CONST_NO_VAR_TorHPX),
+m_TorH(TorH)
 {
     if(dim!=3)ERROR("This construct function only support dim=3, if you want do 2D table, please specify constZ and const_which_var! Note that there is no 1D support!");
     init(xyz_min, xyz_max, max_level, sizeof(USER_DATA), eosPointer);
 }
 
 template <int dim, typename USER_DATA> 
-LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], double constZ, CONST_WHICH_VAR const_which_var, EOS_SPACE eos_space_type, int max_level, void* eosPointer)
+LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], double constZ, CONST_WHICH_VAR const_which_var, EOS_ENERGY TorH, int max_level, void* eosPointer)
 :
 m_constZ(constZ),
-m_EOS_space_type(eos_space_type),
-m_const_which_var(const_which_var)
+m_const_which_var(const_which_var),
+m_TorH(TorH)
 {
     if(dim!=2)ERROR("This construct function only support dim=2, if you want do 3D table, please get rid of constZ and const_which_var! Note that there is no 1D support!");
     init(xyz_min, xyz_max, max_level, sizeof(USER_DATA), eosPointer);
@@ -27,7 +27,6 @@ LookUpTableForest<dim,USER_DATA>::LookUpTableForest(string filename, void* eosPo
     m_eosPointer = eosPointer;
     m_num_children = 1<<dim;
     m_data_size = sizeof(USER_DATA);
-
     read_from_binary(filename);
 }
 
@@ -157,6 +156,8 @@ void LookUpTableForest<dim,USER_DATA>::write_to_binary(string filename, bool isW
     if(fpout == NULL)ERROR("Open file failed: "+filename);
     // write header
     fwrite(&dim0,       sizeof(int),    1,      fpout);
+    fwrite(&m_TorH,     sizeof(EOS_ENERGY),    1,      fpout);
+    fwrite(&m_const_which_var, sizeof(CONST_WHICH_VAR),    1,      fpout);
     fwrite(m_xyz_min,   sizeof(double), dim,    fpout);
     fwrite(m_xyz_max,   sizeof(double), dim,    fpout);
     fwrite(&m_constZ,    sizeof(double), dim,    fpout);
@@ -207,13 +208,15 @@ void LookUpTableForest<dim,USER_DATA>::read_from_binary(string filename, bool is
         ERROR("Dimension is not consistent, maybe change the template argument <dim>");
         fclose(fpin);
     }
-    // write header
-    fread(m_xyz_min,        sizeof(double), dim, fpin);
-    fread(m_xyz_max,        sizeof(double), dim, fpin);
-    fread(&m_constZ,         sizeof(double), dim, fpin);
-    fread(m_length_scale,   sizeof(double), dim, fpin);
-    fread(&m_min_level,     sizeof(int), 1, fpin);
-    fread(&m_max_level,     sizeof(int), 1, fpin);
+    // read header
+    fread(&m_TorH,              sizeof(EOS_ENERGY),         1,      fpin);
+    fread(&m_const_which_var,   sizeof(CONST_WHICH_VAR),    1,      fpin);
+    fread(m_xyz_min,            sizeof(double),             dim,    fpin);
+    fread(m_xyz_max,            sizeof(double),             dim,    fpin);
+    fread(&m_constZ,            sizeof(double),             dim,    fpin);
+    fread(m_length_scale,       sizeof(double),             dim,    fpin);
+    fread(&m_min_level,         sizeof(int),                1,      fpin);
+    fread(&m_max_level,         sizeof(int),                1,      fpin);
     fread(&m_RMSD_RefineCriterion, sizeof(RMSD_RefineCriterion), 1, fpin);
     // recursion read forest and data
     read_forest(fpin, &m_root, is_read_data);
@@ -404,6 +407,10 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
     // ---------- . phase index
     fout<<"        <DataArray type=\"Int32\" Name=\"phaseIndex\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
     for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->phaseRegion_point[j];}}
+    fout<<"\n        </DataArray>"<<endl;
+    // ---------- . Rho
+    fout<<"        <DataArray type=\"Float32\" Name=\"T\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].T;}}
     fout<<"\n        </DataArray>"<<endl;
     // ---------- . Rho
     fout<<"        <DataArray type=\"Float32\" Name=\"rho\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
