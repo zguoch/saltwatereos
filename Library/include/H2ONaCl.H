@@ -433,6 +433,9 @@ namespace H2ONaCl
          * @param nP data points in P axis
          */
         void writePhaseSurface_XHP(double scale_X=1, double scale_H=1.0/HMAX, double scale_P=1.0/1000, string outpath="./", H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nP=500);
+    private:
+        template<int dim>
+        void interp_quad_prop(LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf, H2ONaCl::PROP_H2ONaCl& prop, const double xyz[dim]);
     public:
         int m_num_threads;
         void set_num_threads(int num_threads);
@@ -454,12 +457,13 @@ namespace H2ONaCl
         LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y);
         LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > *lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y, double z);
         H2ONaCl::PROP_H2ONaCl lookup(double x, double y); //for python API
+        H2ONaCl::PROP_H2ONaCl lookup(double x, double y, double z); //for python API
         void destroyLUT();
         void loadLUT(string filename);
+        LookUpTableForest_2D* getLUT_2D(); //for Python API
+        LookUpTableForest_3D* getLUT_3D(); //for Python API
         void save_lut_to_vtk(string filename);
         void save_lut_to_binary(string filename);
-        template<int dim>
-        void interp_quad_prop(LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf, H2ONaCl::PROP_H2ONaCl& prop, const double xyz[dim]);
         // ========
     private:
         inline double Xwt2Xmol(double X){return (X/NaCl::MolarMass)/(X/NaCl::MolarMass+(1-X)/H2O::MolarMass);};

@@ -4571,6 +4571,13 @@ namespace H2ONaCl
         lookup(prop, x, y);
         return prop;
     }
+    // for python API
+    H2ONaCl::PROP_H2ONaCl cH2ONaCl::lookup(double x, double y, double z)
+    {
+        H2ONaCl::PROP_H2ONaCl prop;
+        lookup(prop, x, y, z);
+        return prop;
+    }
 
     LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y, double z)
     {
@@ -4620,4 +4627,28 @@ namespace H2ONaCl
         }
         
     }
+
+    // for python API
+    LookUpTableForest_2D* cH2ONaCl::getLUT_2D()
+    {
+        // STATUS("get lut pointer.");
+        if(m_dim_lut!=2)
+        {
+            STATUS("The LUT in the current cH2ONaCl object is not 2D table. Try getLUT_3D().");
+            return NULL;
+        }
+        return (LookUpTableForest_2D*)m_pLUT;
+    };
+
+    // for python API
+    LookUpTableForest_3D* cH2ONaCl::getLUT_3D()
+    {
+        // STATUS("get lut pointer.");
+        if(m_dim_lut!=3)
+        {
+            STATUS("The LUT in the current cH2ONaCl object is not 3D table. Try getLUT_3D().");
+            return NULL;
+        }
+        return (LookUpTableForest_3D*)m_pLUT;
+    };
 }

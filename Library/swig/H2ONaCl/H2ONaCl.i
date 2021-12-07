@@ -29,6 +29,78 @@ using namespace std;
     #include "omp.h"
     #define USE_PROST 1
 %}
+
+namespace LOOKUPTABLE_FOREST
+{
+    #define MAX_FOREST_LEVEL 29
+
+    template <int dim, typename USER_DATA>
+    struct Quadrant
+    {
+        double              xyz[dim]; //real coordinate of the lower left corner of a quadrant
+        int                 level;
+        bool                isHasChildren;
+        Quadrant            *children[1<<dim]; //2^dim
+        USER_DATA           *user_data;
+        // DEBUG
+        int index = -1;
+    };
+    
+    /**
+     * @brief For 2D case, define which variable is constant and the variable order of xy.
+     * 
+     */
+    enum CONST_WHICH_VAR 
+    {
+        CONST_NO_VAR_TorHPX,     /**< No constant variable, 3D case. The x, y, z represents T/H, P, and X, respectively. T or H is specified by EOS_SPACE*/
+        CONST_TorH_VAR_XP,      /**< Constant temperature T or specific enthalpy H, x represents salinity X and y represents pressure P. T or H is specified by EOS_SPACE */
+        CONST_P_VAR_XTorH,      /**< Constant pressure P, x represents salinity X and y represents temperature T or specific enthalpy H. T or H is specified by EOS_SPACE */
+        CONST_X_VAR_TorHP       /**< Constant salinity X, x represents temperature T or specific enthalpy H, and y represents pressure P. T or H is specified by EOS_SPACE */
+    }; //only used for 2D case, CONST_NO means 3D
+    
+    enum NeedRefine {NeedRefine_NoNeed, NeedRefine_PhaseBoundary, NeedRefine_Rho, NeedRefine_H};
+    /**
+     * @brief Property refinement criterion, minimum RMSD of a quadran, if the RMSD of a property in a quadran grater than this criterion, it will be refined.
+     * 
+     */
+    struct RMSD_RefineCriterion
+    {
+        double Rho;
+        double H;
+    };
+    
+    // add data struct definition for different system, e.g., H2ONaCl. Actually we can move this data type definition to H2ONaCl.H, because LookUpTableForest class never care about this data type definite, it just accept whatever data type through template argument. But for the TCL API, if move this to other place, it will cause some compiling errors. So keep it here before finding better solution.
+    template <int dim>
+    struct FIELD_DATA
+    {
+        // point data field
+        H2ONaCl::PhaseRegion phaseRegion_point[1<<dim];
+        H2ONaCl::PROP_H2ONaCl prop_point[1<<dim]; // properties at vertiex
+        // cell data field
+        NeedRefine need_refine; // indicator of what kind of the need-refined quad position (phase boundary), or what kind of properties need to refine
+        H2ONaCl::PhaseRegion phaseRegion_cell;
+        H2ONaCl::PROP_H2ONaCl prop_cell; // properties at midpoint as cell value (for vtk output)
+    };
+    /**
+     * @brief Use which variable to express energy
+     * 
+     */
+    enum EOS_ENERGY {
+        EOS_ENERGY_T, /**< TPX space */
+        EOS_ENERGY_H  /**< HPX space */
+        };
+
+    inline int get_dim_from_binary(string filename)
+    {
+        FILE* fpin = NULL;
+        fpin = fopen(filename.c_str(), "rb");
+        if(!fpin)ERROR("Open file failed: "+filename);
+        int dim0;
+        fread(&dim0, sizeof(dim0), 1, fpin);
+        fclose(fpin);
+        return dim0;
+    }
+}
 namespace H2ONaCl
 {
     /// Output file format
@@ -108,6 +180,11 @@ namespace H2ONaCl
     double const P_max_LVH  = 390.14744433796; /**< Maximum pressure of L+V+H region, [bar] */
     double const T_Pmax_LVH = 594.63244000000; /**< Temperature at that P_max_LVH */
     // ===========================================================================
+
+    typedef LOOKUPTABLE_FOREST::LookUpTableForest<2, LOOKUPTABLE_FOREST::FIELD_DATA<2> > LookUpTableForest_2D;
+    typedef LOOKUPTABLE_FOREST::LookUpTableForest<3, LOOKUPTABLE_FOREST::FIELD_DATA<3> > LookUpTableForest_3D;
+
+
     /**
      * @brief EOS and thermodynamic properties of \f$H_2O-NaCl\f$ system. 
      * 
@@ -414,25 +491,21 @@ namespace H2ONaCl
          */
         void writePhaseSurface_XHP(double scale_X=1, double scale_H=1.0/HMAX, double scale_P=1.0/PMAX, string outpath="./", H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nP=200);
     public:
-        LOOKUPTABLE_FOREST::LookUpTableForest<2, LOOKUPTABLE_FOREST::FIELD_DATA<2> >* m_lut_PTX_2D; //lookup table in PTX space
-        LOOKUPTABLE_FOREST::LookUpTableForest<3, LOOKUPTABLE_FOREST::FIELD_DATA<3> >* m_lut_PTX_3D;
-        // ======== create, save and load AMR lookup table =====
-        /**
-         * @brief Create a LUT 2D object in PTX space. Create different 2D LUT according to type and  xy limits, then access through member variable m_lut_PTX
-         * 
-         * @param type 
-         * @param xy_min 
-         * @param xy_max 
-         * @param z 
-         */
-        void createLUT_2D_TPX(double xy_min[2], double xy_max[2], double z, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, int min_level = 4, int max_level = 6);
-        void createLUT_2D_TPX(double xmin, double xmax, double ymin, double ymax, double z, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, int min_level = 4, int max_level = 6);
-        H2ONaCl::PROP_H2ONaCl lookup(double x, double y);
+        int m_num_threads;
+        int m_dim_lut;
+        void *m_pLUT;
+        //void createLUT_2D_TPX(double xy_min[2], double xy_max[2], double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6);
+        void createLUT_2D_TPX(double xmin, double xmax, double ymin, double ymax, double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6);
+        //void createLUT_3D_TPX(double xyz_min[3], double xyz_max[3], LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6);
+        void createLUT_3D_TPX(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6);
+        H2ONaCl::PROP_H2ONaCl lookup(double x, double y); //for python API
+        H2ONaCl::PROP_H2ONaCl lookup(double x, double y, double z); //for python API
         void destroyLUT();
-        void loadLUT_PTX(string filename);
+        void loadLUT(string filename);
+        LookUpTableForest_2D* cH2ONaCl::getLUT_2D();
+        LookUpTableForest_3D* getLUT_3D(); //for Python API
         void save_lut_to_vtk(string filename);
         void save_lut_to_binary(string filename);
-
     private:
         inline double Xwt2Xmol(double X){return (X/NaCl::MolarMass)/(X/NaCl::MolarMass+(1-X)/H2O::MolarMass);};
         void approx_Rho_lv(double T, double& Rho_l , double& Rho_v);
