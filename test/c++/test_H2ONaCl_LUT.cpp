@@ -234,7 +234,7 @@ void load_binary_3d(string filename)
     H2ONaCl::PROP_H2ONaCl prop_cal, prop_lookup;
     clock_t start = clock();
 
-    eos.loadLUT_PTX(filename);
+    eos.loadLUT(filename);
     cout<<"dim of the bin file: "<<eos.m_dim_lut<<endl;
     // eos.save_lut_to_vtk("lut_TPX.vtu");
 
@@ -285,8 +285,8 @@ void load_binary_2d(string filename)
     H2ONaCl::PROP_H2ONaCl prop_cal, prop_lookup;
     clock_t start = clock();
 
-    eos.loadLUT_PTX(filename);
-    cout<<"dim of the bin file: "<<eos.m_dim_lut<<endl;
+    eos.loadLUT(filename);
+    // ((H2ONaCl::LookUpTableForest_2D*)eos.m_pLUT)->print_summary();
     eos.save_lut_to_vtk("lut_load_save.vtu");
 
     // double Tmin = 1 +273.15, Tmax = 1000+273.15, Xmin = 0.1, Xmax = 0.99999, Pmin = 5E5, Pmax = 2000E5;

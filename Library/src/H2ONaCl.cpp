@@ -4390,8 +4390,8 @@ namespace H2ONaCl
         {
             ERROR("The EOS space only support TPX and HPX!");
         }
-        
         STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
+        tmp_lut_PTX_2D->print_summary();
     }
 
     void cH2ONaCl::createLUT_3D_TPX(double xyz_min[3], double xyz_max[3], LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level)
@@ -4432,6 +4432,7 @@ namespace H2ONaCl
         }
         
         STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
+        tmp_lut_PTX_3D->print_summary();
     }
 
     void cH2ONaCl::save_lut_to_vtk(string filename)

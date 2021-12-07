@@ -34,6 +34,7 @@ namespace LOOKUPTABLE_FOREST
         CONST_P_VAR_XTorH,      /**< Constant pressure P, x represents salinity X and y represents temperature T or specific enthalpy H. T or H is specified by EOS_SPACE */
         CONST_X_VAR_TorHP       /**< Constant salinity X, x represents temperature T or specific enthalpy H, and y represents pressure P. T or H is specified by EOS_SPACE */
     }; //only used for 2D case, CONST_NO means 3D
+    
     enum NeedRefine {NeedRefine_NoNeed, NeedRefine_PhaseBoundary, NeedRefine_Rho, NeedRefine_H};
     /**
      * @brief Property refinement criterion, minimum RMSD of a quadran, if the RMSD of a property in a quadran grater than this criterion, it will be refined.
@@ -121,6 +122,7 @@ namespace LOOKUPTABLE_FOREST
         void write_to_vtk(string filename, bool write_data=true, bool isNormalizeXYZ=true);
         void write_to_binary(string filename, bool is_write_data=true);
         void read_from_binary(string filename, bool is_read_data=true);
+        void print_summary();
         /**
          * @brief Construct a new Look Up Table Forest object. This is always used to create a 3D table
          * xyz would be corresponding to TPX or PHX. Note that the unit of T is K, unit of P is Pa, unit of X is wt% NaCl (e.g., seawater is 0.032), unit of H is J/kg. The same as H2ONaCl::cH2ONaCl::prop_pTX and The same as H2ONaCl::cH2ONaCl::prop_pHX.

@@ -28,6 +28,7 @@ LookUpTableForest<dim,USER_DATA>::LookUpTableForest(string filename, void* eosPo
     m_num_children = 1<<dim;
     m_data_size = sizeof(USER_DATA);
     read_from_binary(filename);
+    print_summary();
 }
 
 template <int dim, typename USER_DATA> 
@@ -582,6 +583,58 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
     fout<<"</VTKFile>"<<endl;
     fout.close();
     STATUS_time("Write to vtu file done: "+filename, clock()-start);
+}
+
+template <int dim, typename USER_DATA>
+void LookUpTableForest<dim,USER_DATA>::print_summary()
+{
+    int factor = 1<<m_max_level;
+    cout<<"======= Summary of the LookUp Table forest ======="<<endl;
+    cout<<"Dimension: "<<dim<<" in ";
+    if(m_TorH == EOS_ENERGY_T)cout<<"TPX space"<<endl;
+    else if(m_TorH == EOS_ENERGY_H)cout<<"HPX space"<<endl;
+    switch (m_const_which_var)
+    {
+    case CONST_P_VAR_XTorH:
+        {
+            cout<<"Constant P = "<<m_constZ/1E5<<" bar"<<endl;
+            cout<<"X range ["<<m_xyz_min[0]*100<<", "<<m_xyz_max[0]*100<<"] wt.% NaCl, max resolution: "<<(m_xyz_max[0] - m_xyz_min[0])/factor*100<<" wt.% NaCl"<<endl;
+            if(m_TorH == EOS_ENERGY_T)cout<<"T range ["<<m_xyz_min[1]-273.15<<", "<<m_xyz_max[1]-273.15<<"] deg.C, max resolution: "<<(m_xyz_max[1] - m_xyz_min[1])/factor<<" deg.C"<<endl;
+            else if(m_TorH == EOS_ENERGY_H)cout<<"H range ["<<m_xyz_min[1]/1E6<<", "<<m_xyz_max[1]/1E6<<"] MJ/kg, max resolution: "<<(m_xyz_max[1] - m_xyz_min[1])/factor/1000<<" kJ/kg"<<endl;
+        }
+        break;
+    case CONST_TorH_VAR_XP:
+        {
+            if(m_TorH == EOS_ENERGY_T)cout<<"Constant T = "<<m_constZ - 273.15<<" deg.C"<<endl;
+            else if(m_TorH == EOS_ENERGY_H)cout<<"Constant H = "<<m_constZ/1E6<<" MJ/kg"<<endl;
+            cout<<"X range ["<<m_xyz_min[0]*100<<", "<<m_xyz_max[0]*100<<"] wt.% NaCl, max resolution: "<<(m_xyz_max[0] - m_xyz_min[0])/factor*100<<" wt.% NaCl"<<endl;
+            cout<<"P range ["<<m_xyz_min[1]/1E5<<", "<<m_xyz_max[1]/1E5<<"] bar, max resolution: "<<(m_xyz_max[1] - m_xyz_min[1])/factor/1E5<<" bar"<<endl;
+        }
+        break;
+    case CONST_X_VAR_TorHP:
+        {
+            cout<<"Constant X = "<<m_constZ*100<<" wt.% NaCl"<<endl;
+            if(m_TorH == EOS_ENERGY_T)cout<<"T range ["<<m_xyz_min[0]-273.15<<", "<<m_xyz_max[0]-273.15<<"] deg.C, max resolution: "<<(m_xyz_max[0] - m_xyz_min[0])/factor<<" deg.C"<<endl;
+            else if(m_TorH == EOS_ENERGY_H)cout<<"H range ["<<m_xyz_min[0]/1E6<<", "<<m_xyz_max[0]/1E6<<"] MJ/kg, max resolution: "<<(m_xyz_max[0] - m_xyz_min[0])/factor/1000<<" kJ/kg"<<endl;
+            cout<<"P range ["<<m_xyz_min[1]/1E5<<", "<<m_xyz_max[1]/1E5<<"] bar, max resolution: "<<(m_xyz_max[1] - m_xyz_min[1])/factor/1E5<<" bar"<<endl;
+        }
+        break;
+    case CONST_NO_VAR_TorHPX:
+        {
+            if(m_TorH == EOS_ENERGY_T)cout<<"T range ["<<m_xyz_min[0]-273.15<<", "<<m_xyz_max[0]-273.15<<"] deg.C, max resolution: "<<(m_xyz_max[0] - m_xyz_min[0])/factor<<" deg.C"<<endl;
+            else if(m_TorH == EOS_ENERGY_H)cout<<"H range ["<<m_xyz_min[0]/1E6<<", "<<m_xyz_max[0]/1E6<<"] MJ/kg, max resolution: "<<(m_xyz_max[0] - m_xyz_min[0])/factor/1000<<" kJ/kg"<<endl;
+            cout<<"P range ["<<m_xyz_min[1]/1E5<<", "<<m_xyz_max[1]/1E5<<"] bar, max resolution: "<<(m_xyz_max[1] - m_xyz_min[1])/factor/1E5<<" bar"<<endl;
+            cout<<"X range ["<<m_xyz_min[2]*100<<", "<<m_xyz_max[2]*100<<"] wt.% NaCl, max resolution: "<<(m_xyz_max[2] - m_xyz_min[2])/factor*100<<" wt.% NaCl"<<endl;
+        }
+        break;
+    default:
+        break;
+    }
+    cout<<"Min level: "<<m_min_level<<", max level: "<<m_max_level<<endl;
+    vector<Quadrant<dim,USER_DATA>* > leaves;
+    getLeaves(leaves, &m_root);
+    cout<<"All "<<leaves.size()<<" leaves, estimate size "<<ceil(leaves.size()*(sizeof(FIELD_DATA<dim>) + sizeof(Quadrant<dim,USER_DATA>))/1024.0/1024.0)<<" Mb"<<endl;
+    cout<<"================== Summary end ==================="<<endl;
 }
 
 template <int dim, typename USER_DATA>
