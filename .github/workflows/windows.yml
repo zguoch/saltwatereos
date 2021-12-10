@@ -10,7 +10,7 @@ env:
   BUILD_CONFIGURATION: Release
   BUILD_PLATFORM: x64
   PYTHON_PATH: C:/hostedtoolcache/windows/Python/3.8.10/x64
-  BASIC_PYTHON: 3.8
+  BASIC_PYTHON: 3.9
   HOME: D:/a/saltwatereos/saltwatereos
   AppInstaller: swEOS-Windows-Installer
 jobs:
@@ -93,16 +93,16 @@ jobs:
           path: |
             pyswEOS_python${{ matrix.python.version }}.zip
 
-      # # build swEOS cmd app
-      # - name: build cmd app
-      #   if: ${{ matrix.python.version == env.BASIC_PYTHON }}
-      #   working-directory: ${{ env.GITHUB_WORKSPACE }}
-      #   run: |
-      #     cd ${{env.HOME}}
-      #     mkdir commandline\build
-      #     cd commandline\build
-      #     cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
-      #     msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} SaltWaterEOS.sln
+      # build swEOS cmd app
+      - name: build cmd app
+        if: ${{ matrix.python.version == env.BASIC_PYTHON }}
+        working-directory: ${{ env.GITHUB_WORKSPACE }}
+        run: |
+          cd ${{env.HOME}}
+          mkdir commandline\build
+          cd commandline\build
+          cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
+          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} SaltWaterEOS.sln
       
       # # build desktop app
       # - name: build desktop app

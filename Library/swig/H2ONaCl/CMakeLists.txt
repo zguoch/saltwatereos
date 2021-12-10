@@ -72,6 +72,17 @@ if(Build_API_MultiLanguage)
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${specie}.py DESTINATION ${INSTALL_PYTHON_API_PYTHON})
         install(FILES ${files_install} DESTINATION ${INSTALL_PYTHON_API_PYTHON})
     endif(Build_API_Python)
+    # --------- Matlab ----------------
+    option(Build_API_Matlab "whether build API for Matlab" ON)
+    if(Build_API_Matlab)
+        # install 
+        set(INSTALL_MATLAB_API ${PROJECT_SOURCE_DIR}/API/Matlab)
+        file(GLOB files_install_matlab
+            "${PROJECT_SOURCE_DIR}/Matlab/${specie}/*.cpp"
+            "${PROJECT_SOURCE_DIR}/Matlab/${specie}/*.m"
+        )
+        install(FILES ${files_install_matlab} DESTINATION ${INSTALL_MATLAB_API}/${specie})
+    endif(Build_API_Matlab)
     # ------ 2. tcl ------------------
     option(Build_API_tcl "whether build API for tcl" ON)
     if(Build_API_tcl)
