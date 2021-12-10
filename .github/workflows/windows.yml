@@ -73,26 +73,26 @@ jobs:
       #   uses: mxschmitt/action-tmate@v3
 
       # build swEOS library
-      # cmake -DSWIG_EXECUTABLE=${{env.HOME}}/dependencies_swEOS/windows/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=${{env.pythonLocation}}\include -DPYTHON_LIBRARY=${{env.pythonLocation}}\libs\${{matrix.python.lib}} -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
       - name: build library
         working-directory: ${{ env.GITHUB_WORKSPACE }}
         run: |
           cd ${{env.HOME}}
           mkdir Library/build
           cd Library/build
-          cmake -DBuild_API_tcl=OFF -DBuild_API_MultiLanguage=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
+          cmake -DSWIG_EXECUTABLE=${{env.HOME}}/dependencies_swEOS/windows/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=${{env.pythonLocation}}\include -DPYTHON_LIBRARY=${{env.pythonLocation}}\libs\${{matrix.python.lib}} -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} eosH2ONaCl.vcxproj
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} INSTALL.vcxproj
           cd ${{env.HOME}}
-          #cp -r Library/API/python/pyswEOS pyswEOS_python${{ matrix.python.version }}
-          #7z a -tzip pyswEOS_python${{ matrix.python.version }}.zip pyswEOS_python${{ matrix.python.version }}
-      # upload python API
-      # - name: upload pyswEOS
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: pyswEOS_python${{ matrix.python.version }}_${{env.SHORT_SHA}}
-      #     path: |
-      #       pyswEOS_python${{ matrix.python.version }}.zip
+          cp -r Library/API/python/pyswEOS pyswEOS_python${{ matrix.python.version }}
+          7z a -tzip pyswEOS_python${{ matrix.python.version }}.zip pyswEOS_python${{ matrix.python.version }}
+      upload python API
+      - name: upload pyswEOS
+        uses: actions/upload-artifact@v2
+        with:
+          name: pyswEOS_python${{ matrix.python.version }}_${{env.SHORT_SHA}}
+          path: |
+            pyswEOS_python${{ matrix.python.version }}.zip
+            
       # # build swEOS cmd app
       # - name: build cmd app
       #   if: ${{ matrix.python.version == env.BASIC_PYTHON }}
