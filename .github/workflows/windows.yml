@@ -84,8 +84,8 @@ jobs:
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} eosH2ONaCl.vcxproj
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} INSTALL.vcxproj
           cd ${{env.HOME}}
-          cp -r Library/API/python/pyswEOS pyswEOS_python${{ matrix.python.version }}
-          7z a -tzip pyswEOS_python${{ matrix.python.version }}.zip pyswEOS_python${{ matrix.python.version }}
+          #cp -r Library/API/python/pyswEOS pyswEOS_python${{ matrix.python.version }}
+          #7z a -tzip pyswEOS_python${{ matrix.python.version }}.zip pyswEOS_python${{ matrix.python.version }}
       # upload python API
       # - name: upload pyswEOS
       #   uses: actions/upload-artifact@v2
