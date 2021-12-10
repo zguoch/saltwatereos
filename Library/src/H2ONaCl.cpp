@@ -4508,7 +4508,7 @@ namespace H2ONaCl
         double physical_length[dim]; //physical length of the quad
         double coeff[dim][2];
         const int num_children = tmp_lut->m_num_children;
-        double values_at_vertices[num_children];
+        double* values_at_vertices = new double[num_children];
         tmp_lut->get_quadrant_physical_length(targetLeaf->level, physical_length);
         get_coeff_bilinear<dim> (targetLeaf->xyz, physical_length, xyz, coeff);
         // Rho
@@ -4524,6 +4524,8 @@ namespace H2ONaCl
 
         // phase region
         prop.Region = targetLeaf->user_data->phaseRegion_cell;
+
+        delete[] values_at_vertices;
     }
 
     LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)
