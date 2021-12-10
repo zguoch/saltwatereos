@@ -20,11 +20,11 @@ jobs:
     strategy:
       matrix:
         python:
-          - {version: '2.7', lib: 'python27.lib' }
-          - {version: '3.5', lib: 'python35.lib' }
-          - {version: '3.6', lib: 'python36.lib' }
-          - {version: '3.7', lib: 'python37.lib' }
-          - {version: '3.8', lib: 'python38.lib' }
+          # - {version: '2.7', lib: 'python27.lib' }
+          # - {version: '3.5', lib: 'python35.lib' }
+          # - {version: '3.6', lib: 'python36.lib' }
+          # - {version: '3.7', lib: 'python37.lib' }
+          # - {version: '3.8', lib: 'python38.lib' }
           - {version: '3.9', lib: 'python39.lib' }
     steps:
       # checkout source code
@@ -68,9 +68,9 @@ jobs:
           echo ${{ github.ref }}
           echo "commit id short" ${SHORT_SHA}
           python --version
-      # # debug workflow
-      # - name: Setup tmate session
-      #   uses: mxschmitt/action-tmate@v3
+      # debug workflow
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
       # build swEOS library
       - name: build library

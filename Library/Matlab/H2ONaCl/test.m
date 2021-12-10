@@ -34,7 +34,7 @@ end
 function test_createLUT_3D()
     num_threads = 8;
     min_level = 2;
-    max_level = 8;
+    max_level = 6;
     Hmin = 0.1E6; 
     Hmax = 3.9E6;
     Pmin = 100E5;
