@@ -2,7 +2,7 @@
 % parallel version if you have OpenMP
 mex genLUT_2D.cpp -DUSE_OMP=1 -I'/Users/zguo/MyData/Research/3_CodeProject/Hydrothermal-OpenFOAM/saltwatereos/Library/include' -I'/usr/local/include' -L'/Users/zguo/MyData/Research/3_CodeProject/Hydrothermal-OpenFOAM/saltwatereos/Library/lib' -leosH2ONaCl_par -L'/usr/local/lib' -lomp; exit;
 % serial version
-mex genLUT_2D.cpp -I'/Users/zguo/MyData/Research/3_CodeProject/Hydrothermal-OpenFOAM/saltwatereos/Library/include' -L'/Users/zguo/MyData/Research/3_CodeProject/Hydrothermal-OpenFOAM/saltwatereos/Library/lib' -leosH2ONaCl; exit;
+mex genLUT_2D.cpp -I'../../include' -L'../../lib' -leosH2ONaCl; exit;
 
 % 2. build genLUT_3D
 % parallel version if you have OpenMP

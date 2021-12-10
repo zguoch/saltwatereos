@@ -15,7 +15,7 @@ void createTable_constX_TP()
     double TP_max[2] = {700 + 273.15, 400E5};
     double X_wt = 0.2; //wt% NaCl [0,1]
     int min_level = 4;
-    int max_level = 7;
+    int max_level = 12;
 
     eos.createLUT_2D_TPX(TP_min, TP_max, X_wt, LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level);
     eos.save_lut_to_vtk("lut_constX_TP.vtu");
@@ -333,7 +333,7 @@ void load_binary_2d(string filename)
 int main()
 {
     // 1. 
-    // createTable_constX_TP();
+    createTable_constX_TP();
     // createTable_constP_XT();
     // createTable_constP_XH();
     // createTable_constT_XP(500+273.15);
@@ -341,7 +341,7 @@ int main()
 
     // 2. 
     // load_binary_3d("lut_TPX_7.bin");
-    load_binary_2d("lut_constP_XH_7.bin");
+    // load_binary_2d("lut_constP_XH_7.bin");
 
     // destroy by hand
     // eos.destroyLUT_2D_PTX();
