@@ -1,0 +1,1 @@
+mex genLUT.cpp -I'/Users/zguo/MyData/Research/3_CodeProject/Hydrothermal-OpenFOAM/saltwatereos/Library/include' -I'/usr/local/include' -L'/Users/zguo/MyData/Research/3_CodeProject/Hydrothermal-OpenFOAM/saltwatereos/Library/lib' -leosH2ONaCl -L'/usr/local/lib' -lomp; exit;
