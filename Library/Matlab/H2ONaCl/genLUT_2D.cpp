@@ -26,7 +26,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     LOOKUPTABLE_FOREST::EOS_ENERGY TorH = (LOOKUPTABLE_FOREST::EOS_ENERGY)(mxGetScalar(prhs[6]));
 
     H2ONaCl::cH2ONaCl sw;
+  #if USE_OMP == 1
     sw.set_num_threads(8);
+  #endif
     sw.createLUT_2D_TPX(xmin, xmax, ymin, ymax, constZ, const_which_var, TorH);
     sw.save_lut_to_binary("lut.bin");
     sw.save_lut_to_vtk("lut.vtu");

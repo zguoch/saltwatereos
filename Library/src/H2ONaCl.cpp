@@ -4368,9 +4368,13 @@ namespace H2ONaCl
         // parallel refine
         if (tmp_lut_PTX_2D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_T)
         {
+        #ifdef USE_OMP
             #pragma omp parallel //shared(n)
+        #endif
             {
+            #ifdef USE_OMP
                 #pragma omp single
+            #endif
                 {
                     printf("Do refinement using %d threads.\n", m_num_threads);
                     tmp_lut_PTX_2D->refine(RefineFunc_PTX);
@@ -4378,9 +4382,13 @@ namespace H2ONaCl
             }
         }else if(tmp_lut_PTX_2D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
         {
+        #ifdef USE_OMP
             #pragma omp parallel //shared(n)
+        #endif
             {
+            #ifdef USE_OMP
                 #pragma omp single
+            #endif
                 {
                     printf("Do refinement using %d threads.\n", m_num_threads);
                     tmp_lut_PTX_2D->refine(RefineFunc_PHX);
@@ -4408,9 +4416,13 @@ namespace H2ONaCl
         // parallel refine
         if(tmp_lut_PTX_3D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_T)
         {
+        #ifdef USE_OMP
             #pragma omp parallel //shared(n)
+        #endif
             {
+            #ifdef USE_OMP
                 #pragma omp single
+            #endif
                 {
                     printf("Do refinement using %d threads.\n", m_num_threads);
                     tmp_lut_PTX_3D->refine(RefineFunc_PTX);
@@ -4418,9 +4430,13 @@ namespace H2ONaCl
             }
         }else if (tmp_lut_PTX_3D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
         {
+        #ifdef USE_OMP
             #pragma omp parallel //shared(n)
+        #endif
             {
+            #ifdef USE_OMP
                 #pragma omp single
+            #endif
                 {
                     printf("Do refinement using %d threads.\n", m_num_threads);
                     tmp_lut_PTX_3D->refine(RefineFunc_PHX);

@@ -6,7 +6,9 @@
 using namespace std;
 #include <cmath>
 #include "H2ONaCl.H" 
-#include <omp.h>
+#if USE_OMP == 1
+    #include <omp.h>
+#endif
 namespace LOOKUPTABLE_FOREST
 {
     #define MAX_FOREST_LEVEL 29

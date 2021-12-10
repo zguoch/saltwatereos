@@ -326,34 +326,51 @@ void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, boo
 
         // for (int i = 0; i < m_num_children; i++)
         // {
+        #if USE_OMP == 1
             #pragma omp task shared(is_refine) //firstprivate(quad, m_max_level) //
+        #endif
             refine(quad->children[0], is_refine);
 
+        #if USE_OMP == 1
             #pragma omp task shared(is_refine) //firstprivate(quad, m_max_level)
+        #endif
             refine(quad->children[1], is_refine);
 
+        #if USE_OMP == 1
             #pragma omp task shared(is_refine) //firstprivate(quad, m_max_level)
+        #endif
             refine(quad->children[2], is_refine);
 
+        #if USE_OMP == 1
             #pragma omp task shared(is_refine) //firstprivate(quad, m_max_level)
+        #endif
             refine(quad->children[3], is_refine);
 
             if(dim==3)
             {
+            #if USE_OMP == 1
                 #pragma omp task shared(is_refine)
+            #endif
                 refine(quad->children[4], is_refine);
 
+            #if USE_OMP == 1
                 #pragma omp task shared(is_refine)
+            #endif
                 refine(quad->children[5], is_refine);
 
+            #if USE_OMP == 1
                 #pragma omp task shared(is_refine)
+            #endif
                 refine(quad->children[6], is_refine);
 
+            #if USE_OMP == 1
                 #pragma omp task shared(is_refine)
+            #endif
                 refine(quad->children[7], is_refine);
             }
-
+        #if USE_OMP == 1
             #pragma omp taskwait
+        #endif
         // }
     }
 }

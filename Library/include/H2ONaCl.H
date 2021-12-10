@@ -21,7 +21,10 @@ using namespace std;
 #include "NaCl.H"
 #include "dataStruct_H2ONaCl.H"
 #include "LookUpTableForest.h"
+
+#if USE_OMP == 1
 #include "omp.h"
+#endif
 
 #define USE_PROST 1  
 
@@ -438,8 +441,10 @@ namespace H2ONaCl
         void interp_quad_prop(LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf, H2ONaCl::PROP_H2ONaCl& prop, const double xyz[dim]);
     public:
         int m_num_threads;
+    #if USE_OMP == 1
         void set_num_threads(int num_threads);
         int get_num_threads();
+    #endif
         int m_dim_lut;
         void *m_pLUT;
         /**
