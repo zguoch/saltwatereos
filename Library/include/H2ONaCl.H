@@ -463,6 +463,10 @@ namespace H2ONaCl
         LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > *lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y, double z);
         H2ONaCl::PROP_H2ONaCl lookup(double x, double y); //for python API
         H2ONaCl::PROP_H2ONaCl lookup(double x, double y, double z); //for python API
+        LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *lookup_only(H2ONaCl::PROP_H2ONaCl& prop, double x, double y);
+        LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > *lookup_only(H2ONaCl::PROP_H2ONaCl& prop, double x, double y, double z);
+        H2ONaCl::PROP_H2ONaCl lookup_only(double x, double y); //for python API
+        H2ONaCl::PROP_H2ONaCl lookup_only(double x, double y, double z); //for python API
         void destroyLUT();
         void loadLUT(string filename);
         LookUpTableForest_2D* getLUT_2D(); //for Python API

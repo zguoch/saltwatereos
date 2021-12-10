@@ -4624,6 +4624,61 @@ namespace H2ONaCl
         return targetLeaf;
     }
 
+
+    LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup_only(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)
+    {
+        LookUpTableForest_2D* tmp_lut = (LookUpTableForest_2D*)m_pLUT; // make temporary copy of the pointer
+        // cout<<"constZ: "<<tmp_lut->m_constZ<<", y: "<<y<<", x: "<<x<<endl;
+        LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *targetLeaf = NULL;
+        tmp_lut->searchQuadrant(targetLeaf, x, y, tmp_lut->m_constZ);
+        if(targetLeaf->user_data->need_refine)
+        {
+            //only lookup, so don't do anything if the lookup point in the needRefine-cell
+        }
+        else
+        {
+            double xy[2] = {x, y};
+            interp_quad_prop<2>(targetLeaf, prop, xy);
+        }
+        return targetLeaf;
+    }
+
+    // for python API
+    H2ONaCl::PROP_H2ONaCl cH2ONaCl::lookup_only(double x, double y)
+    {
+        H2ONaCl::PROP_H2ONaCl prop;
+        lookup_only(prop, x, y);
+        return prop;
+    }
+    // for python API
+    H2ONaCl::PROP_H2ONaCl cH2ONaCl::lookup_only(double x, double y, double z)
+    {
+        H2ONaCl::PROP_H2ONaCl prop;
+        lookup_only(prop, x, y, z);
+        return prop;
+    }
+
+    LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > * cH2ONaCl::lookup_only(H2ONaCl::PROP_H2ONaCl& prop, double x, double y, double z)
+    {
+        if(m_dim_lut!=3)ERROR("The dim of the LUT is not 3, but you call the 3D lookup function");
+
+        LookUpTableForest_3D* tmp_lut = (LookUpTableForest_3D*)m_pLUT; // make temporary copy of the pointer
+        // cout<<"T: "<<x<<", P: "<<y<<", X: "<<z<<endl;
+        LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > *targetLeaf = NULL;
+        tmp_lut->searchQuadrant(targetLeaf, x, y, z);
+        if(targetLeaf->user_data->need_refine)
+        {
+            //this is a looup-only version, don't do anything if the lookup point in the needRefine-cell
+        }
+        else
+        {
+            double xyz[3] = {x, y, z};
+            interp_quad_prop<3>(targetLeaf, prop, xyz);
+        }
+        return targetLeaf;
+    }
+
+
     void cH2ONaCl::loadLUT(string filename)
     {
         destroyLUT(); //destroy LUT if it already exists.
