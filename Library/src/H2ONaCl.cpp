@@ -4507,7 +4507,8 @@ namespace H2ONaCl
         LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> >* tmp_lut = (LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> >*)m_pLUT;
         double physical_length[dim]; //physical length of the quad
         double coeff[dim][2];
-        double values_at_vertices[tmp_lut->m_num_children];
+        const int num_children = tmp_lut->m_num_children;
+        double values_at_vertices[num_children];
         tmp_lut->get_quadrant_physical_length(targetLeaf->level, physical_length);
         get_coeff_bilinear<dim> (targetLeaf->xyz, physical_length, xyz, coeff);
         // Rho
