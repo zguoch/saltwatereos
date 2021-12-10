@@ -1,7 +1,7 @@
 name: Windows
 on: 
   push:
-    branches: mainxx
+    branches: master
     tags:
       - 'V*'
 env:
