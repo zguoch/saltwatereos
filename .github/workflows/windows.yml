@@ -85,14 +85,14 @@ jobs:
           cd ${{env.HOME}}
           cp -r Library/API/python/pyswEOS pyswEOS_python${{ matrix.python.version }}
           7z a -tzip pyswEOS_python${{ matrix.python.version }}.zip pyswEOS_python${{ matrix.python.version }}
-      upload python API
+      # upload python API
       - name: upload pyswEOS
         uses: actions/upload-artifact@v2
         with:
           name: pyswEOS_python${{ matrix.python.version }}_${{env.SHORT_SHA}}
           path: |
             pyswEOS_python${{ matrix.python.version }}.zip
-            
+
       # # build swEOS cmd app
       # - name: build cmd app
       #   if: ${{ matrix.python.version == env.BASIC_PYTHON }}
