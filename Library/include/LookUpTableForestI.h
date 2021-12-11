@@ -713,7 +713,7 @@ void LookUpTableForest<dim,USER_DATA>::print_summary()
     cout<<"Min level: "<<m_min_level<<", max level: "<<m_max_level<<endl;
     vector<Quadrant<dim,USER_DATA>* > leaves;
     getLeaves(leaves, &m_root);
-    cout<<"All "<<leaves.size()<<" leaves, estimate size "<<ceil(leaves.size()*(sizeof(FIELD_DATA<dim>) + sizeof(Quadrant<dim,USER_DATA>))/1024.0/1024.0)<<" Mb"<<endl;
+    cout<<"All "<<leaves.size()<<" leaves, estimate size "<<ceil(leaves.size()*(sizeof(FIELD_DATA<dim>) + sizeof(bool) + sizeof(double)*3 + sizeof(int))/1024.0/1024.0)<<" Mb"<<endl;
     cout<<"================== Summary end ==================="<<endl;
 }
 
