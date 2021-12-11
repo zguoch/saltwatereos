@@ -4353,7 +4353,7 @@ namespace H2ONaCl
         }
     }
 
-    void cH2ONaCl::createLUT_2D_TPX(double xy_min[2], double xy_max[2], double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level)
+    void cH2ONaCl::createLUT_2D(double xy_min[2], double xy_max[2], double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level)
     {
         destroyLUT(); //destroy lut pointer and release all data before create a new one.
         clock_t start = clock();
@@ -4402,7 +4402,7 @@ namespace H2ONaCl
         tmp_lut_PTX_2D->print_summary();
     }
 
-    void cH2ONaCl::createLUT_3D_TPX(double xyz_min[3], double xyz_max[3], LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level)
+    void cH2ONaCl::createLUT_3D(double xyz_min[3], double xyz_max[3], LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level)
     {
         destroyLUT(); //destroy LUT pointer and release all related data if it exists.
         clock_t start = clock();
@@ -4487,45 +4487,45 @@ namespace H2ONaCl
             m_dim_lut = 0;
         }
     }
-    void cH2ONaCl::createLUT_2D_TPX(double xmin, double xmax, double ymin, double ymax, double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level)
+    void cH2ONaCl::createLUT_2D(double xmin, double xmax, double ymin, double ymax, double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level)
     {
         double xy_min[2] = {xmin, ymin};
         double xy_max[2] = {xmax, ymax};
-        createLUT_2D_TPX(xy_min, xy_max, constZ, const_which_var, TorH,  min_level, max_level);
+        createLUT_2D(xy_min, xy_max, constZ, const_which_var, TorH,  min_level, max_level);
     }
 
-    void cH2ONaCl::createLUT_3D_TPX(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level)
+    void cH2ONaCl::createLUT_3D(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level)
     {
         double xyz_min[3] = {xmin, ymin, zmin};
         double xyz_max[3] = {xmax, ymax, zmax};
-        createLUT_3D_TPX(xyz_min, xyz_max, TorH,  min_level, max_level);
+        createLUT_3D(xyz_min, xyz_max, TorH,  min_level, max_level);
     }
 
     template<int dim>
     void cH2ONaCl::interp_quad_prop(LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf, H2ONaCl::PROP_H2ONaCl& prop, const double xyz[dim])
     {
         LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> >* tmp_lut = (LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> >*)m_pLUT;
-        double physical_length[dim]; //physical length of the quad
-        double coeff[dim][2];
-        const int num_children = tmp_lut->m_num_children;
-        double* values_at_vertices = new double[num_children];
-        tmp_lut->get_quadrant_physical_length(targetLeaf->level, physical_length);
-        get_coeff_bilinear<dim> (targetLeaf->xyz, physical_length, xyz, coeff);
-        // Rho
-        for (int i = 0; i < tmp_lut->m_num_children; i++){
-            values_at_vertices[i] = targetLeaf->user_data->prop_point[i].Rho;
-        }
-        bilinear_cal<dim>(coeff, values_at_vertices, prop.Rho);
-        // H
-        for (int i = 0; i < tmp_lut->m_num_children; i++){
-            values_at_vertices[i] = targetLeaf->user_data->prop_point[i].H;
-        }
-        bilinear_cal<dim>(coeff, values_at_vertices, prop.H);
+        // double physical_length[dim]; //physical length of the quad
+        // double coeff[dim][2];
+        // const int num_children = tmp_lut->m_num_children;
+        // double* values_at_vertices = new double[num_children];
+        // tmp_lut->get_quadrant_physical_length(targetLeaf->level, physical_length);
+        // get_coeff_bilinear<dim> (targetLeaf->xyz, physical_length, xyz, coeff);
+        // // Rho
+        // for (int i = 0; i < tmp_lut->m_num_children; i++){
+        //     values_at_vertices[i] = targetLeaf->user_data->prop_point[i].Rho;
+        // }
+        // bilinear_cal<dim>(coeff, values_at_vertices, prop.Rho);
+        // // H
+        // for (int i = 0; i < tmp_lut->m_num_children; i++){
+        //     values_at_vertices[i] = targetLeaf->user_data->prop_point[i].H;
+        // }
+        // bilinear_cal<dim>(coeff, values_at_vertices, prop.H);
 
         // phase region
         prop.Region = targetLeaf->user_data->phaseRegion_cell;
 
-        delete[] values_at_vertices;
+        // delete[] values_at_vertices;
     }
 
     LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)

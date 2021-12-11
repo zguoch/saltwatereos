@@ -76,15 +76,15 @@ bool calRefine(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>
     }
     // ========================================================
     // calculate properties: four vertices and one midpoint
-    calProp_H2ONaCl_consX(data->prop_point[0], quad->xyz[0],                      quad->xyz[1]);                         //xmin,ymin
-    calProp_H2ONaCl_consX(data->prop_point[1], quad->xyz[0] + physical_length[0], quad->xyz[1]);                         //xmax,ymin
-    calProp_H2ONaCl_consX(data->prop_point[2], quad->xyz[0],                      quad->xyz[1] + physical_length[1]);    //xmin,ymax
-    calProp_H2ONaCl_consX(data->prop_point[3], quad->xyz[0] + physical_length[0], quad->xyz[1] + physical_length[1]);    //xmax,ymax
-    calProp_H2ONaCl_consX(data->prop_cell, quad->xyz[0] + physical_length[0]/2.0, quad->xyz[1] + physical_length[1]/2.0); //xc,yc
-    data->phaseRegion_point[0] = regionIndex[0]; //phase index
-    data->phaseRegion_point[1] = regionIndex[num_sample_x-1];
-    data->phaseRegion_point[2] = regionIndex[num_sample_x*num_sample_y-num_sample_x];
-    data->phaseRegion_point[3] = regionIndex[num_sample_x*num_sample_y-1];
+    // calProp_H2ONaCl_consX(data->prop_point[0], quad->xyz[0],                      quad->xyz[1]);                         //xmin,ymin
+    // calProp_H2ONaCl_consX(data->prop_point[1], quad->xyz[0] + physical_length[0], quad->xyz[1]);                         //xmax,ymin
+    // calProp_H2ONaCl_consX(data->prop_point[2], quad->xyz[0],                      quad->xyz[1] + physical_length[1]);    //xmin,ymax
+    // calProp_H2ONaCl_consX(data->prop_point[3], quad->xyz[0] + physical_length[0], quad->xyz[1] + physical_length[1]);    //xmax,ymax
+    // calProp_H2ONaCl_consX(data->prop_cell, quad->xyz[0] + physical_length[0]/2.0, quad->xyz[1] + physical_length[1]/2.0); //xc,yc
+    // data->phaseRegion_point[0] = regionIndex[0]; //phase index
+    // data->phaseRegion_point[1] = regionIndex[num_sample_x-1];
+    // data->phaseRegion_point[2] = regionIndex[num_sample_x*num_sample_y-num_sample_x];
+    // data->phaseRegion_point[3] = regionIndex[num_sample_x*num_sample_y-1];
     data->phaseRegion_cell     = phaseRegion_H2ONaCl_constantX(quad->xyz[0] + physical_length[0]/2.0, quad->xyz[1] + physical_length[1]/2.0);
     // set some special indicator if cell need refine
     if(need_refine_phaseBoundary)
@@ -95,30 +95,30 @@ bool calRefine(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>
     {
         data->need_refine = NeedRefine_NoNeed;
     }
-    // ========== 2. refinement check for Rho ===================== \todo maybe use another criterion
-    double mean_Rho = data->prop_cell.Rho;
-    for(int i=0;i<forest->m_num_children;i++)mean_Rho += data->prop_point[i].Rho;
-    mean_Rho = mean_Rho / (forest->m_num_children + 1); // vertices data + one midpoint data
-    double RMSD_Rho = pow(data->prop_cell.Rho - mean_Rho, 2.0);
-    for(int i=0;i<forest->m_num_children;i++)RMSD_Rho += pow(data->prop_point[i].Rho - mean_Rho, 2.0);
-    RMSD_Rho = sqrt(RMSD_Rho/(forest->m_num_children + 1));
-    if(RMSD_Rho > forest->m_RMSD_RefineCriterion.Rho)
-    {
-        need_refine_Rho = true;
-        if(data->need_refine == NeedRefine_NoNeed) data->need_refine = NeedRefine_Rho;
-    }
-    // ========== 3. refinement check for H enthalpy ===================== \todo maybe use another criterion
-    double mean_H = data->prop_cell.H;
-    for(int i=0;i<forest->m_num_children;i++)mean_H += data->prop_point[i].H;
-    mean_H = mean_H / (forest->m_num_children + 1); // vertices data + one midpoint data
-    double RMSD_H = pow(data->prop_cell.H - mean_H, 2.0);
-    for(int i=0;i<forest->m_num_children;i++)RMSD_H += pow(data->prop_point[i].H - mean_H, 2.0);
-    RMSD_H = sqrt(RMSD_H/(forest->m_num_children + 1));
-    if(RMSD_H > forest->m_RMSD_RefineCriterion.H)
-    {
-        need_refine_H = true;
-        if(data->need_refine == NeedRefine_NoNeed) data->need_refine = NeedRefine_H;
-    }
+    // // ========== 2. refinement check for Rho ===================== \todo maybe use another criterion
+    // double mean_Rho = 0; // data->prop_cell.Rho;
+    // for(int i=0;i<forest->m_num_children;i++)mean_Rho += data->prop_point[i].Rho;
+    // mean_Rho = mean_Rho / (forest->m_num_children + 1); // vertices data + one midpoint data
+    // double RMSD_Rho = 0; //pow(data->prop_cell.Rho - mean_Rho, 2.0);
+    // for(int i=0;i<forest->m_num_children;i++)RMSD_Rho += pow(data->prop_point[i].Rho - mean_Rho, 2.0);
+    // RMSD_Rho = sqrt(RMSD_Rho/(forest->m_num_children + 1));
+    // if(RMSD_Rho > forest->m_RMSD_RefineCriterion.Rho)
+    // {
+    //     need_refine_Rho = true;
+    //     if(data->need_refine == NeedRefine_NoNeed) data->need_refine = NeedRefine_Rho;
+    // }
+    // // ========== 3. refinement check for H enthalpy ===================== \todo maybe use another criterion
+    // double mean_H = 0; //data->prop_cell.H;
+    // for(int i=0;i<forest->m_num_children;i++)mean_H += data->prop_point[i].H;
+    // mean_H = mean_H / (forest->m_num_children + 1); // vertices data + one midpoint data
+    // double RMSD_H = 0; //pow(data->prop_cell.H - mean_H, 2.0);
+    // for(int i=0;i<forest->m_num_children;i++)RMSD_H += pow(data->prop_point[i].H - mean_H, 2.0);
+    // RMSD_H = sqrt(RMSD_H/(forest->m_num_children + 1));
+    // if(RMSD_H > forest->m_RMSD_RefineCriterion.H)
+    // {
+    //     need_refine_H = true;
+    //     if(data->need_refine == NeedRefine_NoNeed) data->need_refine = NeedRefine_H;
+    // }
 
     // ============ return refine indicator ===========
     if(quad->level > forest->m_max_level)return false;

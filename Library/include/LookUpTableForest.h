@@ -23,7 +23,7 @@ namespace LOOKUPTABLE_FOREST
         Quadrant            *children[1<<dim]; //2^dim
         USER_DATA           *user_data;
         // DEBUG
-        int index = -1;
+        // int index = -1;
     };
     
     /**
@@ -48,18 +48,16 @@ namespace LOOKUPTABLE_FOREST
         double Rho;
         double H;
     };
-    
+
     // add data struct definition for different system, e.g., H2ONaCl. Actually we can move this data type definition to H2ONaCl.H, because LookUpTableForest class never care about this data type definite, it just accept whatever data type through template argument. But for the TCL API, if move this to other place, it will cause some compiling errors. So keep it here before finding better solution.
     template <int dim>
     struct FIELD_DATA
     {
         // point data field
-        H2ONaCl::PhaseRegion phaseRegion_point[1<<dim];
-        H2ONaCl::PROP_H2ONaCl prop_point[1<<dim]; // properties at vertiex
+        // H2ONaCl::PROP_H2ONaCl prop_point[1<<dim]; // properties at vertiex
         // cell data field
         NeedRefine need_refine; // indicator of what kind of the need-refined quad position (phase boundary), or what kind of properties need to refine
         H2ONaCl::PhaseRegion phaseRegion_cell;
-        H2ONaCl::PROP_H2ONaCl prop_cell; // properties at midpoint as cell value (for vtk output)
     };
     /**
      * @brief Use which variable to express energy

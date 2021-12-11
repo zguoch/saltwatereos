@@ -17,7 +17,7 @@ void createTable_constX_TP()
     int min_level = 4;
     int max_level = 12;
 
-    eos.createLUT_2D_TPX(TP_min, TP_max, X_wt, LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level);
+    eos.createLUT_2D(TP_min, TP_max, X_wt, LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level);
     eos.save_lut_to_vtk("lut_constX_TP.vtu");
     eos.save_lut_to_binary("lut_constX_TP_"+std::to_string(max_level)+".bin");
 
@@ -62,7 +62,7 @@ void createTable_constP_XT()
     double constP = 25E6; //Pa
     int min_level = 4;
     int max_level = 7;
-    eos.createLUT_2D_TPX(Xmin, Xmax, Tmin, Tmax, constP, LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level);
+    eos.createLUT_2D(Xmin, Xmax, Tmin, Tmax, constP, LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level);
     eos.save_lut_to_vtk("lut_constP_XT.vtu");
     eos.save_lut_to_binary("lut_constP_XT_"+std::to_string(max_level)+".bin");
 
@@ -106,7 +106,7 @@ void createTable_constP_XH()
     double constP = 25E6; //Pa
     int min_level = 4;
     int max_level = 7;
-    eos.createLUT_2D_TPX(Xmin, Xmax, Hmin, Hmax, constP, LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH, LOOKUPTABLE_FOREST::EOS_ENERGY_H, min_level, max_level);
+    eos.createLUT_2D(Xmin, Xmax, Hmin, Hmax, constP, LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH, LOOKUPTABLE_FOREST::EOS_ENERGY_H, min_level, max_level);
     eos.save_lut_to_vtk("lut_constP_XH.vtu");
     eos.save_lut_to_binary("lut_constP_XH_"+std::to_string(max_level)+".bin");
 
@@ -148,7 +148,7 @@ void createTable_constT_XP(double constT)
     double Xmin = 1E-5, Xmax = 0.99999, Pmin = 5E5, Pmax = 800E5;
     int min_level = 4;
     int max_level = 7;
-    eos.createLUT_2D_TPX(Xmin, Xmax, Pmin, Pmax, constT, LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level);
+    eos.createLUT_2D(Xmin, Xmax, Pmin, Pmax, constT, LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level);
     eos.save_lut_to_vtk("lut_constT_XP.vtu");
     eos.save_lut_to_binary("lut_constT_XP_"+std::to_string(max_level)+".bin");
 
@@ -188,15 +188,70 @@ void createTable_TPX()
     const int dim =3;
     double Tmin = 1 +273.15, Tmax = 1000+273.15, Xmin = 0.1, Xmax = 0.99999, Pmin = 5E5, Pmax = 2000E5;
     int min_level = 3;
-    int max_level = 6;
+    int max_level = 5;
 
-    eos.createLUT_3D_TPX(Tmin, Tmax, Pmin, Pmax, Xmin, Xmax, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level);
+    eos.createLUT_3D(Tmin, Tmax, Pmin, Pmax, Xmin, Xmax, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level);
     eos.save_lut_to_vtk("lut_TPX.vtu");
     eos.save_lut_to_binary("lut_TPX_"+std::to_string(max_level)+".bin");
     cout<<"\n测试读取并写入vtu: "<<endl;
     H2ONaCl::cH2ONaCl eos2;
     eos2.loadLUT("lut_TPX_"+std::to_string(max_level)+".bin");
     eos2.save_lut_to_vtk("lut_TPX_loadwrite.vtu");
+    // STATUS("Start search ... ");
+    // start = clock();
+    // LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
+    // int n_randSample = 1E4;
+    // for (size_t i = 0; i < n_randSample; i++)
+    // {
+    //     double X_wt = (rand()/(double)RAND_MAX)*(Xmax - Xmin) + Xmin;
+    //     double p_Pa = (rand()/(double)RAND_MAX)*(Pmax - Pmin) + Pmin;
+    //     // int ind_targetLeaf = forest.searchQuadrant(T_C, p_bar, 0);
+    //     // eos.m_lut_PTX_2D->searchQuadrant(targetLeaf, T_K, p_Pa, X_wt);
+    //     targetLeaf = eos.searchLUT_2D_PTX(prop_lookup, X_wt, p_Pa);
+    //     prop_cal = eos.prop_pTX(p_Pa, constT, X_wt);
+    //     H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion_pTX(p_Pa, constT, X_wt);
+    //     // cout<<"T_C: "<<T_K - 273.15<<", p_bar: "<<constP/1E5<<", index: "<<targetLeaf->index<<endl;
+    //     // cout<<eos.getPhaseRegionName(targetLeaf->user_data->phaseRegion_cell)<<endl;
+    //     // compare to directally calculation
+    //     // H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion(T_K - 273.15, p_Pa/1E5, eos.Wt2Mol(X_wt));
+    //     // if(targetLeaf->user_data->phaseRegion_cell != phaseRegion_cal)
+    //     if(prop_lookup.Region != phaseRegion_cal)
+    //     {
+    //         // cout<<"Need refine point "<<ind++<<": ";
+    //         // cout<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<endl;
+    //     }else
+    //     {
+    //         double err = prop_cal.Rho-prop_lookup.Rho;
+    //         if(fabs(err)>0.5)
+    //         cout<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<", err: "<<err<<endl;
+    //     }
+    // }
+    // // // forest.searchQuadrant(targetLeaf, 200, 300, 0);
+    // // // cout<<targetLeaf->level<<endl;
+    // STATUS_time("Searching done", clock() - start);
+
+}
+void createTable_HPX()
+{
+    int ind = 0;
+    std::string dummy;
+
+    clock_t start = clock();
+    H2ONaCl::cH2ONaCl eos;
+    eos.set_num_threads(8);
+    H2ONaCl::PROP_H2ONaCl prop_cal, prop_lookup;
+    const int dim =3;
+    double Hmin = 0.1E6, Hmax = 3.9E6, Xmin = 0.001, Xmax = 1, Pmin = 100E5, Pmax = 2500E5;
+    int min_level = 3;
+    int max_level = 5;
+
+    eos.createLUT_3D(Hmin, Hmax, Pmin, Pmax, Xmin, Xmax, LOOKUPTABLE_FOREST::EOS_ENERGY_H, min_level, max_level);
+    eos.save_lut_to_vtk("lut_HPX.vtu");
+    eos.save_lut_to_binary("lut_HPX_"+std::to_string(max_level)+".bin");
+    // cout<<"\n测试读取并写入vtu: "<<endl;
+    // H2ONaCl::cH2ONaCl eos2;
+    // eos2.loadLUT("lut_HPX_"+std::to_string(max_level)+".bin");
+    // eos2.save_lut_to_vtk("lut_HPX_loadwrite.vtu");
     // STATUS("Start search ... ");
     // start = clock();
     // LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
@@ -341,7 +396,8 @@ int main()
     // createTable_constP_XT();
     // createTable_constP_XH();
     // createTable_constT_XP(500+273.15);
-    createTable_TPX();
+    // createTable_TPX();
+    createTable_HPX();
 
     // 2. 
     // load_binary_3d("lut_TPX_7.bin");

@@ -455,7 +455,7 @@ void LookUpTableForest<dim,USER_DATA>::getLeaves(vector<Quadrant<dim,USER_DATA>*
         }
     }else
     {
-        quad->index = leaves.size();
+        // quad->index = leaves.size();
         leaves.push_back(quad);
     }
 }
@@ -485,18 +485,18 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
     // write point data 
     STATUS("write point data");
     fout<<"      <PointData>"<<endl;
-    // ---------- . phase index
-    fout<<"        <DataArray type=\"Int32\" Name=\"phaseIndex\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->phaseRegion_point[j];}}
-    fout<<"\n        </DataArray>"<<endl;
-    // ---------- . Rho
-    fout<<"        <DataArray type=\"Float32\" Name=\"T\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].T;}}
-    fout<<"\n        </DataArray>"<<endl;
-    // ---------- . Rho
-    fout<<"        <DataArray type=\"Float32\" Name=\"rho\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Rho;}}
-    fout<<"\n        </DataArray>"<<endl;
+    // // ---------- . phase index
+    // fout<<"        <DataArray type=\"Int32\" Name=\"phaseIndex\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Region;}}
+    // fout<<"\n        </DataArray>"<<endl;
+    // // ---------- . Rho
+    // fout<<"        <DataArray type=\"Float32\" Name=\"T\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].T;}}
+    // fout<<"\n        </DataArray>"<<endl;
+    // // ---------- . Rho
+    // fout<<"        <DataArray type=\"Float32\" Name=\"rho\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Rho;}}
+    // fout<<"\n        </DataArray>"<<endl;
     // // ---------- . Rho_l
     // fout<<"        <DataArray type=\"Float32\" Name=\"rho_l\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
     // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Rho_l;}}
@@ -510,9 +510,9 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
     // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Rho_h;}}
     // fout<<"\n        </DataArray>"<<endl;
     // ---------- . H
-    fout<<"        <DataArray type=\"Float32\" Name=\"H\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-    for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].H;}}
-    fout<<"\n        </DataArray>"<<endl;
+    // fout<<"        <DataArray type=\"Float32\" Name=\"H\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].H;}}
+    // fout<<"\n        </DataArray>"<<endl;
     // // ---------- . H_l
     // fout<<"        <DataArray type=\"Float32\" Name=\"H_l\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
     // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].H_l;}}
@@ -563,9 +563,9 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
     for (size_t i = 0; i < leaves.size(); i++){ fout<<" "<<leaves[i]->user_data->need_refine;}
     fout<<"\n        </DataArray>"<<endl;
     // ---------- DEBUG. leaf index
-    fout<<"        <DataArray type=\"Int32\" Name=\"quadIndex\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-    for (size_t i = 0; i < leaves.size(); i++){ fout<<" "<<leaves[i]->index;}
-    fout<<"\n        </DataArray>"<<endl;
+    // fout<<"        <DataArray type=\"Int32\" Name=\"quadIndex\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    // for (size_t i = 0; i < leaves.size(); i++){ fout<<" "<<leaves[i]->index;}
+    // fout<<"\n        </DataArray>"<<endl;
     // ----------
     
     fout<<"      </CellData>"<<endl;
