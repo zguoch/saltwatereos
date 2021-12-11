@@ -18,6 +18,7 @@ namespace LOOKUPTABLE_FOREST
     {
         double              xyz[dim]; //real coordinate of the lower left corner of a quadrant
         int                 level;
+        Quadrant*           parent;
         bool                isHasChildren;
         Quadrant            *children[1<<dim]; //2^dim
         USER_DATA           *user_data;
@@ -102,8 +103,10 @@ namespace LOOKUPTABLE_FOREST
         void write_vtk_cellData(ofstream* fout, string type, string name, string format);
         void searchQuadrant(Quadrant<dim,USER_DATA>* quad_source, Quadrant<dim,USER_DATA> *&quad_target, double x_ref, double y_ref, double z_ref);
         void init(double xyz_min[dim], double xyz_max[dim], int max_level, size_t data_size, void* eosPointer);
-        void write_forest(FILE* fpout, Quadrant<dim,USER_DATA>* quad, bool is_write_data);
-        void read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, bool is_read_data);
+        void write_forest(FILE* fpout, Quadrant<dim,USER_DATA>* quad, int order_child, bool is_write_data);
+        void read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, int order_child, bool is_read_data);
+        double* get_lowerleft_xyz(Quadrant<dim,USER_DATA>* quad);
+        void cal_xyz_quad(double* xyz_lower_left, int order_child, Quadrant<dim,USER_DATA>* quad);
     public:
         void    *m_eosPointer;      //pass pointer of EOS object (e.g., the pointer of a object of cH2ONaCl class) to the forest through construct function, this will give access of EOS stuff in the refine call back function, e.g., calculate phase index and properties
         double  m_constZ;         // only valid when dim==2, i.e., 2D case, the constant value of third dimension, e.g. in T-P space with constant X.

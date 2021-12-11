@@ -126,23 +126,29 @@ void LookUpTableForest<dim,USER_DATA>::init_Root(Quadrant<dim,USER_DATA>& quad)
     quad.xyz[1] = m_xyz_min[1];
     dim == 3 ? quad.xyz[2] = m_xyz_min[2] : 0;
     quad.level  = 0;
+    quad.parent = NULL;
     quad.isHasChildren = false;
     if(m_data_size!=0) quad.user_data = new USER_DATA;  //only allocate memory if it is a leaf, this will be released when a quadrent is refined.
 }
 
 template <int dim, typename USER_DATA> 
-void LookUpTableForest<dim,USER_DATA>::write_forest(FILE* fpout, Quadrant<dim,USER_DATA>* quad, bool isWriteData)
+void LookUpTableForest<dim,USER_DATA>::write_forest(FILE* fpout, Quadrant<dim,USER_DATA>* quad, int order_child, bool isWriteData)
 {
-    fwrite(quad, sizeof(Quadrant<dim,USER_DATA>), 1, fpout); //write all quads
+    // fwrite(quad, sizeof(Quadrant<dim,USER_DATA>), 1, fpout); //write all quads
+    fwrite(&quad->level, sizeof(int), 1, fpout); //write level
+    fwrite(&quad->isHasChildren, sizeof(bool), 1, fpout); //write isHasChildren
     // cout<<"write, level: "<<quad->level<<", index: "<<quad->index<<endl;
     if(quad->isHasChildren)
     {
         for (int i = 0; i < m_num_children; i++)
         {
-            write_forest(fpout, quad->children[i], isWriteData);
+            write_forest(fpout, quad->children[i], i, isWriteData);
         }
     }else
     {
+        // write xyz at the lower left corner
+        if(order_child==0)fwrite(quad->xyz, sizeof(double), dim, fpout); //only write xyz of eldest brother
+        // write data
         fwrite(quad->user_data, sizeof(USER_DATA), 1, fpout);
     }
 }
@@ -167,30 +173,79 @@ void LookUpTableForest<dim,USER_DATA>::write_to_binary(string filename, bool isW
     fwrite(&m_max_level,    sizeof(int), 1, fpout);
     fwrite(&m_RMSD_RefineCriterion, sizeof(RMSD_RefineCriterion), 1, fpout);
     // recursion write forest and data
-    write_forest(fpout, &m_root, isWriteData);
+    write_forest(fpout, &m_root, 0, isWriteData);
     // close file
     fclose(fpout);
     STATUS("Writting lookup table to binary file done.");
 }
 
+/**
+ * @brief Get xyz of a quad according to the xyz of his eldest brother. 
+ * Call this function when reading the bin file.
+ * 
+ * @tparam dim 
+ * @tparam USER_DATA 
+ * @param eldest_brother 
+ * @param order_youngerBrother 
+ * @param xyz 
+ */
 template <int dim, typename USER_DATA> 
-void LookUpTableForest<dim,USER_DATA>::read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, bool is_read_data)
+void LookUpTableForest<dim,USER_DATA>::cal_xyz_quad(double* xyz_lower_left, int order_youngerBrother, Quadrant<dim,USER_DATA>* quad)
 {
-    fread(quad, sizeof(Quadrant<dim,USER_DATA>), 1, fpin); //write all quads
-    // cout<<"read, level: "<<quad->level<<", index: "<<quad->index<<", child: "<<quad->isHasChildren<<endl;
+    int length_child = 1<<(MAX_FOREST_LEVEL - quad->level);
+    // cout<<((order_youngerBrother - order_youngerBrother/4 * 4)/2)<<", "<<order_youngerBrother<<endl;
+    // cout<<xyz[0]<<", "<<xyz[1]<<", "<<xyz[2]<<endl;
+    quad->xyz[0] = xyz_lower_left[0] + (order_youngerBrother%2)*length_child*m_length_scale[0];
+    quad->xyz[1] = xyz_lower_left[1] + ((order_youngerBrother - order_youngerBrother/4 * 4)/2) *length_child*m_length_scale[1];
+    if(dim==3)
+    quad->xyz[2] = xyz_lower_left[2] + (order_youngerBrother/4)*length_child*m_length_scale[2];
+    // cout<<"  "<<xyz[0]<<", "<<xyz[1]<<", "<<xyz[2]<<endl;
+}
 
+template <int dim, typename USER_DATA> 
+double* LookUpTableForest<dim,USER_DATA>::get_lowerleft_xyz(Quadrant<dim,USER_DATA>* quad)
+{
+    if(quad->isHasChildren)
+    {
+        return get_lowerleft_xyz(quad->children[0]);
+    }else
+    {
+        return quad->xyz;
+    }
+}
+
+template <int dim, typename USER_DATA> 
+void LookUpTableForest<dim,USER_DATA>::read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, int order_child, bool is_read_data)
+{
+    // fread(quad, sizeof(Quadrant<dim,USER_DATA>), 1, fpin); //write all quads
+    fread(&quad->level, sizeof(int), 1, fpin); //write level
+    fread(&quad->isHasChildren, sizeof(bool), 1, fpin); //write isHasChildren
+    // cout<<"read, level: "<<quad->level<<", index: "<<quad->index<<", child: "<<quad->isHasChildren<<endl;
+    
     if(quad->isHasChildren)
     {
         for (int i = 0; i < m_num_children; i++)
         {
             quad->children[i] = new Quadrant<dim,USER_DATA>;
-            read_forest(fpin, quad->children[i], is_read_data);
+            quad->children[i]->parent = quad;
+            read_forest(fpin, quad->children[i], i, is_read_data); 
         }
     }else
     {
+        if(order_child==0) //only read xyz of eldest brother
+        {
+            fread(quad->xyz, sizeof(double), dim, fpin); 
+        }else
+        {
+            // get left corner xyz, find it's elderest brother->first child->first child ...
+            // 找大哥要xyz，如果大哥有儿子那就找大哥大儿子要xyz；如果大哥的大儿子还有儿子那就找大哥的大孙子要xyz... 直到最后一代一定能找到左下角的xyz
+            // get_lowerleft_xyz第一个参数就是大哥的内存地址
+            cal_xyz_quad(get_lowerleft_xyz(quad->parent->children[0]), order_child, quad);
+        }
+        // load data
         quad->user_data = new USER_DATA;
         fread(quad->user_data, sizeof(USER_DATA), 1, fpin);
-        return;
+        // return;
     }
 }
 
@@ -220,7 +275,7 @@ void LookUpTableForest<dim,USER_DATA>::read_from_binary(string filename, bool is
     fread(&m_max_level,         sizeof(int),                1,      fpin);
     fread(&m_RMSD_RefineCriterion, sizeof(RMSD_RefineCriterion), 1, fpin);
     // recursion read forest and data
-    read_forest(fpin, &m_root, is_read_data);
+    read_forest(fpin, &m_root, 0, is_read_data); //child order of the root it self is 0
     // close file
     fclose(fpin);
     STATUS("Reading lookup table file done");
@@ -246,24 +301,28 @@ void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, boo
             quad->children[0]->xyz[0] = quad->xyz[0];
             quad->children[0]->xyz[1] = quad->xyz[1];
             quad->children[0]->level  = quad->level+1; //only calculate once
+            quad->children[0]->parent = quad;
             quad->children[0]->isHasChildren = false;
             // 2nd child: lower right
             quad->children[1] = new Quadrant<dim,USER_DATA>;
             quad->children[1]->xyz[0] = quad->xyz[0] + length_child*m_length_scale[0];
             quad->children[1]->xyz[1] = quad->xyz[1];
             quad->children[1]->level  = quad->children[0]->level;
+            quad->children[1]->parent = quad;
             quad->children[1]->isHasChildren = false;
             // 3th child: upper left
             quad->children[2] = new Quadrant<dim,USER_DATA>;
             quad->children[2]->xyz[0] = quad->xyz[0];
             quad->children[2]->xyz[1] = quad->xyz[1] + length_child*m_length_scale[1];
             quad->children[2]->level  = quad->children[0]->level;
+            quad->children[2]->parent = quad;
             quad->children[2]->isHasChildren = false;
             // 4th child: upper right
             quad->children[3] = new Quadrant<dim,USER_DATA>;
             quad->children[3]->xyz[0] = quad->children[1]->xyz[0];
             quad->children[3]->xyz[1] = quad->children[2]->xyz[1];
             quad->children[3]->level  = quad->children[0]->level;
+            quad->children[3]->parent = quad;
             quad->children[3]->isHasChildren = false;
             if(m_data_size!=0) // only check once
             {
@@ -287,6 +346,7 @@ void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, boo
                 quad->children[4]->xyz[1] = quad->xyz[1];
                 quad->children[4]->xyz[2] = quad->xyz[2] + length_child*m_length_scale[2]; // only calculate once
                 quad->children[4]->level  = quad->children[0]->level;
+                quad->children[4]->parent = quad;
                 quad->children[4]->isHasChildren = false;
                 // 6th child: lower right
                 quad->children[5] = new Quadrant<dim,USER_DATA>;
@@ -294,6 +354,7 @@ void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, boo
                 quad->children[5]->xyz[1] = quad->xyz[1];
                 quad->children[5]->xyz[2] = quad->children[4]->xyz[2];
                 quad->children[5]->level  = quad->children[0]->level;
+                quad->children[5]->parent = quad;
                 quad->children[5]->isHasChildren = false;
                 // 7th child: upper left
                 quad->children[6] = new Quadrant<dim,USER_DATA>;
@@ -301,6 +362,7 @@ void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, boo
                 quad->children[6]->xyz[1] = quad->children[2]->xyz[1];
                 quad->children[6]->xyz[2] = quad->children[4]->xyz[2];
                 quad->children[6]->level  = quad->children[0]->level;
+                quad->children[6]->parent = quad;
                 quad->children[6]->isHasChildren = false;
                 // 8th child: upper right
                 quad->children[7] = new Quadrant<dim,USER_DATA>;
@@ -308,6 +370,7 @@ void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, boo
                 quad->children[7]->xyz[1] = quad->children[2]->xyz[1];
                 quad->children[7]->xyz[2] = quad->children[4]->xyz[2];
                 quad->children[7]->level  = quad->children[0]->level;
+                quad->children[7]->parent = quad;
                 quad->children[7]->isHasChildren = false;
                 if(m_data_size!=0) // only check once
                 {

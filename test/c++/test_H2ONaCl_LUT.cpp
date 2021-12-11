@@ -187,12 +187,16 @@ void createTable_TPX()
     H2ONaCl::PROP_H2ONaCl prop_cal, prop_lookup;
     const int dim =3;
     double Tmin = 1 +273.15, Tmax = 1000+273.15, Xmin = 0.1, Xmax = 0.99999, Pmin = 5E5, Pmax = 2000E5;
-    int min_level = 4;
-    int max_level = 7;
+    int min_level = 3;
+    int max_level = 6;
 
     eos.createLUT_3D_TPX(Tmin, Tmax, Pmin, Pmax, Xmin, Xmax, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level);
     eos.save_lut_to_vtk("lut_TPX.vtu");
     eos.save_lut_to_binary("lut_TPX_"+std::to_string(max_level)+".bin");
+    cout<<"\n测试读取并写入vtu: "<<endl;
+    H2ONaCl::cH2ONaCl eos2;
+    eos2.loadLUT("lut_TPX_"+std::to_string(max_level)+".bin");
+    eos2.save_lut_to_vtk("lut_TPX_loadwrite.vtu");
     // STATUS("Start search ... ");
     // start = clock();
     // LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
@@ -333,11 +337,11 @@ void load_binary_2d(string filename)
 int main()
 {
     // 1. 
-    createTable_constX_TP();
+    // createTable_constX_TP();
     // createTable_constP_XT();
     // createTable_constP_XH();
     // createTable_constT_XP(500+273.15);
-    // createTable_TPX();
+    createTable_TPX();
 
     // 2. 
     // load_binary_3d("lut_TPX_7.bin");
