@@ -1,6 +1,7 @@
 #ifndef LOOKUPTABLEFOREST_H
 #define LOOKUPTABLEFOREST_H
 #include <vector>
+#include <map>
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -13,11 +14,21 @@ namespace LOOKUPTABLE_FOREST
 {
     #define MAX_FOREST_LEVEL 29
 
+    struct Quad_index
+    {
+        int i, j, k;
+        bool operator< (const Quad_index &ijk) const
+        {
+            return i < ijk.i || (i==ijk.i && j<ijk.j) || (i==ijk.i && j==ijk.j && k<ijk.k);
+        }
+    };
+    
     template <int dim, typename USER_DATA>
     struct Quadrant
     {
         double              xyz[dim]; //real coordinate of the lower left corner of a quadrant
-        int                 level;
+        Quad_index          ijk; //index of the LowerLeft corner in the reference space [2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL]
+        unsigned char       level;
         Quadrant*           parent;
         bool                isHasChildren;
         Quadrant            **children = NULL; //[1<<dim]; //2^dim: use dynamic array to save memory
@@ -93,6 +104,7 @@ namespace LOOKUPTABLE_FOREST
         double m_xyz_max[dim];
         double m_length_scale[dim]; /**< The reference space is a square or a cube with length=2^{MAX_FOREST_LEVEL}, so the length scale in x,y,z axis is calculated as, e.g. length_scale[0] = (m_xyz_max[0] - m_xyz_min[0])/length, so the length of a quadrant is len_quad = 2^{MAX_FOREST_LEVEL - level}, so its real length in x-axis is len_quad*length_scale[0] */
         Quadrant<dim,USER_DATA> m_root;
+        std::map<Quad_index, double> m_map_ijk2data; //std::map<Quad_index, double> one pair of (i,j,k) to one array of data
         void init_Root(Quadrant<dim,USER_DATA>& quad);
         void release_quadrant_data(Quadrant<dim,USER_DATA>* quad);
         void release_children(Quadrant<dim,USER_DATA>* quad);

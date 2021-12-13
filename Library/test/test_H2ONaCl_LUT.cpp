@@ -404,6 +404,16 @@ void load_binary_2d(string filename)
 int main(int argc, char** argv)
 {
     // cout<<sizeof(LOOKUPTABLE_FOREST::Quadrant<3, LOOKUPTABLE_FOREST::FIELD_DATA<2>>**)<<endl;
+    // std::map<LOOKUPTABLE_FOREST::Quad_index, double> test_map;
+    // test_map[{1,2,3}] = 30;
+    // test_map[{1,2,4}] = 40;
+    // test_map[{2,2,4}] = 50;
+    // test_map[{2,2,4}] = 70;
+    // cout<<test_map[{1,2,3}]<<endl
+    //     <<test_map[{1,2,4}]<<endl
+    //     <<test_map[{2,2,4}]<<endl
+    //     <<endl;
+
     if(argc<2)return 0;
 
     int ind = 0;

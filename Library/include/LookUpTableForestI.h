@@ -132,6 +132,7 @@ void LookUpTableForest<dim,USER_DATA>::init_Root(Quadrant<dim,USER_DATA>& quad)
     quad.xyz[0] = m_xyz_min[0];
     quad.xyz[1] = m_xyz_min[1];
     dim == 3 ? quad.xyz[2] = m_xyz_min[2] : 0;
+    quad.ijk={0,0,0};
     quad.level  = 0;
     quad.parent = NULL;
     quad.isHasChildren = false;
@@ -312,6 +313,7 @@ void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, boo
             quad->children[0] = new Quadrant<dim,USER_DATA>;
             quad->children[0]->xyz[0] = quad->xyz[0];
             quad->children[0]->xyz[1] = quad->xyz[1];
+            quad->children[0]->ijk    = quad->ijk;
             quad->children[0]->level  = quad->level+1; //only calculate once
             quad->children[0]->parent = quad;
             quad->children[0]->isHasChildren = false;
@@ -319,6 +321,8 @@ void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, boo
             quad->children[1] = new Quadrant<dim,USER_DATA>;
             quad->children[1]->xyz[0] = quad->xyz[0] + length_child*m_length_scale[0];
             quad->children[1]->xyz[1] = quad->xyz[1];
+            quad->children[1]->ijk    = quad->ijk;
+            quad->children[1]->ijk.i += length_child;
             quad->children[1]->level  = quad->children[0]->level;
             quad->children[1]->parent = quad;
             quad->children[1]->isHasChildren = false;
@@ -326,6 +330,8 @@ void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, boo
             quad->children[2] = new Quadrant<dim,USER_DATA>;
             quad->children[2]->xyz[0] = quad->xyz[0];
             quad->children[2]->xyz[1] = quad->xyz[1] + length_child*m_length_scale[1];
+            quad->children[2]->ijk    = quad->ijk;
+            quad->children[2]->ijk.j += length_child;
             quad->children[2]->level  = quad->children[0]->level;
             quad->children[2]->parent = quad;
             quad->children[2]->isHasChildren = false;
@@ -333,6 +339,9 @@ void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, boo
             quad->children[3] = new Quadrant<dim,USER_DATA>;
             quad->children[3]->xyz[0] = quad->children[1]->xyz[0];
             quad->children[3]->xyz[1] = quad->children[2]->xyz[1];
+            quad->children[3]->ijk    = quad->ijk;
+            quad->children[3]->ijk.i += length_child;
+            quad->children[3]->ijk.k += length_child;
             quad->children[3]->level  = quad->children[0]->level;
             quad->children[3]->parent = quad;
             quad->children[3]->isHasChildren = false;
@@ -357,6 +366,8 @@ void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, boo
                 quad->children[4]->xyz[0] = quad->xyz[0];
                 quad->children[4]->xyz[1] = quad->xyz[1];
                 quad->children[4]->xyz[2] = quad->xyz[2] + length_child*m_length_scale[2]; // only calculate once
+                quad->children[4]->ijk    = quad->ijk;
+                quad->children[4]->ijk.k += length_child;
                 quad->children[4]->level  = quad->children[0]->level;
                 quad->children[4]->parent = quad;
                 quad->children[4]->isHasChildren = false;
@@ -365,6 +376,9 @@ void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, boo
                 quad->children[5]->xyz[0] = quad->children[1]->xyz[0];
                 quad->children[5]->xyz[1] = quad->xyz[1];
                 quad->children[5]->xyz[2] = quad->children[4]->xyz[2];
+                quad->children[5]->ijk    = quad->ijk;
+                quad->children[5]->ijk.i += length_child;
+                quad->children[5]->ijk.k += length_child;
                 quad->children[5]->level  = quad->children[0]->level;
                 quad->children[5]->parent = quad;
                 quad->children[5]->isHasChildren = false;
@@ -373,6 +387,9 @@ void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, boo
                 quad->children[6]->xyz[0] = quad->xyz[0];
                 quad->children[6]->xyz[1] = quad->children[2]->xyz[1];
                 quad->children[6]->xyz[2] = quad->children[4]->xyz[2];
+                quad->children[6]->ijk    = quad->ijk;
+                quad->children[6]->ijk.j += length_child;
+                quad->children[6]->ijk.k += length_child;
                 quad->children[6]->level  = quad->children[0]->level;
                 quad->children[6]->parent = quad;
                 quad->children[6]->isHasChildren = false;
@@ -381,6 +398,10 @@ void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, boo
                 quad->children[7]->xyz[0] = quad->children[1]->xyz[0];
                 quad->children[7]->xyz[1] = quad->children[2]->xyz[1];
                 quad->children[7]->xyz[2] = quad->children[4]->xyz[2];
+                quad->children[7]->ijk    = quad->ijk;
+                quad->children[7]->ijk.i += length_child;
+                quad->children[7]->ijk.j += length_child;
+                quad->children[7]->ijk.k += length_child;
                 quad->children[7]->level  = quad->children[0]->level;
                 quad->children[7]->parent = quad;
                 quad->children[7]->isHasChildren = false;
@@ -454,6 +475,19 @@ template <int dim, typename USER_DATA>
 void LookUpTableForest<dim,USER_DATA>::refine(bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level))
 {
     refine(&m_root, is_refine);
+    // assemble data for all leaves
+    vector<Quadrant<dim,USER_DATA>* > leaves;
+    long int quad_counts = 0;
+    getLeaves(leaves, quad_counts, &m_root);
+    // 
+    for (size_t i = 0; i < leaves.size(); i++)
+    {
+        m_map_ijk2data[leaves[i]->ijk] = 30;
+    }
+    // check key counts
+    cout<<"leaves: "<<leaves.size()<<endl;
+    cout<<"map size: "<<m_map_ijk2data.size()<<endl;
+    
 }
 
 template <int dim, typename USER_DATA>
