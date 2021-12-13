@@ -93,9 +93,9 @@ aux_source_directory(. SRC_MAIN)
 include_directories(src include)
 # source
 add_subdirectory(src)
-add_subdirectory(swig/H2O)
-add_subdirectory(swig/NaCl)
-add_subdirectory(swig/H2ONaCl) # split omp-related code to another file, and do not compile that file in swig
+# add_subdirectory(swig/H2O)
+# add_subdirectory(swig/NaCl)
+# add_subdirectory(swig/H2ONaCl) # split omp-related code to another file, and do not compile that file in swig
 
 # install path 
 INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/include )
@@ -117,10 +117,16 @@ list(APPEND Apps lutInfo lutLookup lut2vtu)
 foreach(app IN LISTS Apps)
     message(STATUS "Add app ${app}")
     add_executable(${app}  ${SC_FILES} "app/${app}.cpp")
+    target_link_libraries(${app} ${LIBomp})
     install (TARGETS ${app} DESTINATION ${PROJECT_SOURCE_DIR}/bin)
 endforeach()
 install (FILES "${PROJECT_SOURCE_DIR}/app/randSample.py" DESTINATION ${PROJECT_SOURCE_DIR}/bin)
 
+# testing
+enable_testing()
+add_executable(test_lut ${SC_FILES} test/test_H2ONaCl_LUT.cpp)
+target_link_libraries(test_lut ${LIBomp})
+add_test(test_lut0 test_lut 1)
 
 message(STATUS "")
 message(STATUS "SWEOS ${SWEOS_VERSION} has been configured for ${SWEOS_OS}")

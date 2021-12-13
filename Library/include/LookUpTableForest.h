@@ -20,7 +20,7 @@ namespace LOOKUPTABLE_FOREST
         int                 level;
         Quadrant*           parent;
         bool                isHasChildren;
-        Quadrant            *children[1<<dim]; //2^dim
+        Quadrant            **children = NULL; //[1<<dim]; //2^dim: use dynamic array to save memory
         USER_DATA           *user_data = NULL;
         // DEBUG
         // int index = -1;
@@ -96,7 +96,7 @@ namespace LOOKUPTABLE_FOREST
         void init_Root(Quadrant<dim,USER_DATA>& quad);
         void release_quadrant_data(Quadrant<dim,USER_DATA>* quad);
         void release_children(Quadrant<dim,USER_DATA>* quad);
-        void getLeaves(vector<Quadrant<dim,USER_DATA>* >& leaves, Quadrant<dim,USER_DATA>* quad);
+        void getLeaves(vector<Quadrant<dim,USER_DATA>* >& leaves, long int& quad_counts, Quadrant<dim,USER_DATA>* quad);
         void refine(Quadrant<dim,USER_DATA>* quad, bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level));
         void write_vtk_cellData(ofstream* fout, string type, string name, string format);
         void searchQuadrant(Quadrant<dim,USER_DATA>* quad_source, Quadrant<dim,USER_DATA> *&quad_target, double x_ref, double y_ref, double z_ref);
