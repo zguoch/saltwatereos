@@ -63,20 +63,24 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     double *xMat, *yMat, *zMat;
     mwSize  m, n;
     /* allocate output variables */
-    double *Rho_out, *T_out;
-    LOOKUPTABLE_FOREST::NeedRefine *needRefine_out;
+    // double *Rho_out, *T_out;
+    // LOOKUPTABLE_FOREST::NeedRefine *needRefine_out;
+    H2ONaCl::PhaseRegion *PhaseRegion;
 
     string filename = mxArrayToString(prhs[0]);
     mGetMatrix(prhs[1], &xMat, "px", &m, &n);
     mGetMatrix(prhs[2], &yMat, "py", &m, &n);
     mGetMatrix(prhs[3], &zMat, "pz", &m, &n);
 
+    // plhs[0] = mxCreateNumericMatrix(m, n, mxINT32_CLASS, mxREAL);
+    // needRefine_out = (LOOKUPTABLE_FOREST::NeedRefine*)mxGetData(plhs[0]);
+    // plhs[1] = mxCreateDoubleMatrix(m, n, mxREAL);
+    // Rho_out = (double*)mxGetData(plhs[1]);
+    // plhs[2] = mxCreateDoubleMatrix(m, n, mxREAL);
+    // T_out = (double*)mxGetData(plhs[2]);
     plhs[0] = mxCreateNumericMatrix(m, n, mxINT32_CLASS, mxREAL);
-    needRefine_out = (LOOKUPTABLE_FOREST::NeedRefine*)mxGetData(plhs[0]);
-    plhs[1] = mxCreateDoubleMatrix(m, n, mxREAL);
-    Rho_out = (double*)mxGetData(plhs[1]);
-    plhs[2] = mxCreateDoubleMatrix(m, n, mxREAL);
-    T_out = (double*)mxGetData(plhs[2]);
+    PhaseRegion = (H2ONaCl::PhaseRegion*)mxGetData(plhs[0]);
+
     // maybe make a safety check, input matrix dimension consistency
     clock_t start = clock();
     STATUS("Passing data end, start loading data ...");
@@ -95,9 +99,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       {
         index = i*n +j;
         targetLeaf = sw.lookup_only(prop_lookup, xMat[index], yMat[index], zMat[index]); 
-        needRefine_out[index] = targetLeaf->user_data->need_refine;
-        T_out[index] = prop_lookup.T;
-        Rho_out[index] = prop_lookup.Rho;
+        // needRefine_out[index] = targetLeaf->user_data->need_refine;
+        // T_out[index] = prop_lookup.T;
+        // Rho_out[index] = prop_lookup.Rho;
+        PhaseRegion[index] = prop_lookup.Region;
       }
     }
     STATUS_time("Lookup end. ", clock()-start);

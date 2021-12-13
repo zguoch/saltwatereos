@@ -21,7 +21,7 @@ namespace LOOKUPTABLE_FOREST
         Quadrant*           parent;
         bool                isHasChildren;
         Quadrant            *children[1<<dim]; //2^dim
-        USER_DATA           *user_data;
+        USER_DATA           *user_data = NULL;
         // DEBUG
         // int index = -1;
     };

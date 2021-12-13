@@ -108,7 +108,7 @@ target_link_libraries(${LIB_NAME} ${LIBomp})
 install (TARGETS ${LIB_NAME} DESTINATION ${PROJECT_SOURCE_DIR}/lib)
 
 # app
-list(APPEND Apps lutInfo lutLookup)
+list(APPEND Apps lutInfo lutLookup lut2vtu)
 foreach(app IN LISTS Apps)
     message(STATUS "Add app ${app}")
     add_executable(${app}  ${SC_FILES} "app/${app}.cpp")
