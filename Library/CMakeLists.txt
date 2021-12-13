@@ -102,10 +102,15 @@ INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/include )
 link_directories(/usr/local/lib)
 FILE(GLOB SC_FILES "${PROJECT_SOURCE_DIR}/src/PROST/*.c" "${PROJECT_SOURCE_DIR}/src/PROST/*.h" "${PROJECT_SOURCE_DIR}/src/*.H" "${PROJECT_SOURCE_DIR}/src/*.cpp")
 
-add_library (${LIB_NAME}  ${SC_FILES} )
-# add_library(water STATIC src/H2O.cpp)
-target_link_libraries(${LIB_NAME} ${LIBomp})
-install (TARGETS ${LIB_NAME} DESTINATION ${PROJECT_SOURCE_DIR}/lib)
+# default is STATIC library, for Mex compilation on Linux system, the SHARED library is required!!! But static lib works for MAC OS
+# compile both STATIC and SHARED library
+list(APPEND buildTypes STATIC SHARED)
+foreach(buildType IN LISTS buildTypes)
+  add_library ("${LIB_NAME}_${buildType}" ${buildType} ${SC_FILES} )
+  set_target_properties("${LIB_NAME}_${buildType}" PROPERTIES OUTPUT_NAME ${LIB_NAME})
+  target_link_libraries("${LIB_NAME}_${buildType}" ${LIBomp})
+  install (TARGETS "${LIB_NAME}_${buildType}" DESTINATION ${PROJECT_SOURCE_DIR}/lib)
+endforeach()
 
 # app
 list(APPEND Apps lutInfo lutLookup lut2vtu)
