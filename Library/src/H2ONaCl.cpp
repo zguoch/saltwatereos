@@ -64,6 +64,7 @@ namespace H2ONaCl
     }
     void cH2ONaCl:: init_PhaseRegionName()
     {
+        m_phaseRegion_name[MixPhaseRegion]="Multi Phase Boundary";
         m_phaseRegion_name[SinglePhase_L]="Single phase(Liquid)";
         m_phaseRegion_name[TwoPhase_L_V_X0]="Liquid + Vapor at X=0";
         m_phaseRegion_name[SinglePhase_V]="Pure vapour phase";
@@ -4637,11 +4638,13 @@ namespace H2ONaCl
         if(targetLeaf->user_data->need_refine)
         {
             //only lookup, so don't do anything if the lookup point in the needRefine-cell
+            prop.Region = targetLeaf->user_data->phaseRegion_cell;
         }
         else
         {
             double xy[2] = {x, y};
             interp_quad_prop<2>(targetLeaf, prop, xy);
+            prop.Region = targetLeaf->user_data->phaseRegion_cell;
         }
         return targetLeaf;
     }
@@ -4672,11 +4675,13 @@ namespace H2ONaCl
         if(targetLeaf->user_data->need_refine)
         {
             //this is a looup-only version, don't do anything if the lookup point in the needRefine-cell
+            prop.Region = targetLeaf->user_data->phaseRegion_cell;
         }
         else
         {
             double xyz[3] = {x, y, z};
             interp_quad_prop<3>(targetLeaf, prop, xyz);
+            prop.Region = targetLeaf->user_data->phaseRegion_cell;
         }
         return targetLeaf;
     }

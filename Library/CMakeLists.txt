@@ -107,6 +107,15 @@ add_library (${LIB_NAME}  ${SC_FILES} )
 target_link_libraries(${LIB_NAME} ${LIBomp})
 install (TARGETS ${LIB_NAME} DESTINATION ${PROJECT_SOURCE_DIR}/lib)
 
+# app
+list(APPEND Apps lutInfo lutLookup)
+foreach(app IN LISTS Apps)
+    message(STATUS "Add app ${app}")
+    add_executable(${app}  ${SC_FILES} "app/${app}.cpp")
+    install (TARGETS ${app} DESTINATION ${PROJECT_SOURCE_DIR}/bin)
+endforeach()
+
+
 message(STATUS "")
 message(STATUS "SWEOS ${SWEOS_VERSION} has been configured for ${SWEOS_OS}")
 message(STATUS "")

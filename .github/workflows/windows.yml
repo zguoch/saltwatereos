@@ -1,7 +1,7 @@
 name: Windows
 on: 
   push:
-    branches: masterxx
+    branches: master
     tags:
       - 'V*'
 env:
@@ -34,14 +34,14 @@ jobs:
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1
 
-      # install Qt5
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v2.13.0
-        with:
-          version: '5.15.2'
-          host: 'windows'
-          target: 'desktop'
-          dir: '${{ github.workspace }}/QT/'
+      # # install Qt5
+      # - name: Install Qt
+      #   uses: jurplel/install-qt-action@v2.13.0
+      #   with:
+      #     version: '5.15.2'
+      #     host: 'windows'
+      #     target: 'desktop'
+      #     dir: '${{ github.workspace }}/QT/'
 
       # install dependencies, e.g. VTK, swig
       - name: install dependencies
@@ -85,6 +85,12 @@ jobs:
           cd ${{env.HOME}}
           cp -r Library/API/python/pyswEOS pyswEOS_python${{ matrix.python.version }}
           7z a -tzip pyswEOS_python${{ matrix.python.version }}.zip pyswEOS_python${{ matrix.python.version }}
+          # package of library
+          mkdir swEOS_${{env.SHORT_SHA}}
+          cp -rf Library/API swEOS_${{env.SHORT_SHA}}
+          cp -rf Library/include swEOS_${{env.SHORT_SHA}}
+          cp -rf Library/lib swEOS_${{env.SHORT_SHA}}
+          7z a -tzip swEOS_${{env.SHORT_SHA}}.zip swEOS_${{env.SHORT_SHA}}
       # upload python API
       - name: upload pyswEOS
         uses: actions/upload-artifact@v2
@@ -92,58 +98,66 @@ jobs:
           name: pyswEOS_python${{ matrix.python.version }}_${{env.SHORT_SHA}}
           path: |
             pyswEOS_python${{ matrix.python.version }}.zip
-
-      # build swEOS cmd app
-      - name: build cmd app
-        if: ${{ matrix.python.version == env.BASIC_PYTHON }}
-        working-directory: ${{ env.GITHUB_WORKSPACE }}
-        run: |
-          cd ${{env.HOME}}
-          mkdir commandline\build
-          cd commandline\build
-          cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
-          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} SaltWaterEOS.sln
       
-      # build desktop app
-      - name: build desktop app
-        if: ${{ matrix.python.version == env.BASIC_PYTHON }}
-        working-directory: ${{ env.GITHUB_WORKSPACE }}
-        run: |
-          cd ${{env.HOME}}
-          mkdir desktop/build
-          cd desktop/build
-          cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} -DVTK_DIR=${{env.HOME}}/dependencies_swEOS/windows/VTK8.2/lib/cmake/vtk-8.2 -DCMAKE_INSTALL_PREFIX=${{env.HOME}}/install ..
-          # -DCPACK_GENERATOR=ON 
-          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} swEOS.vcxproj
-          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} INSTALL.vcxproj
-          ../../QT/Qt/5.15.2/msvc2019_64/bin/windeployqt.exe ${{env.BUILD_CONFIGURATION}}/swEOS.exe
-          # cp ${{env.HOME}}/dependencies_swEOS/windows/VTK8.2/bin/*.dll Release
-          # mkdir ${{env.HOME}}/install/CommandLineTool
-          # cp ../../commandline/build/Release/swEOS.exe ${{env.HOME}}/install/CommandLineTool
-          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} PACKAGE.vcxproj
-
-      # package
-      - name: package zip format
-        if: ${{ matrix.python.version == env.BASIC_PYTHON }}
-        working-directory: ${{ env.GITHUB_WORKSPACE }}
-        run: |
-          cd ${{env.HOME}}/desktop/build
-          # mkdir swEOS_windows
-          # cp -r Library/lib swEOS_windows/
-          # cp -r Library/API swEOS_windows/
-          # cp -r Library/include swEOS_windows/
-          # cp commandline\build\Release\*.exe swEOS_windows\swEOS_cmd.exe
-          # cp -r desktop\build\Release swEOS_windows\
-          7z a -tzip swEOS-Windows-Installer.zip ${{env.HOME}}/install/*
-
-      - name: upload app
-        if: ${{ matrix.python.version == env.BASIC_PYTHON }}
+      # upload library, include, API, and apps
+      - name: upload pyswEOS
         uses: actions/upload-artifact@v2
         with:
-          name: swEOS_windows_python${{matrix.python.version}}_${{env.SHORT_SHA}}
+          name: swEOS_windows
           path: |
-            ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.exe
-            ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.zip
+            swEOS_${{env.SHORT_SHA}}.zip
+
+      # # build swEOS cmd app
+      # - name: build cmd app
+      #   if: ${{ matrix.python.version == env.BASIC_PYTHON }}
+      #   working-directory: ${{ env.GITHUB_WORKSPACE }}
+      #   run: |
+      #     cd ${{env.HOME}}
+      #     mkdir commandline\build
+      #     cd commandline\build
+      #     cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
+      #     msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} SaltWaterEOS.sln
+      
+      # # build desktop app
+      # - name: build desktop app
+      #   if: ${{ matrix.python.version == env.BASIC_PYTHON }}
+      #   working-directory: ${{ env.GITHUB_WORKSPACE }}
+      #   run: |
+      #     cd ${{env.HOME}}
+      #     mkdir desktop/build
+      #     cd desktop/build
+      #     cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} -DVTK_DIR=${{env.HOME}}/dependencies_swEOS/windows/VTK8.2/lib/cmake/vtk-8.2 -DCMAKE_INSTALL_PREFIX=${{env.HOME}}/install ..
+      #     # -DCPACK_GENERATOR=ON 
+      #     msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} swEOS.vcxproj
+      #     msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} INSTALL.vcxproj
+      #     ../../QT/Qt/5.15.2/msvc2019_64/bin/windeployqt.exe ${{env.BUILD_CONFIGURATION}}/swEOS.exe
+      #     # cp ${{env.HOME}}/dependencies_swEOS/windows/VTK8.2/bin/*.dll Release
+      #     # mkdir ${{env.HOME}}/install/CommandLineTool
+      #     # cp ../../commandline/build/Release/swEOS.exe ${{env.HOME}}/install/CommandLineTool
+      #     msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} PACKAGE.vcxproj
+
+      # # package
+      # - name: package zip format
+      #   if: ${{ matrix.python.version == env.BASIC_PYTHON }}
+      #   working-directory: ${{ env.GITHUB_WORKSPACE }}
+      #   run: |
+      #     cd ${{env.HOME}}/desktop/build
+      #     # mkdir swEOS_windows
+      #     # cp -r Library/lib swEOS_windows/
+      #     # cp -r Library/API swEOS_windows/
+      #     # cp -r Library/include swEOS_windows/
+      #     # cp commandline\build\Release\*.exe swEOS_windows\swEOS_cmd.exe
+      #     # cp -r desktop\build\Release swEOS_windows\
+      #     7z a -tzip swEOS-Windows-Installer.zip ${{env.HOME}}/install/*
+
+      # - name: upload app
+      #   if: ${{ matrix.python.version == env.BASIC_PYTHON }}
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: swEOS_windows_python${{matrix.python.version}}_${{env.SHORT_SHA}}
+      #     path: |
+      #       ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.exe
+      #       ${{env.HOME}}/desktop/build/${{env.AppInstaller}}.zip
     
       # tag 上传Release
       - name: get tag name
