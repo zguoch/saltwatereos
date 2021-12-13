@@ -1,7 +1,7 @@
-% genLUT_3D.m Help file for genLUT_3D MEX file
+% lutGen_3D.m Help file for lutGen_3D MEX file
 %
 % Generate 3D Adaptive Mesh Refined (AMR) LookUpTable (LUT) in TPX or HPX space.
-%   genLUT_3D(xmin, xmax, ymin, ymax, constZ, const_which_var, TorH, outputFile, min_level=4, max_level=6, num_threads=1);
+%   lutGen_3D(xmin, xmax, ymin, ymax, constZ, const_which_var, TorH, outputFile, min_level=4, max_level=6, num_threads=1);
 %   * Space is specified by arg TorH: 0 means TPX space; 1 means HPX space.
 %   * Please not that x, y, z order MUST BE T/H, P, X
 %   * Output file, the result will be written in .bin file for lookup purpose and .vtu file for visualization using Paraview.
