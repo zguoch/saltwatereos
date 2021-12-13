@@ -1,7 +1,7 @@
 name: MacOS
 on: 
   push:
-    branches: mainxx
+    branches: master
     tags:
       - 'V*'
 jobs:
@@ -55,61 +55,76 @@ jobs:
           cmake ..
           make install
           cd ../..
-      - name: build command line app
+      # package library
+      - name: package library
         run: |
-          mkdir -p commandline/build
-          cd commandline/build
-          cmake ..
-          make 
-      - name: build desktop app
-        run: |
-          mkdir -p desktop/build
-          cd desktop/build
-          cmake -DQt5_DIR=${QT_DIR}/lib/cmake/Qt5 -DVTK_DIR=/usr/local/opt/vtk@8.2/lib/cmake/vtk-8.2  -DCMAKE_INSTALL_PREFIX=./install ..
-          make 
-          ${QT_DIR}/bin/macdeployqt swEOS.app
-          make install
-          chmod 755 install/commandline/swEOS
-          # mkdir install/CommandLineTool
-          # cp ../../commandline/build/swEOS install/CommandLineTool
-          echo ${MACOS_CERTIFICATE} | base64 --decode > certificate.p12
-          security create-keychain -p ${TMP_PWD} signApp.keychain 
-          security default-keychain -s signApp.keychain
-          security unlock-keychain -p ${TMP_PWD} signApp.keychain
-          security import certificate.p12 -k signApp.keychain -P ${MACOS_CERTIFICATE_PWD} -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k ${TMP_PWD} signApp.keychain
-          # codesign --deep -fs "Developer ID Application: ${APPLEDEVELOPERID_APP}" --options=runtime --timestamp swEOS.app
-          # codesign -vvv --deep --strict swEOS.app 
-          # hdiutil create -srcfolder swEOS.app swEOS.dmg
-          
-          make package
-          # 第一种方案：如果用户无法打开未被验证的app，只需要在终端运行：sudo spctl --master-disable 即可
-          # 第二种方案：只对其中一个app进行开放：sudo xattr -r -d com.apple.quarantine /XXX/XXX.app/
-      # - name: package
-      #   run: |
-      #     mkdir swEOS_OSX
-      #     cp -rf Library/lib swEOS_OSX/
-      #     cp -rf Library/API swEOS_OSX/
-      #     cp -rf Library/include swEOS_OSX/
-      #     cp commandline/build/swEOS swEOS_OSX/
-      #     cp desktop/build/*.dmg swEOS_OSX/
-      #     zip -r swEOS_OSX.zip swEOS_OSX
+          mkdir swEOS_OSX
+          cp -rf Library/lib swEOS_OSX/
+          cp -rf Library/API swEOS_OSX/
+          cp -rf Library/include swEOS_OSX/
+          cp -rf Library/bin swEOS_OSX/
+          zip -r swEOS_OSX.zip swEOS_OSX
+      # upload library
       - uses: actions/upload-artifact@v2
         with:
           name: swEOS_OSX_${{ env.SHORT_SHA }}
-          path: desktop/build/${{env.AppInstaller}}.dmg
+          path: swEOS_OSX.zip
+
+      # - name: build command line app
+      #   run: |
+      #     mkdir -p commandline/build
+      #     cd commandline/build
+      #     cmake ..
+      #     make 
+      # - name: build desktop app
+      #   run: |
+      #     mkdir -p desktop/build
+      #     cd desktop/build
+      #     cmake -DQt5_DIR=${QT_DIR}/lib/cmake/Qt5 -DVTK_DIR=/usr/local/opt/vtk@8.2/lib/cmake/vtk-8.2  -DCMAKE_INSTALL_PREFIX=./install ..
+      #     make 
+      #     ${QT_DIR}/bin/macdeployqt swEOS.app
+      #     make install
+      #     chmod 755 install/commandline/swEOS
+      #     # mkdir install/CommandLineTool
+      #     # cp ../../commandline/build/swEOS install/CommandLineTool
+      #     echo ${MACOS_CERTIFICATE} | base64 --decode > certificate.p12
+      #     security create-keychain -p ${TMP_PWD} signApp.keychain 
+      #     security default-keychain -s signApp.keychain
+      #     security unlock-keychain -p ${TMP_PWD} signApp.keychain
+      #     security import certificate.p12 -k signApp.keychain -P ${MACOS_CERTIFICATE_PWD} -T /usr/bin/codesign
+      #     security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k ${TMP_PWD} signApp.keychain
+      #     # codesign --deep -fs "Developer ID Application: ${APPLEDEVELOPERID_APP}" --options=runtime --timestamp swEOS.app
+      #     # codesign -vvv --deep --strict swEOS.app 
+      #     # hdiutil create -srcfolder swEOS.app swEOS.dmg
+          
+      #     make package
+      #     # 第一种方案：如果用户无法打开未被验证的app，只需要在终端运行：sudo spctl --master-disable 即可
+      #     # 第二种方案：只对其中一个app进行开放：sudo xattr -r -d com.apple.quarantine /XXX/XXX.app/
+      # # - name: package
+      # #   run: |
+      # #     mkdir swEOS_OSX
+      # #     cp -rf Library/lib swEOS_OSX/
+      # #     cp -rf Library/API swEOS_OSX/
+      # #     cp -rf Library/include swEOS_OSX/
+      # #     cp commandline/build/swEOS swEOS_OSX/
+      # #     cp desktop/build/*.dmg swEOS_OSX/
+      # #     zip -r swEOS_OSX.zip swEOS_OSX
+      # - uses: actions/upload-artifact@v2
+      #   with:
+      #     name: swEOS_OSX_${{ env.SHORT_SHA }}
+      #     path: desktop/build/${{env.AppInstaller}}.dmg
       
-      # Build Python API with different python library versions
-      - name: build python APIs
-        run: |
-          bash buildPythonAPIs.sh ${{ env.Path_Pythons }} dylib "-DBuild_API_tcl=ON"
-          cp -rf Library/API/python API_Python_MacOSX
-          zip -r API_Python_MacOSX.zip API_Python_MacOSX
-      # upload python APIs with all python versions
-      - uses: actions/upload-artifact@v2
-        with:
-          name: API_Python_MacOSX_${{ env.SHORT_SHA }}
-          path: API_Python_MacOSX.zip
+      # # Build Python API with different python library versions
+      # - name: build python APIs
+      #   run: |
+      #     bash buildPythonAPIs.sh ${{ env.Path_Pythons }} dylib "-DBuild_API_tcl=ON"
+      #     cp -rf Library/API/python API_Python_MacOSX
+      #     zip -r API_Python_MacOSX.zip API_Python_MacOSX
+      # # upload python APIs with all python versions
+      # - uses: actions/upload-artifact@v2
+      #   with:
+      #     name: API_Python_MacOSX_${{ env.SHORT_SHA }}
+      #     path: API_Python_MacOSX.zip
 
       # tag 上传Release
       - name: uploadRelease

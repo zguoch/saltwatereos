@@ -5,10 +5,10 @@
 % test_createLUT_3D();
 
 function [phaseRegion] = test_lookupLUT_3D()
-    n_sample = 3E3;
-    H = (rand(n_sample).*(3.9-0.1) + 0.1).*1E6;
-    P = (rand(n_sample).*(2500 - 100) + 100).*1E5;
-    X = rand(n_sample).*(1-0.001) + 0.001;
+    n_sample = 1E6;
+    H = (rand(n_sample,1).*(3.9-0.1) + 0.1).*1E6;
+    P = (rand(n_sample,1).*(2500 - 100) + 100).*1E5;
+    X = rand(n_sample,1).*(1-0.001) + 0.001;
     
     
     [phaseRegion] = lutLookup_3D('lut_HPX_10.bin', H, P, X);

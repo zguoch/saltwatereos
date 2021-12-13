@@ -114,6 +114,7 @@ foreach(app IN LISTS Apps)
     add_executable(${app}  ${SC_FILES} "app/${app}.cpp")
     install (TARGETS ${app} DESTINATION ${PROJECT_SOURCE_DIR}/bin)
 endforeach()
+install (FILES "${PROJECT_SOURCE_DIR}/app/randSample.py" DESTINATION ${PROJECT_SOURCE_DIR}/bin)
 
 
 message(STATUS "")

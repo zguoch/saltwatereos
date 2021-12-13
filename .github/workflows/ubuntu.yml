@@ -1,7 +1,7 @@
 name: Ubuntu
 on: 
   push:
-    branches: mainxx
+    branches: master
     tags:
       - 'V*'
 env:
@@ -18,14 +18,14 @@ jobs:
       # checkout source code
       - uses: actions/checkout@v2
       
-      # install QT5
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v2.13.0
-        with:
-          version: '5.15.2'
-          host: 'linux'
-          target: 'desktop'
-          dir: '${{ github.workspace }}/QT/'
+      # # install QT5
+      # - name: Install Qt
+      #   uses: jurplel/install-qt-action@v2.13.0
+      #   with:
+      #     version: '5.15.2'
+      #     host: 'linux'
+      #     target: 'desktop'
+      #     dir: '${{ github.workspace }}/QT/'
       
       # install some useful packages 
       - name: install dependence
@@ -71,59 +71,74 @@ jobs:
           make install
           cd ../..
       
-      # build cmd app
-      - name: build swEOS cmd app
+      # package library
+      - name: package library
         run: |
-          mkdir -p commandline/build
-          cd commandline/build
-          cmake ..
-          make 
-          chmod 755 swEOS
+          mkdir swEOS_Linux
+          cp -rf Library/lib swEOS_Linux/
+          cp -rf Library/API swEOS_Linux/
+          cp -rf Library/include swEOS_Linux/
+          cp -rf Library/bin swEOS_Linux/
+          zip -r swEOS_Linux.zip swEOS_Linux
+      # upload library
+      - uses: actions/upload-artifact@v2
+        with:
+          name: swEOS_Linux_${{ env.SHORT_SHA }}
+          path: swEOS_Linux.zip
+
+      # # build cmd app
+      # - name: build swEOS cmd app
+      #   run: |
+      #     mkdir -p commandline/build
+      #     cd commandline/build
+      #     cmake ..
+      #     make 
+      #     chmod 755 swEOS
           
-      # build desktop app
-      - name: build desktop app
-        run: |
-          cd ${{env.HOME}}
-          mkdir desktop/build
-          cd desktop/build
-          cmake -DVTK_DIR=${{env.HOME}}/dependencies_swEOS/ubuntu/VTK8.2/lib/cmake/vtk-8.2 -DCMAKE_INSTALL_PREFIX=./install ..
-          make 
-          make install
-          cqtdeployer -bin install/bin/swEOS -qmake ${Qt5_DIR}/bin/qmake -targetDir  install
-          chmod 755 install/swEOS.sh
-          chmod 755 install/bin/swEOS
-          mkdir install/CommandLineTool
-          cp ../../commandline/build/swEOS install/CommandLineTool
-          # make package
-      # package
-      - name: package
-        run: |
-          cd ${{env.HOME}}/desktop/build
-          # mkdir swEOS_ubuntu
-          # cp -rf Library/lib swEOS_ubuntu/
-          # cp -rf Library/API swEOS_ubuntu/
-          # cp -rf Library/include swEOS_ubuntu/
-          # cp commandline/build/swEOS swEOS_ubuntu/swEOS_cmd
-          # cp -rf desktop/build/Release swEOS_ubuntu/
-          zip -r ${{env.AppInstaller}}.zip install
+      # # build desktop app
+      # - name: build desktop app
+      #   run: |
+      #     cd ${{env.HOME}}
+      #     mkdir desktop/build
+      #     cd desktop/build
+      #     cmake -DVTK_DIR=${{env.HOME}}/dependencies_swEOS/ubuntu/VTK8.2/lib/cmake/vtk-8.2 -DCMAKE_INSTALL_PREFIX=./install ..
+      #     make 
+      #     make install
+      #     cqtdeployer -bin install/bin/swEOS -qmake ${Qt5_DIR}/bin/qmake -targetDir  install
+      #     chmod 755 install/swEOS.sh
+      #     chmod 755 install/bin/swEOS
+      #     mkdir install/CommandLineTool
+      #     cp ../../commandline/build/swEOS install/CommandLineTool
+      #     # make package
+      # # package
+      # - name: package
+      #   run: |
+      #     cd ${{env.HOME}}/desktop/build
+      #     # mkdir swEOS_ubuntu
+      #     # cp -rf Library/lib swEOS_ubuntu/
+      #     # cp -rf Library/API swEOS_ubuntu/
+      #     # cp -rf Library/include swEOS_ubuntu/
+      #     # cp commandline/build/swEOS swEOS_ubuntu/swEOS_cmd
+      #     # cp -rf desktop/build/Release swEOS_ubuntu/
+      #     zip -r ${{env.AppInstaller}}.zip install
 
-      # upload artifacts
-      - uses: actions/upload-artifact@v2
-        with:
-          name: swEOS_ubuntu_${{env.SHORT_SHA}}
-          path: desktop/build/${{env.AppInstaller}}.zip
+      # # upload artifacts
+      # - uses: actions/upload-artifact@v2
+      #   with:
+      #     name: swEOS_ubuntu_${{env.SHORT_SHA}}
+      #     path: desktop/build/${{env.AppInstaller}}.zip
 
-      # Build Python API with different python library versions
-      - name: build python APIs
-        run: |
-          bash buildPythonAPIs.sh ${{ env.Path_Pythons }} so "-DBuild_API_tcl=OFF"
-          cp -rf Library/API/python API_Python_Linux
-          zip -r API_Python_Linux.zip API_Python_Linux
-      # upload python APIs with all python versions
-      - uses: actions/upload-artifact@v2
-        with:
-          name: API_Python_Linux_${{ env.SHORT_SHA }}
-          path: API_Python_Linux.zip
+      # # Build Python API with different python library versions
+      # - name: build python APIs
+      #   run: |
+      #     bash buildPythonAPIs.sh ${{ env.Path_Pythons }} so "-DBuild_API_tcl=OFF"
+      #     cp -rf Library/API/python API_Python_Linux
+      #     zip -r API_Python_Linux.zip API_Python_Linux
+      # # upload python APIs with all python versions
+      # - uses: actions/upload-artifact@v2
+      #   with:
+      #     name: API_Python_Linux_${{ env.SHORT_SHA }}
+      #     path: API_Python_Linux.zip
 
       # tag 上传Release
       - name: uploadRelease
