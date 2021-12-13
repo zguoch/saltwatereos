@@ -90,6 +90,7 @@ jobs:
           cp -r Library/API swEOS_${{env.SHORT_SHA}}
           cp -r Library/include swEOS_${{env.SHORT_SHA}}
           cp -r Library/lib swEOS_${{env.SHORT_SHA}}
+          cp -r Library/bin swEOS_${{env.SHORT_SHA}}
           7z a -tzip swEOS_${{env.SHORT_SHA}}.zip swEOS_${{env.SHORT_SHA}}
       # upload python API
       - name: upload pyswEOS
