@@ -87,9 +87,9 @@ jobs:
           7z a -tzip pyswEOS_python${{ matrix.python.version }}.zip pyswEOS_python${{ matrix.python.version }}
           # package of library
           mkdir swEOS_${{env.SHORT_SHA}}
-          cp -rf Library/API swEOS_${{env.SHORT_SHA}}
-          cp -rf Library/include swEOS_${{env.SHORT_SHA}}
-          cp -rf Library/lib swEOS_${{env.SHORT_SHA}}
+          cp -r Library/API swEOS_${{env.SHORT_SHA}}
+          cp -r Library/include swEOS_${{env.SHORT_SHA}}
+          cp -r Library/lib swEOS_${{env.SHORT_SHA}}
           7z a -tzip swEOS_${{env.SHORT_SHA}}.zip swEOS_${{env.SHORT_SHA}}
       # upload python API
       - name: upload pyswEOS
