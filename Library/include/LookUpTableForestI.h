@@ -1,21 +1,25 @@
 
 template <int dim, typename USER_DATA> 
-LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], EOS_ENERGY TorH, int max_level, void* eosPointer)
+LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], EOS_ENERGY TorH, int max_level, std::map<int, std::string> name_props, void* eosPointer)
 :
 m_constZ(xyz_min[dim-1]), //make this compatible with 2D case in the refine function.
 m_const_which_var(CONST_NO_VAR_TorHPX),
-m_TorH(TorH)
+m_TorH(TorH),
+m_num_props(name_props.size()),
+m_map_props(name_props)
 {
     if(dim!=3)ERROR("This construct function only support dim=3, if you want do 2D table, please specify constZ and const_which_var! Note that there is no 1D support!");
     init(xyz_min, xyz_max, max_level, sizeof(USER_DATA), eosPointer);
 }
 
 template <int dim, typename USER_DATA> 
-LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], double constZ, CONST_WHICH_VAR const_which_var, EOS_ENERGY TorH, int max_level, void* eosPointer)
+LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], double constZ, CONST_WHICH_VAR const_which_var, EOS_ENERGY TorH, int max_level, std::map<int, std::string> name_props, void* eosPointer)
 :
 m_constZ(constZ),
 m_const_which_var(const_which_var),
-m_TorH(TorH)
+m_TorH(TorH),
+m_num_props(name_props.size()),
+m_map_props(name_props)
 {
     if(dim!=2)ERROR("This construct function only support dim=2, if you want do 3D table, please get rid of constZ and const_which_var! Note that there is no 1D support!");
     init(xyz_min, xyz_max, max_level, sizeof(USER_DATA), eosPointer);
@@ -26,6 +30,7 @@ LookUpTableForest<dim,USER_DATA>::LookUpTableForest(string filename, void* eosPo
 {
     m_eosPointer = eosPointer;
     m_num_children = 1<<dim;
+    m_num_node_per_quad = m_num_children; //use 4 nodes for 2d and 8 nodes for 3D at this moment
     m_data_size = sizeof(USER_DATA);
     read_from_binary(filename);
     print_summary();
@@ -36,6 +41,7 @@ void LookUpTableForest<dim,USER_DATA>::init(double xyz_min[dim], double xyz_max[
 {
     m_eosPointer = eosPointer;
     m_num_children = 1<<dim;
+    m_num_node_per_quad = m_num_children; //use 4 nodes for 2d and 8 nodes for 3D at this moment
     m_data_size = data_size;
     m_min_level = 0;
     m_max_level = max_level;
@@ -71,6 +77,8 @@ LookUpTableForest<dim,USER_DATA>::~LookUpTableForest()
 template <int dim, typename USER_DATA> 
 void LookUpTableForest<dim,USER_DATA>::destory()
 {
+    // release data first
+    release_map2data();
     // cout<<"destroy forest"<<endl;
     release_quadrant_data(&m_root);
     release_children(&m_root);
@@ -110,6 +118,12 @@ void LookUpTableForest<dim,USER_DATA>::release_children(Quadrant<dim,USER_DATA>*
 template <int dim, typename USER_DATA> 
 void LookUpTableForest<dim,USER_DATA>::release_quadrant_data(Quadrant<dim,USER_DATA>* quad)
 {
+    if(quad->pointData)
+    {
+        delete[] quad->pointData;
+        quad->pointData = NULL;
+    }
+
     if(quad->isHasChildren)
     {
         for (int i = 0; i < m_num_children; i++)
@@ -159,6 +173,7 @@ void LookUpTableForest<dim,USER_DATA>::write_forest(FILE* fpout, Quadrant<dim,US
         if(order_child==0)fwrite(quad->xyz, sizeof(double), dim, fpout); //only write xyz of eldest brother
         // write data
         fwrite(quad->user_data, sizeof(USER_DATA), 1, fpout);
+        // fwrite(quad->pointData, sizeof(double), m_num_children*m_num_props, fpout);
     }
 }
 
@@ -180,6 +195,19 @@ void LookUpTableForest<dim,USER_DATA>::write_to_binary(string filename, bool isW
     fwrite(m_length_scale,  sizeof(double), dim, fpout);
     fwrite(&m_min_level,    sizeof(int), 1, fpout);
     fwrite(&m_max_level,    sizeof(int), 1, fpout);
+    fwrite(&m_num_node_per_quad, sizeof(int), 1, fpout);
+    // write props info
+    int num_props = m_map_props.size();
+    fwrite(&num_props, sizeof(int), 1, fpout);
+    for(auto &m : m_map_props)
+    {
+        fwrite(&m.first, sizeof(int), 1, fpout);
+        int len_name = m.second.length();
+        fwrite(&len_name, sizeof(int), 1, fpout);
+        fwrite(m.second.c_str(), sizeof(char), len_name, fpout);
+        // const char* name = m.second.c_str();
+        // cout<<"length of name: "<<m.second.length()<<" "<<m.second<<" "<<sizeof(m.second.c_str())<<endl;
+    }
     fwrite(&m_RMSD_RefineCriterion, sizeof(RMSD_RefineCriterion), 1, fpout);
     // recursion write forest and data
     write_forest(fpout, &m_root, 0, isWriteData);
@@ -224,6 +252,14 @@ double* LookUpTableForest<dim,USER_DATA>::get_lowerleft_xyz(Quadrant<dim,USER_DA
 }
 
 template <int dim, typename USER_DATA> 
+void LookUpTableForest<dim,USER_DATA>::ijk2xyz(const Quad_index* ijk, double& x, double& y, double& z)
+{
+    x = m_root.xyz[0] + ijk->i*m_length_scale[0];
+    y = m_root.xyz[1] + ijk->j*m_length_scale[1];
+    if(dim==3) z = m_root.xyz[2] + ijk->k*m_length_scale[2];
+}
+
+template <int dim, typename USER_DATA> 
 void LookUpTableForest<dim,USER_DATA>::read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, int order_child, bool is_read_data)
 {
     // fread(quad, sizeof(Quadrant<dim,USER_DATA>), 1, fpin); //write all quads
@@ -255,6 +291,8 @@ void LookUpTableForest<dim,USER_DATA>::read_forest(FILE* fpin, Quadrant<dim,USER
         // load data
         quad->user_data = new USER_DATA;
         fread(quad->user_data, sizeof(USER_DATA), 1, fpin);
+        quad->pointData = new double[m_num_props*m_num_node_per_quad];
+        fread(quad->pointData, sizeof(double), m_num_props*m_num_node_per_quad, fpin);
         // return;
     }
 }
@@ -283,12 +321,61 @@ void LookUpTableForest<dim,USER_DATA>::read_from_binary(string filename, bool is
     fread(m_length_scale,       sizeof(double),             dim,    fpin);
     fread(&m_min_level,         sizeof(int),                1,      fpin);
     fread(&m_max_level,         sizeof(int),                1,      fpin);
+    fread(&m_num_node_per_quad, sizeof(int),                1,      fpin);
+    // read props info
+    fread(&m_num_props, sizeof(int), 1, fpin);
+    for (int i = 0; i < m_num_props; i++)
+    {
+        int ind_prop;
+        fread(&ind_prop, sizeof(int), 1, fpin);
+        int len_name;
+        fread(&len_name, sizeof(int), 1, fpin);
+        char* name_prop = new char[len_name];
+        fread(name_prop, sizeof(char), len_name, fpin);
+        m_map_props[ind_prop] = string(name_prop);
+        // cout<<"len: "<<len_name<<", name: "<<m_map_props[ind_prop]<<endl;
+        delete[] name_prop;
+    }
     fread(&m_RMSD_RefineCriterion, sizeof(RMSD_RefineCriterion), 1, fpin);
     // recursion read forest and data
     read_forest(fpin, &m_root, 0, is_read_data); //child order of the root it self is 0
     // close file
     fclose(fpin);
     STATUS("Reading lookup table file done");
+}
+
+template <int dim, typename USER_DATA>
+void LookUpTableForest<dim,USER_DATA>::get_ijk_nodes_quadrant(Quadrant<dim,USER_DATA>* quad, int num_nodes_per_quad, Quad_index* ijk)
+{
+    int length_quad = 1<<(MAX_FOREST_LEVEL - quad->level);
+    switch (num_nodes_per_quad)
+    {
+    case 1<<dim:
+        {
+            // initialize as lower left corner ijk
+            for (int i = 0; i < 4; i++)
+            {
+                ijk[i] = quad->ijk;
+            }
+            // ijk[0] = quad->ijk; //lower left corner of a quad
+            ijk[1].i += length_quad;
+            ijk[2].j += length_quad;
+            ijk[3].i += length_quad; ijk[3].j += length_quad;
+            if(dim==3)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    ijk[i+4] = ijk[i];
+                    ijk[i+4].k += length_quad;
+                }
+            }
+        }
+        break;
+    default:
+        assert(num_nodes_per_quad!=1<<dim);
+        ERROR("Number of nodes per quad only supports 2^dim so far");
+        break;
+    }
 }
 
 template <int dim, typename USER_DATA>
@@ -341,7 +428,7 @@ void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, boo
             quad->children[3]->xyz[1] = quad->children[2]->xyz[1];
             quad->children[3]->ijk    = quad->ijk;
             quad->children[3]->ijk.i += length_child;
-            quad->children[3]->ijk.k += length_child;
+            quad->children[3]->ijk.j += length_child;
             quad->children[3]->level  = quad->children[0]->level;
             quad->children[3]->parent = quad;
             quad->children[3]->isHasChildren = false;
@@ -475,19 +562,58 @@ template <int dim, typename USER_DATA>
 void LookUpTableForest<dim,USER_DATA>::refine(bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level))
 {
     refine(&m_root, is_refine);
-    // assemble data for all leaves
+}
+
+template <int dim, typename USER_DATA>
+void LookUpTableForest<dim,USER_DATA>::release_map2data()
+{
+    if(m_map_ijk2data.size()>0)
+    {
+        // release data and clear map
+        for(auto &ijk2data : m_map_ijk2data)
+        {
+            delete[] ijk2data.second;
+        }
+        m_map_ijk2data.clear();
+    }
+}
+
+template <int dim, typename USER_DATA>
+void LookUpTableForest<dim,USER_DATA>::assemble_data(void (*cal_prop)(LookUpTableForest<dim,USER_DATA>* forest, std::map<Quad_index, double*>& map_ijk2data))
+{
+    // 0. safety check: if the m_map_ijk2data has been already created, release it to avoid repleated creation and memory leak
+    release_map2data();
+
+    // 1. get all leaves
     vector<Quadrant<dim,USER_DATA>* > leaves;
     long int quad_counts = 0;
     getLeaves(leaves, quad_counts, &m_root);
-    // 
+
+    // 2. allocate memory of data at all nodes of leaves
+    Quad_index *ijk_nodes_quad = new Quad_index[m_num_node_per_quad]; // \todo 如果使用二阶插值，则需要更多节点，需要通过cellType进行判断：比如二维情况九点quad，那么需要限制max_level必须小于MAX_FOREST_LEVEL-2，不过这个好办，在构造函数里面判断一下进行安全检查就行
     for (size_t i = 0; i < leaves.size(); i++)
     {
-        m_map_ijk2data[leaves[i]->ijk] = 30;
+        // get ijk of all nodes of a leaf quad
+        get_ijk_nodes_quadrant(leaves[i], m_num_node_per_quad, ijk_nodes_quad);
+        for (int i_node = 0; i_node < m_num_node_per_quad; i_node++)
+        {
+            if(m_map_ijk2data.count(ijk_nodes_quad[i_node]) == 0)
+            {
+                // cout<<ijk_nodes_quad[i_node].i<<" "<<ijk_nodes_quad[i_node].j<<" "<<ijk_nodes_quad[i_node].k<<endl;
+                m_map_ijk2data[ijk_nodes_quad[i_node]] = new double[m_num_props];
+            }
+        }
     }
+
+    //3. call property calculation function to fill data to array
+    cal_prop(this, m_map_ijk2data);
+
     // check key counts
     cout<<"leaves: "<<leaves.size()<<endl;
     cout<<"map size: "<<m_map_ijk2data.size()<<endl;
-    
+
+    // release pointer
+    delete[] ijk_nodes_quad;
 }
 
 template <int dim, typename USER_DATA>
@@ -510,7 +636,7 @@ void LookUpTableForest<dim,USER_DATA>::getLeaves(vector<Quadrant<dim,USER_DATA>*
 
 // ASCII version
 template <int dim, typename USER_DATA>
-void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_data, bool isNormalizeXYZ)
+void LookUpTableForest<dim,USER_DATA>::write_to_vtk_v1(string filename, bool write_data, bool isNormalizeXYZ)
 {
     clock_t start = clock();
     STATUS("Write to vtu file starting ...");
@@ -713,6 +839,114 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
     fout.close();
     STATUS_time("Write to vtu file done: "+filename, clock()-start);
 }
+
+// ASCII version
+template <int dim, typename USER_DATA>
+void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_data, bool isNormalizeXYZ)
+{
+    clock_t start = clock();
+    STATUS("Write to vtu file starting ...");
+    Quadrant<dim,USER_DATA> *targetLeaf = NULL;
+    vector<Quadrant<dim,USER_DATA>* > leaves;
+    long int quad_counts = 0;
+    getLeaves(leaves, quad_counts, &m_root);
+    int num_points_per_cell = 1<<dim;
+    int num_cells = leaves.size();
+    int num_points = m_map_ijk2data.size();
+    double length_cell[dim]; //physical length
+    double length_ref_cell = 0;
+    Quad_index *ijk_nodes_quad = new Quad_index[m_num_node_per_quad]; // \todo 如果使用二阶插值，则需要更多节点，需要通过cellType进行判断：比如二维情况九点quad，那么需要限制max_level必须小于MAX_FOREST_LEVEL-2，不过这个好办，在构造函数里面判断一下进行安全检查就行
+
+    ofstream fout(filename);
+    int CELL_TYPE = dim==2 ? 8 : 11;
+    // write head
+    STATUS("write header");
+    fout<<"<VTKFile type=\"UnstructuredGrid\" version=\"1.0\" byte_order=\"LittleEndian\" header_type=\"UInt64\">"<<endl;
+    fout<<"  <UnstructuredGrid>"<<endl;
+    fout<<"    <Piece NumberOfPoints=\""<<num_points<<"\" NumberOfCells=\""<<num_cells<<"\">"<<endl;
+    // write point data 
+    STATUS("write point data");
+    fout<<"      <PointData>"<<endl;
+    int ind = 0;
+    for(auto &m : m_map_props)
+    {
+        fout<<"        <DataArray type=\"Float32\" Name=\""<<m.second<<"\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+        fout<<"        ";
+        for(auto &map_ijk2data : m_map_ijk2data)
+        {
+            fout<<" "<<map_ijk2data.second[ind];
+        }
+        fout<<"\n        </DataArray>"<<endl;
+        ind++;
+    }
+    fout<<"      </PointData>"<<endl;
+    // write cell data 
+    STATUS("write cell data");
+    fout<<"      <CellData>"<<endl;
+    // ---------- 1. phase index
+    fout<<"        <DataArray type=\"Int32\" Name=\"phaseIndex\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ fout<<" "<<leaves[i]->user_data->phaseRegion_cell;}
+    fout<<"\n        </DataArray>"<<endl;
+    // ---------- 2. need refine
+    fout<<"        <DataArray type=\"Int32\" Name=\"needRefine\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+    for (size_t i = 0; i < leaves.size(); i++){ fout<<" "<<leaves[i]->user_data->need_refine;}
+    fout<<"\n        </DataArray>"<<endl;
+    fout<<"      </CellData>"<<endl;
+    // write points
+    STATUS("write points (xyz)");
+    fout<<"      <Points>"<<endl;
+    fout<<"        <DataArray type=\"Float32\" Name=\"Position\" NumberOfComponents=\"3\" format=\"ascii\" RangeMin=\"0.008838834896540746\" RangeMax=\"1.4053746938907843\">"<<endl;
+    double scale=0; //scale = 0.001, keep some space between each quadrant
+    double physical_length[dim]; //={m_xyz_max[0] - m_xyz_min[0], m_xyz_max[1] - m_xyz_min[1], m_xyz_max[2] - m_xyz_min[2]};
+    for (int i = 0; i < dim; i++){ physical_length[i] = m_xyz_max[i] - m_xyz_min[i];}
+    for(auto &ijk2data : m_map_ijk2data)
+    {
+        fout<<"         "<<ijk2data.first.i<<" "<<ijk2data.first.j<<" "<<ijk2data.first.k<<endl;
+    }
+    fout<<"        </DataArray>"<<endl;
+    fout<<"      </Points>"<<endl;
+    // write cells
+    STATUS("write cells");
+    fout<<"      <Cells>"<<endl;
+    fout<<"        <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\" RangeMin=\"0\" RangeMax=\""<<num_cells-1<<"\">"<<endl;
+    // fout<<"        ";
+    int point_id_cell = 0;
+    for (int i = 0; i < num_cells; i++)
+    {
+        // get ijk of all nodes of a leaf quad
+        get_ijk_nodes_quadrant(leaves[i], m_num_node_per_quad, ijk_nodes_quad);
+        fout<<"         ";
+        for (int i_node = 0; i_node < m_num_node_per_quad; i_node++)
+        {
+            fout<<distance(m_map_ijk2data.begin(),m_map_ijk2data.find(ijk_nodes_quad[i_node]))<<" ";
+        }
+        fout<<endl;
+    }
+    
+    fout<<endl;
+    fout<<"        </DataArray>"<<endl;
+    fout<<"        <DataArray type=\"Int32\" Name=\"offsets\" format=\"ascii\" RangeMin=\"4\" RangeMax=\"64\">"<<endl;
+    fout<<"        ";
+    for (int i = 0; i < num_cells; i++)fout<<" "<<(i+1)*num_points_per_cell;
+    fout<<endl;
+    fout<<"        </DataArray>"<<endl;
+    fout<<"        <DataArray type=\"UInt8\" Name=\"types\" format=\"ascii\" RangeMin=\"8\" RangeMax=\"8\">"<<endl;
+    fout<<"        ";
+    for (int i = 0; i < num_cells; i++)fout<<" "<<CELL_TYPE; //dim dependent
+    fout<<endl;
+    fout<<"        </DataArray>"<<endl;
+    fout<<"      </Cells>"<<endl;
+
+    // write footer
+    fout<<"    </Piece>"<<endl;
+    fout<<"  </UnstructuredGrid>"<<endl;
+    fout<<"</VTKFile>"<<endl;
+    fout.close();
+
+    delete[] ijk_nodes_quad;
+    STATUS_time("Write to vtu file done: "+filename, clock()-start);
+}
+
 
 template <int dim, typename USER_DATA>
 void LookUpTableForest<dim,USER_DATA>::print_summary()

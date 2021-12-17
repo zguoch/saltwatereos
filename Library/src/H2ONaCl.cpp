@@ -20,6 +20,11 @@ namespace H2ONaCl
         // set_num_threads(omp_get_max_threads() > 8 ? 8 : 1);
         init_PhaseRegionName();
         createTable4_Driesner2007a(m_tab4_Driesner2007a);
+
+        // initialize supported properties index
+        m_supported_props[Update_prop_rho]          = "Density [kg/m3]";
+        m_supported_props[Update_prop_h]            = "Specific enthalpy [J/kg]";
+        m_supported_props[Update_prop_drhodh]       = "drho/dh [kg2/(m3 J)]";
     }
     cH2ONaCl::~cH2ONaCl()
     {
@@ -4354,14 +4359,39 @@ namespace H2ONaCl
         }
     }
 
-    void cH2ONaCl::createLUT_2D(double xy_min[2], double xy_max[2], double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level)
+    void cH2ONaCl::parse_update_which_props(int update_which_props)
     {
+        if(m_update_which_props.size()>0)m_update_which_props.clear(); //safety check 
+
+        // bitmask
+        for(auto &ind2name_prop : m_supported_props)
+        {
+            if( (update_which_props & ind2name_prop.first) == ind2name_prop.first)
+            {
+                m_update_which_props[ind2name_prop.first] = ind2name_prop.second;
+            }
+        }
+        // print info
+        STATUS("Update properties: "+to_string(m_update_which_props.size()));
+        int ind = 0;
+        for (auto &m : m_update_which_props)
+        {
+            ind++;
+            STATUS(to_string(ind) + " : " + m.second);
+        }
+    }
+
+    void cH2ONaCl::createLUT_2D(double xy_min[2], double xy_max[2], double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level,int update_which_props)
+    {
+        // parsing which properties need to be calculated
+        parse_update_which_props(update_which_props);
+
         destroyLUT(); //destroy lut pointer and release all data before create a new one.
         clock_t start = clock();
         STATUS("Creating 2D lookup table ...");
         // const int dim =2;
         m_dim_lut = 2;
-        LookUpTableForest_2D* tmp_lut_PTX_2D = new LookUpTableForest_2D (xy_min, xy_max, constZ, const_which_var, TorH, max_level, this);
+        LookUpTableForest_2D* tmp_lut_PTX_2D = new LookUpTableForest_2D (xy_min, xy_max, constZ, const_which_var, TorH, max_level, m_update_which_props, this);
         m_pLUT = tmp_lut_PTX_2D;
         // refine
         tmp_lut_PTX_2D->set_min_level(min_level);
@@ -4379,6 +4409,7 @@ namespace H2ONaCl
                 {
                     printf("Do refinement using %d threads.\n", m_num_threads);
                     tmp_lut_PTX_2D->refine(RefineFunc_PTX);
+                    tmp_lut_PTX_2D->assemble_data(cal_prop_PTX);
                 }
             }
         }else if(tmp_lut_PTX_2D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
@@ -4403,13 +4434,13 @@ namespace H2ONaCl
         tmp_lut_PTX_2D->print_summary();
     }
 
-    void cH2ONaCl::createLUT_3D(double xyz_min[3], double xyz_max[3], LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level)
+    void cH2ONaCl::createLUT_3D(double xyz_min[3], double xyz_max[3], LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level,int update_which_props)
     {
         destroyLUT(); //destroy LUT pointer and release all related data if it exists.
         clock_t start = clock();
         STATUS("Creating 3D lookup table ...");
         m_dim_lut = 3;
-        LookUpTableForest_3D* tmp_lut_PTX_3D = new LookUpTableForest_3D (xyz_min, xyz_max, TorH, max_level, this);
+        LookUpTableForest_3D* tmp_lut_PTX_3D = new LookUpTableForest_3D (xyz_min, xyz_max, TorH, max_level, m_update_which_props, this);
         m_pLUT = tmp_lut_PTX_3D;
         // refine
         tmp_lut_PTX_3D->set_min_level(min_level);
@@ -4488,18 +4519,18 @@ namespace H2ONaCl
             m_dim_lut = 0;
         }
     }
-    void cH2ONaCl::createLUT_2D(double xmin, double xmax, double ymin, double ymax, double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level)
+    void cH2ONaCl::createLUT_2D(double xmin, double xmax, double ymin, double ymax, double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level,int update_which_props)
     {
         double xy_min[2] = {xmin, ymin};
         double xy_max[2] = {xmax, ymax};
-        createLUT_2D(xy_min, xy_max, constZ, const_which_var, TorH,  min_level, max_level);
+        createLUT_2D(xy_min, xy_max, constZ, const_which_var, TorH,  min_level, max_level, update_which_props);
     }
 
-    void cH2ONaCl::createLUT_3D(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level)
+    void cH2ONaCl::createLUT_3D(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level,int update_which_props)
     {
         double xyz_min[3] = {xmin, ymin, zmin};
         double xyz_max[3] = {xmax, ymax, zmax};
-        createLUT_3D(xyz_min, xyz_max, TorH,  min_level, max_level);
+        createLUT_3D(xyz_min, xyz_max, TorH,  min_level, max_level, update_which_props);
     }
 
     template<int dim>

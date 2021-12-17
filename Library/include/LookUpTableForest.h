@@ -33,6 +33,7 @@ namespace LOOKUPTABLE_FOREST
         bool                isHasChildren;
         Quadrant            **children = NULL; //[1<<dim]; //2^dim: use dynamic array to save memory
         USER_DATA           *user_data = NULL;
+        double              *pointData = NULL; //store all point data of a leaf quad, calculate it after refining process.
         // DEBUG
         // int index = -1;
     };
@@ -103,19 +104,22 @@ namespace LOOKUPTABLE_FOREST
         double m_xyz_min[dim];
         double m_xyz_max[dim];
         double m_length_scale[dim]; /**< The reference space is a square or a cube with length=2^{MAX_FOREST_LEVEL}, so the length scale in x,y,z axis is calculated as, e.g. length_scale[0] = (m_xyz_max[0] - m_xyz_min[0])/length, so the length of a quadrant is len_quad = 2^{MAX_FOREST_LEVEL - level}, so its real length in x-axis is len_quad*length_scale[0] */
+        std::map<int, std::string> m_map_props;
         Quadrant<dim,USER_DATA> m_root;
-        std::map<Quad_index, double> m_map_ijk2data; //std::map<Quad_index, double> one pair of (i,j,k) to one array of data
+        std::map<Quad_index, double*> m_map_ijk2data; //std::map<Quad_index, double> one pair of (i,j,k) to one array of data
         void init_Root(Quadrant<dim,USER_DATA>& quad);
         void release_quadrant_data(Quadrant<dim,USER_DATA>* quad);
         void release_children(Quadrant<dim,USER_DATA>* quad);
         void getLeaves(vector<Quadrant<dim,USER_DATA>* >& leaves, long int& quad_counts, Quadrant<dim,USER_DATA>* quad);
         void refine(Quadrant<dim,USER_DATA>* quad, bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level));
+        void release_map2data();
         void write_vtk_cellData(ofstream* fout, string type, string name, string format);
         void searchQuadrant(Quadrant<dim,USER_DATA>* quad_source, Quadrant<dim,USER_DATA> *&quad_target, double x_ref, double y_ref, double z_ref);
         void init(double xyz_min[dim], double xyz_max[dim], int max_level, size_t data_size, void* eosPointer);
         void write_forest(FILE* fpout, Quadrant<dim,USER_DATA>* quad, int order_child, bool is_write_data);
         void read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, int order_child, bool is_read_data);
         double* get_lowerleft_xyz(Quadrant<dim,USER_DATA>* quad);
+        void get_ijk_nodes_quadrant(Quadrant<dim,USER_DATA>* quad, int num_nodes_per_quad, Quad_index* ijk);
         void cal_xyz_quad(double* xyz_lower_left, int order_child, Quadrant<dim,USER_DATA>* quad);
     public:
         void    *m_eosPointer;      //pass pointer of EOS object (e.g., the pointer of a object of cH2ONaCl class) to the forest through construct function, this will give access of EOS stuff in the refine call back function, e.g., calculate phase index and properties
@@ -123,6 +127,8 @@ namespace LOOKUPTABLE_FOREST
         int     m_min_level;
         int     m_max_level;
         int     m_num_children;
+        int     m_num_node_per_quad; //how many nodes will be stored in a quad: only for data storage
+        int     m_num_props; //How many properties will be stored in the node
         // int     m_index_TorH, m_index_P, m_index_X; //specify the index of variable T/H, P, X in the xyz array.
         CONST_WHICH_VAR m_const_which_var; 
         EOS_ENERGY m_TorH; 
@@ -134,6 +140,9 @@ namespace LOOKUPTABLE_FOREST
         void searchQuadrant(Quadrant<dim,USER_DATA> *&targetLeaf, double x, double y, double z);
         void get_quadrant_physical_length(int level, double physical_length[dim]);
         void refine(bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level));
+        void assemble_data(void (*cal_prop)(LookUpTableForest<dim,USER_DATA>* forest, std::map<Quad_index, double*>& map_ijk2data));
+        void ijk2xyz(const Quad_index* ijk, double& x, double& y, double& z);
+        void write_to_vtk_v1(string filename, bool write_data=true, bool isNormalizeXYZ=true);
         void write_to_vtk(string filename, bool write_data=true, bool isNormalizeXYZ=true);
         void write_to_binary(string filename, bool is_write_data=true);
         void read_from_binary(string filename, bool is_read_data=true);
@@ -148,7 +157,7 @@ namespace LOOKUPTABLE_FOREST
          * @param max_level 
          * @param eosPointer 
          */
-        LookUpTableForest(double xyz_min[dim], double xyz_max[dim], EOS_ENERGY TorH, int max_level, void* eosPointer=NULL); //3D case
+        LookUpTableForest(double xyz_min[dim], double xyz_max[dim], EOS_ENERGY TorH, int max_level, std::map<int, std::string> name_props, void* eosPointer=NULL); //3D case
         /**
          * @brief Construct a new Look Up Table Forest object. This is always used to create a 2D table
          * xyz would be corresponding to TPX or PHX. Note that the unit of T is K, unit of P is Pa, unit of X is wt% NaCl (e.g., seawater is 0.032), unit of H is J/kg. 
@@ -161,7 +170,7 @@ namespace LOOKUPTABLE_FOREST
          * @param max_level 
          * @param eosPointer 
          */
-        LookUpTableForest(double xy_min[dim], double xy_max[dim], double constZ, CONST_WHICH_VAR const_which_var, EOS_ENERGY TorH, int max_level, void* eosPointer=NULL); //2D case
+        LookUpTableForest(double xy_min[dim], double xy_max[dim], double constZ, CONST_WHICH_VAR const_which_var, EOS_ENERGY TorH, int max_level, std::map<int, std::string> name_props, void* eosPointer=NULL); //2D case
         LookUpTableForest(string filename, void* pointer=NULL); //load from exist binary file
         void destory();
         ~LookUpTableForest();

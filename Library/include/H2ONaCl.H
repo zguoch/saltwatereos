@@ -51,6 +51,10 @@ namespace H2ONaCl
     // ===========================================================================
     double const P_max_LVH  = 390.14744433796; /**< Maximum pressure of L+V+H region, [bar] */
     double const T_Pmax_LVH = 594.63244000000; /**< Temperature at that P_max_LVH */
+    // ============= bitmask of properties =======================================
+    #define Update_prop_rho     2   // 2^1 = 2
+    #define Update_prop_h       4   // 2^2 = 4
+    #define Update_prop_drhodh  8   // 2^3 = 8
     // ===========================================================================
     typedef LOOKUPTABLE_FOREST::LookUpTableForest<2, LOOKUPTABLE_FOREST::FIELD_DATA<2> > LookUpTableForest_2D;
     typedef LOOKUPTABLE_FOREST::LookUpTableForest<3, LOOKUPTABLE_FOREST::FIELD_DATA<3> > LookUpTableForest_3D;
@@ -446,7 +450,10 @@ namespace H2ONaCl
         int get_num_threads();
     #endif
         int m_dim_lut;
+        std::map<int, std::string> m_supported_props;
+        std::map<int, std::string> m_update_which_props;
         void *m_pLUT;
+        void parse_update_which_props(int update_which_props);
         /**
          * @brief Create a LUT 2D object in PTX space. Create different 2D LUT according to type and  xy limits, then access through member variable m_lut_PTX_2D
          * 
@@ -455,10 +462,10 @@ namespace H2ONaCl
          * @param xy_max 
          * @param z 
          */
-        void createLUT_2D(double xy_min[2], double xy_max[2], double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6);
-        void createLUT_2D(double xmin, double xmax, double ymin, double ymax, double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6);
-        void createLUT_3D(double xyz_min[3], double xyz_max[3], LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6);
-        void createLUT_3D(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6);
+        void createLUT_2D(double xy_min[2], double xy_max[2], double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6, int update_which_props=0);
+        void createLUT_2D(double xmin, double xmax, double ymin, double ymax, double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6, int update_which_props=0);
+        void createLUT_3D(double xyz_min[3], double xyz_max[3], LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6, int update_which_props=0);
+        void createLUT_3D(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6, int update_which_props=0);
         LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y);
         LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > *lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y, double z);
         H2ONaCl::PROP_H2ONaCl lookup(double x, double y); //for python API

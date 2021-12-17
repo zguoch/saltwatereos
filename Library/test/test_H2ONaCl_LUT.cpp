@@ -19,7 +19,7 @@ void createTable_constX_TP(int max_level)
     int min_level = 4;
     // int max_level = 7;
 
-    eos.createLUT_2D(TP_min, TP_max, X_wt, LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level);
+    eos.createLUT_2D(TP_min, TP_max, X_wt, LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level, Update_prop_rho | Update_prop_drhodh | Update_prop_h);
     eos.save_lut_to_vtk("lut_constX_TP.vtu");
     eos.save_lut_to_binary("lut_constX_TP_"+std::to_string(max_level)+".bin");
 
