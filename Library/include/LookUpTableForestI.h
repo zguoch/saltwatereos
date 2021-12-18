@@ -101,14 +101,14 @@ void LookUpTableForest<dim,USER_DATA>::release_children(Quadrant<dim,USER_DATA>*
                 quad->children[i] = NULL;
                 quad->isHasChildren = false;
             }
-            release_all = (release_all || quad->children[i]);
+            // release_all = (release_all || quad->children[i]);
         }
-        if(!release_all)
-        {
-            // cout<<"level: "<<quad->level<<endl;
-            delete[] quad->children;
-            quad->children = NULL;
-        }
+        // if(!release_all)
+        // {
+        //     // cout<<"level: "<<quad->level<<endl;
+        //     delete[] quad->children;
+        //     quad->children = NULL;
+        // }
     }else
     {
         return;
@@ -118,11 +118,11 @@ void LookUpTableForest<dim,USER_DATA>::release_children(Quadrant<dim,USER_DATA>*
 template <int dim, typename USER_DATA> 
 void LookUpTableForest<dim,USER_DATA>::release_quadrant_data(Quadrant<dim,USER_DATA>* quad)
 {
-    if(quad->pointData)
-    {
-        delete[] quad->pointData;
-        quad->pointData = NULL;
-    }
+    // if(quad->pointData)
+    // {
+    //     delete[] quad->pointData;
+    //     quad->pointData = NULL;
+    // }
 
     if(quad->isHasChildren)
     {
@@ -150,7 +150,7 @@ void LookUpTableForest<dim,USER_DATA>::init_Root(Quadrant<dim,USER_DATA>& quad)
     quad.level  = 0;
     quad.parent = NULL;
     quad.isHasChildren = false;
-    quad.children = NULL;
+    // quad.children = NULL;
     if(m_data_size!=0) quad.user_data = new USER_DATA;  //only allocate memory if it is a leaf, this will be released when a quadrent is refined.
 }
 
@@ -269,7 +269,7 @@ void LookUpTableForest<dim,USER_DATA>::read_forest(FILE* fpin, Quadrant<dim,USER
     
     if(quad->isHasChildren)
     {
-        quad->children = new Quadrant<dim,USER_DATA>*[1<dim];
+        // quad->children = new Quadrant<dim,USER_DATA>*[1<dim];
         for (int i = 0; i < m_num_children; i++)
         {
             quad->children[i] = new Quadrant<dim,USER_DATA>;
@@ -291,8 +291,8 @@ void LookUpTableForest<dim,USER_DATA>::read_forest(FILE* fpin, Quadrant<dim,USER
         // load data
         quad->user_data = new USER_DATA;
         fread(quad->user_data, sizeof(USER_DATA), 1, fpin);
-        quad->pointData = new double[m_num_props*m_num_node_per_quad];
-        fread(quad->pointData, sizeof(double), m_num_props*m_num_node_per_quad, fpin);
+        // quad->pointData = new double[m_num_props*m_num_node_per_quad];
+        // fread(quad->pointData, sizeof(double), m_num_props*m_num_node_per_quad, fpin);
         // return;
     }
 }
@@ -333,7 +333,7 @@ void LookUpTableForest<dim,USER_DATA>::read_from_binary(string filename, bool is
         char* name_prop = new char[len_name];
         fread(name_prop, sizeof(char), len_name, fpin);
         m_map_props[ind_prop] = string(name_prop);
-        // cout<<"len: "<<len_name<<", name: "<<m_map_props[ind_prop]<<endl;
+        cout<<"len: "<<len_name<<", name: "<<m_map_props[ind_prop]<<endl;
         delete[] name_prop;
     }
     fread(&m_RMSD_RefineCriterion, sizeof(RMSD_RefineCriterion), 1, fpin);
@@ -394,7 +394,7 @@ void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, boo
             int length_child = 1<<(MAX_FOREST_LEVEL - quad->level -1); //Note that must -1, because this is the child length
             // z index = 0
 
-            quad->children = new Quadrant<dim,USER_DATA>*[1<<dim];
+            // quad->children = new Quadrant<dim,USER_DATA>*[1<<dim];
 
             // 1st child: lower left
             quad->children[0] = new Quadrant<dim,USER_DATA>;

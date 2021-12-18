@@ -31,9 +31,9 @@ namespace LOOKUPTABLE_FOREST
         unsigned char       level;
         Quadrant*           parent;
         bool                isHasChildren;
-        Quadrant            **children = NULL; //[1<<dim]; //2^dim: use dynamic array to save memory
+        Quadrant            *children[1<<dim];// = NULL; //[1<<dim]; //2^dim: use dynamic array to save memory. Use dynamic array will cause bugs in read_forest, fix it later.
         USER_DATA           *user_data = NULL;
-        double              *pointData = NULL; //store all point data of a leaf quad, calculate it after refining process.
+        // double              *pointData = NULL; //store all point data of a leaf quad, calculate it after refining process.
         // DEBUG
         // int index = -1;
     };
