@@ -28,7 +28,7 @@ namespace LOOKUPTABLE_FOREST
     {
         double              xyz[dim]; //real coordinate of the lower left corner of a quadrant
         Quad_index          ijk; //index of the LowerLeft corner in the reference space [2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL]
-        unsigned char       level;
+        int       level;
         Quadrant*           parent;
         bool                isHasChildren;
         Quadrant            *children[1<<dim];// = NULL; //[1<<dim]; //2^dim: use dynamic array to save memory. Use dynamic array will cause bugs in read_forest, fix it later.
@@ -103,12 +103,8 @@ namespace LOOKUPTABLE_FOREST
         long int m_num_quads;
         int m_num_leaves;
         size_t  m_data_size;
-        double m_xyz_min[dim];
-        double m_xyz_max[dim];
         double m_length_scale[dim]; /**< The reference space is a square or a cube with length=2^{MAX_FOREST_LEVEL}, so the length scale in x,y,z axis is calculated as, e.g. length_scale[0] = (m_xyz_max[0] - m_xyz_min[0])/length, so the length of a quadrant is len_quad = 2^{MAX_FOREST_LEVEL - level}, so its real length in x-axis is len_quad*length_scale[0] */
-        std::map<int, propInfo> m_map_props;
         Quadrant<dim,USER_DATA> m_root;
-        std::map<Quad_index, double*> m_map_ijk2data; //std::map<Quad_index, double> one pair of (i,j,k) to one array of data
         void init_Root(Quadrant<dim,USER_DATA>& quad);
         void release_quadrant_data(Quadrant<dim,USER_DATA>* quad);
         void release_children(Quadrant<dim,USER_DATA>* quad);
@@ -122,7 +118,6 @@ namespace LOOKUPTABLE_FOREST
         void read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, int order_child);
         double* get_lowerleft_xyz(Quadrant<dim,USER_DATA>* quad);
         Quad_index get_lowerleft_ijk(Quadrant<dim,USER_DATA>* quad);
-        void get_ijk_nodes_quadrant(Quadrant<dim,USER_DATA>* quad, int num_nodes_per_quad, Quad_index* ijk);
         void cal_xyz_quad(double* xyz_lower_left, int order_child, Quadrant<dim,USER_DATA>* quad);
         void cal_ijk_quad(Quad_index ijk_lower_left, int order_child, Quadrant<dim,USER_DATA>* quad);
         void construct_map2dat();
@@ -133,9 +128,13 @@ namespace LOOKUPTABLE_FOREST
         double  m_constZ;         // only valid when dim==2, i.e., 2D case, the constant value of third dimension, e.g. in T-P space with constant X.
         int     m_min_level;
         int     m_max_level;
+        double m_xyz_min[dim];
+        double m_xyz_max[dim];
         int     m_num_children;
         int     m_num_node_per_quad; //how many nodes will be stored in a quad: only for data storage
         int     m_num_props; //How many properties will be stored in the node
+        std::map<int, propInfo> m_map_props;
+        std::map<Quad_index, double*> m_map_ijk2data; //std::map<Quad_index, double> one pair of (i,j,k) to one array of data
         // int     m_index_TorH, m_index_P, m_index_X; //specify the index of variable T/H, P, X in the xyz array.
         CONST_WHICH_VAR m_const_which_var; 
         EOS_ENERGY m_TorH; 
@@ -143,10 +142,11 @@ namespace LOOKUPTABLE_FOREST
         RMSD_RefineCriterion m_RMSD_RefineCriterion;
         inline void set_min_level(int min_level){m_min_level = min_level;};
         Quadrant<dim,USER_DATA>* get_root(){return &m_root;};
-        int searchQuadrant(double x, double y, double z);
+        // int searchQuadrant(double x, double y, double z);
         void searchQuadrant(Quadrant<dim,USER_DATA> *&targetLeaf, double x, double y, double z);
         void get_quadrant_physical_length(int level, double physical_length[dim]);
         void refine(bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level));
+        void get_ijk_nodes_quadrant(Quadrant<dim,USER_DATA>* quad, int num_nodes_per_quad, Quad_index* ijk);
         void assemble_data(void (*cal_prop)(LookUpTableForest<dim,USER_DATA>* forest, std::map<Quad_index, double*>& map_ijk2data));
         void ijk2xyz(const Quad_index* ijk, double& x, double& y, double& z);
         void write_to_vtk_v1(string filename, bool write_data=true, bool isNormalizeXYZ=true);

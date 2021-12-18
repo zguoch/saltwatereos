@@ -981,6 +981,13 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
     int num_points_per_cell = 1<<dim;
     int num_cells = leaves.size();
     int num_points = m_map_ijk2data.size();
+    std::map<Quad_index, int> index_map_ijk2data;
+    int ind =0;
+    for(auto & m : m_map_ijk2data)
+    {
+        index_map_ijk2data[m.first] = ind;
+        ind++;
+    }
     double length_cell[dim]; //physical length
     double length_ref_cell = 0;
     Quad_index *ijk_nodes_quad = new Quad_index[m_num_node_per_quad]; // \todo 如果使用二阶插值，则需要更多节点，需要通过cellType进行判断：比如二维情况九点quad，那么需要限制max_level必须小于MAX_FOREST_LEVEL-2，不过这个好办，在构造函数里面判断一下进行安全检查就行
@@ -995,7 +1002,7 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
     // write point data 
     STATUS("write point data");
     fout<<"      <PointData>"<<endl;
-    int ind = 0;
+    ind = 0;
     for(auto &m : m_map_props)
     {
         fout<<"        <DataArray type=\"Float32\" Name=\""<<m.second.longName<<"\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
@@ -1046,7 +1053,7 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
         fout<<"         ";
         for (int i_node = 0; i_node < m_num_node_per_quad; i_node++)
         {
-            fout<<distance(m_map_ijk2data.begin(),m_map_ijk2data.find(ijk_nodes_quad[i_node]))<<" ";
+            fout<<index_map_ijk2data[ijk_nodes_quad[i_node]]<<" "; //low performance: distance(m_map_ijk2data.begin(),m_map_ijk2data.find(ijk_nodes_quad[i_node]))
         }
         fout<<endl;
     }
@@ -1183,13 +1190,13 @@ void LookUpTableForest<dim,USER_DATA>::searchQuadrant(Quadrant<dim,USER_DATA> *&
     searchQuadrant(&m_root, targetLeaf, x_ref, y_ref, z_ref);
 }
 
-template <int dim, typename USER_DATA>
-int LookUpTableForest<dim,USER_DATA>::searchQuadrant(double x, double y, double z)
-{
-    double x_ref = (x - m_xyz_min[0])/m_length_scale[0];
-    double y_ref = (y - m_xyz_min[1])/m_length_scale[1];
-    double z_ref = dim == 3 ? (z - m_xyz_min[2])/m_length_scale[2] : 0;
-    Quadrant<dim,USER_DATA>* targetLeaf;
-    searchQuadrant(&m_root, targetLeaf, x_ref, y_ref, z_ref);
-    return targetLeaf->index;
-}
+// template <int dim, typename USER_DATA>
+// int LookUpTableForest<dim,USER_DATA>::searchQuadrant(double x, double y, double z)
+// {
+//     double x_ref = (x - m_xyz_min[0])/m_length_scale[0];
+//     double y_ref = (y - m_xyz_min[1])/m_length_scale[1];
+//     double z_ref = dim == 3 ? (z - m_xyz_min[2])/m_length_scale[2] : 0;
+//     Quadrant<dim,USER_DATA>* targetLeaf;
+//     searchQuadrant(&m_root, targetLeaf, x_ref, y_ref, z_ref);
+//     return targetLeaf->index;
+// }

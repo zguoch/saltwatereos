@@ -4579,6 +4579,123 @@ namespace H2ONaCl
         // delete[] values_at_vertices;
     }
 
+    template<int dim>
+    void cH2ONaCl::interp_quad_prop(LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf, double* props, const double xyz[dim])
+    {
+        LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> >* tmp_lut = (LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> >*)m_pLUT;
+        double physical_length[dim]; //physical length of the quad
+        double coeff[dim][2];
+        const int num_children = tmp_lut->m_num_children;
+        double* values_at_vertices = new double[tmp_lut->m_num_node_per_quad];
+        double** pNodeData = new double*[tmp_lut->m_num_node_per_quad];
+        LOOKUPTABLE_FOREST::Quad_index *ijk_nodes_quad = new LOOKUPTABLE_FOREST::Quad_index[tmp_lut->m_num_node_per_quad]; // \todo 如果使用二阶插值，则需要更多节点，需要通过cellType进行判断：比如二维情况九点quad，那么需要限制max_level必须小于MAX_FOREST_LEVEL-2，不过这个好办，在构造函数里面判断一下进行安全检查就行
+        tmp_lut->get_ijk_nodes_quadrant(targetLeaf, tmp_lut->m_num_node_per_quad, ijk_nodes_quad);
+
+        tmp_lut->get_quadrant_physical_length((int)targetLeaf->level, physical_length);
+        get_coeff_bilinear<dim> (targetLeaf->xyz, physical_length, xyz, coeff);
+        // for (int i = 0; i < dim; i++)
+        // {
+        //     cout<<"    "<<coeff[i][0]<<" "<<coeff[i][1]<<endl;
+        // }
+        
+        // interpolate props
+        int ind_prop =0;
+        for (int i = 0; i < tmp_lut->m_num_node_per_quad; i++){
+            pNodeData[i] = tmp_lut->m_map_ijk2data[ijk_nodes_quad[i]]; //\todo need to be optimized, this map index takes more time
+        }
+        for(auto &map_props : tmp_lut->m_map_props)
+        {
+            // if(ind_prop==0)cout<<" prop: "<<map_props.second.longName<<endl;
+            for (int i = 0; i < tmp_lut->m_num_node_per_quad; i++){
+                values_at_vertices[i] = pNodeData[i][ind_prop]; //\todo need to be optimized, this map index takes more time
+                // if(ind_prop==0)cout<<"    node "<<i<<" : "<<values_at_vertices[i]<<endl;
+            }
+            bilinear_cal<dim>(coeff, values_at_vertices, props[ind_prop]);
+            ind_prop++;
+        }
+        delete[] values_at_vertices;
+        delete[] ijk_nodes_quad;
+        delete[] pNodeData;
+    }
+
+    LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(double* props, double x, double y, bool is_cal)
+    {
+        LookUpTableForest_2D* tmp_lut = (LookUpTableForest_2D*)m_pLUT; // make temporary copy of the pointer
+        // safety check: bound check
+        if(x<tmp_lut->m_xyz_min[0] || x>tmp_lut->m_xyz_max[0] || y<tmp_lut->m_xyz_min[1] || y>tmp_lut->m_xyz_max[1])
+        {
+            ERROR("The lookup point: ("+to_string(x)+", "+to_string(y)+") out of lookup table xy range.");
+        }
+        // -------------------------------
+        // cout<<"constZ: "<<tmp_lut->m_constZ<<", y: "<<y<<", x: "<<x<<endl;
+        LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *targetLeaf = NULL;
+        tmp_lut->searchQuadrant(targetLeaf, x, y, tmp_lut->m_constZ);
+        // cout<<"  level: "<<targetLeaf->level<<", x: "<<x<<", y: "<<y<<", quad x: "<<targetLeaf->xyz[0]<<", quad y: "<<targetLeaf->xyz[1]<<endl;
+        PROP_H2ONaCl tmp_prop;
+        if(targetLeaf->user_data->need_refine)
+        {
+            if(is_cal) // if set is_cal true means cal properties using acurate equation, otherwise interpolate anyway
+            {
+                if(tmp_lut->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_T)
+                {
+                    switch (tmp_lut->m_const_which_var)
+                    {
+                    case LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP:
+                        tmp_prop = prop_pTX(y, x, tmp_lut->m_constZ);
+                        fill_prop2data(&tmp_prop, tmp_lut->m_map_props, props);
+                        // cout<<"cal: "<<x<<", "<<y<<", "<<tmp_lut->m_constZ<<": "<<tmp_prop.Rho<<", "<<props[0]<<endl;
+                        break;
+                    case LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH:
+                        tmp_prop = prop_pTX(tmp_lut->m_constZ, y, x);
+                        fill_prop2data(&tmp_prop, tmp_lut->m_map_props, props);
+                        break;
+                    case LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP:
+                        tmp_prop = prop_pTX(y, tmp_lut->m_constZ, x);
+                        fill_prop2data(&tmp_prop, tmp_lut->m_map_props, props);
+                        break;
+                    default:
+                        ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)");
+                        break;
+                    }
+                }else if(tmp_lut->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
+                {
+                    switch (tmp_lut->m_const_which_var)
+                    {
+                    case LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP:
+                        tmp_prop = prop_pHX(y, x, tmp_lut->m_constZ);
+                        fill_prop2data(&tmp_prop, tmp_lut->m_map_props, props);
+                        break;
+                    case LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH:
+                        tmp_prop = prop_pHX(tmp_lut->m_constZ, y, x);
+                        fill_prop2data(&tmp_prop, tmp_lut->m_map_props, props);
+                        break;
+                    case LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP:
+                        tmp_prop = prop_pHX(y, tmp_lut->m_constZ, x);
+                        fill_prop2data(&tmp_prop, tmp_lut->m_map_props, props);
+                        break;
+                    default:
+                        ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)");
+                        break;
+                    }
+                }else
+                {
+                    ERROR("The EOS space only support TPX and HPX!");
+                }
+            }else
+            {
+                double xy[2] = {x, y};
+                interp_quad_prop<2>(targetLeaf, props, xy);
+            } 
+        }
+        else
+        {
+            double xy[2] = {x, y};
+            interp_quad_prop<2>(targetLeaf, props, xy);
+            // cout<<"lookup: "<<x<<", "<<y<<", rho: "<<props[0]<<endl;
+        }
+        return targetLeaf;
+    }
+
     LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)
     {
         LookUpTableForest_2D* tmp_lut = (LookUpTableForest_2D*)m_pLUT; // make temporary copy of the pointer

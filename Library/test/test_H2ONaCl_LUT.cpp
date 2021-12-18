@@ -355,52 +355,80 @@ void load_binary_2d(string filename)
     H2ONaCl::cH2ONaCl eos;
     H2ONaCl::PROP_H2ONaCl prop_cal, prop_lookup;
     clock_t start = clock();
-
+    const int dim = 2;
     eos.loadLUT(filename);
-    // ((H2ONaCl::LookUpTableForest_2D*)eos.m_pLUT)->print_summary();
-    eos.save_lut_to_vtk("lut_load_save.vtu");
+    H2ONaCl::LookUpTableForest_2D* pLUT = (H2ONaCl::LookUpTableForest_2D*)eos.m_pLUT;
+    // eos.save_lut_to_vtk("lut_load_save.vtu");
+    if(pLUT->m_const_which_var != LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP)ERROR("load_binary_2d only support const_X_Var_TorHP LUT");
 
-    // double Tmin = 1 +273.15, Tmax = 1000+273.15, Xmin = 0.1, Xmax = 0.99999, Pmin = 5E5, Pmax = 2000E5;
+    double Tmin = pLUT->m_xyz_min[0], Tmax = pLUT->m_xyz_max[0], Pmin = pLUT->m_xyz_min[1], Pmax = pLUT->m_xyz_max[1];
+    double x_const = pLUT->m_constZ;
 
-    // STATUS("Start search ... ");
-    // start = clock();
-    // LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > *targetLeaf = NULL;
-    // int n_randSample = 1E6;
-    // for (size_t i = 0; i < n_randSample; i++)
-    // {
-    //     double T_K = (rand()/(double)RAND_MAX)*(Tmax - Tmin) + Tmin;
-    //     double p_Pa = (rand()/(double)RAND_MAX)*(Pmax - Pmin) + Pmin;
-    //     double X_wt = (rand()/(double)RAND_MAX)*(Xmax - Xmin) + Xmin;
-    //     targetLeaf = eos.lookup(prop_lookup,T_K, p_Pa, X_wt); 
-    //     // prop_cal = eos.prop_pTX(p_Pa, T_K, X_wt);
-    //     // H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion_pTX(p_Pa, T_K, X_wt);
-    //     // if(targetLeaf->user_data->prop_cell.Region != phaseRegion_cal)
-    //     if(targetLeaf->user_data->need_refine)
-    //     {
-    //         ind++;
-    //         // cout<<"Need refine point "<<ind++<<", level: "<<targetLeaf->level<<endl;
-    //         // cout<<", rho: "<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<endl;
-    //     }
-    //     else
-    //     {
-    //         // double err = prop_cal.Rho-prop_lookup.Rho;
-    //         // if(fabs(err)>0.5)
-    //         // {
-    //         //     cout<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<", err: "<<err<<endl;
-    //         //     // cout<<"  "<<targetLeaf->user_data->prop_point[0].Rho
-    //         //     //     <<"  "<<targetLeaf->user_data->prop_point[1].Rho
-    //         //     //     <<"  "<<targetLeaf->user_data->prop_point[2].Rho
-    //         //     //     <<"  "<<targetLeaf->user_data->prop_point[3].Rho
-    //         //     //     <<"  "<<targetLeaf->user_data->prop_cell.Rho
-    //         //     //     <<", level: "<<targetLeaf->level<<", refine: "<<targetLeaf->user_data->need_refine
-    //         //     //     <<endl;
-    //         // }
-    //     }
-    // }
+    STATUS("Start search ... ");
+    start = clock();
+    LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
+    int n_randSample = 100;
+    double* props = new double[pLUT->m_map_props.size()];
+    for (size_t i = 0; i < n_randSample; i++)
+    {
+        double T_K = (rand()/(double)RAND_MAX)*(Tmax - Tmin) + Tmin;
+        double p_Pa = (rand()/(double)RAND_MAX)*(Pmax - Pmin) + Pmin;
+        // double X_wt = (rand()/(double)RAND_MAX)*(Xmax - Xmin) + Xmin;
+        // targetLeaf = eos.lookup(prop_lookup,T_K, p_Pa); 
+        targetLeaf = eos.lookup(props, T_K, p_Pa, true);
+        prop_cal = eos.prop_pTX(p_Pa, T_K, x_const);
+        // H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion_pTX(p_Pa, T_K, X_wt);
+        // if(targetLeaf->user_data->prop_cell.Region != phaseRegion_cal)
+        if(targetLeaf->user_data->need_refine)
+        {
+            ind++;
+            cout<<"Need refine point "<<ind++<<", level: "<<(int)targetLeaf->level<<endl;
+            // cout<<", rho: "<<props[distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_rho))]<<endl;
+            cout<<"  Rho: "<<props[0] //distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_rho))
+                <<" "
+                <<prop_cal.Rho
+                <<endl;
+        }
+        else
+        {
+            cout<<"Rho: "<<props[distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_rho))]
+                <<" "
+                <<prop_cal.Rho
+                <<endl;
+            // double err = prop_cal.Rho-prop_lookup.Rho;
+            // if(fabs(err)>0.5)
+            // {
+            //     cout<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<", err: "<<err<<endl;
+            //     // cout<<"  "<<targetLeaf->user_data->prop_point[0].Rho
+            //     //     <<"  "<<targetLeaf->user_data->prop_point[1].Rho
+            //     //     <<"  "<<targetLeaf->user_data->prop_point[2].Rho
+            //     //     <<"  "<<targetLeaf->user_data->prop_point[3].Rho
+            //     //     <<"  "<<targetLeaf->user_data->prop_cell.Rho
+            //     //     <<", level: "<<targetLeaf->level<<", refine: "<<targetLeaf->user_data->need_refine
+            //     //     <<endl;
+            // }
+        }
+    }
     // printf("All %d (%.2f %%) random points close to phase boundary.\n", ind, ind/(double)n_randSample*100);
+
+    delete[] props;
+
     STATUS_time("Searching done", clock() - start);
 }
+void help(char** argv)
+{
+    cout<<"Help information ... "<<endl;
+    cout<<argv[0]<<" 1 [max_level]: createTable_constX_TP"<<endl;
+    cout<<argv[0]<<" 2 [max_level]: createTable_constP_XT"<<endl;
+    cout<<argv[0]<<" 3 [max_level]: createTable_constP_XH"<<endl;
+    cout<<argv[0]<<" 4 [max_level]: createTable_constT_XP"<<endl;
+    cout<<argv[0]<<" 5 [max_level]: createTable_TPX"<<endl;
+    cout<<argv[0]<<" 6 [max_level]: createTable_HPX"<<endl;
+    cout<<argv[0]<<" 7 [my.bin]: load_binary_2d consX_TP"<<endl;
+    cout<<argv[0]<<" 8 [my.bin]: load_binary_3d"<<endl;
 
+    exit(0);
+}
 int main(int argc, char** argv)
 {
     // cout<<sizeof(LOOKUPTABLE_FOREST::Quadrant<3, LOOKUPTABLE_FOREST::FIELD_DATA<2>>**)<<endl;
@@ -413,6 +441,7 @@ int main(int argc, char** argv)
     //     <<test_map[{1,2,4}]<<endl
     //     <<test_map[{2,2,4}]<<endl
     //     <<endl;
+    if(argc==1)help(argv);
 
     if(argc<2)return 0;
 
@@ -455,7 +484,8 @@ int main(int argc, char** argv)
         }
         break;
     case 7:
-        cout<<"load_binary_2d(\"lut_constP_XH_7.bin\");"<<endl;
+        cout<<"Test loading 2D LUT: "<<argv[2]<<endl;
+        load_binary_2d(argv[2]);
         break;
     case 8:
         cout<<"load_binary_3d(\"lut_TPX_7.bin\");"<<endl;

@@ -65,11 +65,11 @@ namespace H2ONaCl
      */
     #define CHECK_REFINE_PROP_RMSD(PROP) \
     { \
-        double mean_Rho = data->prop_cell.PROP; \
-        for(int i=0;i<forest->m_num_children;i++)mean_Rho += data->prop_point[i].PROP; \
+        double mean_Rho = props_refine_check[0].PROP; \
+        for(int i=0;i<forest->m_num_children;i++)mean_Rho += props_refine_check[i+1].PROP; \
         mean_Rho = mean_Rho / (forest->m_num_children + 1);  \
-        double RMSD_Rho = pow(data->prop_cell.PROP - mean_Rho, 2.0); \
-        for(int i=0;i<forest->m_num_children;i++)RMSD_Rho += pow(data->prop_point[i].PROP - mean_Rho, 2.0); \
+        double RMSD_Rho = pow(props_refine_check[0].PROP - mean_Rho, 2.0); \
+        for(int i=0;i<forest->m_num_children;i++)RMSD_Rho += pow(props_refine_check[i+1].PROP - mean_Rho, 2.0); \
         RMSD_Rho = sqrt(RMSD_Rho/(forest->m_num_children + 1)); \
         if(RMSD_Rho > forest->m_RMSD_RefineCriterion.PROP) \
         { \
@@ -443,6 +443,10 @@ namespace H2ONaCl
     private:
         template<int dim>
         void interp_quad_prop(LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf, H2ONaCl::PROP_H2ONaCl& prop, const double xyz[dim]);
+        
+        template<int dim>
+        void interp_quad_prop(LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf, double* props, const double xyz[dim]);
+        
         void init_supported_props();
     public:
         int m_num_threads;
@@ -468,6 +472,7 @@ namespace H2ONaCl
         void createLUT_3D(double xyz_min[3], double xyz_max[3], LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6, int update_which_props=0);
         void createLUT_3D(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6, int update_which_props=0);
         LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y);
+        LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *lookup(double* props, double x, double y, bool is_cal=true);
         LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > *lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y, double z);
         H2ONaCl::PROP_H2ONaCl lookup(double x, double y); //for python API
         H2ONaCl::PROP_H2ONaCl lookup(double x, double y, double z); //for python API
