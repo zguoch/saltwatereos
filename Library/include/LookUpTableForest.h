@@ -100,11 +100,13 @@ namespace LOOKUPTABLE_FOREST
     class LookUpTableForest
     {
     private:
+        long int m_num_quads;
+        int m_num_leaves;
         size_t  m_data_size;
         double m_xyz_min[dim];
         double m_xyz_max[dim];
         double m_length_scale[dim]; /**< The reference space is a square or a cube with length=2^{MAX_FOREST_LEVEL}, so the length scale in x,y,z axis is calculated as, e.g. length_scale[0] = (m_xyz_max[0] - m_xyz_min[0])/length, so the length of a quadrant is len_quad = 2^{MAX_FOREST_LEVEL - level}, so its real length in x-axis is len_quad*length_scale[0] */
-        std::map<int, std::string> m_map_props;
+        std::map<int, propInfo> m_map_props;
         Quadrant<dim,USER_DATA> m_root;
         std::map<Quad_index, double*> m_map_ijk2data; //std::map<Quad_index, double> one pair of (i,j,k) to one array of data
         void init_Root(Quadrant<dim,USER_DATA>& quad);
@@ -117,13 +119,15 @@ namespace LOOKUPTABLE_FOREST
         void searchQuadrant(Quadrant<dim,USER_DATA>* quad_source, Quadrant<dim,USER_DATA> *&quad_target, double x_ref, double y_ref, double z_ref);
         void init(double xyz_min[dim], double xyz_max[dim], int max_level, size_t data_size, void* eosPointer);
         void write_forest(FILE* fpout, Quadrant<dim,USER_DATA>* quad, int order_child, bool is_write_data);
-        void read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, int order_child, bool is_read_data);
+        void read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, int order_child);
         double* get_lowerleft_xyz(Quadrant<dim,USER_DATA>* quad);
         Quad_index get_lowerleft_ijk(Quadrant<dim,USER_DATA>* quad);
         void get_ijk_nodes_quadrant(Quadrant<dim,USER_DATA>* quad, int num_nodes_per_quad, Quad_index* ijk);
         void cal_xyz_quad(double* xyz_lower_left, int order_child, Quadrant<dim,USER_DATA>* quad);
         void cal_ijk_quad(Quad_index ijk_lower_left, int order_child, Quadrant<dim,USER_DATA>* quad);
         void construct_map2dat();
+        void read_props_from_binary(string filename_forest);
+        void read_forest_from_binary(string filename, bool read_only_header=false);
     public:
         void    *m_eosPointer;      //pass pointer of EOS object (e.g., the pointer of a object of cH2ONaCl class) to the forest through construct function, this will give access of EOS stuff in the refine call back function, e.g., calculate phase index and properties
         double  m_constZ;         // only valid when dim==2, i.e., 2D case, the constant value of third dimension, e.g. in T-P space with constant X.
@@ -148,7 +152,6 @@ namespace LOOKUPTABLE_FOREST
         void write_to_vtk_v1(string filename, bool write_data=true, bool isNormalizeXYZ=true);
         void write_to_vtk(string filename, bool write_data=true, bool isNormalizeXYZ=true);
         void write_to_binary(string filename, bool is_write_data=true);
-        void read_forest_from_binary(string filename, bool is_read_data=true);
         void print_summary();
         /**
          * @brief Construct a new Look Up Table Forest object. This is always used to create a 3D table
@@ -160,7 +163,7 @@ namespace LOOKUPTABLE_FOREST
          * @param max_level 
          * @param eosPointer 
          */
-        LookUpTableForest(double xyz_min[dim], double xyz_max[dim], EOS_ENERGY TorH, int max_level, std::map<int, std::string> name_props, void* eosPointer=NULL); //3D case
+        LookUpTableForest(double xyz_min[dim], double xyz_max[dim], EOS_ENERGY TorH, int max_level, std::map<int, propInfo> name_props, void* eosPointer=NULL); //3D case
         /**
          * @brief Construct a new Look Up Table Forest object. This is always used to create a 2D table
          * xyz would be corresponding to TPX or PHX. Note that the unit of T is K, unit of P is Pa, unit of X is wt% NaCl (e.g., seawater is 0.032), unit of H is J/kg. 
@@ -173,8 +176,8 @@ namespace LOOKUPTABLE_FOREST
          * @param max_level 
          * @param eosPointer 
          */
-        LookUpTableForest(double xy_min[dim], double xy_max[dim], double constZ, CONST_WHICH_VAR const_which_var, EOS_ENERGY TorH, int max_level, std::map<int, std::string> name_props, void* eosPointer=NULL); //2D case
-        LookUpTableForest(string filename, void* pointer=NULL); //load from exist binary file
+        LookUpTableForest(double xy_min[dim], double xy_max[dim], double constZ, CONST_WHICH_VAR const_which_var, EOS_ENERGY TorH, int max_level, std::map<int, propInfo> name_props, void* eosPointer=NULL); //2D case
+        LookUpTableForest(string filename_forest, void* pointer=NULL); //load from exist binary file
         void destory();
         ~LookUpTableForest();
     };

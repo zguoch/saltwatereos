@@ -22,9 +22,7 @@ namespace H2ONaCl
         createTable4_Driesner2007a(m_tab4_Driesner2007a);
 
         // initialize supported properties index
-        m_supported_props[Update_prop_rho]          = "Density [kg/m3]";
-        m_supported_props[Update_prop_h]            = "Specific enthalpy [J/kg]";
-        m_supported_props[Update_prop_drhodh]       = "drho/dh [kg2/(m3 J)]";
+        init_supported_props();
     }
     cH2ONaCl::~cH2ONaCl()
     {
@@ -88,6 +86,21 @@ namespace H2ONaCl
         // m_phaseRegion_name[ThreePhase_V_L_H]="4.5";
         // m_phaseRegion_name[TwoPhase_V_L_L]="5";
         // m_phaseRegion_name[TwoPhase_V_L_V]="6";
+    }
+    void cH2ONaCl::init_supported_props()
+    {
+        // Bulk density
+        m_supported_props[Update_prop_rho].longName          = "Bulk density";
+        m_supported_props[Update_prop_rho].shortName         = "Rho";
+        m_supported_props[Update_prop_rho].unit              = "[kg/m3]";
+        // Specific enhalpy
+        m_supported_props[Update_prop_h].longName            = "Bulk specific enthalpy";
+        m_supported_props[Update_prop_h].shortName           = "H";
+        m_supported_props[Update_prop_h].unit                = "[J/kg]";
+        // Derivative: drhodh
+        m_supported_props[Update_prop_drhodh].longName       = "dRho/dH";
+        m_supported_props[Update_prop_drhodh].shortName      = "dRhodH";
+        m_supported_props[Update_prop_drhodh].unit           = "[kg2/(m3 J)]";
     }
     void cH2ONaCl:: init_prop()
     {
@@ -4377,7 +4390,7 @@ namespace H2ONaCl
         for (auto &m : m_update_which_props)
         {
             ind++;
-            STATUS(to_string(ind) + " : " + m.second);
+            STATUS(to_string(ind) + " : " + m.second.longName);
         }
     }
 

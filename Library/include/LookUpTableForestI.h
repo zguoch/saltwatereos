@@ -1,6 +1,6 @@
 
 template <int dim, typename USER_DATA> 
-LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], EOS_ENERGY TorH, int max_level, std::map<int, std::string> name_props, void* eosPointer)
+LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], EOS_ENERGY TorH, int max_level, std::map<int, propInfo> name_props, void* eosPointer)
 :
 m_constZ(xyz_min[dim-1]), //make this compatible with 2D case in the refine function.
 m_const_which_var(CONST_NO_VAR_TorHPX),
@@ -13,7 +13,7 @@ m_map_props(name_props)
 }
 
 template <int dim, typename USER_DATA> 
-LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], double constZ, CONST_WHICH_VAR const_which_var, EOS_ENERGY TorH, int max_level, std::map<int, std::string> name_props, void* eosPointer)
+LookUpTableForest<dim,USER_DATA>::LookUpTableForest(double xyz_min[dim], double xyz_max[dim], double constZ, CONST_WHICH_VAR const_which_var, EOS_ENERGY TorH, int max_level, std::map<int, propInfo> name_props, void* eosPointer)
 :
 m_constZ(constZ),
 m_const_which_var(const_which_var),
@@ -26,16 +26,26 @@ m_map_props(name_props)
 }
 
 template <int dim, typename USER_DATA> 
-LookUpTableForest<dim,USER_DATA>::LookUpTableForest(string filename, void* eosPointer)
+LookUpTableForest<dim,USER_DATA>::LookUpTableForest(string filename_forest, void* eosPointer)
 {
     m_eosPointer = eosPointer;
     m_num_children = 1<<dim;
     m_num_node_per_quad = m_num_children; //use 4 nodes for 2d and 8 nodes for 3D at this moment
     m_data_size = sizeof(USER_DATA);
-    // read forest
-    read_forest_from_binary(filename);
-    // construct ijk_map2data
-    construct_map2dat();
+
+    // read from binary file
+    if(eosPointer==NULL) //if the eosPointer is NULL, only read header for lutInfo app
+    {
+        read_forest_from_binary(filename_forest, true);
+    }else
+    {
+        // read forest
+        read_forest_from_binary(filename_forest);
+        // construct ijk_map2data
+        construct_map2dat();
+        // read data from binary
+        read_props_from_binary(filename_forest);
+    }
     // print info
     print_summary();
 }
@@ -188,7 +198,7 @@ void LookUpTableForest<dim,USER_DATA>::write_forest(FILE* fpout, Quadrant<dim,US
 template <int dim, typename USER_DATA> 
 void LookUpTableForest<dim,USER_DATA>::write_to_binary(string filename, bool isWriteData)
 {
-    STATUS("Write lookup table to binary file ...");
+    STATUS("Write lookup table forest to binary file ...");
     int dim0 = dim;
     FILE* fpout = NULL;
     fpout = fopen(filename.c_str(), "wb");
@@ -204,15 +214,32 @@ void LookUpTableForest<dim,USER_DATA>::write_to_binary(string filename, bool isW
     fwrite(&m_min_level,    sizeof(int), 1, fpout);
     fwrite(&m_max_level,    sizeof(int), 1, fpout);
     fwrite(&m_num_node_per_quad, sizeof(int), 1, fpout);
+    // leaves and total quads info 
+    // vector<Quadrant<dim,USER_DATA>* > leaves;
+    // long int quad_counts = 0;
+    // getLeaves(leaves,quad_counts, &m_root);
+    // int num_leaves = leaves.size();
+    fwrite(&m_num_quads, sizeof(long int), 1, fpout);
+    fwrite(&m_num_leaves, sizeof(int), 1, fpout);
     // write props info
     int num_props = m_map_props.size();
     fwrite(&num_props, sizeof(int), 1, fpout);
     for(auto &m : m_map_props)
     {
+        int len_str = 0;
         fwrite(&m.first, sizeof(int), 1, fpout);
-        int len_name = m.second.length();
-        fwrite(&len_name, sizeof(int), 1, fpout);
-        fwrite(m.second.c_str(), sizeof(char), len_name, fpout);
+        // short name
+        len_str = m.second.shortName.length();
+        fwrite(&len_str, sizeof(int), 1, fpout);
+        fwrite(m.second.shortName.c_str(), sizeof(char), len_str, fpout);
+        // long name
+        len_str = m.second.longName.length();
+        fwrite(&len_str, sizeof(int), 1, fpout);
+        fwrite(m.second.longName.c_str(), sizeof(char), len_str, fpout);
+        // unit
+        len_str = m.second.unit.length();
+        fwrite(&len_str, sizeof(int), 1, fpout);
+        fwrite(m.second.unit.c_str(), sizeof(char), len_str, fpout);
         // const char* name = m.second.c_str();
         // cout<<"length of name: "<<m.second.length()<<" "<<m.second<<" "<<sizeof(m.second.c_str())<<endl;
     }
@@ -221,7 +248,26 @@ void LookUpTableForest<dim,USER_DATA>::write_to_binary(string filename, bool isW
     write_forest(fpout, &m_root, 0, isWriteData);
     // close file
     fclose(fpout);
-    STATUS("Writting lookup table to binary file done.");
+    STATUS("Writting lookup table forest to binary file done.");
+
+    // write properties to binary file
+    STATUS("Writting properties data to binary file ...");
+    // \todo 应该给forst文件和所有匹配的prop数据文件头上写一个UUID用于匹配识别
+    int ind_prop = 0;
+    for(auto &map_props : m_map_props)
+    {
+        string filename_prop = filename+"."+map_props.second.shortName;
+        STATUS_color(to_string(ind_prop)+" "+map_props.second.longName+": "+filename_prop, COLOR_BLUE);
+        FILE* fpout_prop = NULL;
+        fpout_prop = fopen(filename_prop.c_str(), "wb");
+        if(fpout_prop == NULL)ERROR("Open file failed: "+filename_prop);
+        for(auto &map_ijk2data : m_map_ijk2data)
+        {
+            fwrite(&map_ijk2data.second[ind_prop], sizeof(double), 1, fpout_prop);
+        }
+        fclose(fpout_prop);
+        ind_prop++;
+    }
 }
 
 /**
@@ -293,7 +339,7 @@ void LookUpTableForest<dim,USER_DATA>::ijk2xyz(const Quad_index* ijk, double& x,
 }
 
 template <int dim, typename USER_DATA> 
-void LookUpTableForest<dim,USER_DATA>::read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, int order_child, bool is_read_data)
+void LookUpTableForest<dim,USER_DATA>::read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, int order_child)
 {
     // fread(quad, sizeof(Quadrant<dim,USER_DATA>), 1, fpin); //write all quads
     fread(&quad->level, sizeof(int), 1, fpin); //write level
@@ -307,7 +353,7 @@ void LookUpTableForest<dim,USER_DATA>::read_forest(FILE* fpin, Quadrant<dim,USER
         {
             quad->children[i] = new Quadrant<dim,USER_DATA>;
             quad->children[i]->parent = quad;
-            read_forest(fpin, quad->children[i], i, is_read_data); 
+            read_forest(fpin, quad->children[i], i); 
         }
     }else
     {
@@ -333,9 +379,34 @@ void LookUpTableForest<dim,USER_DATA>::read_forest(FILE* fpin, Quadrant<dim,USER
 }
 
 template <int dim, typename USER_DATA> 
-void LookUpTableForest<dim,USER_DATA>::read_forest_from_binary(string filename, bool is_read_data)
+void LookUpTableForest<dim,USER_DATA>::read_props_from_binary(string filename_forest)
 {
-    STATUS("Read lookup table from binary file ...");
+    STATUS("Read lookup table properties from binary file ...");
+    
+    int ind_prop = 0;
+    for(auto &map_props : m_map_props)
+    {
+        string filename_prop = filename_forest+"."+map_props.second.shortName;
+        STATUS_color(to_string(ind_prop)+" "+map_props.second.longName+": "+filename_prop, COLOR_BLUE);
+        FILE* fpin = NULL;
+        fpin = fopen(filename_prop.c_str(), "rb");
+        if(!fpin)
+        {
+            ERROR("Open file failed: "+filename_prop);
+        }
+        for(auto &map_ijk2data : m_map_ijk2data)
+        {
+            fread(&map_ijk2data.second[ind_prop], sizeof(double), 1, fpin);
+        }
+        fclose(fpin);
+        ind_prop++;
+    }
+}
+
+template <int dim, typename USER_DATA> 
+void LookUpTableForest<dim,USER_DATA>::read_forest_from_binary(string filename, bool read_only_header)
+{
+    STATUS("Read lookup table forest from binary file ...");
     FILE* fpin = NULL;
     fpin = fopen(filename.c_str(), "rb");
     if(!fpin)ERROR("Open file failed: "+filename);
@@ -357,26 +428,42 @@ void LookUpTableForest<dim,USER_DATA>::read_forest_from_binary(string filename, 
     fread(&m_min_level,         sizeof(int),                1,      fpin);
     fread(&m_max_level,         sizeof(int),                1,      fpin);
     fread(&m_num_node_per_quad, sizeof(int),                1,      fpin);
+    // leaves and total quads info
+    fread(&m_num_quads, sizeof(long int), 1, fpin);
+    fread(&m_num_leaves, sizeof(int), 1, fpin);
     // read props info
     fread(&m_num_props, sizeof(int), 1, fpin);
     for (int i = 0; i < m_num_props; i++)
     {
         int ind_prop;
         fread(&ind_prop, sizeof(int), 1, fpin);
-        int len_name;
-        fread(&len_name, sizeof(int), 1, fpin);
-        char* name_prop = new char[len_name];
-        fread(name_prop, sizeof(char), len_name, fpin);
-        m_map_props[ind_prop] = string(name_prop);
-        cout<<"len: "<<len_name<<", name: "<<m_map_props[ind_prop]<<endl;
-        delete[] name_prop;
+        int len_str;
+        // short name
+        fread(&len_str, sizeof(int), 1, fpin);
+        char* str_shortName = new char[len_str];
+        fread(str_shortName, sizeof(char), len_str, fpin);
+        m_map_props[ind_prop].shortName = string(str_shortName);
+        // long name
+        fread(&len_str, sizeof(int), 1, fpin);
+        char* str_longName = new char[len_str];
+        fread(str_longName, sizeof(char), len_str, fpin);
+        m_map_props[ind_prop].longName = string(str_longName);
+        // unit
+        fread(&len_str, sizeof(int), 1, fpin);
+        char* str_unit = new char[len_str];
+        fread(str_unit, sizeof(char), len_str, fpin);
+        m_map_props[ind_prop].unit = string(str_unit);
+        // cout<<"len: "<<len_name<<", name: "<<m_map_props[ind_prop].shortName<<endl;
+        delete[] str_shortName;
+        delete[] str_longName;
+        delete[] str_unit;
     }
     fread(&m_RMSD_RefineCriterion, sizeof(RMSD_RefineCriterion), 1, fpin);
     // recursion read forest and data
-    read_forest(fpin, &m_root, 0, is_read_data); //child order of the root it self is 0
+    if(!read_only_header)read_forest(fpin, &m_root, 0); //child order of the root it self is 0
     // close file
     fclose(fpin);
-    STATUS("Reading lookup table file done");
+    STATUS("Reading lookup table forest done");
 }
 
 template <int dim, typename USER_DATA>
@@ -621,9 +708,9 @@ void LookUpTableForest<dim,USER_DATA>::construct_map2dat()
 
     // 1. get all leaves
     vector<Quadrant<dim,USER_DATA>* > leaves;
-    long int quad_counts = 0;
-    getLeaves(leaves, quad_counts, &m_root);
-
+    getLeaves(leaves, m_num_quads, &m_root);
+    m_num_leaves = leaves.size();
+    
     // 2. allocate memory of data at all nodes of leaves
     Quad_index *ijk_nodes_quad = new Quad_index[m_num_node_per_quad]; // \todo 如果使用二阶插值，则需要更多节点，需要通过cellType进行判断：比如二维情况九点quad，那么需要限制max_level必须小于MAX_FOREST_LEVEL-2，不过这个好办，在构造函数里面判断一下进行安全检查就行
     for (size_t i = 0; i < leaves.size(); i++)
@@ -641,8 +728,8 @@ void LookUpTableForest<dim,USER_DATA>::construct_map2dat()
     }
 
     // check key counts
-    cout<<"leaves: "<<leaves.size()<<endl;
-    cout<<"map size: "<<m_map_ijk2data.size()<<endl;
+    // cout<<"leaves: "<<leaves.size()<<endl;
+    // cout<<"map size: "<<m_map_ijk2data.size()<<endl;
 
     // release pointer
     delete[] ijk_nodes_quad;
@@ -911,7 +998,7 @@ void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_
     int ind = 0;
     for(auto &m : m_map_props)
     {
-        fout<<"        <DataArray type=\"Float32\" Name=\""<<m.second<<"\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
+        fout<<"        <DataArray type=\"Float32\" Name=\""<<m.second.longName<<"\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
         fout<<"        ";
         for(auto &map_ijk2data : m_map_ijk2data)
         {
@@ -1035,10 +1122,17 @@ void LookUpTableForest<dim,USER_DATA>::print_summary()
         break;
     }
     cout<<"Min level: "<<m_min_level<<", max level: "<<m_max_level<<endl;
-    vector<Quadrant<dim,USER_DATA>* > leaves;
-    long int quad_counts = 0;
-    getLeaves(leaves,quad_counts, &m_root);
-    cout<<"All "<<leaves.size()<<" leaves, "<<quad_counts-leaves.size()<<" non-leaf quads. Estimate size "<<ceil(leaves.size()*(sizeof(FIELD_DATA<dim>) + sizeof(bool) + sizeof(double)*3 + sizeof(int))/1024.0/1024.0)<<" Mb"<<endl;
+    cout<<"All "<<m_num_leaves<<" leaves, "<<m_num_quads-m_num_leaves<<" non-leaf quads. "
+    // <<"Estimate size "<<ceil(leaves.size()*(sizeof(FIELD_DATA<dim>) + sizeof(bool) + sizeof(double)*3 + sizeof(int))/1024.0/1024.0)<<" Mb"
+    <<endl;
+    // props info
+    cout<<"Include "<<m_num_props<<" properties on each node."<<endl;
+    int ind =0;
+    for(auto & m : m_map_props)
+    {
+        cout<<"  "<<ind<<": "<<m.second.longName<<endl;
+        ind++;
+    }
     cout<<"================== Summary end ==================="<<endl;
 }
 

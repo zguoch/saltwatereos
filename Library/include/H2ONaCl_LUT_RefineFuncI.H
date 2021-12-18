@@ -377,7 +377,7 @@ namespace H2ONaCl
         return false;
     }
 
-    void fill_prop2data(const H2ONaCl::PROP_H2ONaCl* prop, const std::map<int, std::string>& update_which_props, double* data)
+    void fill_prop2data(const H2ONaCl::PROP_H2ONaCl* prop, const std::map<int, propInfo>& update_which_props, double* data)
     {
         // for (size_t i = 0; i < update_which_props.size(); i++)
         int i = 0;

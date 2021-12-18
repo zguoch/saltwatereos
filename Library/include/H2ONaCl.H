@@ -443,6 +443,7 @@ namespace H2ONaCl
     private:
         template<int dim>
         void interp_quad_prop(LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf, H2ONaCl::PROP_H2ONaCl& prop, const double xyz[dim]);
+        void init_supported_props();
     public:
         int m_num_threads;
     #if USE_OMP == 1
@@ -450,8 +451,8 @@ namespace H2ONaCl
         int get_num_threads();
     #endif
         int m_dim_lut;
-        std::map<int, std::string> m_supported_props;
-        std::map<int, std::string> m_update_which_props;
+        std::map<int, propInfo> m_supported_props;
+        std::map<int, propInfo> m_update_which_props;
         void *m_pLUT;
         void parse_update_which_props(int update_which_props);
         /**

@@ -12,6 +12,18 @@
 #define DATASTRUCT_H2ONACL_H
 
 #include "stdfunc.H"
+
+// some general data structure
+/**
+ * @brief Information of a thermodynamic property
+ * 
+ */
+struct propInfo
+{
+    string shortName, longName, unit;
+    // int dimension[7]; //OpenFOAM dimension
+};
+
 namespace H2ONaCl
 {
     /// Output file format
@@ -40,7 +52,7 @@ namespace H2ONaCl
         double X_l, X_v; // volume fraction of NaCl in vaper and liquid, it is a composition fraction. H2O + NaCl
         double Mu_l, Mu_v;//viscosity [Pa s]
     };
-
+    
     struct MP_STRUCT
     {
         double b1, b1t, b1tt;
