@@ -738,10 +738,14 @@ void LookUpTableForest<dim,USER_DATA>::construct_map2dat()
 template <int dim, typename USER_DATA>
 void LookUpTableForest<dim,USER_DATA>::assemble_data(void (*cal_prop)(LookUpTableForest<dim,USER_DATA>* forest, std::map<Quad_index, double*>& map_ijk2data))
 {
+    STATUS("Assemble properties data to nodes of leaves ...");
+
     construct_map2dat();
     
     //3. call property calculation function to fill data to array
     cal_prop(this, m_map_ijk2data);
+
+    STATUS("Assemble properties data done.");
 }
 
 template <int dim, typename USER_DATA>
