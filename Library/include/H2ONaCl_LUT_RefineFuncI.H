@@ -171,9 +171,9 @@ namespace H2ONaCl
         // call MACRO function calculate property refine criterion
         // \todo what is the best criterion for each property ?
         // ========== 2. refinement check for Rho =====================
-        if(data->need_refine == LOOKUPTABLE_FOREST::NeedRefine_NoNeed){
-            CHECK_REFINE_PROP_RMSD(Rho);
-        }
+        // if(data->need_refine == LOOKUPTABLE_FOREST::NeedRefine_NoNeed){
+        //     CHECK_REFINE_PROP_RMSD(Rho);
+        // }
         // // ========== 2. refinement check for H =====================
         // if(data->need_refine == LOOKUPTABLE_FOREST::NeedRefine_NoNeed){
         //     CHECK_REFINE_PROP_RMSD(Rho);

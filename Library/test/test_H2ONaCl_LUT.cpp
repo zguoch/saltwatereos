@@ -304,34 +304,45 @@ void load_binary_3d(string filename)
     H2ONaCl::cH2ONaCl eos;
     H2ONaCl::PROP_H2ONaCl prop_cal, prop_lookup;
     clock_t start = clock();
-
+    const int dim = 3;
     eos.loadLUT(filename);
     cout<<"dim of the bin file: "<<eos.m_dim_lut<<endl;
     // eos.save_lut_to_vtk("lut_TPX.vtu");
+    H2ONaCl::LookUpTableForest_3D* pLUT = (H2ONaCl::LookUpTableForest_3D*)eos.m_pLUT;
 
-    double Tmin = 1 +273.15, Tmax = 1000+273.15, Xmin = 0.1, Xmax = 0.99999, Pmin = 5E5, Pmax = 2000E5;
+    double TorHmin = pLUT->m_xyz_min[0], TorHmax = pLUT->m_xyz_max[0], Pmin = pLUT->m_xyz_min[1], Pmax = pLUT->m_xyz_max[1];
+    double Xmin = pLUT->m_xyz_min[2], Xmax = pLUT->m_xyz_max[2];
 
     STATUS("Start search ... ");
     start = clock();
-    LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > *targetLeaf = NULL;
-    int n_randSample = 1E6;
+    LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
+    double* props = new double[pLUT->m_map_props.size()];
+    int ind_rho = 0;
+    int n_randSample = 10;
     for (size_t i = 0; i < n_randSample; i++)
     {
-        double T_K = (rand()/(double)RAND_MAX)*(Tmax - Tmin) + Tmin;
+        double TorH = (rand()/(double)RAND_MAX)*(TorHmax - TorHmin) + TorHmin;
         double p_Pa = (rand()/(double)RAND_MAX)*(Pmax - Pmin) + Pmin;
         double X_wt = (rand()/(double)RAND_MAX)*(Xmax - Xmin) + Xmin;
-        targetLeaf = eos.lookup(prop_lookup,T_K, p_Pa, X_wt); 
-        // prop_cal = eos.prop_pTX(p_Pa, T_K, X_wt);
+        targetLeaf = eos.lookup(props, TorH, p_Pa, X_wt, false); 
+        if(pLUT->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_T)
+        {
+            prop_cal = eos.prop_pTX(p_Pa, TorH, X_wt);
+        }else
+        {
+            prop_cal = eos.prop_pHX(p_Pa, TorH, X_wt);
+        }
         // H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion_pTX(p_Pa, T_K, X_wt);
         // if(targetLeaf->user_data->prop_cell.Region != phaseRegion_cal)
         if(targetLeaf->user_data->need_refine)
         {
             ind++;
-            // cout<<"Need refine point "<<ind++<<", level: "<<targetLeaf->level<<endl;
-            // cout<<", rho: "<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<endl;
+            cout<<"Need refine point "<<ind++<<", level: "<<targetLeaf->level;
+            cout<<", rho: "<<prop_cal.Rho<<"  "<<props[ind_rho]<<endl;
         }
         else
         {
+            cout<<"Rho: "<<prop_cal.Rho<<"  "<<props[ind_rho]<<endl;
             // double err = prop_cal.Rho-prop_lookup.Rho;
             // if(fabs(err)>0.5)
             // {
@@ -347,6 +358,9 @@ void load_binary_3d(string filename)
         }
     }
     printf("All %d (%.2f %%) random points close to phase boundary.\n", ind, ind/(double)n_randSample*100);
+
+    delete[] props;
+
     STATUS_time("Searching done", clock() - start);
 }
 void load_binary_2d(string filename)
@@ -489,8 +503,8 @@ int main(int argc, char** argv)
         load_binary_2d(argv[2]);
         break;
     case 8:
-        cout<<"load_binary_3d(\"lut_TPX_7.bin\");"<<endl;
-        // load_binary_3d("lut_TPX_7.bin");
+        cout<<"Test loading 3D LUT: "<<argv[2]<<endl;
+        load_binary_3d(argv[2]);
         break;
     default:
         break;

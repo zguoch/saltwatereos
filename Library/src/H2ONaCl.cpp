@@ -4654,7 +4654,7 @@ namespace H2ONaCl
                         fill_prop2data(&tmp_prop, tmp_lut->m_map_props, props);
                         break;
                     default:
-                        ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)");
+                        ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(double* props, double x, double y)");
                         break;
                     }
                 }else if(tmp_lut->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
@@ -4771,6 +4771,12 @@ namespace H2ONaCl
         if(m_dim_lut!=3)ERROR("The dim of the LUT is not 3, but you call the 3D lookup function");
 
         LookUpTableForest_3D* tmp_lut = (LookUpTableForest_3D*)m_pLUT; // make temporary copy of the pointer
+        // safety check: bound check
+        if(x<tmp_lut->m_xyz_min[0] || x>tmp_lut->m_xyz_max[0] || y<tmp_lut->m_xyz_min[1] || y>tmp_lut->m_xyz_max[1] || z<tmp_lut->m_xyz_min[2] || z>tmp_lut->m_xyz_max[2])
+        {
+            ERROR("The lookup point: ("+to_string(x)+", "+to_string(y)+", "+to_string(z)+") out of lookup table xyz range.");
+        }
+        // -------------------------------
         // cout<<"T: "<<x<<", P: "<<y<<", X: "<<z<<endl;
         LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > *targetLeaf = NULL;
         tmp_lut->searchQuadrant(targetLeaf, x, y, z);
@@ -4795,6 +4801,50 @@ namespace H2ONaCl
         return targetLeaf;
     }
 
+    LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > * cH2ONaCl::lookup(double* props, double x, double y, double z, bool is_cal)
+    {
+        if(m_dim_lut!=3)ERROR("The dim of the LUT is not 3, but you call the 3D lookup function");
+
+        LookUpTableForest_3D* tmp_lut = (LookUpTableForest_3D*)m_pLUT; // make temporary copy of the pointer
+        // safety check: bound check
+        if(x<tmp_lut->m_xyz_min[0] || x>tmp_lut->m_xyz_max[0] || y<tmp_lut->m_xyz_min[1] || y>tmp_lut->m_xyz_max[1] || z<tmp_lut->m_xyz_min[2] || z>tmp_lut->m_xyz_max[2])
+        {
+            ERROR("The lookup point: ("+to_string(x)+", "+to_string(y)+", "+to_string(z)+") out of lookup table xyz range.");
+        }
+        // -------------------------------
+        // cout<<"T: "<<x<<", P: "<<y<<", X: "<<z<<endl;
+        LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > *targetLeaf = NULL;
+        tmp_lut->searchQuadrant(targetLeaf, x, y, z);
+        PROP_H2ONaCl tmp_prop;
+        if(targetLeaf->user_data->need_refine)
+        {
+            if(is_cal)
+            {
+                if(tmp_lut->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_T)
+                {
+                    tmp_prop = prop_pTX(y, x, z); //For 3D case, the order of x,y,z MUST BE TorH, p, X.
+                    fill_prop2data(&tmp_prop, tmp_lut->m_map_props, props);
+                }else if (tmp_lut->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
+                {
+                    tmp_prop = prop_pTX(y, x, z); //For 3D case, the order of x,y,z MUST BE TorH, p, X.
+                    fill_prop2data(&tmp_prop, tmp_lut->m_map_props, props);
+                }else
+                {
+                    ERROR("The EOS space only support TPX and HPX!");
+                }
+            }else
+            {
+                double xyz[3] = {x, y, z};
+                interp_quad_prop<3>(targetLeaf, props, xyz);
+            }
+        }
+        else
+        {
+            double xyz[3] = {x, y, z};
+            interp_quad_prop<3>(targetLeaf, props, xyz);
+        }
+        return targetLeaf;
+    }
 
     LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup_only(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)
     {
