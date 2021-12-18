@@ -4404,13 +4404,13 @@ namespace H2ONaCl
         STATUS("Creating 2D lookup table ...");
         // const int dim =2;
         m_dim_lut = 2;
-        LookUpTableForest_2D* tmp_lut_PTX_2D = new LookUpTableForest_2D (xy_min, xy_max, constZ, const_which_var, TorH, max_level, m_update_which_props, this);
-        m_pLUT = tmp_lut_PTX_2D;
+        LookUpTableForest_2D* tmp_lut_2D = new LookUpTableForest_2D (xy_min, xy_max, constZ, const_which_var, TorH, max_level, m_update_which_props, this);
+        m_pLUT = tmp_lut_2D;
         // refine
-        tmp_lut_PTX_2D->set_min_level(min_level);
-        tmp_lut_PTX_2D->refine(refine_uniform);
+        tmp_lut_2D->set_min_level(min_level);
+        tmp_lut_2D->refine(refine_uniform);
         // parallel refine
-        if (tmp_lut_PTX_2D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_T)
+        if (tmp_lut_2D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_T)
         {
         #ifdef USE_OMP
             #pragma omp parallel //shared(n)
@@ -4421,11 +4421,11 @@ namespace H2ONaCl
             #endif
                 {
                     printf("Do refinement using %d threads.\n", m_num_threads);
-                    tmp_lut_PTX_2D->refine(RefineFunc_PTX);
-                    tmp_lut_PTX_2D->assemble_data(cal_prop_PTX);
+                    tmp_lut_2D->refine(RefineFunc_PTX);
+                    tmp_lut_2D->assemble_data(cal_prop_PTX);
                 }
             }
-        }else if(tmp_lut_PTX_2D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
+        }else if(tmp_lut_2D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
         {
         #ifdef USE_OMP
             #pragma omp parallel //shared(n)
@@ -4436,7 +4436,8 @@ namespace H2ONaCl
             #endif
                 {
                     printf("Do refinement using %d threads.\n", m_num_threads);
-                    tmp_lut_PTX_2D->refine(RefineFunc_PHX);
+                    tmp_lut_2D->refine(RefineFunc_PHX);
+                    tmp_lut_2D->assemble_data(cal_prop_PHX);
                 }
             }
         }else
@@ -4444,22 +4445,25 @@ namespace H2ONaCl
             ERROR("The EOS space only support TPX and HPX!");
         }
         STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
-        tmp_lut_PTX_2D->print_summary();
+        tmp_lut_2D->print_summary();
     }
 
     void cH2ONaCl::createLUT_3D(double xyz_min[3], double xyz_max[3], LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level,int update_which_props)
     {
+        // parsing which properties need to be calculated
+        parse_update_which_props(update_which_props);
+
         destroyLUT(); //destroy LUT pointer and release all related data if it exists.
         clock_t start = clock();
         STATUS("Creating 3D lookup table ...");
         m_dim_lut = 3;
-        LookUpTableForest_3D* tmp_lut_PTX_3D = new LookUpTableForest_3D (xyz_min, xyz_max, TorH, max_level, m_update_which_props, this);
-        m_pLUT = tmp_lut_PTX_3D;
+        LookUpTableForest_3D* tmp_lut_3D = new LookUpTableForest_3D (xyz_min, xyz_max, TorH, max_level, m_update_which_props, this);
+        m_pLUT = tmp_lut_3D;
         // refine
-        tmp_lut_PTX_3D->set_min_level(min_level);
-        tmp_lut_PTX_3D->refine(refine_uniform);
+        tmp_lut_3D->set_min_level(min_level);
+        tmp_lut_3D->refine(refine_uniform);
         // parallel refine
-        if(tmp_lut_PTX_3D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_T)
+        if(tmp_lut_3D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_T)
         {
         #ifdef USE_OMP
             #pragma omp parallel //shared(n)
@@ -4470,10 +4474,11 @@ namespace H2ONaCl
             #endif
                 {
                     printf("Do refinement using %d threads.\n", m_num_threads);
-                    tmp_lut_PTX_3D->refine(RefineFunc_PTX);
+                    tmp_lut_3D->refine(RefineFunc_PTX);
+                    tmp_lut_3D->assemble_data(cal_prop_PTX);
                 }
             }
-        }else if (tmp_lut_PTX_3D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
+        }else if (tmp_lut_3D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
         {
         #ifdef USE_OMP
             #pragma omp parallel //shared(n)
@@ -4484,7 +4489,8 @@ namespace H2ONaCl
             #endif
                 {
                     printf("Do refinement using %d threads.\n", m_num_threads);
-                    tmp_lut_PTX_3D->refine(RefineFunc_PHX);
+                    tmp_lut_3D->refine(RefineFunc_PHX);
+                    tmp_lut_3D->assemble_data(cal_prop_PHX);
                 }
             }
         }else
@@ -4493,7 +4499,7 @@ namespace H2ONaCl
         }
         
         STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
-        tmp_lut_PTX_3D->print_summary();
+        tmp_lut_3D->print_summary();
     }
 
     void cH2ONaCl::save_lut_to_vtk(string filename)

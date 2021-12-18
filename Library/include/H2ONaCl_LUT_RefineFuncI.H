@@ -398,6 +398,7 @@ namespace H2ONaCl
             i++;
         }
     }
+    
     template <int dim, typename USER_DATA>
     void cal_prop_PTX(LOOKUPTABLE_FOREST::LookUpTableForest<dim,USER_DATA>* forest, std::map<LOOKUPTABLE_FOREST::Quad_index, double*>& map_ijk2data)
     {
@@ -428,61 +429,102 @@ namespace H2ONaCl
             break;
         case LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP:
             {
-                
-                // ========================================================
-                // calculate properties: four vertices and one midpoint
-                // data->prop_point[0] = eosPointer->prop_pTX(quad->xyz[1],                                forest->m_constZ,   quad->xyz[0]);                                  //xmin,ymin
-                // data->prop_point[1] = eosPointer->prop_pTX(quad->xyz[1],                                forest->m_constZ,   quad->xyz[0] + physical_length_quad[0]);        //xmax,ymin
-                // data->prop_point[2] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      forest->m_constZ,   quad->xyz[0]);                                  //xmin,ymax
-                // data->prop_point[3] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      forest->m_constZ,   quad->xyz[0] + physical_length_quad[0]);        //xmax,ymax
-                // data->prop_cell     = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1]/2.0,  forest->m_constZ,   quad->xyz[0] + physical_length_quad[0]/2.0);    //xc,yc
-                // data->phaseRegion_point[0] = regionIndex[0]; //phase index
-                // data->phaseRegion_point[1] = regionIndex[num_sample_x-1];
-                // data->phaseRegion_point[2] = regionIndex[num_sample_x*num_sample_y-num_sample_x];
-                // data->phaseRegion_point[3] = regionIndex[num_sample_x*num_sample_y-1];
-                // data->phaseRegion_cell     = eosPointer->findPhaseRegion_pTX(quad->xyz[1] + physical_length_quad[1]/2.0, forest->m_constZ, quad->xyz[0] + physical_length_quad[0]/2.0); 
+                //\todo 这里可以考虑并行
+                for(auto &ijk2data : map_ijk2data)
+                {
+                    forest->ijk2xyz(&ijk2data.first, x, y, z);
+                    tmp_prop = eosPointer->prop_pTX(y, forest->m_constZ, x);
+                    fill_prop2data(&tmp_prop, eosPointer->m_update_which_props, ijk2data.second);
+                }
             }
             break;
         case LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH:
             {
-                
-                // ========================================================
-                // calculate properties: four vertices and one midpoint
-                // data->prop_point[0] = eosPointer->prop_pTX(forest->m_constZ, quad->xyz[1],                               quad->xyz[0]);                                  //xmin,ymin
-                // data->prop_point[1] = eosPointer->prop_pTX(forest->m_constZ, quad->xyz[1],                               quad->xyz[0] + physical_length_quad[0]);        //xmax,ymin
-                // data->prop_point[2] = eosPointer->prop_pTX(forest->m_constZ, quad->xyz[1] + physical_length_quad[1],     quad->xyz[0]);                                  //xmin,ymax
-                // data->prop_point[3] = eosPointer->prop_pTX(forest->m_constZ, quad->xyz[1] + physical_length_quad[1],     quad->xyz[0] + physical_length_quad[0]);        //xmax,ymax
-                // data->prop_cell     = eosPointer->prop_pTX(forest->m_constZ, quad->xyz[1] + physical_length_quad[1]/2.0, quad->xyz[0] + physical_length_quad[0]/2.0);    //xc,yc
-                // data->phaseRegion_point[0] = regionIndex[0]; //phase index
-                // data->phaseRegion_point[1] = regionIndex[num_sample_x-1];
-                // data->phaseRegion_point[2] = regionIndex[num_sample_x*num_sample_y-num_sample_x];
-                // data->phaseRegion_point[3] = regionIndex[num_sample_x*num_sample_y-1];
-                // data->phaseRegion_cell     = eosPointer->findPhaseRegion_pTX(forest->m_constZ, quad->xyz[1] + physical_length_quad[1]/2.0,  quad->xyz[0] + physical_length_quad[0]/2.0); 
+                //\todo 这里可以考虑并行
+                for(auto &ijk2data : map_ijk2data)
+                {
+                    forest->ijk2xyz(&ijk2data.first, x, y, z);
+                    tmp_prop = eosPointer->prop_pTX(forest->m_constZ, y, x);
+                    fill_prop2data(&tmp_prop, eosPointer->m_update_which_props, ijk2data.second);
+                }
             }
             break;
         case LOOKUPTABLE_FOREST::CONST_NO_VAR_TorHPX: //3D case, the dim must be 3, because it has been checked in the forest construct function
             {
+                //\todo 这里可以考虑并行
+                for(auto &ijk2data : map_ijk2data)
+                {
+                    forest->ijk2xyz(&ijk2data.first, x, y, z);
+                    tmp_prop = eosPointer->prop_pTX(y, x, z);
+                    fill_prop2data(&tmp_prop, eosPointer->m_update_which_props, ijk2data.second);
+                }
+            }
+            break;
+        default:
+            ERROR("It is impossible! The forest->m_const_which_var is not one of CONST_X_VAR_TorHP, CONST_TorH_VAR_XP, CONST_P_VAR_XTorH and CONST_NO");
+            break;
+        }
+    }
+
+    template <int dim, typename USER_DATA>
+    void cal_prop_PHX(LOOKUPTABLE_FOREST::LookUpTableForest<dim,USER_DATA>* forest, std::map<LOOKUPTABLE_FOREST::Quad_index, double*>& map_ijk2data)
+    {
+        H2ONaCl::cH2ONaCl* eosPointer =(H2ONaCl::cH2ONaCl*)(forest->m_eosPointer); //read only! please DO NOT use this pointer to change any data in the EOS object!!! although it can change the member data. 
+        if(eosPointer->m_update_which_props.size()==0) return; //if no properties are specificed, doesn't do anything and return
+        
+        double x, y, z;
+        H2ONaCl::PROP_H2ONaCl tmp_prop;
+        switch (forest->m_const_which_var)
+        {
+        case LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP:
+            {
+                //\todo 这里可以考虑并行
+                for(auto &ijk2data : map_ijk2data)
+                {
+                    forest->ijk2xyz(&ijk2data.first, x, y, z);
+                    tmp_prop = eosPointer->prop_pHX(y, x, forest->m_constZ);
+                    fill_prop2data(&tmp_prop, eosPointer->m_update_which_props, ijk2data.second);
+                }
+                // std::cout<<"prop calculation done"<<std::endl;
+                // int test_id = 0;
+                // for(auto &ijk2data : map_ijk2data)
+                // {
+                //     std::cout<<eosPointer->m_supported_props[eosPointer->m_update_which_props[test_id]]<<ijk2data.second[test_id]<<std::endl;
+                // }
                 
-                // ========================================================
-                // calculate properties: four vertices and one midpoint
-                // data->prop_point[0] = eosPointer->prop_pTX(quad->xyz[1],                                quad->xyz[0],                               quad->xyz[2]);      //xmin,ymin
-                // data->prop_point[1] = eosPointer->prop_pTX(quad->xyz[1],                                quad->xyz[0] + physical_length_quad[0],     quad->xyz[2]);      //xmax,ymin
-                // data->prop_point[2] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0],                               quad->xyz[2]);      //xmin,ymax
-                // data->prop_point[3] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0] + physical_length_quad[0],     quad->xyz[2]);      //xmax,ymax
-                // data->prop_point[4] = eosPointer->prop_pTX(quad->xyz[1],                                quad->xyz[0],                               quad->xyz[2] + physical_length_quad[2]);      //xmin,ymin
-                // data->prop_point[5] = eosPointer->prop_pTX(quad->xyz[1],                                quad->xyz[0] + physical_length_quad[0],     quad->xyz[2] + physical_length_quad[2]);      //xmax,ymin
-                // data->prop_point[6] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0],                               quad->xyz[2] + physical_length_quad[2]);      //xmin,ymax
-                // data->prop_point[7] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0] + physical_length_quad[0],     quad->xyz[2] + physical_length_quad[2]);      //xmax,ymax
-                // data->prop_cell     = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1]/2.0,  quad->xyz[0] + physical_length_quad[0]/2.0, quad->xyz[2]+ physical_length_quad[2]/2.0);      //xc,yc
-                // data->phaseRegion_point[0] = regionIndex[0]; //phase index
-                // data->phaseRegion_point[1] = regionIndex[num_sample_x-1];
-                // data->phaseRegion_point[2] = regionIndex[num_sample_x*num_sample_y-num_sample_x];
-                // data->phaseRegion_point[3] = regionIndex[num_sample_x*num_sample_y-1];
-                // data->phaseRegion_point[4] = regionIndex[num_sample_x*num_sample_y*num_sample_z - num_sample_x*num_sample_y]; //phase index
-                // data->phaseRegion_point[5] = regionIndex[num_sample_x*num_sample_y*num_sample_z - num_sample_x*(num_sample_y-1) - 1];
-                // data->phaseRegion_point[6] = regionIndex[num_sample_x*num_sample_y*num_sample_z - num_sample_x];
-                // data->phaseRegion_point[7] = regionIndex[num_sample_x*num_sample_y*num_sample_z - 1];
-                // data->phaseRegion_cell     = eosPointer->findPhaseRegion_pTX(quad->xyz[1] + physical_length_quad[1]/2.0, quad->xyz[0] + physical_length_quad[0]/2.0, quad->xyz[2] + physical_length_quad[2]/2.0); 
+            }
+            break;
+        case LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP:
+            {
+                //\todo 这里可以考虑并行
+                for(auto &ijk2data : map_ijk2data)
+                {
+                    forest->ijk2xyz(&ijk2data.first, x, y, z);
+                    tmp_prop = eosPointer->prop_pHX(y, forest->m_constZ, x);
+                    fill_prop2data(&tmp_prop, eosPointer->m_update_which_props, ijk2data.second);
+                }
+            }
+            break;
+        case LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH:
+            {
+                //\todo 这里可以考虑并行
+                for(auto &ijk2data : map_ijk2data)
+                {
+                    forest->ijk2xyz(&ijk2data.first, x, y, z);
+                    tmp_prop = eosPointer->prop_pHX(forest->m_constZ, y, x);
+                    fill_prop2data(&tmp_prop, eosPointer->m_update_which_props, ijk2data.second);
+                }
+            }
+            break;
+        case LOOKUPTABLE_FOREST::CONST_NO_VAR_TorHPX: //3D case, the dim must be 3, because it has been checked in the forest construct function
+            {
+                //\todo 这里可以考虑并行
+                for(auto &ijk2data : map_ijk2data)
+                {
+                    forest->ijk2xyz(&ijk2data.first, x, y, z);
+                    tmp_prop = eosPointer->prop_pHX(y, x, z);
+                    fill_prop2data(&tmp_prop, eosPointer->m_update_which_props, ijk2data.second);
+                }
             }
             break;
         default:

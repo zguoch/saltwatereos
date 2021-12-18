@@ -184,7 +184,7 @@ void createTable_constT_XP(double constT)
     }
     STATUS_time("Searching done", clock() - start);
 }
-void createTable_TPX()
+void createTable_TPX(int max_level)
 {
     int ind = 0;
     std::string dummy;
@@ -198,15 +198,15 @@ void createTable_TPX()
     const int dim =3;
     double Tmin = 1 +273.15, Tmax = 1000+273.15, Xmin = 0.1, Xmax = 0.99999, Pmin = 5E5, Pmax = 2000E5;
     int min_level = 3;
-    int max_level = 5;
+    // int max_level = 5;
 
-    eos.createLUT_3D(Tmin, Tmax, Pmin, Pmax, Xmin, Xmax, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level);
+    eos.createLUT_3D(Tmin, Tmax, Pmin, Pmax, Xmin, Xmax, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level, Update_prop_rho | Update_prop_drhodh | Update_prop_h);
     eos.save_lut_to_vtk("lut_TPX_"+std::to_string(max_level)+".vtu");
     eos.save_lut_to_binary("lut_TPX_"+std::to_string(max_level)+".bin");
-    cout<<"\n测试读取并写入vtu: "<<endl;
-    H2ONaCl::cH2ONaCl eos2;
-    eos2.loadLUT("lut_TPX_"+std::to_string(max_level)+".bin");
-    eos2.save_lut_to_vtk("lut_TPX_loadwrite.vtu");
+    // cout<<"\n测试读取并写入vtu: "<<endl;
+    // H2ONaCl::cH2ONaCl eos2;
+    // eos2.loadLUT("lut_TPX_"+std::to_string(max_level)+".bin");
+    // eos2.save_lut_to_vtk("lut_TPX_loadwrite.vtu");
     // STATUS("Start search ... ");
     // start = clock();
     // LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
@@ -241,7 +241,7 @@ void createTable_TPX()
     // STATUS_time("Searching done", clock() - start);
 
 }
-void createTable_HPX()
+void createTable_HPX(int max_level)
 {
     int ind = 0;
     std::string dummy;
@@ -255,9 +255,9 @@ void createTable_HPX()
     const int dim =3;
     double Hmin = 0.1E6, Hmax = 3.9E6, Xmin = 0.001, Xmax = 1, Pmin = 100E5, Pmax = 2500E5;
     int min_level = 3;
-    int max_level = 7;
+    // int max_level = 7;
 
-    eos.createLUT_3D(Hmin, Hmax, Pmin, Pmax, Xmin, Xmax, LOOKUPTABLE_FOREST::EOS_ENERGY_H, min_level, max_level);
+    eos.createLUT_3D(Hmin, Hmax, Pmin, Pmax, Xmin, Xmax, LOOKUPTABLE_FOREST::EOS_ENERGY_H, min_level, max_level, Update_prop_rho | Update_prop_h | Update_prop_drhodh);
     eos.save_lut_to_vtk("lut_HPX_"+std::to_string(max_level)+".vtu");
     eos.save_lut_to_binary("lut_HPX_"+std::to_string(max_level)+".bin");
     // cout<<"\n测试读取并写入vtu: "<<endl;
@@ -441,12 +441,18 @@ int main(int argc, char** argv)
         // createTable_constT_XP(500+273.15);
         break;
     case 5:
-        cout<<"createTable_TPX();"<<endl;
-        // createTable_TPX();
+        {
+            int max_level = atoi(argv[2]);
+            cout<<"createTable_TPX();"<<endl;
+            createTable_TPX(max_level);
+        }
         break;
     case 6:
-        cout<<"createTable_HPX();"<<endl;
-        createTable_HPX();
+        {
+            int max_level = atoi(argv[2]);
+            cout<<"createTable_HPX();"<<endl;
+            createTable_HPX(max_level);
+        }
         break;
     case 7:
         cout<<"load_binary_2d(\"lut_constP_XH_7.bin\");"<<endl;
