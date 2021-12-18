@@ -113,7 +113,7 @@ foreach(buildType IN LISTS buildTypes)
 endforeach()
 
 # app
-list(APPEND Apps lutInfo lutLookup lut2vtu)
+list(APPEND Apps lutInfo lutLookup lut2vtu lutGen_2D lutGen_3D)
 foreach(app IN LISTS Apps)
     message(STATUS "Add app ${app}")
     add_executable(${app}  ${SC_FILES} "app/${app}.cpp")
