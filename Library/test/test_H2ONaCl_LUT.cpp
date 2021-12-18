@@ -353,7 +353,7 @@ void load_binary_2d(string filename)
 {
     int ind = 0;
     H2ONaCl::cH2ONaCl eos;
-    H2ONaCl::PROP_H2ONaCl prop_cal, prop_lookup;
+    H2ONaCl::PROP_H2ONaCl prop_cal;
     clock_t start = clock();
     const int dim = 2;
     eos.loadLUT(filename);
@@ -367,8 +367,9 @@ void load_binary_2d(string filename)
     STATUS("Start search ... ");
     start = clock();
     LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
-    int n_randSample = 100;
+    int n_randSample = 1E3;
     double* props = new double[pLUT->m_map_props.size()];
+    int ind_rho = 0;
     for (size_t i = 0; i < n_randSample; i++)
     {
         double T_K = (rand()/(double)RAND_MAX)*(Tmax - Tmin) + Tmin;
@@ -376,29 +377,29 @@ void load_binary_2d(string filename)
         // double X_wt = (rand()/(double)RAND_MAX)*(Xmax - Xmin) + Xmin;
         // targetLeaf = eos.lookup(prop_lookup,T_K, p_Pa); 
         targetLeaf = eos.lookup(props, T_K, p_Pa, true);
-        prop_cal = eos.prop_pTX(p_Pa, T_K, x_const);
+        // prop_cal = eos.prop_pTX(p_Pa, T_K, x_const);
         // H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion_pTX(p_Pa, T_K, X_wt);
         // if(targetLeaf->user_data->prop_cell.Region != phaseRegion_cal)
-        if(targetLeaf->user_data->need_refine)
+        // if(targetLeaf->user_data->need_refine)
         {
-            ind++;
-            cout<<"Need refine point "<<ind++<<", level: "<<(int)targetLeaf->level<<endl;
-            // cout<<", rho: "<<props[distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_rho))]<<endl;
-            cout<<"  Rho: "<<props[0] //distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_rho))
-                <<" "
-                <<prop_cal.Rho
-                <<endl;
+            // ind++;
+            // cout<<"Need refine point "<<ind++<<", level: "<<(int)targetLeaf->level<<endl;
+            // // cout<<", rho: "<<props[distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_rho))]<<endl;
+            // cout<<"  Rho: "<<props[0] //distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_rho))
+            //     <<" "
+            //     <<prop_cal.Rho
+            //     <<endl;
         }
-        else
+        // else
         {
-            cout<<"Rho: "<<props[distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_rho))]
-                <<" "
-                <<prop_cal.Rho
-                <<endl;
-            // double err = prop_cal.Rho-prop_lookup.Rho;
-            // if(fabs(err)>0.5)
+            // cout<<"Rho: "<<props[ind_rho]
+            //     <<" "
+            //     <<prop_cal.Rho
+            //     <<endl;
+            // double err = prop_cal.Rho-props[ind_rho];
+            // if(fabs(err)>pLUT->m_RMSD_RefineCriterion.Rho)
             // {
-            //     cout<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<", err: "<<err<<endl;
+            //     cout<<prop_cal.Rho<<"  "<<props[ind_rho]<<", err: "<<err<<endl;
             //     // cout<<"  "<<targetLeaf->user_data->prop_point[0].Rho
             //     //     <<"  "<<targetLeaf->user_data->prop_point[1].Rho
             //     //     <<"  "<<targetLeaf->user_data->prop_point[2].Rho
