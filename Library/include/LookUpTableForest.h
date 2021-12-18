@@ -119,8 +119,11 @@ namespace LOOKUPTABLE_FOREST
         void write_forest(FILE* fpout, Quadrant<dim,USER_DATA>* quad, int order_child, bool is_write_data);
         void read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, int order_child, bool is_read_data);
         double* get_lowerleft_xyz(Quadrant<dim,USER_DATA>* quad);
+        Quad_index get_lowerleft_ijk(Quadrant<dim,USER_DATA>* quad);
         void get_ijk_nodes_quadrant(Quadrant<dim,USER_DATA>* quad, int num_nodes_per_quad, Quad_index* ijk);
         void cal_xyz_quad(double* xyz_lower_left, int order_child, Quadrant<dim,USER_DATA>* quad);
+        void cal_ijk_quad(Quad_index ijk_lower_left, int order_child, Quadrant<dim,USER_DATA>* quad);
+        void construct_map2dat();
     public:
         void    *m_eosPointer;      //pass pointer of EOS object (e.g., the pointer of a object of cH2ONaCl class) to the forest through construct function, this will give access of EOS stuff in the refine call back function, e.g., calculate phase index and properties
         double  m_constZ;         // only valid when dim==2, i.e., 2D case, the constant value of third dimension, e.g. in T-P space with constant X.
@@ -145,7 +148,7 @@ namespace LOOKUPTABLE_FOREST
         void write_to_vtk_v1(string filename, bool write_data=true, bool isNormalizeXYZ=true);
         void write_to_vtk(string filename, bool write_data=true, bool isNormalizeXYZ=true);
         void write_to_binary(string filename, bool is_write_data=true);
-        void read_from_binary(string filename, bool is_read_data=true);
+        void read_forest_from_binary(string filename, bool is_read_data=true);
         void print_summary();
         /**
          * @brief Construct a new Look Up Table Forest object. This is always used to create a 3D table

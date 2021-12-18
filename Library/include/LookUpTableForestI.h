@@ -32,7 +32,11 @@ LookUpTableForest<dim,USER_DATA>::LookUpTableForest(string filename, void* eosPo
     m_num_children = 1<<dim;
     m_num_node_per_quad = m_num_children; //use 4 nodes for 2d and 8 nodes for 3D at this moment
     m_data_size = sizeof(USER_DATA);
-    read_from_binary(filename);
+    // read forest
+    read_forest_from_binary(filename);
+    // construct ijk_map2data
+    construct_map2dat();
+    // print info
     print_summary();
 }
 
@@ -170,7 +174,11 @@ void LookUpTableForest<dim,USER_DATA>::write_forest(FILE* fpout, Quadrant<dim,US
     }else
     {
         // write xyz at the lower left corner
-        if(order_child==0)fwrite(quad->xyz, sizeof(double), dim, fpout); //only write xyz of eldest brother
+        if(order_child==0)
+        {
+            fwrite(quad->xyz, sizeof(double), dim, fpout); //only write xyz of eldest brother
+            fwrite(&quad->ijk, sizeof(Quad_index), 1, fpout); //only write ijk of eldest brother
+        }
         // write data
         fwrite(quad->user_data, sizeof(USER_DATA), 1, fpout);
         // fwrite(quad->pointData, sizeof(double), m_num_children*m_num_props, fpout);
@@ -240,6 +248,19 @@ void LookUpTableForest<dim,USER_DATA>::cal_xyz_quad(double* xyz_lower_left, int 
 }
 
 template <int dim, typename USER_DATA> 
+void LookUpTableForest<dim,USER_DATA>::cal_ijk_quad(Quad_index ijk_lower_left, int order_youngerBrother, Quadrant<dim,USER_DATA>* quad)
+{
+    int length_child = 1<<(MAX_FOREST_LEVEL - quad->level);
+    // cout<<((order_youngerBrother - order_youngerBrother/4 * 4)/2)<<", "<<order_youngerBrother<<endl;
+    // cout<<xyz[0]<<", "<<xyz[1]<<", "<<xyz[2]<<endl;
+    quad->ijk.i = ijk_lower_left.i + (order_youngerBrother%2)*length_child;
+    quad->ijk.j = ijk_lower_left.j + ((order_youngerBrother - order_youngerBrother/4 * 4)/2) *length_child;
+    if(dim==3)
+    quad->ijk.k = ijk_lower_left.k + (order_youngerBrother/4)*length_child;
+    // cout<<"  "<<xyz[0]<<", "<<xyz[1]<<", "<<xyz[2]<<endl;
+}
+
+template <int dim, typename USER_DATA> 
 double* LookUpTableForest<dim,USER_DATA>::get_lowerleft_xyz(Quadrant<dim,USER_DATA>* quad)
 {
     if(quad->isHasChildren)
@@ -248,6 +269,18 @@ double* LookUpTableForest<dim,USER_DATA>::get_lowerleft_xyz(Quadrant<dim,USER_DA
     }else
     {
         return quad->xyz;
+    }
+}
+
+template <int dim, typename USER_DATA> 
+Quad_index LookUpTableForest<dim,USER_DATA>::get_lowerleft_ijk(Quadrant<dim,USER_DATA>* quad)
+{
+    if(quad->isHasChildren)
+    {
+        return get_lowerleft_ijk(quad->children[0]);
+    }else
+    {
+        return quad->ijk;
     }
 }
 
@@ -281,12 +314,14 @@ void LookUpTableForest<dim,USER_DATA>::read_forest(FILE* fpin, Quadrant<dim,USER
         if(order_child==0) //only read xyz of eldest brother
         {
             fread(quad->xyz, sizeof(double), dim, fpin); 
+            fread(&quad->ijk, sizeof(Quad_index), 1, fpin); //only read ijk of eldest brother
         }else
         {
             // get left corner xyz, find it's elderest brother->first child->first child ...
             // 找大哥要xyz，如果大哥有儿子那就找大哥大儿子要xyz；如果大哥的大儿子还有儿子那就找大哥的大孙子要xyz... 直到最后一代一定能找到左下角的xyz
             // get_lowerleft_xyz第一个参数就是大哥的内存地址
             cal_xyz_quad(get_lowerleft_xyz(quad->parent->children[0]), order_child, quad);
+            cal_ijk_quad(get_lowerleft_ijk(quad->parent->children[0]), order_child, quad);
         }
         // load data
         quad->user_data = new USER_DATA;
@@ -298,7 +333,7 @@ void LookUpTableForest<dim,USER_DATA>::read_forest(FILE* fpin, Quadrant<dim,USER
 }
 
 template <int dim, typename USER_DATA> 
-void LookUpTableForest<dim,USER_DATA>::read_from_binary(string filename, bool is_read_data)
+void LookUpTableForest<dim,USER_DATA>::read_forest_from_binary(string filename, bool is_read_data)
 {
     STATUS("Read lookup table from binary file ...");
     FILE* fpin = NULL;
@@ -579,7 +614,7 @@ void LookUpTableForest<dim,USER_DATA>::release_map2data()
 }
 
 template <int dim, typename USER_DATA>
-void LookUpTableForest<dim,USER_DATA>::assemble_data(void (*cal_prop)(LookUpTableForest<dim,USER_DATA>* forest, std::map<Quad_index, double*>& map_ijk2data))
+void LookUpTableForest<dim,USER_DATA>::construct_map2dat()
 {
     // 0. safety check: if the m_map_ijk2data has been already created, release it to avoid repleated creation and memory leak
     release_map2data();
@@ -605,15 +640,21 @@ void LookUpTableForest<dim,USER_DATA>::assemble_data(void (*cal_prop)(LookUpTabl
         }
     }
 
-    //3. call property calculation function to fill data to array
-    cal_prop(this, m_map_ijk2data);
-
     // check key counts
     cout<<"leaves: "<<leaves.size()<<endl;
     cout<<"map size: "<<m_map_ijk2data.size()<<endl;
 
     // release pointer
     delete[] ijk_nodes_quad;
+}
+
+template <int dim, typename USER_DATA>
+void LookUpTableForest<dim,USER_DATA>::assemble_data(void (*cal_prop)(LookUpTableForest<dim,USER_DATA>* forest, std::map<Quad_index, double*>& map_ijk2data))
+{
+    construct_map2dat();
+    
+    //3. call property calculation function to fill data to array
+    cal_prop(this, m_map_ijk2data);
 }
 
 template <int dim, typename USER_DATA>
