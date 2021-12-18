@@ -494,7 +494,7 @@ void LookUpTableForest<dim,USER_DATA>::get_ijk_nodes_quadrant(Quadrant<dim,USER_
         }
         break;
     default:
-        assert(num_nodes_per_quad!=1<<dim);
+        // assert(num_nodes_per_quad!=1<<dim);
         ERROR("Number of nodes per quad only supports 2^dim so far");
         break;
     }
