@@ -4422,7 +4422,7 @@ namespace H2ONaCl
                 {
                     printf("Do refinement using %d threads.\n", m_num_threads);
                     tmp_lut_2D->refine(RefineFunc_PTX);
-                    tmp_lut_2D->assemble_data(cal_prop_PTX);
+                    // tmp_lut_2D->assemble_data(cal_prop_PTX);
                 }
             }
         }else if(tmp_lut_2D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
@@ -4437,7 +4437,7 @@ namespace H2ONaCl
                 {
                     printf("Do refinement using %d threads.\n", m_num_threads);
                     tmp_lut_2D->refine(RefineFunc_PHX);
-                    tmp_lut_2D->assemble_data(cal_prop_PHX);
+                    // tmp_lut_2D->assemble_data(cal_prop_PHX);
                 }
             }
         }else
@@ -4445,6 +4445,7 @@ namespace H2ONaCl
             ERROR("The EOS space only support TPX and HPX!");
         }
         STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
+        tmp_lut_2D->assemble_data(cal_prop_PTX);
         tmp_lut_2D->print_summary();
     }
 
@@ -4475,7 +4476,7 @@ namespace H2ONaCl
                 {
                     printf("Do refinement using %d threads.\n", m_num_threads);
                     tmp_lut_3D->refine(RefineFunc_PTX);
-                    tmp_lut_3D->assemble_data(cal_prop_PTX);
+                    // tmp_lut_3D->assemble_data(cal_prop_PTX); //Be carefull!!! would be in parallel
                 }
             }
         }else if (tmp_lut_3D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
@@ -4490,7 +4491,7 @@ namespace H2ONaCl
                 {
                     printf("Do refinement using %d threads.\n", m_num_threads);
                     tmp_lut_3D->refine(RefineFunc_PHX);
-                    tmp_lut_3D->assemble_data(cal_prop_PHX);
+                    // tmp_lut_3D->assemble_data(cal_prop_PHX);
                 }
             }
         }else
@@ -4499,6 +4500,7 @@ namespace H2ONaCl
         }
         
         STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
+        tmp_lut_3D->assemble_data(cal_prop_PTX);
         tmp_lut_3D->print_summary();
     }
 
