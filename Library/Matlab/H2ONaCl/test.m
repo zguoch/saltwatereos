@@ -1,17 +1,17 @@
 
-[phaseRegion] = test_lookupLUT_3D();
+% [phaseRegion] = test_lookupLUT_3D();
 % [needRefine, rho, T] = test_lookupLUT_2D();
-% test_createLUT_2D();
+test_createLUT_2D();
 % test_createLUT_3D();
 
-function [phaseRegion] = test_lookupLUT_3D()
+function [Rho, T, phaseRegion] = test_lookupLUT_3D()
     n_sample = 1E6;
     H = (rand(n_sample,1).*(3.9-0.1) + 0.1).*1E6;
     P = (rand(n_sample,1).*(2500 - 100) + 100).*1E5;
     X = rand(n_sample,1).*(1-0.001) + 0.001;
     
     
-    [phaseRegion] = lutLookup_3D('lut_HPX_10.bin', H, P, X);
+    [Rho, T, phaseRegion] = lutLookup_3D('lut_HPX_10.bin', H, P, X);
 %     ind = ( phaseRegion == -1);
 %    size_sample = size(X);
 %    num_sample = size_sample(1)*size_sample(2);
@@ -23,7 +23,7 @@ function [needRefine, rho, T] = test_lookupLUT_2D()
     X = rand(n_sample).*(1-0.001) + 0.001;
     H = (rand(n_sample).*(3.5-0.1) + 0.1).*1E6;
     
-    [needRefine, rho, T] = lutLookup_2D('lut_constP_XH.bin', X, H);
+    [needRefine, rho, T] = lutLookup_2D('lut_constP_XH_7.bin', X, H);
     ind = ( needRefine == 1);
     
 %     plot

@@ -80,24 +80,32 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     clock_t start = clock();
     STATUS("Passing data end, start loading data ...");
     H2ONaCl::cH2ONaCl sw;
-    H2ONaCl::PROP_H2ONaCl prop_lookup;
     sw.loadLUT(filename); //\Todo pass this sw pointer as input arg from outside, don't always load the LUT file.
     STATUS_time("Load LUT end. ", clock()-start);
     start = clock();
     STATUS("Start looking up ...");
     const int dim = 2;
+    H2ONaCl::LookUpTableForest_2D* pLUT = (H2ONaCl::LookUpTableForest_2D*)sw.m_pLUT;
     LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
+    double* props = new double[pLUT->m_map_props.size()];
+    // ====== get order of props in the data array =====
+    int index_Rho = distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_rho));
+    int index_T = distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_T));
+    // =================================================
+
     int index = 0;
     for (int i = 0; i < m; i++)
     {
       for (int j = 0; j < n; j++)
       {
         index = i*n +j;
-        targetLeaf = sw.lookup_only(prop_lookup, xMat[index], yMat[index]); 
+        targetLeaf = sw.lookup(props, xMat[index], yMat[index]); 
         needRefine_out[index] = targetLeaf->user_data->need_refine;
-        T_out[index] = prop_lookup.T;
-        Rho_out[index] = prop_lookup.Rho;
+        T_out[index] = props[index_T];
+        Rho_out[index] = props[index_Rho]; 
       }
     }
+
+    delete[] props;
     STATUS_time("Lookup end. ", clock()-start);
 }

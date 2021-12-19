@@ -30,7 +30,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   #if USE_OMP == 1
     sw.set_num_threads(num_threads);
   #endif
-    sw.createLUT_3D(xmin, xmax, ymin, ymax, zmin, zmax, TorH, min_level, max_level);
+    sw.createLUT_3D(xmin, xmax, ymin, ymax, zmin, zmax, TorH, min_level, max_level, Update_prop_rho | Update_prop_h | Update_prop_T);
     sw.save_lut_to_binary(filename+".bin");
     sw.save_lut_to_vtk(filename+".vtu");
 }

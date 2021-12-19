@@ -63,7 +63,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     double *xMat, *yMat, *zMat;
     mwSize  m, n;
     /* allocate output variables */
-    // double *Rho_out, *T_out;
+    double *Rho_out, *T_out;
     // LOOKUPTABLE_FOREST::NeedRefine *needRefine_out;
     H2ONaCl::PhaseRegion *PhaseRegion;
 
@@ -74,19 +74,24 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
     // plhs[0] = mxCreateNumericMatrix(m, n, mxINT32_CLASS, mxREAL);
     // needRefine_out = (LOOKUPTABLE_FOREST::NeedRefine*)mxGetData(plhs[0]);
-    // plhs[1] = mxCreateDoubleMatrix(m, n, mxREAL);
-    // Rho_out = (double*)mxGetData(plhs[1]);
-    // plhs[2] = mxCreateDoubleMatrix(m, n, mxREAL);
-    // T_out = (double*)mxGetData(plhs[2]);
-    plhs[0] = mxCreateNumericMatrix(m, n, mxINT32_CLASS, mxREAL);
+    plhs[0] = mxCreateDoubleMatrix(m, n, mxREAL);
+    Rho_out = (double*)mxGetData(plhs[1]);
+    plhs[1] = mxCreateDoubleMatrix(m, n, mxREAL);
+    T_out = (double*)mxGetData(plhs[2]);
+    plhs[2] = mxCreateNumericMatrix(m, n, mxINT32_CLASS, mxREAL);
     PhaseRegion = (H2ONaCl::PhaseRegion*)mxGetData(plhs[0]);
 
     // maybe make a safety check, input matrix dimension consistency
     clock_t start = clock();
     STATUS("Passing data end, start loading data ...");
     H2ONaCl::cH2ONaCl sw;
-    H2ONaCl::PROP_H2ONaCl prop_lookup;
     sw.loadLUT(filename); //\Todo pass this sw pointer as input arg from outside, don't always load the LUT file.
+    H2ONaCl::LookUpTableForest_3D* pLUT = (H2ONaCl::LookUpTableForest_3D*)sw.m_pLUT;
+    double* props = new double[pLUT->m_map_props.size()];
+    // ====== get order of props in the data array =====
+    int index_Rho = distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_rho));
+    int index_T = distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_T));
+    // =================================================
     STATUS_time("Load LUT end. ", clock()-start);
     start = clock();
     STATUS("Start looking up ...");
@@ -98,12 +103,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       for (int j = 0; j < n; j++)
       {
         index = i*n +j;
-        targetLeaf = sw.lookup_only(prop_lookup, xMat[index], yMat[index], zMat[index]); 
+        targetLeaf = sw.lookup(props, xMat[index], yMat[index], zMat[index]); 
         // needRefine_out[index] = targetLeaf->user_data->need_refine;
-        // T_out[index] = prop_lookup.T;
-        // Rho_out[index] = prop_lookup.Rho;
-        PhaseRegion[index] = prop_lookup.Region;
+        T_out[index] = props[index_T];
+        Rho_out[index] = props[index_Rho];
+        PhaseRegion[index] = targetLeaf->user_data->phaseRegion_cell;
       }
     }
+    delete[] props;
     STATUS_time("Lookup end. ", clock()-start);
 }
