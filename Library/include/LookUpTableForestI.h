@@ -32,7 +32,8 @@ LookUpTableForest<dim,USER_DATA>::LookUpTableForest(string filename_forest, void
     m_num_children = 1<<dim;
     m_num_node_per_quad = m_num_children; //use 4 nodes for 2d and 8 nodes for 3D at this moment
     m_data_size = sizeof(USER_DATA);
-
+    init_Root(m_root);
+    
     // read from binary file
     if(eosPointer==NULL) //if the eosPointer is NULL, only read header for lutInfo app
     {
@@ -101,6 +102,8 @@ void LookUpTableForest<dim,USER_DATA>::destory()
 template <int dim, typename USER_DATA> 
 void LookUpTableForest<dim,USER_DATA>::release_children(Quadrant<dim,USER_DATA>* quad)
 {
+    if(quad==NULL)return; 
+
     if(quad->isHasChildren)
     {
         bool release_all = false;
@@ -132,6 +135,7 @@ void LookUpTableForest<dim,USER_DATA>::release_children(Quadrant<dim,USER_DATA>*
 template <int dim, typename USER_DATA> 
 void LookUpTableForest<dim,USER_DATA>::release_quadrant_data(Quadrant<dim,USER_DATA>* quad)
 {
+    if(quad==NULL)return;
     // if(quad->pointData)
     // {
     //     delete[] quad->pointData;
