@@ -4648,16 +4648,16 @@ namespace H2ONaCl
                     {
                     case LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP:
                         tmp_prop = prop_pTX(y, x, tmp_lut->m_constZ);
-                        fill_prop2data(&tmp_prop, tmp_lut->m_map_props, props);
+                        fill_prop2data(this, &tmp_prop, tmp_lut->m_map_props, props);
                         // cout<<"cal: "<<x<<", "<<y<<", "<<tmp_lut->m_constZ<<": "<<tmp_prop.Rho<<", "<<props[0]<<endl;
                         break;
                     case LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH:
                         tmp_prop = prop_pTX(tmp_lut->m_constZ, y, x);
-                        fill_prop2data(&tmp_prop, tmp_lut->m_map_props, props);
+                        fill_prop2data(this, &tmp_prop, tmp_lut->m_map_props, props);
                         break;
                     case LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP:
                         tmp_prop = prop_pTX(y, tmp_lut->m_constZ, x);
-                        fill_prop2data(&tmp_prop, tmp_lut->m_map_props, props);
+                        fill_prop2data(this, &tmp_prop, tmp_lut->m_map_props, props);
                         break;
                     default:
                         ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(double* props, double x, double y)");
@@ -4669,15 +4669,15 @@ namespace H2ONaCl
                     {
                     case LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP:
                         tmp_prop = prop_pHX(y, x, tmp_lut->m_constZ);
-                        fill_prop2data(&tmp_prop, tmp_lut->m_map_props, props);
+                        fill_prop2data(this, &tmp_prop, tmp_lut->m_map_props, props);
                         break;
                     case LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH:
                         tmp_prop = prop_pHX(tmp_lut->m_constZ, y, x);
-                        fill_prop2data(&tmp_prop, tmp_lut->m_map_props, props);
+                        fill_prop2data(this, &tmp_prop, tmp_lut->m_map_props, props);
                         break;
                     case LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP:
                         tmp_prop = prop_pHX(y, tmp_lut->m_constZ, x);
-                        fill_prop2data(&tmp_prop, tmp_lut->m_map_props, props);
+                        fill_prop2data(this, &tmp_prop, tmp_lut->m_map_props, props);
                         break;
                     default:
                         ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)");
@@ -4829,11 +4829,11 @@ namespace H2ONaCl
                 if(tmp_lut->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_T)
                 {
                     tmp_prop = prop_pTX(y, x, z); //For 3D case, the order of x,y,z MUST BE TorH, p, X.
-                    fill_prop2data(&tmp_prop, tmp_lut->m_map_props, props);
+                    fill_prop2data(this, &tmp_prop, tmp_lut->m_map_props, props);
                 }else if (tmp_lut->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
                 {
                     tmp_prop = prop_pTX(y, x, z); //For 3D case, the order of x,y,z MUST BE TorH, p, X.
-                    fill_prop2data(&tmp_prop, tmp_lut->m_map_props, props);
+                    fill_prop2data(this, &tmp_prop, tmp_lut->m_map_props, props);
                 }else
                 {
                     ERROR("The EOS space only support TPX and HPX!");

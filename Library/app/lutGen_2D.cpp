@@ -49,17 +49,17 @@ int main(int argc, char** argv)
     {
         if(const_var == "X")
         {
-            eos.createLUT_2D(xmin + 273.15, xmax + 273.15, ymin * 1E5, ymax * 1E5, constZ, LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level, Update_prop_rho | Update_prop_drhodh | Update_prop_h);
+            eos.createLUT_2D(xmin + 273.15, xmax + 273.15, ymin * 1E5, ymax * 1E5, constZ, LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level, Update_prop_rho | Update_prop_h);
             eos.save_lut_to_vtk("lut_constX_TP_"+std::to_string(max_level)+".vtu");
             eos.save_lut_to_binary("lut_constX_TP_"+std::to_string(max_level)+".bin");
         }else if(const_var == "P")
         {
-            eos.createLUT_2D(xmin, xmax, ymin + 273.15, ymax+273.15, constZ * 1E5, LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level, Update_prop_rho | Update_prop_drhodh | Update_prop_h);
+            eos.createLUT_2D(xmin, xmax, ymin + 273.15, ymax+273.15, constZ * 1E5, LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level, Update_prop_rho | Update_prop_h);
             eos.save_lut_to_vtk("lut_constP_XT_"+std::to_string(max_level)+".vtu");
             eos.save_lut_to_binary("lut_constP_XT_"+std::to_string(max_level)+".bin");
         }else if(const_var == "T")
         {
-            eos.createLUT_2D(xmin, xmax, ymin*1E5, ymax*1E5, constZ + 273.15, LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level, Update_prop_rho | Update_prop_drhodh | Update_prop_h);
+            eos.createLUT_2D(xmin, xmax, ymin*1E5, ymax*1E5, constZ + 273.15, LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level, Update_prop_rho | Update_prop_h);
             eos.save_lut_to_vtk("lut_constT_XP_"+std::to_string(max_level)+".vtu");
             eos.save_lut_to_binary("lut_constT_XP_"+std::to_string(max_level)+".bin");
         }
@@ -71,17 +71,17 @@ int main(int argc, char** argv)
     {
         if(const_var == "X")
         {
-            eos.createLUT_2D(xmin*1E6, xmax*1E6, ymin*1E5, ymax*1E5, constZ, LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP, LOOKUPTABLE_FOREST::EOS_ENERGY_H, min_level, max_level, Update_prop_rho | Update_prop_drhodh | Update_prop_h);
+            eos.createLUT_2D(xmin*1E6, xmax*1E6, ymin*1E5, ymax*1E5, constZ, LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP, LOOKUPTABLE_FOREST::EOS_ENERGY_H, min_level, max_level, Update_prop_rho | Update_prop_h);
             eos.save_lut_to_vtk("lut_constX_HP_"+std::to_string(max_level)+".vtu");
             eos.save_lut_to_binary("lut_constX_HP_"+std::to_string(max_level)+".bin");
         }else if(const_var == "P")
         {
-            eos.createLUT_2D(xmin, xmax, ymin*1E6, ymax*1E6, constZ*1E5, LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH, LOOKUPTABLE_FOREST::EOS_ENERGY_H, min_level, max_level, Update_prop_rho | Update_prop_drhodh | Update_prop_h);
+            eos.createLUT_2D(xmin, xmax, ymin*1E6, ymax*1E6, constZ*1E5, LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH, LOOKUPTABLE_FOREST::EOS_ENERGY_H, min_level, max_level, Update_prop_rho | Update_prop_h);
             eos.save_lut_to_vtk("lut_constP_XH_"+std::to_string(max_level)+".vtu");
             eos.save_lut_to_binary("lut_constP_XH_"+std::to_string(max_level)+".bin");
         }else if(const_var == "H")
         {
-            eos.createLUT_2D(xmin, xmax, ymin*1E5, ymax*1E5, constZ*1E6, LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP, LOOKUPTABLE_FOREST::EOS_ENERGY_H, min_level, max_level, Update_prop_rho | Update_prop_drhodh | Update_prop_h);
+            eos.createLUT_2D(xmin, xmax, ymin*1E5, ymax*1E5, constZ*1E6, LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP, LOOKUPTABLE_FOREST::EOS_ENERGY_H, min_level, max_level, Update_prop_rho | Update_prop_h);
             eos.save_lut_to_vtk("lut_constH_XP_"+std::to_string(max_level)+".vtu");
             eos.save_lut_to_binary("lut_constH_XP_"+std::to_string(max_level)+".bin");
         }

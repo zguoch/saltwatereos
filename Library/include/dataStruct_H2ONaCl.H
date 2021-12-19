@@ -53,6 +53,8 @@ namespace H2ONaCl
         double S_l, S_v, S_h; //saturation [-]
         double X_l, X_v; // volume fraction of NaCl in vaper and liquid, it is a composition fraction. H2O + NaCl
         double Mu_l, Mu_v;//viscosity [Pa s]
+        // derivatives
+        double dRhodH;
     };
     
     struct MP_STRUCT
