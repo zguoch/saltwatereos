@@ -1146,7 +1146,7 @@ void LookUpTableForest<dim,USER_DATA>::print_summary()
     int ind =0;
     for(auto & m : m_map_props)
     {
-        cout<<"  "<<ind<<": "<<m.second.longName<<endl;
+        cout<<"  "<<ind<<": "<<m.second.longName<<": "<<m.second.shortName<<m.second.unit<<endl;
         ind++;
     }
     cout<<"================== Summary end ==================="<<endl;
