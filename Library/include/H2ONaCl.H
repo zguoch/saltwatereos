@@ -55,6 +55,7 @@ namespace H2ONaCl
     #define Update_prop_rho     2   // 2^1 = 2
     #define Update_prop_h       4   // 2^2 = 4
     #define Update_prop_drhodh  8   // 2^3 = 8
+    #define Update_prop_T       16   // 2^4 = 16
     // ===========================================================================
     typedef LOOKUPTABLE_FOREST::LookUpTableForest<2, LOOKUPTABLE_FOREST::FIELD_DATA<2> > LookUpTableForest_2D;
     typedef LOOKUPTABLE_FOREST::LookUpTableForest<3, LOOKUPTABLE_FOREST::FIELD_DATA<3> > LookUpTableForest_3D;

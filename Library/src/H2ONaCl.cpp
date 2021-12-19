@@ -89,6 +89,10 @@ namespace H2ONaCl
     }
     void cH2ONaCl::init_supported_props()
     {
+        // Temperature
+        strcpy(m_supported_props[Update_prop_T].longName          , "Temperature");
+        strcpy(m_supported_props[Update_prop_T].shortName         , "T");
+        strcpy(m_supported_props[Update_prop_T].unit              , "[K]");
         // Bulk density
         strcpy(m_supported_props[Update_prop_rho].longName          , "Bulk density");
         strcpy(m_supported_props[Update_prop_rho].shortName         , "Rho");
@@ -101,6 +105,7 @@ namespace H2ONaCl
         strcpy(m_supported_props[Update_prop_drhodh].longName       , "dRho/dH");
         strcpy(m_supported_props[Update_prop_drhodh].shortName      , "dRhodH");
         strcpy(m_supported_props[Update_prop_drhodh].unit           , "[kg2/(m3 J)]");
+        
     }
     void cH2ONaCl:: init_prop()
     {
