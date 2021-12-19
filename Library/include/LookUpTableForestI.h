@@ -230,22 +230,22 @@ void LookUpTableForest<dim,USER_DATA>::write_to_binary(string filename, bool isW
     fwrite(&num_props, sizeof(int), 1, fpout);
     for(auto &m : m_map_props)
     {
-        int len_str = 0;
+        // int len_str = 0;
         fwrite(&m.first, sizeof(int), 1, fpout);
-        // short name
-        len_str = m.second.shortName.length();
-        fwrite(&len_str, sizeof(int), 1, fpout);
-        fwrite(m.second.shortName.c_str(), sizeof(char), len_str, fpout);
-        // long name
-        len_str = m.second.longName.length();
-        fwrite(&len_str, sizeof(int), 1, fpout);
-        fwrite(m.second.longName.c_str(), sizeof(char), len_str, fpout);
-        // unit
-        len_str = m.second.unit.length();
-        fwrite(&len_str, sizeof(int), 1, fpout);
-        fwrite(m.second.unit.c_str(), sizeof(char), len_str, fpout);
-        // const char* name = m.second.c_str();
-        // cout<<"length of name: "<<m.second.length()<<" "<<m.second<<" "<<sizeof(m.second.c_str())<<endl;
+        // // short name
+        // len_str = m.second.shortName.length();
+        // fwrite(&len_str, sizeof(int), 1, fpout);
+        fwrite(m.second.shortName, sizeof(char), STR_LENGTH_PROPINFO, fpout);
+        // // long name
+        // len_str = m.second.longName.length();
+        // fwrite(&len_str, sizeof(int), 1, fpout);
+        fwrite(m.second.longName, sizeof(char), STR_LENGTH_PROPINFO, fpout);
+        // // unit
+        // len_str = m.second.unit.length();
+        // fwrite(&len_str, sizeof(int), 1, fpout);
+        fwrite(m.second.unit, sizeof(char), STR_LENGTH_PROPINFO, fpout);
+        // // const char* name = m.second.c_str();
+        // // cout<<"length of name: "<<m.second.length()<<" "<<m.second<<" "<<sizeof(m.second.c_str())<<endl;
     }
     fwrite(&m_RMSD_RefineCriterion, sizeof(RMSD_RefineCriterion), 1, fpout);
     // recursion write forest and data
@@ -441,26 +441,27 @@ void LookUpTableForest<dim,USER_DATA>::read_forest_from_binary(string filename, 
     {
         int ind_prop;
         fread(&ind_prop, sizeof(int), 1, fpin);
-        int len_str;
-        // short name
-        fread(&len_str, sizeof(int), 1, fpin);
-        char* str_shortName = new char[len_str];
-        fread(str_shortName, sizeof(char), len_str, fpin);
-        m_map_props[ind_prop].shortName = string(str_shortName);
-        // long name
-        fread(&len_str, sizeof(int), 1, fpin);
-        char* str_longName = new char[len_str];
-        fread(str_longName, sizeof(char), len_str, fpin);
-        m_map_props[ind_prop].longName = string(str_longName);
-        // unit
-        fread(&len_str, sizeof(int), 1, fpin);
-        char* str_unit = new char[len_str];
-        fread(str_unit, sizeof(char), len_str, fpin);
-        m_map_props[ind_prop].unit = string(str_unit);
-        // cout<<"len: "<<len_name<<", name: "<<m_map_props[ind_prop].shortName<<endl;
-        delete[] str_shortName;
-        delete[] str_longName;
-        delete[] str_unit;
+    
+        // int len_str;
+        // // short name
+        // fread(&len_str, sizeof(int), 1, fpin);
+        // char* str_shortName = new char[len_str];
+        fread(m_map_props[ind_prop].shortName, sizeof(char), STR_LENGTH_PROPINFO, fpin);
+        // m_map_props[ind_prop].shortName = string(str_shortName);
+        // // long name
+        // fread(&len_str, sizeof(int), 1, fpin);
+        // char* str_longName = new char[len_str];
+        fread(m_map_props[ind_prop].longName, sizeof(char), STR_LENGTH_PROPINFO, fpin);
+        // m_map_props[ind_prop].longName = string(str_longName);
+        // // unit
+        // fread(&len_str, sizeof(int), 1, fpin);
+        // char* str_unit = new char[len_str];
+        fread(m_map_props[ind_prop].unit, sizeof(char), STR_LENGTH_PROPINFO, fpin);
+        // m_map_props[ind_prop].unit = string(str_unit);
+        // // cout<<"len: "<<len_name<<", name: "<<m_map_props[ind_prop].shortName<<endl;
+        // delete[] str_shortName;
+        // delete[] str_longName;
+        // delete[] str_unit;
     }
     fread(&m_RMSD_RefineCriterion, sizeof(RMSD_RefineCriterion), 1, fpin);
     // recursion read forest and data

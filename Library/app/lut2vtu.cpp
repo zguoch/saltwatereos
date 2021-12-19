@@ -2,6 +2,11 @@
 
 int main(int argc, char** argv)
 {
+    // char test[100];
+    // strcpy(test, "dsasd");
+    // printf("%s:end\n", test);
+    // return 0;
+    
     if(argc!=2)ERROR("Usage: lutinfo myLUT.bin");
     H2ONaCl::cH2ONaCl sw;
     sw.loadLUT(argv[1]);

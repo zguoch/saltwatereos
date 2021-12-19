@@ -2,7 +2,8 @@
 #define STDFUNC_H
 #include "stdio.h"
 #include <iostream>
-#include<map>  
+#include<map> 
+#include <cstring>
 
  #ifdef _WIN32
     // define color, this seems only work on MacOS and linux, doesn't work on windows

@@ -41,7 +41,7 @@ int main(int argc, char** argv)
             fprintf(fp, "Phase region\tNeed_refine");
             for (auto &m : pLUT->m_map_props)
             {
-                fprintf(fp, "\t%s", m.second.longName.c_str());
+                fprintf(fp, "\t%s", m.second.longName);
             }
             fprintf(fp, "\n");
             
@@ -72,7 +72,7 @@ int main(int argc, char** argv)
             fprintf(fp, "Phase region\tNeed_refine");
             for (auto &m : pLUT->m_map_props)
             {
-                fprintf(fp, "\t%s", m.second.longName.c_str());
+                fprintf(fp, "\t%s", m.second.longName);
             }
             fprintf(fp, "\n");
 

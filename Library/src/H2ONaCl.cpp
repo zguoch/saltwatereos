@@ -90,17 +90,17 @@ namespace H2ONaCl
     void cH2ONaCl::init_supported_props()
     {
         // Bulk density
-        m_supported_props[Update_prop_rho].longName          = "Bulk density";
-        m_supported_props[Update_prop_rho].shortName         = "Rho";
-        m_supported_props[Update_prop_rho].unit              = "[kg/m3]";
+        strcpy(m_supported_props[Update_prop_rho].longName          , "Bulk density");
+        strcpy(m_supported_props[Update_prop_rho].shortName         , "Rho");
+        strcpy(m_supported_props[Update_prop_rho].unit              , "[kg/m3]");
         // Specific enhalpy
-        m_supported_props[Update_prop_h].longName            = "Bulk specific enthalpy";
-        m_supported_props[Update_prop_h].shortName           = "H";
-        m_supported_props[Update_prop_h].unit                = "[J/kg]";
+        strcpy(m_supported_props[Update_prop_h].longName            , "Bulk specific enthalpy");
+        strcpy(m_supported_props[Update_prop_h].shortName           , "H");
+        strcpy(m_supported_props[Update_prop_h].unit                , "[J/kg]");
         // Derivative: drhodh
-        m_supported_props[Update_prop_drhodh].longName       = "dRho/dH";
-        m_supported_props[Update_prop_drhodh].shortName      = "dRhodH";
-        m_supported_props[Update_prop_drhodh].unit           = "[kg2/(m3 J)]";
+        strcpy(m_supported_props[Update_prop_drhodh].longName       , "dRho/dH");
+        strcpy(m_supported_props[Update_prop_drhodh].shortName      , "dRhodH");
+        strcpy(m_supported_props[Update_prop_drhodh].unit           , "[kg2/(m3 J)]");
     }
     void cH2ONaCl:: init_prop()
     {
