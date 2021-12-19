@@ -31,21 +31,26 @@ def usage(argv):
     print(head)
     print(description)
     print('Zhikui Guo, 2021/12/19, GEOMAR')
-    print('[Example]: '+C_RED + basename+C_BLUE + ' xx.txt yy.txt zz.txt'+C_DEFAULT)
+    print('[Example]: '+C_RED + basename+C_BLUE + ' xx.txt yy.txt zz.txt zz_lut.txt'+C_DEFAULT)
     print('='*len(head))
 
 
 def main(argv):
-    if(len(argv)!=4):
+    if(len(argv)!=5):
         usage(argv)
         exit()
     
     xx = np.loadtxt(argv[1])
     yy = np.loadtxt(argv[2])
     zz = np.loadtxt(argv[3])
-    fig = plt.figure(figsize=(8,8))
-    ax=plt.gca()
+    zz_lut = np.loadtxt(argv[4])
+    fig,axes = plt.subplots(1,2,figsize=(16,8))
+    ax=axes[0]
     ax.contourf(xx,yy,zz, levels=50, cmap='rainbow')
+    ax.text(0.5, 1.02, "Formula", ha='center', va='bottom', transform=ax.transAxes, fontsize=16, fontweight='bold')
+    ax=axes[1]
+    ax.contourf(xx,yy,zz_lut, levels=50, cmap='rainbow')
+    ax.text(0.5, 1.02, "Lookup table", ha='center', va='bottom', transform=ax.transAxes, fontsize=16, fontweight='bold')
     plt.savefig('result.pdf', bbox_inches='tight')
 
 

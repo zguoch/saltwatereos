@@ -370,13 +370,13 @@ void load_binary_2d(string filename)
     H2ONaCl::PROP_H2ONaCl prop_cal;
     clock_t start = clock();
     const int dim = 2;
+    int dim_file = LOOKUPTABLE_FOREST::get_dim_from_binary(filename);
+    if(dim!=dim_file)ERROR("The input LUT file is not 2D.");
     eos.loadLUT(filename);
     H2ONaCl::LookUpTableForest_2D* pLUT = (H2ONaCl::LookUpTableForest_2D*)eos.m_pLUT;
     // eos.save_lut_to_vtk("lut_load_save.vtu");
-    if(pLUT->m_const_which_var != LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP)ERROR("load_binary_2d only support const_X_Var_TorHP LUT");
-
-    double Tmin = pLUT->m_xyz_min[0], Tmax = pLUT->m_xyz_max[0], Pmin = pLUT->m_xyz_min[1], Pmax = pLUT->m_xyz_max[1];
-    double x_const = pLUT->m_constZ;
+    double Xmin = pLUT->m_xyz_min[0], Xmax = pLUT->m_xyz_max[0], Ymin = pLUT->m_xyz_min[1], Ymax = pLUT->m_xyz_max[1];
+    double constZ = pLUT->m_constZ;
     int index_rho = distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_rho));
     int index_h = distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_h));
     int index_T = distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_T));
@@ -388,25 +388,70 @@ void load_binary_2d(string filename)
     double* props = new double[pLUT->m_map_props.size()];
     int ind_rho = 0;
     int nx = 100, ny = 150;
-    double dx = (Tmax - Tmin)/(nx - 1);
-    double dy = (Pmax - Pmin)/(ny - 1);
+    double dx = (Xmax - Xmin)/(nx - 1);
+    double dy = (Ymax - Ymin)/(ny - 1);
     double x, y;
     ofstream fpout_xx("XX.txt");
     ofstream fpout_yy("YY.txt");
     ofstream fpout_zz("ZZ.txt");
     ofstream fpout_zz_lut("ZZ_lut.txt");
+    bool isCal = true;
     for (int i = 0; i < ny; i++)
     {
-        y = Pmin + i*dy;
+        y = Ymin + i*dy;
         for (int j = 0; j < nx; j++)
         {
-            x = Tmin + j*dx;
-            prop_cal = eos.prop_pTX(y, x, x_const);
-            targetLeaf = eos.lookup(props, x, y, true);
+            x = Xmin + j*dx;
+            if(isCal)
+            {
+                switch (pLUT->m_TorH)
+                {
+                case LOOKUPTABLE_FOREST::EOS_ENERGY_T:
+                    {
+                        switch (pLUT->m_const_which_var)
+                        {
+                        case LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP:
+                            prop_cal = eos.prop_pTX(y, x, constZ);
+                            break;
+                        case LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH:
+                            prop_cal = eos.prop_pTX(constZ, y, x);
+                            break;
+                        case LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP:
+                            prop_cal = eos.prop_pTX(y, constZ, x);
+                            break;
+                        default:
+                            break;
+                        }
+                    }
+                    break;
+                case LOOKUPTABLE_FOREST::EOS_ENERGY_H:
+                    {
+                        switch (pLUT->m_const_which_var)
+                        {
+                        case LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP:
+                            prop_cal = eos.prop_pHX(y, x, constZ);
+                            break;
+                        case LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH:
+                            prop_cal = eos.prop_pHX(constZ, y, x);
+                            break;
+                        case LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP:
+                            prop_cal = eos.prop_pHX(y, constZ, x);
+                            break;
+                        default:
+                            break;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+                }
+                fpout_zz<<prop_cal.Rho<<" ";
+            }
+            
+            targetLeaf = eos.lookup(props, x, y, false);
             fpout_xx<<x<<" ";
             fpout_yy<<y<<" ";
-            fpout_zz<<prop_cal.H<<" ";
-            fpout_zz_lut<<props[index_h]<<" ";
+            fpout_zz_lut<<props[index_rho]<<" ";
         }
         fpout_xx<<endl;
         fpout_yy<<endl;
