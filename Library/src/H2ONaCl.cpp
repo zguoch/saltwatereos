@@ -4425,6 +4425,7 @@ namespace H2ONaCl
                 }
             }
             // update properties data on leaves
+            STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
             tmp_lut_2D->assemble_data(cal_prop_PTX);
         }else if(tmp_lut_2D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
         {
@@ -4442,12 +4443,12 @@ namespace H2ONaCl
             }
 
             // 
+            STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
             tmp_lut_2D->assemble_data(cal_prop_PHX);
         }else
         {
             ERROR("The EOS space only support TPX and HPX!");
         }
-        STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
         tmp_lut_2D->print_summary();
     }
 
@@ -4481,6 +4482,7 @@ namespace H2ONaCl
                 }
             }
             // 
+            STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
             tmp_lut_3D->assemble_data(cal_prop_PTX);
         }else if (tmp_lut_3D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
         {
@@ -4497,13 +4499,12 @@ namespace H2ONaCl
                 }
             }
             // 
+            STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
             tmp_lut_3D->assemble_data(cal_prop_PHX);
         }else
         {
             ERROR("The EOS space only support TPX and HPX!");
         }
-        
-        STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
         tmp_lut_3D->print_summary();
     }
 
