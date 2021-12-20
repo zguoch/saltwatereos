@@ -52,6 +52,7 @@ void mGetMatrix(const mxArray *prhs, double **out, const char *varname, mwSize *
   *out_m = m;
   *out_n = n;
 }
+// this function just used to test and debug, please ignore it.
 void load_binary_2d(string filename)
 {
     int ind = 0;
@@ -220,12 +221,12 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
         // fpout_prop1<<props[1]<<" ";
         // fpout_prop2<<props[2]<<" ";
       }
-      // fpout_x<<endl;
-      // fpout_y<<endl;
-      // fpout_z<<endl;
-      // fpout_prop0<<endl;
-      // fpout_prop1<<endl;
-      // fpout_prop2<<endl;
+    //   fpout_x<<endl;
+    //   fpout_y<<endl;
+    //   fpout_z<<endl;
+    //   fpout_prop0<<endl;
+    //   fpout_prop1<<endl;
+    //   fpout_prop2<<endl;
     }
     // fpout_x.close();
     // fpout_y.close();

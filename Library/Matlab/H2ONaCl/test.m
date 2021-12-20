@@ -26,7 +26,9 @@ function [needRefine, rho, T] = test_lookupLUT_2D()
     
     [needRefine, rho, T] = lutLookup_2D('lut_constP_XH_8.bin', X, H);
     % plot
-    contourf(X,H,T);
+    contourf(X,H,rho);
+    % save fig
+    saveas(gcf, 'result.pdf');
 end
 
 function [needRefine, rho, T] = test_lookupLUT_2D_random()
