@@ -1,6 +1,7 @@
 #include "H2ONaCl.H"
 #include "H2ONaCl_LUT_RefineFuncI.H"
-
+#include "LookUpTableForestI.h"
+#include "interpolationI.h"
 // using namespace H2ONaCl;
 namespace H2ONaCl
 {

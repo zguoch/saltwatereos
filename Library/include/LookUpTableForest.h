@@ -182,7 +182,7 @@ namespace LOOKUPTABLE_FOREST
         ~LookUpTableForest();
     };
 
-   #include "LookUpTableForestI.h" //have to organize the template class header file and sourfile together
+//    #include "LookUpTableForestI.h" //have to organize the template class header file and sourfile together
     
 }
 

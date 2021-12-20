@@ -15,7 +15,7 @@ using namespace std;
 // solve roots of general polynomial
 // This code comes from https://www.codeproject.com/Articles/674149/A-Real-Polynomial-Class-with-Root-Finder
 #include "Polynomial.h"
-#include "interpolation.h"
+
 // #include "Fluid.H"
 #include "H2O.H"
 #include "NaCl.H"
