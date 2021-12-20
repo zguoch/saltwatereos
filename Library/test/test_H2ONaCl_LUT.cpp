@@ -312,52 +312,102 @@ void load_binary_3d(string filename)
 
     double TorHmin = pLUT->m_xyz_min[0], TorHmax = pLUT->m_xyz_max[0], Pmin = pLUT->m_xyz_min[1], Pmax = pLUT->m_xyz_max[1];
     double Xmin = pLUT->m_xyz_min[2], Xmax = pLUT->m_xyz_max[2];
-
+    double constX = 0.2; //lookup x=0.2 slice
+    double constP = 200E5;
+    int index_rho = distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_rho));
+    int index_h = distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_h));
+    int index_T = distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_T));
+    int nP = 100, nTorH = 150, nX = 100;
+    double dTorH = (TorHmax - TorHmin)/(nTorH - 1);
+    double dP = (Pmax - Pmin)/(nP - 1);
+    double dX = (Xmax - Xmin)/(nX - 1);
+    double TorH, P, X;
     STATUS("Start search ... ");
     start = clock();
     LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
     double* props = new double[pLUT->m_map_props.size()];
     int ind_rho = 0;
-    int n_randSample = 10;
-    for (size_t i = 0; i < n_randSample; i++)
+    ofstream fpout_xx("XX.txt");
+    ofstream fpout_yy("YY.txt");
+    ofstream fpout_zz("ZZ.txt");
+    ofstream fpout_zz_lut("ZZ_lut.txt");
+    bool isCal = true;
+    for (int i = 0; i < nTorH; i++)
     {
-        double TorH = (rand()/(double)RAND_MAX)*(TorHmax - TorHmin) + TorHmin;
-        double p_Pa = (rand()/(double)RAND_MAX)*(Pmax - Pmin) + Pmin;
-        double X_wt = (rand()/(double)RAND_MAX)*(Xmax - Xmin) + Xmin;
-        targetLeaf = eos.lookup(props, TorH, p_Pa, X_wt, false); 
-        if(pLUT->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_T)
+        TorH = TorHmin + i*dTorH;
+        for (int j = 0; j < nX; j++)
         {
-            prop_cal = eos.prop_pTX(p_Pa, TorH, X_wt);
-        }else
-        {
-            prop_cal = eos.prop_pHX(p_Pa, TorH, X_wt);
+            X = Xmin + j*dX;
+            if(isCal)
+            {
+                switch (pLUT->m_TorH)
+                {
+                case LOOKUPTABLE_FOREST::EOS_ENERGY_T:
+                    prop_cal = eos.prop_pTX(constP, TorH, X);
+                    break;
+                case LOOKUPTABLE_FOREST::EOS_ENERGY_H:
+                    prop_cal = eos.prop_pHX(constP, TorH, X);
+                    break;
+                default:
+                    break;
+                }
+                fpout_zz<<prop_cal.Rho<<" ";
+            }
+            
+            targetLeaf = eos.lookup(props, TorH, constP, X);
+            fpout_xx<<X<<" ";
+            fpout_yy<<TorH<<" ";
+            fpout_zz_lut<<props[index_rho]<<" ";
         }
-        // H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion_pTX(p_Pa, T_K, X_wt);
-        // if(targetLeaf->user_data->prop_cell.Region != phaseRegion_cal)
-        if(targetLeaf->user_data->need_refine)
-        {
-            ind++;
-            cout<<"Need refine point "<<ind++<<", level: "<<targetLeaf->level;
-            cout<<", rho: "<<prop_cal.Rho<<"  "<<props[ind_rho]<<endl;
-        }
-        else
-        {
-            cout<<"Rho: "<<prop_cal.Rho<<"  "<<props[ind_rho]<<endl;
-            // double err = prop_cal.Rho-prop_lookup.Rho;
-            // if(fabs(err)>0.5)
-            // {
-            //     cout<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<", err: "<<err<<endl;
-            //     // cout<<"  "<<targetLeaf->user_data->prop_point[0].Rho
-            //     //     <<"  "<<targetLeaf->user_data->prop_point[1].Rho
-            //     //     <<"  "<<targetLeaf->user_data->prop_point[2].Rho
-            //     //     <<"  "<<targetLeaf->user_data->prop_point[3].Rho
-            //     //     <<"  "<<targetLeaf->user_data->prop_cell.Rho
-            //     //     <<", level: "<<targetLeaf->level<<", refine: "<<targetLeaf->user_data->need_refine
-            //     //     <<endl;
-            // }
-        }
+        fpout_xx<<endl;
+        fpout_yy<<endl;
+        fpout_zz<<endl;
+        fpout_zz_lut<<endl;
     }
-    printf("All %d (%.2f %%) random points close to phase boundary.\n", ind, ind/(double)n_randSample*100);
+    fpout_xx.close();
+    fpout_yy.close();
+    fpout_zz.close();
+    fpout_zz_lut.close();
+    // int n_randSample = 10;
+    // for (size_t i = 0; i < n_randSample; i++)
+    // {
+    //     double TorH = (rand()/(double)RAND_MAX)*(TorHmax - TorHmin) + TorHmin;
+    //     double p_Pa = (rand()/(double)RAND_MAX)*(Pmax - Pmin) + Pmin;
+    //     double X_wt = (rand()/(double)RAND_MAX)*(Xmax - Xmin) + Xmin;
+    //     targetLeaf = eos.lookup(props, TorH, p_Pa, X_wt, false); 
+    //     if(pLUT->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_T)
+    //     {
+    //         prop_cal = eos.prop_pTX(p_Pa, TorH, X_wt);
+    //     }else
+    //     {
+    //         prop_cal = eos.prop_pHX(p_Pa, TorH, X_wt);
+    //     }
+    //     // H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion_pTX(p_Pa, T_K, X_wt);
+    //     // if(targetLeaf->user_data->prop_cell.Region != phaseRegion_cal)
+    //     if(targetLeaf->user_data->need_refine)
+    //     {
+    //         ind++;
+    //         cout<<"Need refine point "<<ind++<<", level: "<<targetLeaf->level;
+    //         cout<<", rho: "<<prop_cal.Rho<<"  "<<props[ind_rho]<<endl;
+    //     }
+    //     else
+    //     {
+    //         cout<<"Rho: "<<prop_cal.Rho<<"  "<<props[ind_rho]<<endl;
+    //         // double err = prop_cal.Rho-prop_lookup.Rho;
+    //         // if(fabs(err)>0.5)
+    //         // {
+    //         //     cout<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<", err: "<<err<<endl;
+    //         //     // cout<<"  "<<targetLeaf->user_data->prop_point[0].Rho
+    //         //     //     <<"  "<<targetLeaf->user_data->prop_point[1].Rho
+    //         //     //     <<"  "<<targetLeaf->user_data->prop_point[2].Rho
+    //         //     //     <<"  "<<targetLeaf->user_data->prop_point[3].Rho
+    //         //     //     <<"  "<<targetLeaf->user_data->prop_cell.Rho
+    //         //     //     <<", level: "<<targetLeaf->level<<", refine: "<<targetLeaf->user_data->need_refine
+    //         //     //     <<endl;
+    //         // }
+    //     }
+    // }
+    // printf("All %d (%.2f %%) random points close to phase boundary.\n", ind, ind/(double)n_randSample*100);
 
     delete[] props;
 
