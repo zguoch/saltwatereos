@@ -100,7 +100,7 @@ add_subdirectory(swig/H2ONaCl) # split omp-related code to another file, and do 
 # install path 
 INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/include )
 link_directories(/usr/local/lib)
-FILE(GLOB SC_FILES "${PROJECT_SOURCE_DIR}/src/PROST/*.c" "${PROJECT_SOURCE_DIR}/src/PROST/*.h" "${PROJECT_SOURCE_DIR}/src/*.H" "${PROJECT_SOURCE_DIR}/src/*.cpp")
+FILE(GLOB SC_FILES "${PROJECT_SOURCE_DIR}/src/PROST/*.c" "${PROJECT_SOURCE_DIR}/src/PROST/*.h" "${PROJECT_SOURCE_DIR}/src/*.H" "${PROJECT_SOURCE_DIR}/src/*.cpp" )
 
 # default is STATIC library, for Mex compilation on Linux system, the SHARED library is required!!! But static lib works for MAC OS
 # compile both STATIC and SHARED library
