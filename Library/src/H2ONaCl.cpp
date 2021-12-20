@@ -4837,7 +4837,7 @@ namespace H2ONaCl
                     fill_prop2data(this, &tmp_prop, tmp_lut->m_map_props, props);
                 }else if (tmp_lut->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
                 {
-                    tmp_prop = prop_pTX(y, x, z); //For 3D case, the order of x,y,z MUST BE TorH, p, X.
+                    tmp_prop = prop_pHX(y, x, z); //For 3D case, the order of x,y,z MUST BE TorH, p, X.
                     fill_prop2data(this, &tmp_prop, tmp_lut->m_map_props, props);
                 }else
                 {
