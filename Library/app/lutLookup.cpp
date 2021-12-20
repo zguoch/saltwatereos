@@ -33,7 +33,7 @@ int main(int argc, char** argv)
         {
             const int dim = 2;
             H2ONaCl::LookUpTableForest_2D* pLUT = (H2ONaCl::LookUpTableForest_2D*)sw.m_pLUT;
-            LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
+            LOOKUPTABLE_FOREST::Quadrant<dim,H2ONaCl::FIELD_DATA<dim> > *targetLeaf = NULL;
             FILE* fp = NULL;
             fp = fopen("lookup_result.csv", "w");
             if(!fp)ERROR("Open file failed: lookup_result.txt");
@@ -64,7 +64,7 @@ int main(int argc, char** argv)
         {
             const int dim = 3;
             H2ONaCl::LookUpTableForest_3D* pLUT = (H2ONaCl::LookUpTableForest_3D*)sw.m_pLUT;
-            LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
+            LOOKUPTABLE_FOREST::Quadrant<dim,H2ONaCl::FIELD_DATA<dim> > *targetLeaf = NULL;
             FILE* fp = NULL;
             fp = fopen("lookup_result.csv", "w");
             if(!fp)ERROR("Open file failed: lookup_result.txt");

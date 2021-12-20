@@ -4565,9 +4565,9 @@ namespace H2ONaCl
     }
 
     template<int dim>
-    void cH2ONaCl::interp_quad_prop(LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf, H2ONaCl::PROP_H2ONaCl& prop, const double xyz[dim])
+    void cH2ONaCl::interp_quad_prop(LOOKUPTABLE_FOREST::Quadrant<dim,H2ONaCl::FIELD_DATA<dim> > *targetLeaf, H2ONaCl::PROP_H2ONaCl& prop, const double xyz[dim])
     {
-        LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> >* tmp_lut = (LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> >*)m_pLUT;
+        LOOKUPTABLE_FOREST::LookUpTableForest<dim, H2ONaCl::FIELD_DATA<dim> >* tmp_lut = (LOOKUPTABLE_FOREST::LookUpTableForest<dim, H2ONaCl::FIELD_DATA<dim> >*)m_pLUT;
         // double physical_length[dim]; //physical length of the quad
         // double coeff[dim][2];
         // const int num_children = tmp_lut->m_num_children;
@@ -4592,9 +4592,9 @@ namespace H2ONaCl
     }
 
     template<int dim>
-    void cH2ONaCl::interp_quad_prop(LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf, double* props, const double xyz[dim])
+    void cH2ONaCl::interp_quad_prop(LOOKUPTABLE_FOREST::Quadrant<dim,H2ONaCl::FIELD_DATA<dim> > *targetLeaf, double* props, const double xyz[dim])
     {
-        LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> >* tmp_lut = (LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> >*)m_pLUT;
+        LOOKUPTABLE_FOREST::LookUpTableForest<dim, H2ONaCl::FIELD_DATA<dim> >* tmp_lut = (LOOKUPTABLE_FOREST::LookUpTableForest<dim, H2ONaCl::FIELD_DATA<dim> >*)m_pLUT;
         double physical_length[dim]; //physical length of the quad
         double coeff[dim][2];
         const int num_children = tmp_lut->m_num_children;
@@ -4630,7 +4630,7 @@ namespace H2ONaCl
         delete[] pNodeData;
     }
 
-    LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(double* props, double x, double y, bool is_cal)
+    LOOKUPTABLE_FOREST::Quadrant<2,H2ONaCl::FIELD_DATA<2> > * cH2ONaCl::lookup(double* props, double x, double y, bool is_cal)
     {
         LookUpTableForest_2D* tmp_lut = (LookUpTableForest_2D*)m_pLUT; // make temporary copy of the pointer
         // safety check: bound check
@@ -4640,7 +4640,7 @@ namespace H2ONaCl
         }
         // -------------------------------
         // cout<<"constZ: "<<tmp_lut->m_constZ<<", y: "<<y<<", x: "<<x<<endl;
-        LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *targetLeaf = NULL;
+        LOOKUPTABLE_FOREST::Quadrant<2,H2ONaCl::FIELD_DATA<2> > *targetLeaf = NULL;
         tmp_lut->searchQuadrant(targetLeaf, x, y, tmp_lut->m_constZ);
         // cout<<"  level: "<<targetLeaf->level<<", x: "<<x<<", y: "<<y<<", quad x: "<<targetLeaf->xyz[0]<<", quad y: "<<targetLeaf->xyz[1]<<endl;
         PROP_H2ONaCl tmp_prop;
@@ -4666,7 +4666,7 @@ namespace H2ONaCl
                         fill_prop2data(this, &tmp_prop, tmp_lut->m_map_props, props);
                         break;
                     default:
-                        ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(double* props, double x, double y)");
+                        ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,H2ONaCl::FIELD_DATA<2> > * cH2ONaCl::lookup(double* props, double x, double y)");
                         break;
                     }
                 }else if(tmp_lut->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
@@ -4686,7 +4686,7 @@ namespace H2ONaCl
                         fill_prop2data(this, &tmp_prop, tmp_lut->m_map_props, props);
                         break;
                     default:
-                        ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)");
+                        ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,H2ONaCl::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)");
                         break;
                     }
                 }else
@@ -4708,11 +4708,11 @@ namespace H2ONaCl
         return targetLeaf;
     }
 
-    LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)
+    LOOKUPTABLE_FOREST::Quadrant<2,H2ONaCl::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)
     {
         LookUpTableForest_2D* tmp_lut = (LookUpTableForest_2D*)m_pLUT; // make temporary copy of the pointer
         // cout<<"constZ: "<<tmp_lut->m_constZ<<", y: "<<y<<", x: "<<x<<endl;
-        LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *targetLeaf = NULL;
+        LOOKUPTABLE_FOREST::Quadrant<2,H2ONaCl::FIELD_DATA<2> > *targetLeaf = NULL;
         tmp_lut->searchQuadrant(targetLeaf, x, y, tmp_lut->m_constZ);
         if(targetLeaf->user_data->need_refine)
         {
@@ -4730,7 +4730,7 @@ namespace H2ONaCl
                     prop = prop_pTX(y, tmp_lut->m_constZ, x);
                     break;
                 default:
-                    ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)");
+                    ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,H2ONaCl::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)");
                     break;
                 }
             }else if(tmp_lut->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
@@ -4747,7 +4747,7 @@ namespace H2ONaCl
                     prop = prop_pHX(y, tmp_lut->m_constZ, x);
                     break;
                 default:
-                    ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)");
+                    ERROR("Impossible case occurs in LOOKUPTABLE_FOREST::Quadrant<2,H2ONaCl::FIELD_DATA<2> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)");
                     break;
                 }
             }else
@@ -4778,7 +4778,7 @@ namespace H2ONaCl
         return prop;
     }
 
-    LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y, double z)
+    LOOKUPTABLE_FOREST::Quadrant<3,H2ONaCl::FIELD_DATA<3> > * cH2ONaCl::lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y, double z)
     {
         if(m_dim_lut!=3)ERROR("The dim of the LUT is not 3, but you call the 3D lookup function");
 
@@ -4790,7 +4790,7 @@ namespace H2ONaCl
         }
         // -------------------------------
         // cout<<"T: "<<x<<", P: "<<y<<", X: "<<z<<endl;
-        LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > *targetLeaf = NULL;
+        LOOKUPTABLE_FOREST::Quadrant<3,H2ONaCl::FIELD_DATA<3> > *targetLeaf = NULL;
         tmp_lut->searchQuadrant(targetLeaf, x, y, z);
         if(targetLeaf->user_data->need_refine)
         {
@@ -4813,7 +4813,7 @@ namespace H2ONaCl
         return targetLeaf;
     }
 
-    LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > * cH2ONaCl::lookup(double* props, double x, double y, double z, bool is_cal)
+    LOOKUPTABLE_FOREST::Quadrant<3,H2ONaCl::FIELD_DATA<3> > * cH2ONaCl::lookup(double* props, double x, double y, double z, bool is_cal)
     {
         if(m_dim_lut!=3)ERROR("The dim of the LUT is not 3, but you call the 3D lookup function");
 
@@ -4825,7 +4825,7 @@ namespace H2ONaCl
         }
         // -------------------------------
         // cout<<"T: "<<x<<", P: "<<y<<", X: "<<z<<endl;
-        LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > *targetLeaf = NULL;
+        LOOKUPTABLE_FOREST::Quadrant<3,H2ONaCl::FIELD_DATA<3> > *targetLeaf = NULL;
         tmp_lut->searchQuadrant(targetLeaf, x, y, z);
         PROP_H2ONaCl tmp_prop;
         if(targetLeaf->user_data->need_refine)
@@ -4858,11 +4858,11 @@ namespace H2ONaCl
         return targetLeaf;
     }
 
-    LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > * cH2ONaCl::lookup_only(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)
+    LOOKUPTABLE_FOREST::Quadrant<2,H2ONaCl::FIELD_DATA<2> > * cH2ONaCl::lookup_only(H2ONaCl::PROP_H2ONaCl& prop, double x, double y)
     {
         LookUpTableForest_2D* tmp_lut = (LookUpTableForest_2D*)m_pLUT; // make temporary copy of the pointer
         // cout<<"constZ: "<<tmp_lut->m_constZ<<", y: "<<y<<", x: "<<x<<endl;
-        LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *targetLeaf = NULL;
+        LOOKUPTABLE_FOREST::Quadrant<2,H2ONaCl::FIELD_DATA<2> > *targetLeaf = NULL;
         tmp_lut->searchQuadrant(targetLeaf, x, y, tmp_lut->m_constZ);
         if(targetLeaf->user_data->need_refine)
         {
@@ -4893,13 +4893,13 @@ namespace H2ONaCl
         return prop;
     }
 
-    LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > * cH2ONaCl::lookup_only(H2ONaCl::PROP_H2ONaCl& prop, double x, double y, double z)
+    LOOKUPTABLE_FOREST::Quadrant<3,H2ONaCl::FIELD_DATA<3> > * cH2ONaCl::lookup_only(H2ONaCl::PROP_H2ONaCl& prop, double x, double y, double z)
     {
         if(m_dim_lut!=3)ERROR("The dim of the LUT is not 3, but you call the 3D lookup function");
 
         LookUpTableForest_3D* tmp_lut = (LookUpTableForest_3D*)m_pLUT; // make temporary copy of the pointer
         // cout<<"T: "<<x<<", P: "<<y<<", X: "<<z<<endl;
-        LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > *targetLeaf = NULL;
+        LOOKUPTABLE_FOREST::Quadrant<3,H2ONaCl::FIELD_DATA<3> > *targetLeaf = NULL;
         tmp_lut->searchQuadrant(targetLeaf, x, y, z);
         if(targetLeaf->user_data->need_refine)
         {

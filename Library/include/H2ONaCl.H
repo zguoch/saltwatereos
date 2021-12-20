@@ -51,14 +51,25 @@ namespace H2ONaCl
     // ===========================================================================
     double const P_max_LVH  = 390.14744433796; /**< Maximum pressure of L+V+H region, [bar] */
     double const T_Pmax_LVH = 594.63244000000; /**< Temperature at that P_max_LVH */
+
+    // ======
+    template <int dim>
+    struct FIELD_DATA
+    {
+        // point data field
+        // H2ONaCl::PROP_H2ONaCl prop_point[1<<dim]; // properties at vertiex
+        // cell data field
+        LOOKUPTABLE_FOREST::NeedRefine need_refine; // indicator of what kind of the need-refined quad position (phase boundary), or what kind of properties need to refine
+        H2ONaCl::PhaseRegion phaseRegion_cell;
+    };
     // ============= bitmask of properties =======================================
     #define Update_prop_rho     2   // 2^1 = 2
     #define Update_prop_h       4   // 2^2 = 4
     #define Update_prop_drhodh  8   // 2^3 = 8
     #define Update_prop_T       16   // 2^4 = 16
     // ===========================================================================
-    typedef LOOKUPTABLE_FOREST::LookUpTableForest<2, LOOKUPTABLE_FOREST::FIELD_DATA<2> > LookUpTableForest_2D;
-    typedef LOOKUPTABLE_FOREST::LookUpTableForest<3, LOOKUPTABLE_FOREST::FIELD_DATA<3> > LookUpTableForest_3D;
+    typedef LOOKUPTABLE_FOREST::LookUpTableForest<2, H2ONaCl::FIELD_DATA<2> > LookUpTableForest_2D;
+    typedef LOOKUPTABLE_FOREST::LookUpTableForest<3, H2ONaCl::FIELD_DATA<3> > LookUpTableForest_3D;
 
     /**
      * @brief Check the criterion of a property and determine if need to refine.
@@ -443,10 +454,10 @@ namespace H2ONaCl
         void writePhaseSurface_XHP(double scale_X=1, double scale_H=1.0/HMAX, double scale_P=1.0/1000, string outpath="./", H2ONaCl::fmtOutPutFile fmt=H2ONaCl::fmt_vtk, int nP=500);
     private:
         template<int dim>
-        void interp_quad_prop(LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf, H2ONaCl::PROP_H2ONaCl& prop, const double xyz[dim]);
+        void interp_quad_prop(LOOKUPTABLE_FOREST::Quadrant<dim,H2ONaCl::FIELD_DATA<dim> > *targetLeaf, H2ONaCl::PROP_H2ONaCl& prop, const double xyz[dim]);
         
         template<int dim>
-        void interp_quad_prop(LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf, double* props, const double xyz[dim]);
+        void interp_quad_prop(LOOKUPTABLE_FOREST::Quadrant<dim,H2ONaCl::FIELD_DATA<dim> > *targetLeaf, double* props, const double xyz[dim]);
         
         void init_supported_props();
     public:
@@ -472,14 +483,14 @@ namespace H2ONaCl
         void createLUT_2D(double xmin, double xmax, double ymin, double ymax, double constZ, LOOKUPTABLE_FOREST::CONST_WHICH_VAR const_which_var, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6, int update_which_props=0);
         void createLUT_3D(double xyz_min[3], double xyz_max[3], LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6, int update_which_props=0);
         void createLUT_3D(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level = 4, int max_level = 6, int update_which_props=0);
-        LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y);
-        LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *lookup(double* props, double x, double y, bool is_cal=true);
-        LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > *lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y, double z);
-        LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > *lookup(double* props, double x, double y, double z, bool is_cal=true);
+        LOOKUPTABLE_FOREST::Quadrant<2,H2ONaCl::FIELD_DATA<2> > *lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y);
+        LOOKUPTABLE_FOREST::Quadrant<2,H2ONaCl::FIELD_DATA<2> > *lookup(double* props, double x, double y, bool is_cal=true);
+        LOOKUPTABLE_FOREST::Quadrant<3,H2ONaCl::FIELD_DATA<3> > *lookup(H2ONaCl::PROP_H2ONaCl& prop, double x, double y, double z);
+        LOOKUPTABLE_FOREST::Quadrant<3,H2ONaCl::FIELD_DATA<3> > *lookup(double* props, double x, double y, double z, bool is_cal=true);
         H2ONaCl::PROP_H2ONaCl lookup(double x, double y); //for python API
         H2ONaCl::PROP_H2ONaCl lookup(double x, double y, double z); //for python API
-        LOOKUPTABLE_FOREST::Quadrant<2,LOOKUPTABLE_FOREST::FIELD_DATA<2> > *lookup_only(H2ONaCl::PROP_H2ONaCl& prop, double x, double y);
-        LOOKUPTABLE_FOREST::Quadrant<3,LOOKUPTABLE_FOREST::FIELD_DATA<3> > *lookup_only(H2ONaCl::PROP_H2ONaCl& prop, double x, double y, double z);
+        LOOKUPTABLE_FOREST::Quadrant<2,H2ONaCl::FIELD_DATA<2> > *lookup_only(H2ONaCl::PROP_H2ONaCl& prop, double x, double y);
+        LOOKUPTABLE_FOREST::Quadrant<3,H2ONaCl::FIELD_DATA<3> > *lookup_only(H2ONaCl::PROP_H2ONaCl& prop, double x, double y, double z);
         H2ONaCl::PROP_H2ONaCl lookup_only(double x, double y); //for python API
         H2ONaCl::PROP_H2ONaCl lookup_only(double x, double y, double z); //for python API
         void destroyLUT();

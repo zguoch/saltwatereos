@@ -6,7 +6,7 @@
 #include <fstream>
 using namespace std;
 #include <cmath>
-#include "H2ONaCl.H" 
+// #include "H2ONaCl.H" 
 #if USE_OMP == 1
     #include <omp.h>
 #endif
@@ -62,15 +62,7 @@ namespace LOOKUPTABLE_FOREST
     };
 
     // add data struct definition for different system, e.g., H2ONaCl. Actually we can move this data type definition to H2ONaCl.H, because LookUpTableForest class never care about this data type definite, it just accept whatever data type through template argument. But for the TCL API, if move this to other place, it will cause some compiling errors. So keep it here before finding better solution.
-    template <int dim>
-    struct FIELD_DATA
-    {
-        // point data field
-        // H2ONaCl::PROP_H2ONaCl prop_point[1<<dim]; // properties at vertiex
-        // cell data field
-        NeedRefine need_refine; // indicator of what kind of the need-refined quad position (phase boundary), or what kind of properties need to refine
-        H2ONaCl::PhaseRegion phaseRegion_cell;
-    };
+    
     /**
      * @brief Use which variable to express energy
      * 

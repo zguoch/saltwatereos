@@ -25,7 +25,7 @@ void createTable_constX_TP(int max_level)
 
     STATUS("Start search ... ");
     start = clock();
-    LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
+    LOOKUPTABLE_FOREST::Quadrant<dim,H2ONaCl::FIELD_DATA<dim> > *targetLeaf = NULL;
     int n_randSample = 1E4;
     for (size_t i = 0; i < n_randSample; i++)
     {
@@ -72,7 +72,7 @@ void createTable_constP_XT()
 
     STATUS("Start search ... ");
     start = clock();
-    LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
+    LOOKUPTABLE_FOREST::Quadrant<dim,H2ONaCl::FIELD_DATA<dim> > *targetLeaf = NULL;
     int n_randSample = 1E4;
     for (size_t i = 0; i < n_randSample; i++)
     {
@@ -118,7 +118,7 @@ void createTable_constP_XH()
 
     STATUS("Start search ... ");
     start = clock();
-    LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
+    LOOKUPTABLE_FOREST::Quadrant<dim,H2ONaCl::FIELD_DATA<dim> > *targetLeaf = NULL;
     int n_randSample = 1E4;
     // for (size_t i = 0; i < n_randSample; i++)
     // {
@@ -162,7 +162,7 @@ void createTable_constT_XP(double constT)
 
     STATUS("Start search ... ");
     start = clock();
-    LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
+    LOOKUPTABLE_FOREST::Quadrant<dim,H2ONaCl::FIELD_DATA<dim> > *targetLeaf = NULL;
     int n_randSample = 1E4;
     for (size_t i = 0; i < n_randSample; i++)
     {
@@ -209,7 +209,7 @@ void createTable_TPX(int max_level)
     // eos2.save_lut_to_vtk("lut_TPX_loadwrite.vtu");
     // STATUS("Start search ... ");
     // start = clock();
-    // LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
+    // LOOKUPTABLE_FOREST::Quadrant<dim,H2ONaCl::FIELD_DATA<dim> > *targetLeaf = NULL;
     // int n_randSample = 1E4;
     // for (size_t i = 0; i < n_randSample; i++)
     // {
@@ -266,7 +266,7 @@ void createTable_HPX(int max_level)
     // eos2.save_lut_to_vtk("lut_HPX_loadwrite.vtu");
     // STATUS("Start search ... ");
     // start = clock();
-    // LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
+    // LOOKUPTABLE_FOREST::Quadrant<dim,H2ONaCl::FIELD_DATA<dim> > *targetLeaf = NULL;
     // int n_randSample = 1E4;
     // for (size_t i = 0; i < n_randSample; i++)
     // {
@@ -324,7 +324,7 @@ void load_binary_3d(string filename)
     double TorH, P, X;
     STATUS("Start search ... ");
     start = clock();
-    LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
+    LOOKUPTABLE_FOREST::Quadrant<dim,H2ONaCl::FIELD_DATA<dim> > *targetLeaf = NULL;
     double* props = new double[pLUT->m_map_props.size()];
     int ind_rho = 0;
     ofstream fpout_xx("XX.txt");
@@ -445,7 +445,7 @@ void load_binary_2d(string filename)
 
     STATUS("Start search ... ");
     start = clock();
-    LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
+    LOOKUPTABLE_FOREST::Quadrant<dim,H2ONaCl::FIELD_DATA<dim> > *targetLeaf = NULL;
     int n_randSample = 1E3;
     double* props = new double[pLUT->m_map_props.size()];
     int ind_rho = 0;
@@ -587,7 +587,7 @@ void help(char** argv)
 }
 int main(int argc, char** argv)
 {
-    // cout<<sizeof(LOOKUPTABLE_FOREST::Quadrant<3, LOOKUPTABLE_FOREST::FIELD_DATA<2>>**)<<endl;
+    // cout<<sizeof(LOOKUPTABLE_FOREST::Quadrant<3, H2ONaCl::FIELD_DATA<2>>**)<<endl;
     // std::map<LOOKUPTABLE_FOREST::Quad_index, double> test_map;
     // test_map[{1,2,3}] = 30;
     // test_map[{1,2,4}] = 40;
