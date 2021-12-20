@@ -153,54 +153,54 @@ bool refine_uniform(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_
 
 int main()
 {
-    clock_t start, end;
-    double xyzmin[3] = {2,5, 0}; //T[deg.C], p[bar]
-    double xyzmax[3] = {700, 400, 1};
-    double constZ = 0.2;
-    int max_level = 10;
-    const int dim =2;
-    LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> > forest(xyzmin, xyzmax, constZ, LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP, LOOKUPTABLE_FOREST::EOS_ENERGY_T, max_level);
-    // refine 
-    start = clock();
-    int num_threads = 1;
-    omp_set_num_threads(num_threads);
-    forest.refine(refine_uniform);
-    #pragma omp parallel //shared(n)
-    {
-        #pragma omp single
-        {
-            printf("Parallel process refinement, using %d threads\n", omp_get_num_threads());
-            // printf ("fib(%d) = %d\n", n, fib(n));
-            forest.refine(refine_fn);
-        }
-    }
-    // forest.refine(refine_fn);
-    // the clock return all the cpu runing time
-    cout<<"Refinement end : "<<((double)(clock()-start)/CLOCKS_PER_SEC)/num_threads<<" s"<<endl;
+    // clock_t start, end;
+    // double xyzmin[3] = {2,5, 0}; //T[deg.C], p[bar]
+    // double xyzmax[3] = {700, 400, 1};
+    // double constZ = 0.2;
+    // int max_level = 10;
+    // const int dim =2;
+    // LOOKUPTABLE_FOREST::LookUpTableForest<dim, LOOKUPTABLE_FOREST::FIELD_DATA<dim> > forest(xyzmin, xyzmax, constZ, LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP, LOOKUPTABLE_FOREST::EOS_ENERGY_T, max_level);
+    // // refine 
+    // start = clock();
+    // int num_threads = 1;
+    // omp_set_num_threads(num_threads);
+    // forest.refine(refine_uniform);
+    // #pragma omp parallel //shared(n)
+    // {
+    //     #pragma omp single
+    //     {
+    //         printf("Parallel process refinement, using %d threads\n", omp_get_num_threads());
+    //         // printf ("fib(%d) = %d\n", n, fib(n));
+    //         forest.refine(refine_fn);
+    //     }
+    // }
+    // // forest.refine(refine_fn);
+    // // the clock return all the cpu runing time
+    // cout<<"Refinement end : "<<((double)(clock()-start)/CLOCKS_PER_SEC)/num_threads<<" s"<<endl;
 
-    start = clock();
-    forest.write_to_vtk("lookuptable.vtu");
-    cout<<"Write to vtk end: "<<(double)(clock()-start)/CLOCKS_PER_SEC<<" s"<<endl;
+    // start = clock();
+    // forest.write_to_vtk("lookuptable.vtu");
+    // cout<<"Write to vtk end: "<<(double)(clock()-start)/CLOCKS_PER_SEC<<" s"<<endl;
     
-    cout<<"search start ..."<<endl;
-    start = clock();
-    Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
-    int n_randSample = 1E7;
-    for (size_t i = 0; i < n_randSample; i++)
-    {
-        double T_C = (rand()/(double)RAND_MAX)*(xyzmax[0] - xyzmin[0]) + xyzmin[0];
-        double p_bar = (rand()/(double)RAND_MAX)*(xyzmax[1] - xyzmin[1]) + xyzmin[1];
-        // int ind_targetLeaf = forest.searchQuadrant(T_C, p_bar, 0);
-        forest.searchQuadrant(targetLeaf, T_C, p_bar, 0);
-        // cout<<"T_C: "<<T_C<<", p_bar: "<<p_bar<<", index: "<<ind_targetLeaf<<endl;
-        // cout<<eos.getPhaseRegionName(targetLeaf->user_data->phaseRegion_cell)<<endl;
-    }
-    // forest.searchQuadrant(targetLeaf, 200, 300, 0);
-    // cout<<targetLeaf->level<<endl;
-    cout<<"Search "<<n_randSample<<" points: "<<(double)(clock()-start)/CLOCKS_PER_SEC<<" s"<<endl;
+    // cout<<"search start ..."<<endl;
+    // start = clock();
+    // Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
+    // int n_randSample = 1E7;
+    // for (size_t i = 0; i < n_randSample; i++)
+    // {
+    //     double T_C = (rand()/(double)RAND_MAX)*(xyzmax[0] - xyzmin[0]) + xyzmin[0];
+    //     double p_bar = (rand()/(double)RAND_MAX)*(xyzmax[1] - xyzmin[1]) + xyzmin[1];
+    //     // int ind_targetLeaf = forest.searchQuadrant(T_C, p_bar, 0);
+    //     forest.searchQuadrant(targetLeaf, T_C, p_bar, 0);
+    //     // cout<<"T_C: "<<T_C<<", p_bar: "<<p_bar<<", index: "<<ind_targetLeaf<<endl;
+    //     // cout<<eos.getPhaseRegionName(targetLeaf->user_data->phaseRegion_cell)<<endl;
+    // }
+    // // forest.searchQuadrant(targetLeaf, 200, 300, 0);
+    // // cout<<targetLeaf->level<<endl;
+    // cout<<"Search "<<n_randSample<<" points: "<<(double)(clock()-start)/CLOCKS_PER_SEC<<" s"<<endl;
     
-    // // std::string dummy;
-    // // std::cout << "Enter to continue..." << std::endl;
-    // // std::getline(std::cin, dummy);
+    // // // std::string dummy;
+    // // // std::cout << "Enter to continue..." << std::endl;
+    // // // std::getline(std::cin, dummy);
     return 0;
 }
