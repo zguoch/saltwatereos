@@ -72,7 +72,7 @@ void load_binary_2d(string filename)
 
     STATUS("Start search ... ");
     start = clock();
-    LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
+    LOOKUPTABLE_FOREST::Quadrant<dim,H2ONaCl::FIELD_DATA<dim> > *targetLeaf = NULL;
     int n_randSample = 1E3;
     double* props = new double[pLUT->m_map_props.size()];
     int ind_rho = 0;
@@ -183,58 +183,58 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     clock_t start = clock();
     STATUS("Passing data end, start loading data ...");
     H2ONaCl::cH2ONaCl sw;
-    load_binary_2d(filename);
+    // load_binary_2d(filename);
 
-    // sw.loadLUT(filename); //\Todo pass this sw pointer as input arg from outside, don't always load the LUT file.
-    // STATUS_time("Load LUT end. ", clock()-start);
-    // start = clock();
-    // STATUS("Start looking up ...");
-    // const int dim = 2;
-    // H2ONaCl::LookUpTableForest_2D* pLUT = (H2ONaCl::LookUpTableForest_2D*)sw.m_pLUT;
-    // LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
-    // double* props = new double[pLUT->m_map_props.size()];
-    // // ====== get order of props in the data array =====
-    // int index_Rho = distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_rho));
-    // int index_T = distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_T));
-    // // =================================================
-    // // ofstream fpout_x("XX.txt");
-    // // ofstream fpout_y("YY.txt");
-    // // ofstream fpout_z("ZZ.txt");
-    // // ofstream fpout_prop0("prop0.txt");
-    // // ofstream fpout_prop1("prop1.txt");
-    // // ofstream fpout_prop2("prop2.txt");
-    // int index = 0;
-    // for (int i = 0; i < m; i++)
-    // {
-    //   for (int j = 0; j < n; j++)
-    //   {
-    //     index = i*n +j;
-    //     targetLeaf = sw.lookup(props, xMat[index], yMat[index]); 
-    //     needRefine_out[index] = targetLeaf->user_data->need_refine;
-    //     T_out[index] = props[index_T];
-    //     Rho_out[index] = props[index_Rho]; 
-    //     // fpout_x<<xMat[index]<<" ";
-    //     // fpout_y<<yMat[index]<<" ";
-    //     // fpout_z<<yMat[index]<<" ";
-    //     // fpout_prop0<<props[0]<<" ";
-    //     // fpout_prop1<<props[1]<<" ";
-    //     // fpout_prop2<<props[2]<<" ";
-    //   }
-    //   // fpout_x<<endl;
-    //   // fpout_y<<endl;
-    //   // fpout_z<<endl;
-    //   // fpout_prop0<<endl;
-    //   // fpout_prop1<<endl;
-    //   // fpout_prop2<<endl;
-    // }
-    // // fpout_x.close();
-    // // fpout_y.close();
-    // // fpout_z.close();
-    // // fpout_prop0.close();
-    // // fpout_prop1.close();
-    // // fpout_prop2.close();
+    sw.loadLUT(filename); //\Todo pass this sw pointer as input arg from outside, don't always load the LUT file.
+    STATUS_time("Load LUT end. ", clock()-start);
+    start = clock();
+    STATUS("Start looking up ...");
+    const int dim = 2;
+    H2ONaCl::LookUpTableForest_2D* pLUT = (H2ONaCl::LookUpTableForest_2D*)sw.m_pLUT;
+    LOOKUPTABLE_FOREST::Quadrant<dim,H2ONaCl::FIELD_DATA<dim> > *targetLeaf = NULL;
+    double* props = new double[pLUT->m_map_props.size()];
+    // ====== get order of props in the data array =====
+    int index_Rho = distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_rho));
+    int index_T = distance(pLUT->m_map_props.begin(),pLUT->m_map_props.find(Update_prop_T));
+    // =================================================
+    // ofstream fpout_x("XX.txt");
+    // ofstream fpout_y("YY.txt");
+    // ofstream fpout_z("ZZ.txt");
+    // ofstream fpout_prop0("prop0.txt");
+    // ofstream fpout_prop1("prop1.txt");
+    // ofstream fpout_prop2("prop2.txt");
+    int index = 0;
+    for (int i = 0; i < m; i++)
+    {
+      for (int j = 0; j < n; j++)
+      {
+        index = i*n +j;
+        targetLeaf = sw.lookup(props, xMat[index], yMat[index]); 
+        needRefine_out[index] = targetLeaf->user_data->need_refine;
+        T_out[index] = props[index_T];
+        Rho_out[index] = props[index_Rho]; 
+        // fpout_x<<xMat[index]<<" ";
+        // fpout_y<<yMat[index]<<" ";
+        // fpout_z<<yMat[index]<<" ";
+        // fpout_prop0<<props[0]<<" ";
+        // fpout_prop1<<props[1]<<" ";
+        // fpout_prop2<<props[2]<<" ";
+      }
+      // fpout_x<<endl;
+      // fpout_y<<endl;
+      // fpout_z<<endl;
+      // fpout_prop0<<endl;
+      // fpout_prop1<<endl;
+      // fpout_prop2<<endl;
+    }
+    // fpout_x.close();
+    // fpout_y.close();
+    // fpout_z.close();
+    // fpout_prop0.close();
+    // fpout_prop1.close();
+    // fpout_prop2.close();
 
 
-    // delete[] props;
-    // STATUS_time("Lookup end. ", clock()-start);
+    delete[] props;
+    STATUS_time("Lookup end. ", clock()-start);
 }

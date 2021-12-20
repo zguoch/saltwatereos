@@ -96,7 +96,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     start = clock();
     STATUS("Start looking up ...");
     const int dim = 3;
-    LOOKUPTABLE_FOREST::Quadrant<dim,LOOKUPTABLE_FOREST::FIELD_DATA<dim> > *targetLeaf = NULL;
+    LOOKUPTABLE_FOREST::Quadrant<dim,H2ONaCl::FIELD_DATA<dim> > *targetLeaf = NULL;
     int index = 0;
     for (int i = 0; i < m; i++)
     {
