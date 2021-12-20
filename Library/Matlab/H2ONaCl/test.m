@@ -1,22 +1,22 @@
 
-% [phaseRegion] = test_lookupLUT_3D();
-[needRefine, rho, T] = test_lookupLUT_2D();
+[needRefine, rho, T] = test_lookupLUT_3D();
+% [needRefine, rho, T] = test_lookupLUT_2D();
 % [needRefine, rho, T] = test_lookupLUT_2D_random();
 % test_createLUT_2D();
 % test_createLUT_3D();
 
-function [Rho, T, phaseRegion] = test_lookupLUT_3D()
-    n_sample = 1E6;
-    H = (rand(n_sample,1).*(3.9-0.1) + 0.1).*1E6;
-    P = (rand(n_sample,1).*(2500 - 100) + 100).*1E5;
-    X = rand(n_sample,1).*(1-0.001) + 0.001;
+function [needRefine, rho, T] = test_lookupLUT_3D()
+    p0 = 200E5;
+    x=linspace(0.001, 1, 100);
+    h=linspace(0.1, 3.5, 100)*1E6;
+    [X,H]=meshgrid(x,h);
+    P = H.*0 + p0;
     
-    
-    [Rho, T, phaseRegion] = lutLookup_3D('lut_HPX_10.bin', H, P, X);
-%     ind = ( phaseRegion == -1);
-%    size_sample = size(X);
-%    num_sample = size_sample(1)*size_sample(2);
-%    fprintf('%d random points, %d(%.2f%%) points close to phase boundary.\n',num_sample, length(X(ind)), length(X(ind))/num_sample);
+    [needRefine, rho, T] = lutLookup_3D('lut_HPX_10.bin', H, P, X);
+    % plot
+    contourf(X,H,rho);
+    % save fig
+    saveas(gcf, 'result.pdf');
 end
 
 function [needRefine, rho, T] = test_lookupLUT_2D()
