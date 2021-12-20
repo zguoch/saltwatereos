@@ -69,6 +69,8 @@ jobs:
           cd Library/build
           cmake -DBuild_API_tcl=OFF  ..
           make install
+          cmake -DBuild_API_tcl=OFF -DUSE_OMP=ON  ..
+          make install
           cd ../..
       
       # package library

@@ -411,7 +411,7 @@ namespace H2ONaCl
             {
                 // for(auto &ijk2data : map_ijk2data)
                 //\todo bug, if use parallel for, the lower left point value output to vtu is wrong, the bug would come from map!!!
-                //#pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
+                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
                 for(int i=0; i<num_points; i++)
                 {
                     // forest->ijk2xyz(&ijk2data.first, x, y, z);
@@ -432,7 +432,7 @@ namespace H2ONaCl
         case LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP:
             {
                 //\todo 这里可以考虑并行
-                //#pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
+                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
                 for(int i=0; i<num_points; i++)
                 {
                     forest->ijk2xyz(&p_ijk_first[i], x, y, z);
@@ -443,7 +443,7 @@ namespace H2ONaCl
             break;
         case LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH:
             {
-                //#pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
+                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
                 for(int i=0; i<num_points; i++)
                 {
                     forest->ijk2xyz(&p_ijk_first[i], x, y, z);
@@ -454,7 +454,7 @@ namespace H2ONaCl
             break;
         case LOOKUPTABLE_FOREST::CONST_NO_VAR_TorHPX: //3D case, the dim must be 3, because it has been checked in the forest construct function
             {
-                //#pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
+                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
                 for(int i=0; i<num_points; i++)
                 {
                     forest->ijk2xyz(&p_ijk_first[i], x, y, z);
@@ -494,7 +494,7 @@ namespace H2ONaCl
         {
         case LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP:
             {
-                //#pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
+                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
                 for(int i=0; i<num_points; i++)
                 {
                     forest->ijk2xyz(&p_ijk_first[i], x, y, z);
@@ -512,7 +512,7 @@ namespace H2ONaCl
             break;
         case LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP:
             {
-                //#pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
+                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
                 for(int i=0; i<num_points; i++)
                 {
                     forest->ijk2xyz(&p_ijk_first[i], x, y, z);
@@ -523,7 +523,7 @@ namespace H2ONaCl
             break;
         case LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH:
             {
-                //#pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
+                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
                 for(int i=0; i<num_points; i++)
                 {
                     forest->ijk2xyz(&p_ijk_first[i], x, y, z);
@@ -534,7 +534,7 @@ namespace H2ONaCl
             break;
         case LOOKUPTABLE_FOREST::CONST_NO_VAR_TorHPX: //3D case, the dim must be 3, because it has been checked in the forest construct function
             {
-                //#pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
+                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
                 for(int i=0; i<num_points; i++)
                 {
                     forest->ijk2xyz(&p_ijk_first[i], x, y, z);

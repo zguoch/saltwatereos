@@ -54,6 +54,8 @@ jobs:
           cd Library/build
           cmake ..
           make install
+          cmake -DUSE_OMP=ON ..
+          make install
           cd ../..
       # package library
       - name: package library

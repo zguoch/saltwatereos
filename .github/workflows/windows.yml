@@ -82,6 +82,9 @@ jobs:
           cmake -DSWIG_EXECUTABLE=${{env.HOME}}/dependencies_swEOS/windows/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=${{env.pythonLocation}}\include -DPYTHON_LIBRARY=${{env.pythonLocation}}\libs\${{matrix.python.lib}} -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} eosH2ONaCl.vcxproj
           msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} INSTALL.vcxproj
+          cmake -DUSE_OMP=ON -DSWIG_EXECUTABLE=${{env.HOME}}/dependencies_swEOS/windows/swigwin-4.0.2/swig.exe -DPYTHON_INCLUDE_DIR=${{env.pythonLocation}}\include -DPYTHON_LIBRARY=${{env.pythonLocation}}\libs\${{matrix.python.lib}} -DBuild_API_tcl=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}} -DCMAKE_GENERATOR_PLATFORM=${{env.BUILD_PLATFORM}} ..
+          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} eosH2ONaCl.vcxproj
+          msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} INSTALL.vcxproj
           cd ${{env.HOME}}
           cp -r Library/API/python/pyswEOS pyswEOS_python${{ matrix.python.version }}
           7z a -tzip pyswEOS_python${{ matrix.python.version }}.zip pyswEOS_python${{ matrix.python.version }}
