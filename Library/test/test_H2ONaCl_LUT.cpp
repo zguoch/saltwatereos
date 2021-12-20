@@ -331,6 +331,9 @@ void load_binary_3d(string filename)
     ofstream fpout_yy("YY.txt");
     ofstream fpout_zz("ZZ.txt");
     ofstream fpout_zz_lut("ZZ_lut.txt");
+    ofstream fpout_phase("phase.txt");
+    ofstream fpout_needRefine("refine.txt");
+    ofstream fpout_T_lut("T_lut.txt");
     bool isCal = true;
     for (int i = 0; i < nTorH; i++)
     {
@@ -358,16 +361,25 @@ void load_binary_3d(string filename)
             fpout_xx<<X<<" ";
             fpout_yy<<TorH<<" ";
             fpout_zz_lut<<props[index_rho]<<" ";
+            fpout_T_lut<<props[index_T]<<" ";
+            fpout_phase<<targetLeaf->user_data->phaseRegion_cell<<" ";
+            fpout_needRefine<<targetLeaf->user_data->need_refine<<" ";
         }
         fpout_xx<<endl;
         fpout_yy<<endl;
         fpout_zz<<endl;
         fpout_zz_lut<<endl;
+        fpout_needRefine<<endl;
+        fpout_phase<<endl;
+        fpout_T_lut<<endl;
     }
     fpout_xx.close();
     fpout_yy.close();
     fpout_zz.close();
     fpout_zz_lut.close();
+    fpout_phase.close();
+    fpout_needRefine.close();
+    fpout_T_lut.close();
     // int n_randSample = 10;
     // for (size_t i = 0; i < n_randSample; i++)
     // {
