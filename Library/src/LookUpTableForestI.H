@@ -47,10 +47,13 @@ namespace LOOKUPTABLE_FOREST
         {
             // read forest
             read_forest_from_binary(filename_forest);
+            // WAIT("after loading forest");
             // construct ijk_map2data
             construct_map2dat();
+            // WAIT("after constructing map2data");
             // read data from binary
             read_props_from_binary(filename_forest);
+            // WAIT("after loading property data");
         }
         // print info
         print_summary();
@@ -816,6 +819,7 @@ namespace LOOKUPTABLE_FOREST
         ofstream fout(filename);
         int CELL_TYPE = dim==2 ? 8 : 11;
         // write head
+        // WAIT("before writting vtu");
         // STATUS("write header");
         cout<<"    head ";
         fout<<"<VTKFile type=\"UnstructuredGrid\" version=\"1.0\" byte_order=\"LittleEndian\" header_type=\"UInt64\">"<<endl;

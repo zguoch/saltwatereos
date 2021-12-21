@@ -35,5 +35,5 @@
 #define ERROR(info) {std::cout<<"--  "<<COLOR_RED<<info<<COLOR_DEFAULT<<std::endl; exit(0);}
 #define WARNING(info) {std::cout<<"--  "<<COLOR_YELLOW<<info<<COLOR_DEFAULT<<std::endl;}
 #define ASSERT(expression, info) {std::cout<<"--  "<<COLOR_RED<<info<<COLOR_DEFAULT<<std::endl; assert(expression);}
-
+#define WAIT(where) {std::cout<<"Waiting "<<where<< ". Enter to continue..." << std::endl; std::string dummy; std::getline(std::cin, dummy);}
 #endif
