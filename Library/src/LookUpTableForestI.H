@@ -817,11 +817,13 @@ namespace LOOKUPTABLE_FOREST
         int CELL_TYPE = dim==2 ? 8 : 11;
         // write head
         // STATUS("write header");
+        cout<<"    head ";
         fout<<"<VTKFile type=\"UnstructuredGrid\" version=\"1.0\" byte_order=\"LittleEndian\" header_type=\"UInt64\">"<<endl;
         fout<<"  <UnstructuredGrid>"<<endl;
         fout<<"    <Piece NumberOfPoints=\""<<num_points<<"\" NumberOfCells=\""<<num_cells<<"\">"<<endl;
         // write point data 
         // STATUS("write point data");
+        cout<<"pd ";
         fout<<"      <PointData>"<<endl;
         ind = 0;
         for(auto &m : m_map_props)
@@ -838,6 +840,7 @@ namespace LOOKUPTABLE_FOREST
         fout<<"      </PointData>"<<endl;
         // write cell data 
         // STATUS("write cell data");
+        cout<<"cd ";
         fout<<"      <CellData>"<<endl;
         // ---------- 1. phase index
         fout<<"        <DataArray type=\"Int32\" Name=\"phaseIndex\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
@@ -850,6 +853,7 @@ namespace LOOKUPTABLE_FOREST
         fout<<"      </CellData>"<<endl;
         // write points
         // STATUS("write points (xyz)");
+        cout<<"xyz ";
         fout<<"      <Points>"<<endl;
         fout<<"        <DataArray type=\"Float32\" Name=\"Position\" NumberOfComponents=\"3\" format=\"ascii\" RangeMin=\"0.008838834896540746\" RangeMax=\"1.4053746938907843\">"<<endl;
         double scale=0; //scale = 0.001, keep some space between each quadrant
@@ -863,6 +867,7 @@ namespace LOOKUPTABLE_FOREST
         fout<<"      </Points>"<<endl;
         // write cells
         // STATUS("write cells");
+        cout<<"cells ";
         fout<<"      <Cells>"<<endl;
         fout<<"        <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\" RangeMin=\"0\" RangeMax=\""<<num_cells-1<<"\">"<<endl;
         // fout<<"        ";
@@ -898,6 +903,7 @@ namespace LOOKUPTABLE_FOREST
         fout<<"  </UnstructuredGrid>"<<endl;
         fout<<"</VTKFile>"<<endl;
         fout.close();
+        cout<<"done"<<endl;
 
         delete[] ijk_nodes_quad;
         STATUS_time("Write to vtu file done: "+filename, clock()-start);

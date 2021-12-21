@@ -425,7 +425,7 @@ void load_binary_3d(string filename)
 
     STATUS_time("Searching done", clock() - start);
 }
-void load_binary_2d(string filename)
+void load_binary_2d(string filename, bool isCal)
 {
     int ind = 0;
     H2ONaCl::cH2ONaCl eos;
@@ -455,9 +455,10 @@ void load_binary_2d(string filename)
     double x, y;
     ofstream fpout_xx("XX.txt");
     ofstream fpout_yy("YY.txt");
-    ofstream fpout_zz("ZZ.txt");
+    ofstream fpout_zz;
+    if(isCal)fpout_zz.open("ZZ.txt");
     ofstream fpout_zz_lut("ZZ_lut.txt");
-    bool isCal = true;
+    // bool isCal = true;
     for (int i = 0; i < ny; i++)
     {
         y = Ymin + i*dy;
@@ -517,12 +518,12 @@ void load_binary_2d(string filename)
         }
         fpout_xx<<endl;
         fpout_yy<<endl;
-        fpout_zz<<endl;
+        if(isCal)fpout_zz<<endl;
         fpout_zz_lut<<endl;
     }
     fpout_xx.close();
     fpout_yy.close();
-    fpout_zz.close();
+    if(isCal)fpout_zz.close();
     fpout_zz_lut.close();
     
     // for (size_t i = 0; i < n_randSample; i++)
@@ -580,7 +581,7 @@ void help(char** argv)
     cout<<argv[0]<<" 4 [max_level]: createTable_constT_XP"<<endl;
     cout<<argv[0]<<" 5 [max_level]: createTable_TPX"<<endl;
     cout<<argv[0]<<" 6 [max_level]: createTable_HPX"<<endl;
-    cout<<argv[0]<<" 7 [my.bin]: load_binary_2d consX_TP"<<endl;
+    cout<<argv[0]<<" 7 [my.bin] [isFunCal]: load_binary_2d consX_TP"<<endl;
     cout<<argv[0]<<" 8 [my.bin]: load_binary_3d"<<endl;
 
     exit(0);
@@ -599,7 +600,7 @@ int main(int argc, char** argv)
     //     <<endl;
     if(argc==1)help(argv);
 
-    if(argc<2)return 0;
+    // if(argc<2)return 0;
 
     int ind = 0;
     std::string dummy;
@@ -641,7 +642,7 @@ int main(int argc, char** argv)
         break;
     case 7:
         cout<<"Test loading 2D LUT: "<<argv[2]<<endl;
-        load_binary_2d(argv[2]);
+        load_binary_2d(argv[2],(bool)atoi(argv[3]));
         break;
     case 8:
         cout<<"Test loading 3D LUT: "<<argv[2]<<endl;
