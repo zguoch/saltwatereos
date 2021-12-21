@@ -22,20 +22,51 @@ namespace LOOKUPTABLE_FOREST
             return i < ijk.i || (i==ijk.i && j<ijk.j) || (i==ijk.i && j==ijk.j && k<ijk.k);
         }
     };
+
+    // non complete declaration
+    template <int dim, typename USER_DATA> struct NonLeafQuad;
+    template <int dim, typename USER_DATA> struct LeafQuad;
     
     template <int dim, typename USER_DATA>
     struct Quadrant
     {
+        int       level;
+        bool      isHasChildren;
+        union data
+        {
+            NonLeafQuad<dim, USER_DATA>* nonleaf;
+            LeafQuad<dim, USER_DATA>* leaf;
+        };
+        
         double              xyz[dim]; //real coordinate of the lower left corner of a quadrant
         Quad_index          ijk; //index of the LowerLeft corner in the reference space [2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL]
-        int       level;
+        
         Quadrant*           parent;
-        bool                isHasChildren;
         Quadrant            *children[1<<dim];// = NULL; //[1<<dim]; //2^dim: use dynamic array to save memory. Use dynamic array will cause bugs in read_forest, fix it later.
         USER_DATA           *user_data = NULL;
         // double              *pointData = NULL; //store all point data of a leaf quad, calculate it after refining process.
         // DEBUG
         // int index = -1;
+    };
+
+    // data for non-leaf quad
+    template <int dim, typename USER_DATA> 
+    struct NonLeafQuad
+    {
+        Quadrant<dim, USER_DATA>   *children[1<<dim];
+    };
+    // data for leaf quad
+    template <int dim, typename USER_DATA> 
+    struct LeafQuad
+    {
+        double              xyz[dim]; //real coordinate of the lower left corner of a quadrant
+        union coord
+        {
+            Quad_index          ijk; //index of the LowerLeft corner in the reference space [2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL]
+            double              xyz[dim]; //real coordinate of the lower left corner of a quadrant
+        };
+        Quadrant<dim, USER_DATA>* parent;
+        USER_DATA           *user_data = NULL;
     };
     
     /**
