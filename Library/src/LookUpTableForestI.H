@@ -408,7 +408,7 @@ namespace LOOKUPTABLE_FOREST
     template <int dim, typename USER_DATA> 
     void LookUpTableForest<dim,USER_DATA>::read_forest_from_binary(string filename_forest, bool read_only_header)
     {
-        STATUS("Read lookup table forest from binary file ...");
+        STATUS("Check lookup table forest header ...");
         FILE* fpin = NULL;
         fpin = fopen(filename_forest.c_str(), "rb");
         if(!fpin)ERROR("Open file failed: "+filename_forest);
@@ -448,12 +448,16 @@ namespace LOOKUPTABLE_FOREST
             fread(m_map_props[ind_prop].unit, sizeof(char), STR_LENGTH_PROPINFO, fpin);
             // check if property file exist
             string filename_prop = filename_forest+"."+m_map_props[ind_prop].shortName;
-            // std::filesystem::exists("filename_prop");
-            m_map_props.erase(ind_prop);
+            struct stat buffer;
+            if(stat(filename_prop.c_str(), &buffer) != 0)
+            {
+                WARNING("Property: " + string(m_map_props[ind_prop].longName)+COLOR_RED+" (" + "Not Found" + COLOR_DEFAULT + "): "+filename_prop);
+                m_map_props.erase(ind_prop);
+            }
         }
         // only return existed properties
         m_num_props = m_map_props.size();
-
+        STATUS("Read lookup table forest from binary file ...");
         fread(&m_RMSD_RefineCriterion, sizeof(RMSD_RefineCriterion), 1, fpin);
         // recursion read forest and data
         if(!read_only_header)read_forest(fpin, &m_root, 0); //child order of the root it self is 0
@@ -725,9 +729,9 @@ namespace LOOKUPTABLE_FOREST
             }
         }
 
-        // check key counts
-        cout<<"leaves: "<<leaves.size()<<endl;
-        cout<<"unique nodes: "<<m_map_ijk2data.size()<<endl;
+        // // check key counts
+        cout<<"    leaves: "<<leaves.size()<<endl;
+        cout<<"    unique nodes: "<<m_map_ijk2data.size()<<endl;
 
         // release pointer
         delete[] ijk_nodes_quad;
@@ -1152,7 +1156,7 @@ namespace LOOKUPTABLE_FOREST
         int ind =0;
         for(auto & m : m_map_props)
         {
-            cout<<"  "<<ind<<": "<<m.second.longName<<": "<<m.second.shortName<<m.second.unit<<endl;
+            cout<<"  "<<ind<<": "<<COLOR_GREEN<<m.second.longName<<COLOR_DEFAULT<<": "<<m.second.shortName<<m.second.unit<<endl;
             ind++;
         }
         cout<<"================== Summary end ==================="<<endl;
