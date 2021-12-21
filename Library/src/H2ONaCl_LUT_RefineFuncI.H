@@ -405,20 +405,21 @@ namespace H2ONaCl
         }
         // ----------------------
         double x, y, z;
+        H2ONaCl::PROP_H2ONaCl tmp_prop;
         switch (forest->m_const_which_var)
         {
         case LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP:
             {
                 // for(auto &ijk2data : map_ijk2data)
-                //\todo bug, if use parallel for, the lower left point value output to vtu is wrong, the bug would come from map!!!
-                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
+                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, eosPointer,forest) private(x, y, z, tmp_prop)
                 for(int i=0; i<num_points; i++)
                 {
                     // forest->ijk2xyz(&ijk2data.first, x, y, z);
                     forest->ijk2xyz(&p_ijk_first[i], x, y, z);
-                    H2ONaCl::PROP_H2ONaCl tmp_prop = eosPointer->prop_pTX(y, x, forest->m_constZ);
+                    tmp_prop = eosPointer->prop_pTX(y, x, forest->m_constZ);
                     // fill_prop2data(eosPointer, &tmp_prop, eosPointer->m_update_which_props, ijk2data.second);
                     fill_prop2data(eosPointer, &tmp_prop, eosPointer->m_update_which_props, p_ijk_second[i]);
+                    
                 }
                 // std::cout<<"prop calculation done"<<std::endl;
                 // int test_id = 0;
@@ -432,33 +433,33 @@ namespace H2ONaCl
         case LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP:
             {
                 //\todo 这里可以考虑并行
-                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
+                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, eosPointer,forest) private(x, y, z, tmp_prop)
                 for(int i=0; i<num_points; i++)
                 {
                     forest->ijk2xyz(&p_ijk_first[i], x, y, z);
-                    H2ONaCl::PROP_H2ONaCl tmp_prop = eosPointer->prop_pTX(y, forest->m_constZ, x);
+                    tmp_prop = eosPointer->prop_pTX(y, forest->m_constZ, x);
                     fill_prop2data(eosPointer, &tmp_prop, eosPointer->m_update_which_props, p_ijk_second[i]);
                 }
             }
             break;
         case LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH:
             {
-                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
+                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, eosPointer,forest) private(x, y, z, tmp_prop)
                 for(int i=0; i<num_points; i++)
                 {
                     forest->ijk2xyz(&p_ijk_first[i], x, y, z);
-                    H2ONaCl::PROP_H2ONaCl tmp_prop = eosPointer->prop_pTX(forest->m_constZ, y, x);
+                    tmp_prop = eosPointer->prop_pTX(forest->m_constZ, y, x);
                     fill_prop2data(eosPointer, &tmp_prop, eosPointer->m_update_which_props, p_ijk_second[i]);
                 }
             }
             break;
         case LOOKUPTABLE_FOREST::CONST_NO_VAR_TorHPX: //3D case, the dim must be 3, because it has been checked in the forest construct function
             {
-                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
+                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, eosPointer,forest) private(x, y, z, tmp_prop)
                 for(int i=0; i<num_points; i++)
                 {
                     forest->ijk2xyz(&p_ijk_first[i], x, y, z);
-                    H2ONaCl::PROP_H2ONaCl tmp_prop = eosPointer->prop_pTX(y, x, z);
+                    tmp_prop = eosPointer->prop_pTX(y, x, z);
                     fill_prop2data(eosPointer, &tmp_prop, eosPointer->m_update_which_props, p_ijk_second[i]);
                 }
             }
@@ -490,15 +491,16 @@ namespace H2ONaCl
         }
         // ----------------------
         double x, y, z;
+        H2ONaCl::PROP_H2ONaCl tmp_prop;
         switch (forest->m_const_which_var)
         {
         case LOOKUPTABLE_FOREST::CONST_X_VAR_TorHP:
             {
-                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
+                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, eosPointer,forest) private(x, y, z, tmp_prop)
                 for(int i=0; i<num_points; i++)
                 {
                     forest->ijk2xyz(&p_ijk_first[i], x, y, z);
-                    H2ONaCl::PROP_H2ONaCl tmp_prop = eosPointer->prop_pHX(y, x, forest->m_constZ);
+                    tmp_prop = eosPointer->prop_pHX(y, x, forest->m_constZ);
                     fill_prop2data(eosPointer, &tmp_prop, eosPointer->m_update_which_props, p_ijk_second[i]);
                 }
                 // std::cout<<"prop calculation done"<<std::endl;
@@ -512,33 +514,33 @@ namespace H2ONaCl
             break;
         case LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP:
             {
-                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
+                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, eosPointer,forest) private(x, y, z, tmp_prop)
                 for(int i=0; i<num_points; i++)
                 {
                     forest->ijk2xyz(&p_ijk_first[i], x, y, z);
-                    H2ONaCl::PROP_H2ONaCl tmp_prop = eosPointer->prop_pHX(y, forest->m_constZ, x);
+                    tmp_prop = eosPointer->prop_pHX(y, forest->m_constZ, x);
                     fill_prop2data(eosPointer, &tmp_prop, eosPointer->m_update_which_props, p_ijk_second[i]);
                 }
             }
             break;
         case LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH:
             {
-                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
+                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, eosPointer,forest) private(x, y, z, tmp_prop)
                 for(int i=0; i<num_points; i++)
                 {
                     forest->ijk2xyz(&p_ijk_first[i], x, y, z);
-                    H2ONaCl::PROP_H2ONaCl tmp_prop = eosPointer->prop_pHX(forest->m_constZ, y, x);
+                    tmp_prop = eosPointer->prop_pHX(forest->m_constZ, y, x);
                     fill_prop2data(eosPointer, &tmp_prop, eosPointer->m_update_which_props, p_ijk_second[i]);
                 }
             }
             break;
         case LOOKUPTABLE_FOREST::CONST_NO_VAR_TorHPX: //3D case, the dim must be 3, because it has been checked in the forest construct function
             {
-                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, x, y, z, eosPointer,forest)
+                #pragma omp parallel for shared(p_ijk_first, p_ijk_second, eosPointer,forest) private(x, y, z, tmp_prop)
                 for(int i=0; i<num_points; i++)
                 {
                     forest->ijk2xyz(&p_ijk_first[i], x, y, z);
-                    H2ONaCl::PROP_H2ONaCl tmp_prop = eosPointer->prop_pHX(y, x, z);
+                    tmp_prop = eosPointer->prop_pHX(y, x, z);
                     fill_prop2data(eosPointer, &tmp_prop, eosPointer->m_update_which_props, p_ijk_second[i]);
                 }
             }

@@ -691,6 +691,8 @@ namespace LOOKUPTABLE_FOREST
     template <int dim, typename USER_DATA>
     void LookUpTableForest<dim,USER_DATA>::construct_map2dat()
     {
+        STATUS("Construct map to points ...");
+        clock_t start = clock();
         // 0. safety check: if the m_map_ijk2data has been already created, release it to avoid repleated creation and memory leak
         release_map2data();
 
@@ -716,11 +718,13 @@ namespace LOOKUPTABLE_FOREST
         }
 
         // check key counts
-        // cout<<"leaves: "<<leaves.size()<<endl;
-        // cout<<"map size: "<<m_map_ijk2data.size()<<endl;
+        cout<<"leaves: "<<leaves.size()<<endl;
+        cout<<"unique nodes: "<<m_map_ijk2data.size()<<endl;
 
         // release pointer
         delete[] ijk_nodes_quad;
+
+        STATUS_time("Construct map to property data done.", clock()-start);
     }
 
     template <int dim, typename USER_DATA>
@@ -730,10 +734,11 @@ namespace LOOKUPTABLE_FOREST
         // auto start = std::chrono::system_clock::now();
         // #endif
         // clock_t start = clock();
-        STATUS("Assemble properties data to nodes of leaves ...");
-
+    
         construct_map2dat();
         
+        STATUS("Assemble properties data to nodes of leaves ...");
+
         //3. call property calculation function to fill data to array
         cal_prop(this, m_map_ijk2data);
 
