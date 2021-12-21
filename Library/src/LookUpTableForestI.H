@@ -780,213 +780,6 @@ namespace LOOKUPTABLE_FOREST
             leaves.push_back(quad);
         }
     }
-
-    // ASCII version
-    template <int dim, typename USER_DATA>
-    void LookUpTableForest<dim,USER_DATA>::write_to_vtk_v1(string filename, bool write_data, bool isNormalizeXYZ)
-    {
-        clock_t start = clock();
-        STATUS("Write to vtu file starting ...");
-        Quadrant<dim,USER_DATA> *targetLeaf = NULL;
-        vector<Quadrant<dim,USER_DATA>* > leaves;
-        long int quad_counts = 0;
-        getLeaves(leaves, quad_counts, &m_root);
-        int num_points_per_cell = 1<<dim;
-        int num_cells = leaves.size();
-        int num_points = num_cells*num_points_per_cell;
-        double length_cell[dim]; //physical length
-        double length_ref_cell = 0;
-
-        ofstream fout(filename);
-        int CELL_TYPE = dim==2 ? 8 : 11;
-        // write head
-        STATUS("write header");
-        fout<<"<VTKFile type=\"UnstructuredGrid\" version=\"1.0\" byte_order=\"LittleEndian\" header_type=\"UInt64\">"<<endl;
-        fout<<"  <UnstructuredGrid>"<<endl;
-        fout<<"    <Piece NumberOfPoints=\""<<num_points<<"\" NumberOfCells=\""<<num_cells<<"\">"<<endl;
-        // write point data 
-        STATUS("write point data");
-        fout<<"      <PointData>"<<endl;
-        // // ---------- . phase index
-        // fout<<"        <DataArray type=\"Int32\" Name=\"phaseIndex\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Region;}}
-        // fout<<"\n        </DataArray>"<<endl;
-        // // ---------- . Rho
-        // fout<<"        <DataArray type=\"Float32\" Name=\"T\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].T;}}
-        // fout<<"\n        </DataArray>"<<endl;
-        // // ---------- . Rho
-        // fout<<"        <DataArray type=\"Float32\" Name=\"rho\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Rho;}}
-        // fout<<"\n        </DataArray>"<<endl;
-        // // ---------- . Rho_l
-        // fout<<"        <DataArray type=\"Float32\" Name=\"rho_l\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Rho_l;}}
-        // fout<<"\n        </DataArray>"<<endl;
-        // // ---------- . Rho_v
-        // fout<<"        <DataArray type=\"Float32\" Name=\"rho_v\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Rho_v;}}
-        // fout<<"\n        </DataArray>"<<endl;
-        // // ---------- . Rho_h
-        // fout<<"        <DataArray type=\"Float32\" Name=\"rho_h\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Rho_h;}}
-        // fout<<"\n        </DataArray>"<<endl;
-        // ---------- . H
-        // fout<<"        <DataArray type=\"Float32\" Name=\"H\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].H;}}
-        // fout<<"\n        </DataArray>"<<endl;
-        // // ---------- . H_l
-        // fout<<"        <DataArray type=\"Float32\" Name=\"H_l\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].H_l;}}
-        // fout<<"\n        </DataArray>"<<endl;
-        // // ---------- . H_v
-        // fout<<"        <DataArray type=\"Float32\" Name=\"H_v\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].H_v;}}
-        // fout<<"\n        </DataArray>"<<endl;
-        // // ---------- . H_h
-        // fout<<"        <DataArray type=\"Float32\" Name=\"H_h\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].H_h;}}
-        // fout<<"\n        </DataArray>"<<endl;
-        // // ---------- . X
-        // fout<<"        <DataArray type=\"Float32\" Name=\"X\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].X_wt;}}
-        // fout<<"\n        </DataArray>"<<endl;
-        // // ---------- . X_l
-        // fout<<"        <DataArray type=\"Float32\" Name=\"X_l\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].X_l;}}
-        // fout<<"\n        </DataArray>"<<endl;
-        // // ---------- . X_v
-        // fout<<"        <DataArray type=\"Float32\" Name=\"X_v\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].X_v;}}
-        // fout<<"\n        </DataArray>"<<endl;
-        // // ---------- . Mu
-        // fout<<"        <DataArray type=\"Float32\" Name=\"Mu\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Mu;}}
-        // fout<<"\n        </DataArray>"<<endl;
-        // // ---------- . Mu_l
-        // fout<<"        <DataArray type=\"Float32\" Name=\"Mu_l\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Mu_l;}}
-        // fout<<"\n        </DataArray>"<<endl;
-        // // ---------- . Mu_v
-        // fout<<"        <DataArray type=\"Float32\" Name=\"Mu_v\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        // for (size_t i = 0; i < leaves.size(); i++){ for (int j = 0; j < num_points_per_cell; j++){fout<<" "<<leaves[i]->user_data->prop_point[j].Mu_v;}}
-        // fout<<"\n        </DataArray>"<<endl;
-        // ----------
-        fout<<"      </PointData>"<<endl;
-        // write cell data 
-        STATUS("write cell data");
-        fout<<"      <CellData>"<<endl;
-        // ---------- 1. phase index
-        fout<<"        <DataArray type=\"Int32\" Name=\"phaseIndex\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        for (size_t i = 0; i < leaves.size(); i++){ fout<<" "<<leaves[i]->user_data->phaseRegion_cell;}
-        fout<<"\n        </DataArray>"<<endl;
-        // ---------- 2. need refine
-        fout<<"        <DataArray type=\"Int32\" Name=\"needRefine\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        for (size_t i = 0; i < leaves.size(); i++){ fout<<" "<<leaves[i]->user_data->need_refine;}
-        fout<<"\n        </DataArray>"<<endl;
-        // ---------- DEBUG. leaf index
-        // fout<<"        <DataArray type=\"Int32\" Name=\"quadIndex\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        // for (size_t i = 0; i < leaves.size(); i++){ fout<<" "<<leaves[i]->index;}
-        // fout<<"\n        </DataArray>"<<endl;
-        // ----------
-        
-        fout<<"      </CellData>"<<endl;
-        // write points
-        STATUS("write points (xyz)");
-        fout<<"      <Points>"<<endl;
-        fout<<"        <DataArray type=\"Float32\" Name=\"Position\" NumberOfComponents=\"3\" format=\"ascii\" RangeMin=\"0.008838834896540746\" RangeMax=\"1.4053746938907843\">"<<endl;
-        double scale=0; //scale = 0.001, keep some space between each quadrant
-        double physical_length[dim]; //={m_xyz_max[0] - m_xyz_min[0], m_xyz_max[1] - m_xyz_min[1], m_xyz_max[2] - m_xyz_min[2]};
-        for (int i = 0; i < dim; i++){ physical_length[i] = m_xyz_max[i] - m_xyz_min[i];}
-        
-        for (int i = 0; i < num_cells; i++)
-        {
-            length_ref_cell = 1<<(MAX_FOREST_LEVEL - leaves[i]->level);
-            for (int j = 0; j < dim; j++)
-            {
-                length_cell[j] = m_length_scale[j] * length_ref_cell;
-            }
-            // ---------
-            fout<<"        ";
-            if (isNormalizeXYZ)
-            {
-                double z = m_constZ;
-                if(dim==3)z = (leaves[i]->xyz[2]   - physical_length[2]*scale - m_xyz_min[2])/(m_xyz_max[2] - m_xyz_min[2]);
-                fout<<" "<<(leaves[i]->xyz[0]                    + physical_length[0]*scale - m_xyz_min[0])/(m_xyz_max[0] - m_xyz_min[0])<<" "<<(leaves[i]->xyz[1]                  + physical_length[1]*scale - m_xyz_min[1])/(m_xyz_max[1] - m_xyz_min[1])<<" "<<z; //Lower left
-                fout<<" "<<(leaves[i]->xyz[0] + length_cell[0]   - physical_length[0]*scale - m_xyz_min[0])/(m_xyz_max[0] - m_xyz_min[0])<<" "<<(leaves[i]->xyz[1]                  + physical_length[1]*scale - m_xyz_min[1])/(m_xyz_max[1] - m_xyz_min[1])<<" "<<z; //lower right
-                fout<<" "<<(leaves[i]->xyz[0]                    + physical_length[0]*scale - m_xyz_min[0])/(m_xyz_max[0] - m_xyz_min[0])<<" "<<(leaves[i]->xyz[1] + length_cell[1] - physical_length[1]*scale - m_xyz_min[1])/(m_xyz_max[1] - m_xyz_min[1])<<" "<<z; //upper left
-                fout<<" "<<(leaves[i]->xyz[0] + length_cell[0]   - physical_length[0]*scale - m_xyz_min[0])/(m_xyz_max[0] - m_xyz_min[0])<<" "<<(leaves[i]->xyz[1] + length_cell[1] - physical_length[1]*scale - m_xyz_min[1])/(m_xyz_max[1] - m_xyz_min[1])<<" "<<z; //upper right
-                if(dim==3)
-                {
-                    double z = (leaves[i]->xyz[2] + length_cell[2]   - physical_length[2]*scale - m_xyz_min[2])/(m_xyz_max[2] - m_xyz_min[2]);
-                    fout<<" "<<(leaves[i]->xyz[0]                    + physical_length[0]*scale - m_xyz_min[0])/(m_xyz_max[0] - m_xyz_min[0])<<" "<<(leaves[i]->xyz[1]                  + physical_length[1]*scale - m_xyz_min[1])/(m_xyz_max[1] - m_xyz_min[1])<<" "<<z; //Lower left at z=zmax
-                    fout<<" "<<(leaves[i]->xyz[0] + length_cell[0]   - physical_length[0]*scale - m_xyz_min[0])/(m_xyz_max[0] - m_xyz_min[0])<<" "<<(leaves[i]->xyz[1]                  + physical_length[1]*scale - m_xyz_min[1])/(m_xyz_max[1] - m_xyz_min[1])<<" "<<z; //lower right at z=zmax
-                    fout<<" "<<(leaves[i]->xyz[0]                    + physical_length[0]*scale - m_xyz_min[0])/(m_xyz_max[0] - m_xyz_min[0])<<" "<<(leaves[i]->xyz[1] + length_cell[1] - physical_length[1]*scale - m_xyz_min[1])/(m_xyz_max[1] - m_xyz_min[1])<<" "<<z; //upper left at z=zmax
-                    fout<<" "<<(leaves[i]->xyz[0] + length_cell[0]   - physical_length[0]*scale - m_xyz_min[0])/(m_xyz_max[0] - m_xyz_min[0])<<" "<<(leaves[i]->xyz[1] + length_cell[1] - physical_length[1]*scale - m_xyz_min[1])/(m_xyz_max[1] - m_xyz_min[1])<<" "<<z; //upper right at z=zmax
-                }
-            }else
-            {
-                fout<<" "<<leaves[i]->xyz[0]                    + physical_length[0]*scale<<" "<<leaves[i]->xyz[1]                  + physical_length[1]*scale<<" "<<(dim == 3 ? leaves[i]->xyz[2] : m_constZ); //Lower left
-                fout<<" "<<leaves[i]->xyz[0] + length_cell[0]   - physical_length[0]*scale<<" "<<leaves[i]->xyz[1]                  + physical_length[1]*scale<<" "<<(dim == 3 ? leaves[i]->xyz[2] : m_constZ); //lower right
-                fout<<" "<<leaves[i]->xyz[0]                    + physical_length[0]*scale<<" "<<leaves[i]->xyz[1] + length_cell[1] - physical_length[1]*scale<<" "<<(dim == 3 ? leaves[i]->xyz[2] : m_constZ); //upper left
-                fout<<" "<<leaves[i]->xyz[0] + length_cell[0]   - physical_length[0]*scale<<" "<<leaves[i]->xyz[1] + length_cell[1] - physical_length[1]*scale<<" "<<(dim == 3 ? leaves[i]->xyz[2] : m_constZ); //upper right
-                if(dim==3)
-                {
-                    double z = leaves[i]->xyz[2] + length_cell[2]   - physical_length[2]*scale;
-                    fout<<" "<<leaves[i]->xyz[0]                    + physical_length[0]*scale<<" "<<leaves[i]->xyz[1]                  + physical_length[1]*scale<<" "<<z; //Lower left at z=zmax
-                    fout<<" "<<leaves[i]->xyz[0] + length_cell[0]   - physical_length[0]*scale<<" "<<leaves[i]->xyz[1]                  + physical_length[1]*scale<<" "<<z; //lower right at z=zmax
-                    fout<<" "<<leaves[i]->xyz[0]                    + physical_length[0]*scale<<" "<<leaves[i]->xyz[1] + length_cell[1] - physical_length[1]*scale<<" "<<z; //upper left at z=zmax
-                    fout<<" "<<leaves[i]->xyz[0] + length_cell[0]   - physical_length[0]*scale<<" "<<leaves[i]->xyz[1] + length_cell[1] - physical_length[1]*scale<<" "<<z; //upper right at z=zmax
-                }
-            }
-            
-            fout<<endl;
-        }
-        fout<<"        </DataArray>"<<endl;
-        fout<<"      </Points>"<<endl;
-        // write cells
-        STATUS("write cells");
-        fout<<"      <Cells>"<<endl;
-        fout<<"        <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\" RangeMin=\"0\" RangeMax=\""<<num_cells-1<<"\">"<<endl;
-        fout<<"        ";
-        int point_id_cell = 0;
-        for (int i = 0; i < num_cells; i++)
-        {
-            point_id_cell = i*num_points_per_cell;
-            fout<<" "<<point_id_cell;
-            fout<<" "<<point_id_cell+1;
-            fout<<" "<<point_id_cell+2;
-            fout<<" "<<point_id_cell+3;
-            if(dim==3)
-            {
-                fout<<" "<<point_id_cell+4;
-                fout<<" "<<point_id_cell+5;
-                fout<<" "<<point_id_cell+6;
-                fout<<" "<<point_id_cell+7;
-            }
-        }
-        fout<<endl;
-        fout<<"        </DataArray>"<<endl;
-        fout<<"        <DataArray type=\"Int32\" Name=\"offsets\" format=\"ascii\" RangeMin=\"4\" RangeMax=\"64\">"<<endl;
-        fout<<"        ";
-        for (int i = 0; i < num_cells; i++)fout<<" "<<(i+1)*num_points_per_cell;
-        fout<<endl;
-        fout<<"        </DataArray>"<<endl;
-        fout<<"        <DataArray type=\"UInt8\" Name=\"types\" format=\"ascii\" RangeMin=\"8\" RangeMax=\"8\">"<<endl;
-        fout<<"        ";
-        for (int i = 0; i < num_cells; i++)fout<<" "<<CELL_TYPE; //dim dependent
-        fout<<endl;
-        fout<<"        </DataArray>"<<endl;
-        fout<<"      </Cells>"<<endl;
-
-        // write footer
-        fout<<"    </Piece>"<<endl;
-        fout<<"  </UnstructuredGrid>"<<endl;
-        fout<<"</VTKFile>"<<endl;
-        fout.close();
-        STATUS_time("Write to vtu file done: "+filename, clock()-start);
-    }
-
     // ASCII version
     template <int dim, typename USER_DATA>
     void LookUpTableForest<dim,USER_DATA>::write_to_vtk(string filename, bool write_data, bool isNormalizeXYZ)
@@ -997,8 +790,17 @@ namespace LOOKUPTABLE_FOREST
         vector<Quadrant<dim,USER_DATA>* > leaves;
         long int quad_counts = 0;
         getLeaves(leaves, quad_counts, &m_root);
+        // get valid leaves, get rid of leaves with  H2ONaCl::UnknownPhaseRegion
+        vector<size_t> index_valid_leaves;
+        for (size_t i = 0; i < leaves.size(); i++)
+        {
+            if(leaves[i]->user_data->phaseRegion_cell != H2ONaCl::UnknownPhaseRegion)
+            {
+                index_valid_leaves.push_back(i);
+            }
+        }
         int num_points_per_cell = 1<<dim;
-        int num_cells = leaves.size();
+        int num_cells = index_valid_leaves.size();
         int num_points = m_map_ijk2data.size();
         std::map<Quad_index, int> index_map_ijk2data;
         int ind =0;
@@ -1014,12 +816,12 @@ namespace LOOKUPTABLE_FOREST
         ofstream fout(filename);
         int CELL_TYPE = dim==2 ? 8 : 11;
         // write head
-        STATUS("write header");
+        // STATUS("write header");
         fout<<"<VTKFile type=\"UnstructuredGrid\" version=\"1.0\" byte_order=\"LittleEndian\" header_type=\"UInt64\">"<<endl;
         fout<<"  <UnstructuredGrid>"<<endl;
         fout<<"    <Piece NumberOfPoints=\""<<num_points<<"\" NumberOfCells=\""<<num_cells<<"\">"<<endl;
         // write point data 
-        STATUS("write point data");
+        // STATUS("write point data");
         fout<<"      <PointData>"<<endl;
         ind = 0;
         for(auto &m : m_map_props)
@@ -1035,19 +837,19 @@ namespace LOOKUPTABLE_FOREST
         }
         fout<<"      </PointData>"<<endl;
         // write cell data 
-        STATUS("write cell data");
+        // STATUS("write cell data");
         fout<<"      <CellData>"<<endl;
         // ---------- 1. phase index
         fout<<"        <DataArray type=\"Int32\" Name=\"phaseIndex\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        for (size_t i = 0; i < leaves.size(); i++){ fout<<" "<<leaves[i]->user_data->phaseRegion_cell;}
+        for (size_t i = 0; i < index_valid_leaves.size(); i++){ fout<<" "<<leaves[index_valid_leaves[i]]->user_data->phaseRegion_cell;}
         fout<<"\n        </DataArray>"<<endl;
         // ---------- 2. need refine
         fout<<"        <DataArray type=\"Int32\" Name=\"needRefine\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        for (size_t i = 0; i < leaves.size(); i++){ fout<<" "<<leaves[i]->user_data->need_refine;}
+        for (size_t i = 0; i < index_valid_leaves.size(); i++){ fout<<" "<<leaves[index_valid_leaves[i]]->user_data->need_refine;}
         fout<<"\n        </DataArray>"<<endl;
         fout<<"      </CellData>"<<endl;
         // write points
-        STATUS("write points (xyz)");
+        // STATUS("write points (xyz)");
         fout<<"      <Points>"<<endl;
         fout<<"        <DataArray type=\"Float32\" Name=\"Position\" NumberOfComponents=\"3\" format=\"ascii\" RangeMin=\"0.008838834896540746\" RangeMax=\"1.4053746938907843\">"<<endl;
         double scale=0; //scale = 0.001, keep some space between each quadrant
@@ -1060,7 +862,7 @@ namespace LOOKUPTABLE_FOREST
         fout<<"        </DataArray>"<<endl;
         fout<<"      </Points>"<<endl;
         // write cells
-        STATUS("write cells");
+        // STATUS("write cells");
         fout<<"      <Cells>"<<endl;
         fout<<"        <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\" RangeMin=\"0\" RangeMax=\""<<num_cells-1<<"\">"<<endl;
         // fout<<"        ";
@@ -1068,11 +870,11 @@ namespace LOOKUPTABLE_FOREST
         for (int i = 0; i < num_cells; i++)
         {
             // get ijk of all nodes of a leaf quad
-            get_ijk_nodes_quadrant(leaves[i], m_num_node_per_quad, ijk_nodes_quad);
+            get_ijk_nodes_quadrant(leaves[index_valid_leaves[i]], m_num_node_per_quad, ijk_nodes_quad);
             fout<<"         ";
             for (int i_node = 0; i_node < m_num_node_per_quad; i_node++)
             {
-                fout<<index_map_ijk2data[ijk_nodes_quad[i_node]]<<" "; //low performance: distance(m_map_ijk2data.begin(),m_map_ijk2data.find(ijk_nodes_quad[i_node]))
+                fout<<index_map_ijk2data[ijk_nodes_quad[i_node]]<<" "; 
             }
             fout<<endl;
         }

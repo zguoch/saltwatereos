@@ -141,7 +141,6 @@ namespace LOOKUPTABLE_FOREST
         void get_ijk_nodes_quadrant(Quadrant<dim,USER_DATA>* quad, int num_nodes_per_quad, Quad_index* ijk);
         void assemble_data(void (*cal_prop)(LookUpTableForest<dim,USER_DATA>* forest, std::map<Quad_index, double*>& map_ijk2data));
         void ijk2xyz(const Quad_index* ijk, double& x, double& y, double& z);
-        void write_to_vtk_v1(string filename, bool write_data=true, bool isNormalizeXYZ=true);
         void write_to_vtk(string filename, bool write_data=true, bool isNormalizeXYZ=true);
         void write_to_binary(string filename, bool is_write_data=true);
         void print_summary();
