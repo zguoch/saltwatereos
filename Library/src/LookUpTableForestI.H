@@ -406,12 +406,12 @@ namespace LOOKUPTABLE_FOREST
     }
 
     template <int dim, typename USER_DATA> 
-    void LookUpTableForest<dim,USER_DATA>::read_forest_from_binary(string filename, bool read_only_header)
+    void LookUpTableForest<dim,USER_DATA>::read_forest_from_binary(string filename_forest, bool read_only_header)
     {
         STATUS("Read lookup table forest from binary file ...");
         FILE* fpin = NULL;
-        fpin = fopen(filename.c_str(), "rb");
-        if(!fpin)ERROR("Open file failed: "+filename);
+        fpin = fopen(filename_forest.c_str(), "rb");
+        if(!fpin)ERROR("Open file failed: "+filename_forest);
         int dim0;
         fread(&dim0, sizeof(dim0), 1, fpin);
         if(dim0 != dim)
@@ -434,8 +434,9 @@ namespace LOOKUPTABLE_FOREST
         fread(&m_num_quads, sizeof(long int), 1, fpin);
         fread(&m_num_leaves, sizeof(int), 1, fpin);
         // read props info
-        fread(&m_num_props, sizeof(int), 1, fpin);
-        for (int i = 0; i < m_num_props; i++)
+        int tmp_num_props = 0;
+        fread(&tmp_num_props, sizeof(int), 1, fpin);
+        for (int i = 0; i < tmp_num_props; i++)
         {
             int ind_prop;
             fread(&ind_prop, sizeof(int), 1, fpin);
@@ -445,7 +446,14 @@ namespace LOOKUPTABLE_FOREST
             fread(m_map_props[ind_prop].longName, sizeof(char), STR_LENGTH_PROPINFO, fpin);
             // unit
             fread(m_map_props[ind_prop].unit, sizeof(char), STR_LENGTH_PROPINFO, fpin);
+            // check if property file exist
+            string filename_prop = filename_forest+"."+m_map_props[ind_prop].shortName;
+            // std::filesystem::exists("filename_prop");
+            m_map_props.erase(ind_prop);
         }
+        // only return existed properties
+        m_num_props = m_map_props.size();
+
         fread(&m_RMSD_RefineCriterion, sizeof(RMSD_RefineCriterion), 1, fpin);
         // recursion read forest and data
         if(!read_only_header)read_forest(fpin, &m_root, 0); //child order of the root it self is 0
