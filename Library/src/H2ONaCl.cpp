@@ -4459,6 +4459,9 @@ namespace H2ONaCl
             ERROR("The EOS space only support TPX and HPX!");
         }
         tmp_lut_2D->print_summary();
+        // WAIT("createLUT_2D");
+        // tmp_lut_2D->m_map_ijk2data.clear();
+        // WAIT("delete map_ijk2data");
     }
 
     void cH2ONaCl::createLUT_3D(double xyz_min[3], double xyz_max[3], LOOKUPTABLE_FOREST::EOS_ENERGY TorH, int min_level, int max_level,int update_which_props)

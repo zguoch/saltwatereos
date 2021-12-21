@@ -59,7 +59,7 @@ namespace LOOKUPTABLE_FOREST
     template <int dim, typename USER_DATA> 
     struct LeafQuad
     {
-        union COORD
+        struct COORD
         {
             Quad_index          ijk; //index of the LowerLeft corner in the reference space [2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL]
             double              xyz[dim]; //real coordinate of the lower left corner of a quadrant

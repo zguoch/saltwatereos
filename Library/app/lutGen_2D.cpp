@@ -77,6 +77,7 @@ int main(int argc, char** argv)
         }else if(const_var == "P")
         {
             eos.createLUT_2D(xmin, xmax, ymin*1E6, ymax*1E6, constZ*1E5, LOOKUPTABLE_FOREST::CONST_P_VAR_XTorH, LOOKUPTABLE_FOREST::EOS_ENERGY_H, min_level, max_level, Update_prop_rho | Update_prop_h | Update_prop_T);
+            // WAIT("createLUT_2D");
             eos.save_lut_to_binary("lut_constP_XH_"+std::to_string(max_level)+".bin");
             eos.save_lut_to_vtk("lut_constP_XH_"+std::to_string(max_level)+".vtu");
         }else if(const_var == "H")

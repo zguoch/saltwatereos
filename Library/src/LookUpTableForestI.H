@@ -370,14 +370,19 @@ namespace LOOKUPTABLE_FOREST
         // fread(quad, sizeof(Quadrant<dim,USER_DATA>), 1, fpin); //write all quads
         fread(&quad->level, sizeof(int), 1, fpin); //write level
         fread(&quad->isHasChildren, sizeof(bool), 1, fpin); //write isHasChildren
-        // cout<<"read, level: "<<quad->level<<", index: "<<quad->index<<", child: "<<quad->isHasChildren<<endl;
+        // cout<<"read, level: "<<quad->level<<", has child: "<<quad->isHasChildren<<endl;
         
         if(quad->isHasChildren)
         {
             // quad->qData.nonleaf->children = new Quadrant<dim,USER_DATA>*[1<dim];
+            // LeafQuad<dim,USER_DATA>* leaf_quad_backup = quad->qData.leaf;
+            if(quad->qData.leaf->user_data)delete quad->qData.leaf->user_data;
+            delete quad->qData.leaf;
+            quad->qData.nonleaf = new NonLeafQuad<dim, USER_DATA>;
             for (int i = 0; i < m_num_children; i++)
             {
                 quad->qData.nonleaf->children[i] = new Quadrant<dim,USER_DATA>;
+                quad->qData.nonleaf->children[i]->qData.leaf = new LeafQuad<dim,USER_DATA>;
                 quad->qData.nonleaf->children[i]->qData.leaf->parent = quad;
                 read_forest(fpin, quad->qData.nonleaf->children[i], i); 
             }
