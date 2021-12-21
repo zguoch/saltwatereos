@@ -221,10 +221,10 @@ void createTable_TPX(int max_level)
     //     prop_cal = eos.prop_pTX(p_Pa, constT, X_wt);
     //     H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion_pTX(p_Pa, constT, X_wt);
     //     // cout<<"T_C: "<<T_K - 273.15<<", p_bar: "<<constP/1E5<<", index: "<<targetLeaf->index<<endl;
-    //     // cout<<eos.getPhaseRegionName(targetLeaf->user_data->phaseRegion_cell)<<endl;
+    //     // cout<<eos.getPhaseRegionName(targetLeaf->qData.leaf->user_data->phaseRegion_cell)<<endl;
     //     // compare to directally calculation
     //     // H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion(T_K - 273.15, p_Pa/1E5, eos.Wt2Mol(X_wt));
-    //     // if(targetLeaf->user_data->phaseRegion_cell != phaseRegion_cal)
+    //     // if(targetLeaf->qData.leaf->user_data->phaseRegion_cell != phaseRegion_cal)
     //     if(prop_lookup.Region != phaseRegion_cal)
     //     {
     //         // cout<<"Need refine point "<<ind++<<": ";
@@ -278,10 +278,10 @@ void createTable_HPX(int max_level)
     //     prop_cal = eos.prop_pTX(p_Pa, constT, X_wt);
     //     H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion_pTX(p_Pa, constT, X_wt);
     //     // cout<<"T_C: "<<T_K - 273.15<<", p_bar: "<<constP/1E5<<", index: "<<targetLeaf->index<<endl;
-    //     // cout<<eos.getPhaseRegionName(targetLeaf->user_data->phaseRegion_cell)<<endl;
+    //     // cout<<eos.getPhaseRegionName(targetLeaf->qData.leaf->user_data->phaseRegion_cell)<<endl;
     //     // compare to directally calculation
     //     // H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion(T_K - 273.15, p_Pa/1E5, eos.Wt2Mol(X_wt));
-    //     // if(targetLeaf->user_data->phaseRegion_cell != phaseRegion_cal)
+    //     // if(targetLeaf->qData.leaf->user_data->phaseRegion_cell != phaseRegion_cal)
     //     if(prop_lookup.Region != phaseRegion_cal)
     //     {
     //         // cout<<"Need refine point "<<ind++<<": ";
@@ -362,8 +362,8 @@ void load_binary_3d(string filename)
             fpout_yy<<TorH<<" ";
             fpout_zz_lut<<props[index_rho]<<" ";
             fpout_T_lut<<props[index_T]<<" ";
-            fpout_phase<<targetLeaf->user_data->phaseRegion_cell<<" ";
-            fpout_needRefine<<targetLeaf->user_data->need_refine<<" ";
+            fpout_phase<<targetLeaf->qData.leaf->user_data->phaseRegion_cell<<" ";
+            fpout_needRefine<<targetLeaf->qData.leaf->user_data->need_refine<<" ";
         }
         fpout_xx<<endl;
         fpout_yy<<endl;
@@ -395,8 +395,8 @@ void load_binary_3d(string filename)
     //         prop_cal = eos.prop_pHX(p_Pa, TorH, X_wt);
     //     }
     //     // H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion_pTX(p_Pa, T_K, X_wt);
-    //     // if(targetLeaf->user_data->prop_cell.Region != phaseRegion_cal)
-    //     if(targetLeaf->user_data->need_refine)
+    //     // if(targetLeaf->qData.leaf->user_data->prop_cell.Region != phaseRegion_cal)
+    //     if(targetLeaf->qData.leaf->user_data->need_refine)
     //     {
     //         ind++;
     //         cout<<"Need refine point "<<ind++<<", level: "<<targetLeaf->level;
@@ -409,12 +409,12 @@ void load_binary_3d(string filename)
     //         // if(fabs(err)>0.5)
     //         // {
     //         //     cout<<prop_cal.Rho<<"  "<<prop_lookup.Rho<<", err: "<<err<<endl;
-    //         //     // cout<<"  "<<targetLeaf->user_data->prop_point[0].Rho
-    //         //     //     <<"  "<<targetLeaf->user_data->prop_point[1].Rho
-    //         //     //     <<"  "<<targetLeaf->user_data->prop_point[2].Rho
-    //         //     //     <<"  "<<targetLeaf->user_data->prop_point[3].Rho
-    //         //     //     <<"  "<<targetLeaf->user_data->prop_cell.Rho
-    //         //     //     <<", level: "<<targetLeaf->level<<", refine: "<<targetLeaf->user_data->need_refine
+    //         //     // cout<<"  "<<targetLeaf->qData.leaf->user_data->prop_point[0].Rho
+    //         //     //     <<"  "<<targetLeaf->qData.leaf->user_data->prop_point[1].Rho
+    //         //     //     <<"  "<<targetLeaf->qData.leaf->user_data->prop_point[2].Rho
+    //         //     //     <<"  "<<targetLeaf->qData.leaf->user_data->prop_point[3].Rho
+    //         //     //     <<"  "<<targetLeaf->qData.leaf->user_data->prop_cell.Rho
+    //         //     //     <<", level: "<<targetLeaf->level<<", refine: "<<targetLeaf->qData.leaf->user_data->need_refine
     //         //     //     <<endl;
     //         // }
     //     }
@@ -535,8 +535,8 @@ void load_binary_2d(string filename, bool isCal)
     //     targetLeaf = eos.lookup(props, T_K, p_Pa, true);
     //     prop_cal = eos.prop_pTX(p_Pa, T_K, x_const);
     //     // H2ONaCl::PhaseRegion phaseRegion_cal = eos.findPhaseRegion_pTX(p_Pa, T_K, X_wt);
-    //     // if(targetLeaf->user_data->prop_cell.Region != phaseRegion_cal)
-    //     // if(targetLeaf->user_data->need_refine)
+    //     // if(targetLeaf->qData.leaf->user_data->prop_cell.Region != phaseRegion_cal)
+    //     // if(targetLeaf->qData.leaf->user_data->need_refine)
     //     {
     //         // ind++;
     //         // cout<<"Need refine point "<<ind++<<", level: "<<(int)targetLeaf->level<<endl;
@@ -556,12 +556,12 @@ void load_binary_2d(string filename, bool isCal)
     //         // if(fabs(err)>pLUT->m_RMSD_RefineCriterion.Rho)
     //         // {
     //         //     cout<<prop_cal.Rho<<"  "<<props[ind_rho]<<", err: "<<err<<endl;
-    //         //     // cout<<"  "<<targetLeaf->user_data->prop_point[0].Rho
-    //         //     //     <<"  "<<targetLeaf->user_data->prop_point[1].Rho
-    //         //     //     <<"  "<<targetLeaf->user_data->prop_point[2].Rho
-    //         //     //     <<"  "<<targetLeaf->user_data->prop_point[3].Rho
-    //         //     //     <<"  "<<targetLeaf->user_data->prop_cell.Rho
-    //         //     //     <<", level: "<<targetLeaf->level<<", refine: "<<targetLeaf->user_data->need_refine
+    //         //     // cout<<"  "<<targetLeaf->qData.leaf->user_data->prop_point[0].Rho
+    //         //     //     <<"  "<<targetLeaf->qData.leaf->user_data->prop_point[1].Rho
+    //         //     //     <<"  "<<targetLeaf->qData.leaf->user_data->prop_point[2].Rho
+    //         //     //     <<"  "<<targetLeaf->qData.leaf->user_data->prop_point[3].Rho
+    //         //     //     <<"  "<<targetLeaf->qData.leaf->user_data->prop_cell.Rho
+    //         //     //     <<", level: "<<targetLeaf->level<<", refine: "<<targetLeaf->qData.leaf->user_data->need_refine
     //         //     //     <<endl;
     //         // }
     //     }

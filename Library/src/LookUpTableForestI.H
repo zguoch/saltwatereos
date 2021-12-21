@@ -104,35 +104,43 @@ namespace LOOKUPTABLE_FOREST
         release_map2data();
         // cout<<"destroy forest"<<endl;
         release_quadrant_data(&m_root);
-        release_children(&m_root);
+        while (m_root.isHasChildren)
+        {
+            release_leaves(&m_root); //release leaf quad every round
+        }
     }
 
     template <int dim, typename USER_DATA> 
-    void LookUpTableForest<dim,USER_DATA>::release_children(Quadrant<dim,USER_DATA>* quad)
+    void LookUpTableForest<dim,USER_DATA>::release_leaves(Quadrant<dim,USER_DATA>* quad)
     {
         if(quad==NULL)return; 
-
+        static int quadnums = 0;
         if(quad->isHasChildren)
         {
-            bool release_all = false;
+            // bool release_all = false;
             for (int i = 0; i < m_num_children; i++)
             {
-                if(quad->children[i]->isHasChildren)
+                if(quad->qData.nonleaf->children[i]->isHasChildren)
                 {
-                    release_children(quad->children[i]);
+                    release_leaves(quad->qData.nonleaf->children[i]);
                 }else
                 {
-                    delete quad->children[i];
-                    quad->children[i] = NULL;
+                    // delete child's qData.nonleaf first: here the child could also be a leaf quad, but we still can use qData.nonleaf to access its qData.leaf, because they (are union pointer) has the same pointer value.
+                    delete quad->qData.nonleaf->children[i]->qData.nonleaf;
+                    quad->qData.nonleaf->children[i]->qData.nonleaf = NULL;
+                    delete quad->qData.nonleaf->children[i];
+                    quad->qData.nonleaf->children[i] = NULL;
                     quad->isHasChildren = false;
+                    // quadnums++;
+                    // cout<<quad->level<<" "<<quadnums<<endl;
                 }
-                // release_all = (release_all || quad->children[i]);
+                // release_all = (release_all || quad->qData.nonleaf->children[i]);
             }
             // if(!release_all)
             // {
             //     // cout<<"level: "<<quad->level<<endl;
-            //     delete[] quad->children;
-            //     quad->children = NULL;
+            //     delete[] quad->qData.nonleaf->children;
+            //     quad->qData.nonleaf->children = NULL;
             // }
         }else
         {
@@ -154,12 +162,14 @@ namespace LOOKUPTABLE_FOREST
         {
             for (int i = 0; i < m_num_children; i++)
             {
-                release_quadrant_data(quad->children[i]);
+                release_quadrant_data(quad->qData.nonleaf->children[i]);
             }
-        }else if (quad->user_data)
+        }else if (quad->qData.leaf->user_data)
         {
-            delete quad->user_data;
-            quad->user_data = NULL;
+            delete quad->qData.leaf->user_data;
+            quad->qData.leaf->user_data = NULL;
+            // delete quad->qData.leaf; !!! DON'T need to delete leaf quad here, it will be deleted in the release_leaves function, because qData.leaf and qData.nonleaf can point to the same memory block.
+            // That means the value of qData.leaf and qData.nonleaf always the same, because they are all pointer type, but they point to different type of data.
         }else
         {
             return;
@@ -169,15 +179,17 @@ namespace LOOKUPTABLE_FOREST
     template <int dim, typename USER_DATA> 
     void LookUpTableForest<dim,USER_DATA>::init_Root(Quadrant<dim,USER_DATA>& quad)
     {
-        quad.xyz[0] = m_xyz_min[0];
-        quad.xyz[1] = m_xyz_min[1];
-        dim == 3 ? quad.xyz[2] = m_xyz_min[2] : 0;
-        quad.ijk={0,0,0};
+        // quad.xyz[0] = m_xyz_min[0];
+        // quad.xyz[1] = m_xyz_min[1];
+        // dim == 3 ? quad.xyz[2] = m_xyz_min[2] : 0;
+        // quad.ijk={0,0,0};
         quad.level  = 0;
-        quad.parent = NULL;
         quad.isHasChildren = false;
+        quad.qData.leaf = new LeafQuad<dim, USER_DATA>;
+        // quad.qData.leaf->parent = NULL;
+        
         // quad.children = NULL;
-        if(m_data_size!=0) quad.user_data = new USER_DATA;  //only allocate memory if it is a leaf, this will be released when a quadrent is refined.
+        if(m_data_size!=0) quad.qData.leaf->user_data = new USER_DATA;  //only allocate memory if it is a leaf, this will be released when a quadrent is refined.
     }
 
     template <int dim, typename USER_DATA> 
@@ -191,18 +203,18 @@ namespace LOOKUPTABLE_FOREST
         {
             for (int i = 0; i < m_num_children; i++)
             {
-                write_forest(fpout, quad->children[i], i, isWriteData);
+                write_forest(fpout, quad->qData.nonleaf->children[i], i, isWriteData);
             }
         }else
         {
             // write xyz at the lower left corner
             if(order_child==0)
             {
-                fwrite(quad->xyz, sizeof(double), dim, fpout); //only write xyz of eldest brother
-                fwrite(&quad->ijk, sizeof(Quad_index), 1, fpout); //only write ijk of eldest brother
+                fwrite(quad->qData.leaf->coord.xyz, sizeof(double), dim, fpout); //only write xyz of eldest brother
+                fwrite(&quad->qData.leaf->coord.ijk, sizeof(Quad_index), 1, fpout); //only write ijk of eldest brother
             }
             // write data
-            fwrite(quad->user_data, sizeof(USER_DATA), 1, fpout);
+            fwrite(quad->qData.leaf->user_data, sizeof(USER_DATA), 1, fpout);
             // fwrite(quad->pointData, sizeof(double), m_num_children*m_num_props, fpout);
         }
     }
@@ -291,10 +303,10 @@ namespace LOOKUPTABLE_FOREST
         int length_child = 1<<(MAX_FOREST_LEVEL - quad->level);
         // cout<<((order_youngerBrother - order_youngerBrother/4 * 4)/2)<<", "<<order_youngerBrother<<endl;
         // cout<<xyz[0]<<", "<<xyz[1]<<", "<<xyz[2]<<endl;
-        quad->xyz[0] = xyz_lower_left[0] + (order_youngerBrother%2)*length_child*m_length_scale[0];
-        quad->xyz[1] = xyz_lower_left[1] + ((order_youngerBrother - order_youngerBrother/4 * 4)/2) *length_child*m_length_scale[1];
+        quad->qData.leaf->coord.xyz[0] = xyz_lower_left[0] + (order_youngerBrother%2)*length_child*m_length_scale[0];
+        quad->qData.leaf->coord.xyz[1] = xyz_lower_left[1] + ((order_youngerBrother - order_youngerBrother/4 * 4)/2) *length_child*m_length_scale[1];
         if(dim==3)
-        quad->xyz[2] = xyz_lower_left[2] + (order_youngerBrother/4)*length_child*m_length_scale[2];
+        quad->qData.leaf->coord.xyz[2] = xyz_lower_left[2] + (order_youngerBrother/4)*length_child*m_length_scale[2];
         // cout<<"  "<<xyz[0]<<", "<<xyz[1]<<", "<<xyz[2]<<endl;
     }
 
@@ -304,10 +316,10 @@ namespace LOOKUPTABLE_FOREST
         int length_child = 1<<(MAX_FOREST_LEVEL - quad->level);
         // cout<<((order_youngerBrother - order_youngerBrother/4 * 4)/2)<<", "<<order_youngerBrother<<endl;
         // cout<<xyz[0]<<", "<<xyz[1]<<", "<<xyz[2]<<endl;
-        quad->ijk.i = ijk_lower_left.i + (order_youngerBrother%2)*length_child;
-        quad->ijk.j = ijk_lower_left.j + ((order_youngerBrother - order_youngerBrother/4 * 4)/2) *length_child;
+        quad->qData.leaf->coord.ijk.i = ijk_lower_left.i + (order_youngerBrother%2)*length_child;
+        quad->qData.leaf->coord.ijk.j = ijk_lower_left.j + ((order_youngerBrother - order_youngerBrother/4 * 4)/2) *length_child;
         if(dim==3)
-        quad->ijk.k = ijk_lower_left.k + (order_youngerBrother/4)*length_child;
+        quad->qData.leaf->coord.ijk.k = ijk_lower_left.k + (order_youngerBrother/4)*length_child;
         // cout<<"  "<<xyz[0]<<", "<<xyz[1]<<", "<<xyz[2]<<endl;
     }
 
@@ -316,10 +328,10 @@ namespace LOOKUPTABLE_FOREST
     {
         if(quad->isHasChildren)
         {
-            return get_lowerleft_xyz(quad->children[0]);
+            return get_lowerleft_xyz(quad->qData.nonleaf->children[0]);
         }else
         {
-            return quad->xyz;
+            return quad->qData.leaf->coord.xyz;
         }
     }
 
@@ -328,19 +340,28 @@ namespace LOOKUPTABLE_FOREST
     {
         if(quad->isHasChildren)
         {
-            return get_lowerleft_ijk(quad->children[0]);
+            return get_lowerleft_ijk(quad->qData.nonleaf->children[0]);
         }else
         {
-            return quad->ijk;
+            return quad->qData.leaf->coord.ijk;
         }
     }
 
     template <int dim, typename USER_DATA> 
     void LookUpTableForest<dim,USER_DATA>::ijk2xyz(const Quad_index* ijk, double& x, double& y, double& z)
     {
-        x = m_root.xyz[0] + ijk->i*m_length_scale[0];
-        y = m_root.xyz[1] + ijk->j*m_length_scale[1];
-        if(dim==3) z = m_root.xyz[2] + ijk->k*m_length_scale[2];
+        x = m_xyz_min[0] + ijk->i*m_length_scale[0];
+        y = m_xyz_min[1] + ijk->j*m_length_scale[1];
+        if(dim==3) z = m_xyz_min[2] + ijk->k*m_length_scale[2];
+    }
+
+    template <int dim, typename USER_DATA> 
+    void LookUpTableForest<dim,USER_DATA>::union_ijk2xyz(Quadrant<dim, USER_DATA>* quad, Quad_index& ijk_backup)
+    {
+        ijk_backup = quad->qData.leaf->coord.ijk;
+        quad->qData.leaf->coord.xyz[0] = m_xyz_min[0] + ijk_backup.i*m_length_scale[0];
+        quad->qData.leaf->coord.xyz[1] = m_xyz_min[1] + ijk_backup.j*m_length_scale[1];
+        if(dim==3)quad->qData.leaf->coord.xyz[2] = m_xyz_min[2] + ijk_backup.k*m_length_scale[2];
     }
 
     template <int dim, typename USER_DATA> 
@@ -353,30 +374,30 @@ namespace LOOKUPTABLE_FOREST
         
         if(quad->isHasChildren)
         {
-            // quad->children = new Quadrant<dim,USER_DATA>*[1<dim];
+            // quad->qData.nonleaf->children = new Quadrant<dim,USER_DATA>*[1<dim];
             for (int i = 0; i < m_num_children; i++)
             {
-                quad->children[i] = new Quadrant<dim,USER_DATA>;
-                quad->children[i]->parent = quad;
-                read_forest(fpin, quad->children[i], i); 
+                quad->qData.nonleaf->children[i] = new Quadrant<dim,USER_DATA>;
+                quad->qData.nonleaf->children[i]->qData.leaf->parent = quad;
+                read_forest(fpin, quad->qData.nonleaf->children[i], i); 
             }
         }else
         {
             if(order_child==0) //only read xyz of eldest brother
             {
-                fread(quad->xyz, sizeof(double), dim, fpin); 
-                fread(&quad->ijk, sizeof(Quad_index), 1, fpin); //only read ijk of eldest brother
+                fread(quad->qData.leaf->coord.xyz, sizeof(double), dim, fpin); 
+                fread(&quad->qData.leaf->coord.ijk, sizeof(Quad_index), 1, fpin); //only read ijk of eldest brother
             }else
             {
                 // get left corner xyz, find it's elderest brother->first child->first child ...
                 // 找大哥要xyz，如果大哥有儿子那就找大哥大儿子要xyz；如果大哥的大儿子还有儿子那就找大哥的大孙子要xyz... 直到最后一代一定能找到左下角的xyz
                 // get_lowerleft_xyz第一个参数就是大哥的内存地址
-                cal_xyz_quad(get_lowerleft_xyz(quad->parent->children[0]), order_child, quad);
-                cal_ijk_quad(get_lowerleft_ijk(quad->parent->children[0]), order_child, quad);
+                cal_xyz_quad(get_lowerleft_xyz(quad->qData.leaf->parent->qData.nonleaf->children[0]), order_child, quad);
+                cal_ijk_quad(get_lowerleft_ijk(quad->qData.leaf->parent->qData.nonleaf->children[0]), order_child, quad);
             }
             // load data
-            quad->user_data = new USER_DATA;
-            fread(quad->user_data, sizeof(USER_DATA), 1, fpin);
+            quad->qData.leaf->user_data = new USER_DATA;
+            fread(quad->qData.leaf->user_data, sizeof(USER_DATA), 1, fpin);
             // quad->pointData = new double[m_num_props*m_num_node_per_quad];
             // fread(quad->pointData, sizeof(double), m_num_props*m_num_node_per_quad, fpin);
             // return;
@@ -480,9 +501,9 @@ namespace LOOKUPTABLE_FOREST
                 // initialize as lower left corner ijk
                 for (int i = 0; i < 4; i++)
                 {
-                    ijk[i] = quad->ijk;
+                    ijk[i] = quad->qData.leaf->coord.ijk;
                 }
-                // ijk[0] = quad->ijk; //lower left corner of a quad
+                // ijk[0] = quad->qData.leaf->coord.ijk; //lower left corner of a quad
                 ijk[1].i += length_quad;
                 ijk[2].j += length_quad;
                 ijk[3].i += length_quad; ijk[3].j += length_quad;
@@ -506,11 +527,21 @@ namespace LOOKUPTABLE_FOREST
     template <int dim, typename USER_DATA>
     void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level))
     {
+        // WAIT("inside refine");
         // printf("refine on thread %d, min_level: %d, max_level: %d, level: %d\n", omp_get_thread_num(), m_min_level, m_max_level, quad->level);
         // 
         // NOTE that do not use for loop in the recursion, it will slow down the calculation
-        
-        if(is_refine(this, quad, m_max_level))
+        // -------- ijk and xyz are union, ijk2xyz and make a backup for ijk -------
+        Quad_index ijk_backup;
+        if(!quad->isHasChildren)union_ijk2xyz(quad, ijk_backup);
+        // WAIT("union_ijk2xyz");
+        // -------------------------------------------------------------------------
+        bool do_refine = is_refine(this, quad, m_max_level); //refine calculation function need xyz coordinate
+        // after refine calculating, give ijk back to union
+        if(!quad->isHasChildren)quad->qData.leaf->coord.ijk = ijk_backup;
+        // -----------------------------------------
+
+        if(do_refine)
         {
             // if no children, create children
             if(!quad->isHasChildren)
@@ -519,117 +550,104 @@ namespace LOOKUPTABLE_FOREST
                 int length_child = 1<<(MAX_FOREST_LEVEL - quad->level -1); //Note that must -1, because this is the child length
                 // z index = 0
 
-                // quad->children = new Quadrant<dim,USER_DATA>*[1<<dim];
-
+                // quad->qData.nonleaf->children = new Quadrant<dim,USER_DATA>*[1<<dim];
+                // WAIT("Create children");
+                // backup parent leaf quad data and create new nonleaf data because the quad has become a parent
+                LeafQuad<dim, USER_DATA>* leaf_quad_backup = quad->qData.leaf;
+                quad->qData.nonleaf = new NonLeafQuad<dim, USER_DATA>;
                 // 1st child: lower left
-                quad->children[0] = new Quadrant<dim,USER_DATA>;
-                quad->children[0]->xyz[0] = quad->xyz[0];
-                quad->children[0]->xyz[1] = quad->xyz[1];
-                quad->children[0]->ijk    = quad->ijk;
-                quad->children[0]->level  = quad->level+1; //only calculate once
-                quad->children[0]->parent = quad;
-                quad->children[0]->isHasChildren = false;
+                quad->qData.nonleaf->children[0] = new Quadrant<dim,USER_DATA>;
+                quad->qData.nonleaf->children[0]->qData.leaf = new LeafQuad<dim, USER_DATA>;
+                quad->qData.nonleaf->children[0]->qData.leaf->coord.ijk    = leaf_quad_backup->coord.ijk;
+                quad->qData.nonleaf->children[0]->level  = quad->level+1; //only calculate once
+                quad->qData.nonleaf->children[0]->qData.leaf->parent = quad;
+                quad->qData.nonleaf->children[0]->isHasChildren = false;
                 // 2nd child: lower right
-                quad->children[1] = new Quadrant<dim,USER_DATA>;
-                quad->children[1]->xyz[0] = quad->xyz[0] + length_child*m_length_scale[0];
-                quad->children[1]->xyz[1] = quad->xyz[1];
-                quad->children[1]->ijk    = quad->ijk;
-                quad->children[1]->ijk.i += length_child;
-                quad->children[1]->level  = quad->children[0]->level;
-                quad->children[1]->parent = quad;
-                quad->children[1]->isHasChildren = false;
+                quad->qData.nonleaf->children[1] = new Quadrant<dim,USER_DATA>;
+                quad->qData.nonleaf->children[1]->qData.leaf = new LeafQuad<dim, USER_DATA>;
+                quad->qData.nonleaf->children[1]->qData.leaf->coord.ijk    = leaf_quad_backup->coord.ijk;
+                quad->qData.nonleaf->children[1]->qData.leaf->coord.ijk.i += length_child;
+                quad->qData.nonleaf->children[1]->level  = quad->qData.nonleaf->children[0]->level;
+                quad->qData.nonleaf->children[1]->qData.leaf->parent = quad;
+                quad->qData.nonleaf->children[1]->isHasChildren = false;
                 // 3th child: upper left
-                quad->children[2] = new Quadrant<dim,USER_DATA>;
-                quad->children[2]->xyz[0] = quad->xyz[0];
-                quad->children[2]->xyz[1] = quad->xyz[1] + length_child*m_length_scale[1];
-                quad->children[2]->ijk    = quad->ijk;
-                quad->children[2]->ijk.j += length_child;
-                quad->children[2]->level  = quad->children[0]->level;
-                quad->children[2]->parent = quad;
-                quad->children[2]->isHasChildren = false;
+                quad->qData.nonleaf->children[2] = new Quadrant<dim,USER_DATA>;
+                quad->qData.nonleaf->children[2]->qData.leaf = new LeafQuad<dim, USER_DATA>;
+                quad->qData.nonleaf->children[2]->qData.leaf->coord.ijk    = leaf_quad_backup->coord.ijk;
+                quad->qData.nonleaf->children[2]->qData.leaf->coord.ijk.j += length_child;
+                quad->qData.nonleaf->children[2]->level  = quad->qData.nonleaf->children[0]->level;
+                quad->qData.nonleaf->children[2]->qData.leaf->parent = quad;
+                quad->qData.nonleaf->children[2]->isHasChildren = false;
                 // 4th child: upper right
-                quad->children[3] = new Quadrant<dim,USER_DATA>;
-                quad->children[3]->xyz[0] = quad->children[1]->xyz[0];
-                quad->children[3]->xyz[1] = quad->children[2]->xyz[1];
-                quad->children[3]->ijk    = quad->ijk;
-                quad->children[3]->ijk.i += length_child;
-                quad->children[3]->ijk.j += length_child;
-                quad->children[3]->level  = quad->children[0]->level;
-                quad->children[3]->parent = quad;
-                quad->children[3]->isHasChildren = false;
+                quad->qData.nonleaf->children[3] = new Quadrant<dim,USER_DATA>;
+                quad->qData.nonleaf->children[3]->qData.leaf = new LeafQuad<dim, USER_DATA>;
+                quad->qData.nonleaf->children[3]->qData.leaf->coord.ijk    = leaf_quad_backup->coord.ijk;
+                quad->qData.nonleaf->children[3]->qData.leaf->coord.ijk.i += length_child;
+                quad->qData.nonleaf->children[3]->qData.leaf->coord.ijk.j += length_child;
+                quad->qData.nonleaf->children[3]->level  = quad->qData.nonleaf->children[0]->level;
+                quad->qData.nonleaf->children[3]->qData.leaf->parent = quad;
+                quad->qData.nonleaf->children[3]->isHasChildren = false;
                 if(m_data_size!=0) // only check once
                 {
-                    quad->children[0]->user_data = new USER_DATA;
-                    quad->children[1]->user_data = new USER_DATA;
-                    quad->children[2]->user_data = new USER_DATA;
-                    quad->children[3]->user_data = new USER_DATA;
+                    quad->qData.nonleaf->children[0]->qData.leaf->user_data = new USER_DATA;
+                    quad->qData.nonleaf->children[1]->qData.leaf->user_data = new USER_DATA;
+                    quad->qData.nonleaf->children[2]->qData.leaf->user_data = new USER_DATA;
+                    quad->qData.nonleaf->children[3]->qData.leaf->user_data = new USER_DATA;
                 }
                 // 3D case: z index =1
                 if(dim == 3)
                 {
-                    // complete z coordinate of the first four children
-                    quad->children[0]->xyz[2] = quad->xyz[2];
-                    quad->children[1]->xyz[2] = quad->xyz[2];
-                    quad->children[2]->xyz[2] = quad->xyz[2];
-                    quad->children[3]->xyz[2] = quad->xyz[2];
                     // ------- the last four children ------
                     // 5th child: lower left
-                    quad->children[4] = new Quadrant<dim,USER_DATA>;
-                    quad->children[4]->xyz[0] = quad->xyz[0];
-                    quad->children[4]->xyz[1] = quad->xyz[1];
-                    quad->children[4]->xyz[2] = quad->xyz[2] + length_child*m_length_scale[2]; // only calculate once
-                    quad->children[4]->ijk    = quad->ijk;
-                    quad->children[4]->ijk.k += length_child;
-                    quad->children[4]->level  = quad->children[0]->level;
-                    quad->children[4]->parent = quad;
-                    quad->children[4]->isHasChildren = false;
+                    quad->qData.nonleaf->children[4] = new Quadrant<dim,USER_DATA>;
+                    quad->qData.nonleaf->children[4]->qData.leaf = new LeafQuad<dim, USER_DATA>;
+                    quad->qData.nonleaf->children[4]->qData.leaf->coord.ijk    = leaf_quad_backup->coord.ijk;
+                    quad->qData.nonleaf->children[4]->qData.leaf->coord.ijk.k += length_child;
+                    quad->qData.nonleaf->children[4]->level  = quad->qData.nonleaf->children[0]->level;
+                    quad->qData.nonleaf->children[4]->qData.leaf->parent = quad;
+                    quad->qData.nonleaf->children[4]->isHasChildren = false;
                     // 6th child: lower right
-                    quad->children[5] = new Quadrant<dim,USER_DATA>;
-                    quad->children[5]->xyz[0] = quad->children[1]->xyz[0];
-                    quad->children[5]->xyz[1] = quad->xyz[1];
-                    quad->children[5]->xyz[2] = quad->children[4]->xyz[2];
-                    quad->children[5]->ijk    = quad->ijk;
-                    quad->children[5]->ijk.i += length_child;
-                    quad->children[5]->ijk.k += length_child;
-                    quad->children[5]->level  = quad->children[0]->level;
-                    quad->children[5]->parent = quad;
-                    quad->children[5]->isHasChildren = false;
+                    quad->qData.nonleaf->children[5] = new Quadrant<dim,USER_DATA>;
+                    quad->qData.nonleaf->children[5]->qData.leaf = new LeafQuad<dim, USER_DATA>;
+                    quad->qData.nonleaf->children[5]->qData.leaf->coord.ijk    = leaf_quad_backup->coord.ijk;
+                    quad->qData.nonleaf->children[5]->qData.leaf->coord.ijk.i += length_child;
+                    quad->qData.nonleaf->children[5]->qData.leaf->coord.ijk.k += length_child;
+                    quad->qData.nonleaf->children[5]->level  = quad->qData.nonleaf->children[0]->level;
+                    quad->qData.nonleaf->children[5]->qData.leaf->parent = quad;
+                    quad->qData.nonleaf->children[5]->isHasChildren = false;
                     // 7th child: upper left
-                    quad->children[6] = new Quadrant<dim,USER_DATA>;
-                    quad->children[6]->xyz[0] = quad->xyz[0];
-                    quad->children[6]->xyz[1] = quad->children[2]->xyz[1];
-                    quad->children[6]->xyz[2] = quad->children[4]->xyz[2];
-                    quad->children[6]->ijk    = quad->ijk;
-                    quad->children[6]->ijk.j += length_child;
-                    quad->children[6]->ijk.k += length_child;
-                    quad->children[6]->level  = quad->children[0]->level;
-                    quad->children[6]->parent = quad;
-                    quad->children[6]->isHasChildren = false;
+                    quad->qData.nonleaf->children[6] = new Quadrant<dim,USER_DATA>;
+                    quad->qData.nonleaf->children[6]->qData.leaf = new LeafQuad<dim, USER_DATA>;
+                    quad->qData.nonleaf->children[6]->qData.leaf->coord.ijk    = leaf_quad_backup->coord.ijk;
+                    quad->qData.nonleaf->children[6]->qData.leaf->coord.ijk.j += length_child;
+                    quad->qData.nonleaf->children[6]->qData.leaf->coord.ijk.k += length_child;
+                    quad->qData.nonleaf->children[6]->level  = quad->qData.nonleaf->children[0]->level;
+                    quad->qData.nonleaf->children[6]->qData.leaf->parent = quad;
+                    quad->qData.nonleaf->children[6]->isHasChildren = false;
                     // 8th child: upper right
-                    quad->children[7] = new Quadrant<dim,USER_DATA>;
-                    quad->children[7]->xyz[0] = quad->children[1]->xyz[0];
-                    quad->children[7]->xyz[1] = quad->children[2]->xyz[1];
-                    quad->children[7]->xyz[2] = quad->children[4]->xyz[2];
-                    quad->children[7]->ijk    = quad->ijk;
-                    quad->children[7]->ijk.i += length_child;
-                    quad->children[7]->ijk.j += length_child;
-                    quad->children[7]->ijk.k += length_child;
-                    quad->children[7]->level  = quad->children[0]->level;
-                    quad->children[7]->parent = quad;
-                    quad->children[7]->isHasChildren = false;
+                    quad->qData.nonleaf->children[7] = new Quadrant<dim,USER_DATA>;
+                    quad->qData.nonleaf->children[7]->qData.leaf = new LeafQuad<dim, USER_DATA>;
+                    quad->qData.nonleaf->children[7]->qData.leaf->coord.ijk    = leaf_quad_backup->coord.ijk;
+                    quad->qData.nonleaf->children[7]->qData.leaf->coord.ijk.i += length_child;
+                    quad->qData.nonleaf->children[7]->qData.leaf->coord.ijk.j += length_child;
+                    quad->qData.nonleaf->children[7]->qData.leaf->coord.ijk.k += length_child;
+                    quad->qData.nonleaf->children[7]->level  = quad->qData.nonleaf->children[0]->level;
+                    quad->qData.nonleaf->children[7]->qData.leaf->parent = quad;
+                    quad->qData.nonleaf->children[7]->isHasChildren = false;
                     if(m_data_size!=0) // only check once
                     {
-                        quad->children[4]->user_data = new USER_DATA; 
-                        quad->children[5]->user_data = new USER_DATA; 
-                        quad->children[6]->user_data = new USER_DATA; 
-                        quad->children[7]->user_data = new USER_DATA; 
+                        quad->qData.nonleaf->children[4]->qData.leaf->user_data = new USER_DATA; 
+                        quad->qData.nonleaf->children[5]->qData.leaf->user_data = new USER_DATA; 
+                        quad->qData.nonleaf->children[6]->qData.leaf->user_data = new USER_DATA; 
+                        quad->qData.nonleaf->children[7]->qData.leaf->user_data = new USER_DATA; 
                     }
                 }
-
                 // delete parent data
-                delete quad->user_data;
-                quad->user_data = NULL;
+                delete leaf_quad_backup->user_data;
+                leaf_quad_backup->user_data = NULL;
+                delete leaf_quad_backup; //delete leafquad data itself, because we don't need it any more.
                 quad->isHasChildren = true;
+                // WAIT("Create children done");
             }
 
             // for (int i = 0; i < m_num_children; i++)
@@ -637,44 +655,44 @@ namespace LOOKUPTABLE_FOREST
             #if USE_OMP == 1
                 #pragma omp task shared(is_refine) //firstprivate(quad, m_max_level) //
             #endif
-                refine(quad->children[0], is_refine);
+                refine(quad->qData.nonleaf->children[0], is_refine);
 
             #if USE_OMP == 1
                 #pragma omp task shared(is_refine) //firstprivate(quad, m_max_level)
             #endif
-                refine(quad->children[1], is_refine);
+                refine(quad->qData.nonleaf->children[1], is_refine);
 
             #if USE_OMP == 1
                 #pragma omp task shared(is_refine) //firstprivate(quad, m_max_level)
             #endif
-                refine(quad->children[2], is_refine);
+                refine(quad->qData.nonleaf->children[2], is_refine);
 
             #if USE_OMP == 1
                 #pragma omp task shared(is_refine) //firstprivate(quad, m_max_level)
             #endif
-                refine(quad->children[3], is_refine);
+                refine(quad->qData.nonleaf->children[3], is_refine);
 
                 if(dim==3)
                 {
                 #if USE_OMP == 1
                     #pragma omp task shared(is_refine)
                 #endif
-                    refine(quad->children[4], is_refine);
+                    refine(quad->qData.nonleaf->children[4], is_refine);
 
                 #if USE_OMP == 1
                     #pragma omp task shared(is_refine)
                 #endif
-                    refine(quad->children[5], is_refine);
+                    refine(quad->qData.nonleaf->children[5], is_refine);
 
                 #if USE_OMP == 1
                     #pragma omp task shared(is_refine)
                 #endif
-                    refine(quad->children[6], is_refine);
+                    refine(quad->qData.nonleaf->children[6], is_refine);
 
                 #if USE_OMP == 1
                     #pragma omp task shared(is_refine)
                 #endif
-                    refine(quad->children[7], is_refine);
+                    refine(quad->qData.nonleaf->children[7], is_refine);
                 }
             #if USE_OMP == 1
                 #pragma omp taskwait
@@ -686,7 +704,9 @@ namespace LOOKUPTABLE_FOREST
     template <int dim, typename USER_DATA>
     void LookUpTableForest<dim,USER_DATA>::refine(bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level))
     {
+        // WAIT("Do refine");
         refine(&m_root, is_refine);
+        // WAIT("Refine done");
     }
 
     template <int dim, typename USER_DATA>
@@ -775,7 +795,7 @@ namespace LOOKUPTABLE_FOREST
         {
             for (int i = 0; i < m_num_children; i++)
             {
-                getLeaves(leaves, quad_counts, quad->children[i]);
+                getLeaves(leaves, quad_counts, quad->qData.nonleaf->children[i]);
             }
         }else
         {
@@ -797,7 +817,7 @@ namespace LOOKUPTABLE_FOREST
         vector<size_t> index_valid_leaves;
         for (size_t i = 0; i < leaves.size(); i++)
         {
-            if(leaves[i]->user_data->phaseRegion_cell != H2ONaCl::UnknownPhaseRegion)
+            if(leaves[i]->qData.leaf->user_data->phaseRegion_cell != H2ONaCl::UnknownPhaseRegion)
             {
                 index_valid_leaves.push_back(i);
             }
@@ -848,11 +868,11 @@ namespace LOOKUPTABLE_FOREST
         fout<<"      <CellData>"<<endl;
         // ---------- 1. phase index
         fout<<"        <DataArray type=\"Int32\" Name=\"phaseIndex\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        for (size_t i = 0; i < index_valid_leaves.size(); i++){ fout<<" "<<leaves[index_valid_leaves[i]]->user_data->phaseRegion_cell;}
+        for (size_t i = 0; i < index_valid_leaves.size(); i++){ fout<<" "<<leaves[index_valid_leaves[i]]->qData.leaf->user_data->phaseRegion_cell;}
         fout<<"\n        </DataArray>"<<endl;
         // ---------- 2. need refine
         fout<<"        <DataArray type=\"Int32\" Name=\"needRefine\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-        for (size_t i = 0; i < index_valid_leaves.size(); i++){ fout<<" "<<leaves[index_valid_leaves[i]]->user_data->need_refine;}
+        for (size_t i = 0; i < index_valid_leaves.size(); i++){ fout<<" "<<leaves[index_valid_leaves[i]]->qData.leaf->user_data->need_refine;}
         fout<<"\n        </DataArray>"<<endl;
         fout<<"      </CellData>"<<endl;
         // write points
@@ -994,7 +1014,7 @@ namespace LOOKUPTABLE_FOREST
             return;
         }else
         {
-            int length_child = 1<<(MAX_FOREST_LEVEL - quad_source->children[0]->level); //any of a child to access the child level number, e.g., 0
+            int length_child = 1<<(MAX_FOREST_LEVEL - quad_source->qData.nonleaf->children[0]->level); //any of a child to access the child level number, e.g., 0
             int childID_x = x_ref/length_child;
             int childID_y = y_ref/length_child;
             int childID_z = dim == 3 ? z_ref/length_child : 0;
@@ -1003,7 +1023,7 @@ namespace LOOKUPTABLE_FOREST
             childID_y = childID_y >=2 ? 1 : childID_y;
             childID_z = childID_z >=2 ? 1 : childID_z;
             // cout<<"  childID_x: "<<childID_x<<", childID_y: "<<childID_y<<", level: "<<quad_source->level<<endl;
-            searchQuadrant(quad_source->children[childID_z*4 + childID_y*2 + childID_x], quad_target,
+            searchQuadrant(quad_source->qData.nonleaf->children[childID_z*4 + childID_y*2 + childID_x], quad_target,
                 childID_x == 1 ? x_ref - length_child : x_ref, 
                 childID_y == 1 ? y_ref - length_child : y_ref, 
                 childID_z == 1 ? z_ref - length_child : z_ref

@@ -48,13 +48,13 @@ int main(int argc, char** argv)
             for (size_t i = 0; i < x.size(); i++)
             {
                 targetLeaf = sw.lookup(props, x[i], y[i]);
-                fprintf(fp, "%d\t%d", targetLeaf->user_data->phaseRegion_cell, targetLeaf->user_data->need_refine);
+                fprintf(fp, "%d\t%d", targetLeaf->qData.leaf->user_data->phaseRegion_cell, targetLeaf->qData.leaf->user_data->need_refine);
                 for (size_t j = 0; j < pLUT->m_map_props.size(); j++)
                 {
                     fprintf(fp, "\t%f", props[j]);
                 }
                 fprintf(fp, "\n");
-                if(targetLeaf->user_data->phaseRegion_cell == H2ONaCl::MixPhaseRegion)ind++;
+                if(targetLeaf->qData.leaf->user_data->phaseRegion_cell == H2ONaCl::MixPhaseRegion)ind++;
             }
             fclose(fp);
             delete[] props;
@@ -79,13 +79,13 @@ int main(int argc, char** argv)
             for (size_t i = 0; i < x.size(); i++)
             {
                 targetLeaf = sw.lookup(props, x[i], y[i], z[i]);
-                fprintf(fp, "%d\t%d", targetLeaf->user_data->phaseRegion_cell, targetLeaf->user_data->need_refine);
+                fprintf(fp, "%d\t%d", targetLeaf->qData.leaf->user_data->phaseRegion_cell, targetLeaf->qData.leaf->user_data->need_refine);
                 for (size_t j = 0; j < pLUT->m_map_props.size(); j++)
                 {
                     fprintf(fp, "\t%f", props[j]);
                 }
                 fprintf(fp, "\n");
-                if(targetLeaf->user_data->phaseRegion_cell == H2ONaCl::MixPhaseRegion)ind++;
+                if(targetLeaf->qData.leaf->user_data->phaseRegion_cell == H2ONaCl::MixPhaseRegion)ind++;
             }
             fclose(fp);
             delete[] props;

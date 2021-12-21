@@ -4404,17 +4404,20 @@ namespace H2ONaCl
     {
         // parsing which properties need to be calculated
         parse_update_which_props(update_which_props);
-
+        
         destroyLUT(); //destroy lut pointer and release all data before create a new one.
+        // WAIT("destroyLUT");
         clock_t start = clock();
         STATUS("Creating 2D lookup table ...");
         // const int dim =2;
         m_dim_lut = 2;
         LookUpTableForest_2D* tmp_lut_2D = new LookUpTableForest_2D (xy_min, xy_max, constZ, const_which_var, TorH, max_level, m_update_which_props, this);
         m_pLUT = tmp_lut_2D;
+        // WAIT("new LookUpTableForest_2D");
         // refine
         tmp_lut_2D->set_min_level(min_level);
-        tmp_lut_2D->refine(refine_uniform);
+        // tmp_lut_2D->refine(refine_uniform);
+        // WAIT("refine_uniform");
         // parallel refine
         if (tmp_lut_2D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_T)
         {
@@ -4539,11 +4542,11 @@ namespace H2ONaCl
             if(m_dim_lut==2)
             {
                 // static_cast<LookUpTableForest_2D*>(m_lut)->destory();
-                ((LookUpTableForest_2D *)m_pLUT)->destory();
+                // ((LookUpTableForest_2D *)m_pLUT)->destory();
                 delete ((LookUpTableForest_2D *)m_pLUT);
             }else
             {
-                ((LookUpTableForest_3D *)m_pLUT)->destory();
+                // ((LookUpTableForest_3D *)m_pLUT)->destory();
                 delete ((LookUpTableForest_3D *)m_pLUT);
             }
             m_pLUT = NULL;
@@ -4573,20 +4576,20 @@ namespace H2ONaCl
         // const int num_children = tmp_lut->m_num_children;
         // double* values_at_vertices = new double[num_children];
         // tmp_lut->get_quadrant_physical_length(targetLeaf->level, physical_length);
-        // get_coeff_bilinear<dim> (targetLeaf->xyz, physical_length, xyz, coeff);
+        // get_coeff_bilinear<dim> (targetLeaf->qData.leaf->coord.xyz, physical_length, xyz, coeff);
         // // Rho
         // for (int i = 0; i < tmp_lut->m_num_children; i++){
-        //     values_at_vertices[i] = targetLeaf->user_data->prop_point[i].Rho;
+        //     values_at_vertices[i] = targetLeaf->qData.leaf->user_data->prop_point[i].Rho;
         // }
         // bilinear_cal<dim>(coeff, values_at_vertices, prop.Rho);
         // // H
         // for (int i = 0; i < tmp_lut->m_num_children; i++){
-        //     values_at_vertices[i] = targetLeaf->user_data->prop_point[i].H;
+        //     values_at_vertices[i] = targetLeaf->qData.leaf->user_data->prop_point[i].H;
         // }
         // bilinear_cal<dim>(coeff, values_at_vertices, prop.H);
 
         // phase region
-        prop.Region = targetLeaf->user_data->phaseRegion_cell;
+        prop.Region = targetLeaf->qData.leaf->user_data->phaseRegion_cell;
 
         // delete[] values_at_vertices;
     }
@@ -4604,7 +4607,7 @@ namespace H2ONaCl
         tmp_lut->get_ijk_nodes_quadrant(targetLeaf, tmp_lut->m_num_node_per_quad, ijk_nodes_quad);
 
         tmp_lut->get_quadrant_physical_length((int)targetLeaf->level, physical_length);
-        get_coeff_bilinear<dim> (targetLeaf->xyz, physical_length, xyz, coeff);
+        get_coeff_bilinear<dim> (targetLeaf->qData.leaf->coord.xyz, physical_length, xyz, coeff);
         // for (int i = 0; i < dim; i++)
         // {
         //     cout<<"    "<<coeff[i][0]<<" "<<coeff[i][1]<<endl;
@@ -4642,9 +4645,9 @@ namespace H2ONaCl
         // cout<<"constZ: "<<tmp_lut->m_constZ<<", y: "<<y<<", x: "<<x<<endl;
         LOOKUPTABLE_FOREST::Quadrant<2,H2ONaCl::FIELD_DATA<2> > *targetLeaf = NULL;
         tmp_lut->searchQuadrant(targetLeaf, x, y, tmp_lut->m_constZ);
-        // cout<<"  level: "<<targetLeaf->level<<", x: "<<x<<", y: "<<y<<", quad x: "<<targetLeaf->xyz[0]<<", quad y: "<<targetLeaf->xyz[1]<<endl;
+        // cout<<"  level: "<<targetLeaf->level<<", x: "<<x<<", y: "<<y<<", quad x: "<<targetLeaf->qData.leaf->coord.xyz[0]<<", quad y: "<<targetLeaf->qData.leaf->coord.xyz[1]<<endl;
         PROP_H2ONaCl tmp_prop;
-        if(targetLeaf->user_data->need_refine)
+        if(targetLeaf->qData.leaf->user_data->need_refine)
         {
             if(is_cal) // if set is_cal true means cal properties using acurate equation, otherwise interpolate anyway
             {
@@ -4714,7 +4717,7 @@ namespace H2ONaCl
         // cout<<"constZ: "<<tmp_lut->m_constZ<<", y: "<<y<<", x: "<<x<<endl;
         LOOKUPTABLE_FOREST::Quadrant<2,H2ONaCl::FIELD_DATA<2> > *targetLeaf = NULL;
         tmp_lut->searchQuadrant(targetLeaf, x, y, tmp_lut->m_constZ);
-        if(targetLeaf->user_data->need_refine)
+        if(targetLeaf->qData.leaf->user_data->need_refine)
         {
             if(tmp_lut->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_T)
             {
@@ -4792,7 +4795,7 @@ namespace H2ONaCl
         // cout<<"T: "<<x<<", P: "<<y<<", X: "<<z<<endl;
         LOOKUPTABLE_FOREST::Quadrant<3,H2ONaCl::FIELD_DATA<3> > *targetLeaf = NULL;
         tmp_lut->searchQuadrant(targetLeaf, x, y, z);
-        if(targetLeaf->user_data->need_refine)
+        if(targetLeaf->qData.leaf->user_data->need_refine)
         {
             if(tmp_lut->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_T)
             {
@@ -4828,7 +4831,7 @@ namespace H2ONaCl
         LOOKUPTABLE_FOREST::Quadrant<3,H2ONaCl::FIELD_DATA<3> > *targetLeaf = NULL;
         tmp_lut->searchQuadrant(targetLeaf, x, y, z);
         PROP_H2ONaCl tmp_prop;
-        if(targetLeaf->user_data->need_refine)
+        if(targetLeaf->qData.leaf->user_data->need_refine)
         {
             if(is_cal)
             {
@@ -4864,16 +4867,16 @@ namespace H2ONaCl
         // cout<<"constZ: "<<tmp_lut->m_constZ<<", y: "<<y<<", x: "<<x<<endl;
         LOOKUPTABLE_FOREST::Quadrant<2,H2ONaCl::FIELD_DATA<2> > *targetLeaf = NULL;
         tmp_lut->searchQuadrant(targetLeaf, x, y, tmp_lut->m_constZ);
-        if(targetLeaf->user_data->need_refine)
+        if(targetLeaf->qData.leaf->user_data->need_refine)
         {
             //only lookup, so don't do anything if the lookup point in the needRefine-cell
-            prop.Region = targetLeaf->user_data->phaseRegion_cell;
+            prop.Region = targetLeaf->qData.leaf->user_data->phaseRegion_cell;
         }
         else
         {
             double xy[2] = {x, y};
             interp_quad_prop<2>(targetLeaf, prop, xy);
-            prop.Region = targetLeaf->user_data->phaseRegion_cell;
+            prop.Region = targetLeaf->qData.leaf->user_data->phaseRegion_cell;
         }
         return targetLeaf;
     }
@@ -4901,16 +4904,16 @@ namespace H2ONaCl
         // cout<<"T: "<<x<<", P: "<<y<<", X: "<<z<<endl;
         LOOKUPTABLE_FOREST::Quadrant<3,H2ONaCl::FIELD_DATA<3> > *targetLeaf = NULL;
         tmp_lut->searchQuadrant(targetLeaf, x, y, z);
-        if(targetLeaf->user_data->need_refine)
+        if(targetLeaf->qData.leaf->user_data->need_refine)
         {
             //this is a looup-only version, don't do anything if the lookup point in the needRefine-cell
-            prop.Region = targetLeaf->user_data->phaseRegion_cell;
+            prop.Region = targetLeaf->qData.leaf->user_data->phaseRegion_cell;
         }
         else
         {
             double xyz[3] = {x, y, z};
             interp_quad_prop<3>(targetLeaf, prop, xyz);
-            prop.Region = targetLeaf->user_data->phaseRegion_cell;
+            prop.Region = targetLeaf->qData.leaf->user_data->phaseRegion_cell;
         }
         return targetLeaf;
     }

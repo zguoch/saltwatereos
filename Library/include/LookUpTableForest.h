@@ -26,24 +26,24 @@ namespace LOOKUPTABLE_FOREST
     // non complete declaration
     template <int dim, typename USER_DATA> struct NonLeafQuad;
     template <int dim, typename USER_DATA> struct LeafQuad;
-    
+    template <int dim, typename USER_DATA>union Quad_data
+    {
+        NonLeafQuad<dim, USER_DATA>* nonleaf;
+        LeafQuad<dim, USER_DATA>* leaf = NULL;
+    };
     template <int dim, typename USER_DATA>
     struct Quadrant
     {
         int       level;
         bool      isHasChildren;
-        union data
-        {
-            NonLeafQuad<dim, USER_DATA>* nonleaf;
-            LeafQuad<dim, USER_DATA>* leaf;
-        };
+        Quad_data<dim, USER_DATA> qData; //leaf quad and nonleaf quad use different type of data
+        int index;
+        // double              xyz[dim]; //real coordinate of the lower left corner of a quadrant
+        // Quad_index          ijk; //index of the LowerLeft corner in the reference space [2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL]
         
-        double              xyz[dim]; //real coordinate of the lower left corner of a quadrant
-        Quad_index          ijk; //index of the LowerLeft corner in the reference space [2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL]
-        
-        Quadrant*           parent;
-        Quadrant            *children[1<<dim];// = NULL; //[1<<dim]; //2^dim: use dynamic array to save memory. Use dynamic array will cause bugs in read_forest, fix it later.
-        USER_DATA           *user_data = NULL;
+        // Quadrant*           parent;
+        // Quadrant            *children[1<<dim];// = NULL; //[1<<dim]; //2^dim: use dynamic array to save memory. Use dynamic array will cause bugs in read_forest, fix it later.
+        // USER_DATA        *user_data = NULL;
         // double              *pointData = NULL; //store all point data of a leaf quad, calculate it after refining process.
         // DEBUG
         // int index = -1;
@@ -59,13 +59,12 @@ namespace LOOKUPTABLE_FOREST
     template <int dim, typename USER_DATA> 
     struct LeafQuad
     {
-        double              xyz[dim]; //real coordinate of the lower left corner of a quadrant
-        union coord
+        union COORD
         {
             Quad_index          ijk; //index of the LowerLeft corner in the reference space [2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL]
             double              xyz[dim]; //real coordinate of the lower left corner of a quadrant
-        };
-        Quadrant<dim, USER_DATA>* parent;
+        }coord;
+        Quadrant<dim, USER_DATA>* parent =NULL;
         USER_DATA           *user_data = NULL;
     };
     
@@ -130,7 +129,7 @@ namespace LOOKUPTABLE_FOREST
         Quadrant<dim,USER_DATA> m_root;
         void init_Root(Quadrant<dim,USER_DATA>& quad);
         void release_quadrant_data(Quadrant<dim,USER_DATA>* quad);
-        void release_children(Quadrant<dim,USER_DATA>* quad);
+        void release_leaves(Quadrant<dim,USER_DATA>* quad);
         void getLeaves(vector<Quadrant<dim,USER_DATA>* >& leaves, long int& quad_counts, Quadrant<dim,USER_DATA>* quad);
         void refine(Quadrant<dim,USER_DATA>* quad, bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level));
         void release_map2data();
@@ -172,6 +171,7 @@ namespace LOOKUPTABLE_FOREST
         void get_ijk_nodes_quadrant(Quadrant<dim,USER_DATA>* quad, int num_nodes_per_quad, Quad_index* ijk);
         void assemble_data(void (*cal_prop)(LookUpTableForest<dim,USER_DATA>* forest, std::map<Quad_index, double*>& map_ijk2data));
         void ijk2xyz(const Quad_index* ijk, double& x, double& y, double& z);
+        void union_ijk2xyz(Quadrant<dim, USER_DATA>* quad, Quad_index& ijk_backup);
         void write_to_vtk(string filename, bool write_data=true, bool isNormalizeXYZ=true);
         void write_to_binary(string filename, bool is_write_data=true);
         void print_summary();

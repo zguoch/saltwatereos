@@ -36,7 +36,7 @@ namespace H2ONaCl
         
         H2ONaCl::cH2ONaCl* eosPointer =(H2ONaCl::cH2ONaCl*)(forest->m_eosPointer); //read only! please DO NOT use this pointer to change any data in the EOS object!!! although it can change the member data. 
         // double xv, xl;
-        USER_DATA       *data = (USER_DATA *) quad->user_data;
+        USER_DATA       *data = (USER_DATA *) quad->qData.leaf->user_data;
         data->need_refine = LOOKUPTABLE_FOREST::NeedRefine_NoNeed; //initialize need_refine to be NoNeed
         // const double* physical_length_quad = forest->m_physical_length_quad[quad->level];
         double physical_length_quad[3];
@@ -55,43 +55,43 @@ namespace H2ONaCl
             {
                 for (int iy = 0; iy < num_sample_y; iy++)
                 {
-                    y_physical_quad = quad->xyz[1] + dy_physical_quad*iy;
+                    y_physical_quad = quad->qData.leaf->coord.xyz[1] + dy_physical_quad*iy;
                     for (int ix = 0; ix < num_sample_x; ix++)
                     {
-                        x_physical_quad = quad->xyz[0] + dx_physical_quad*ix;
+                        x_physical_quad = quad->qData.leaf->coord.xyz[0] + dx_physical_quad*ix;
                         regionIndex[iy*num_sample_x + ix] = eosPointer->findPhaseRegion_pTX(y_physical_quad, x_physical_quad, forest->m_constZ);
                     }
                 }
-                data->phaseRegion_cell     = eosPointer->findPhaseRegion_pTX(quad->xyz[1] + physical_length_quad[1]/2.0, quad->xyz[0] + physical_length_quad[0]/2.0, forest->m_constZ); 
+                data->phaseRegion_cell     = eosPointer->findPhaseRegion_pTX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1]/2.0, quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]/2.0, forest->m_constZ); 
 
                 // ========================================================
                 // calculate properties: four vertices and one midpoint
-                props_refine_check[0] = eosPointer->prop_pTX(quad->xyz[1],                                quad->xyz[0],                               forest->m_constZ);      //xmin,ymin
-                props_refine_check[1] = eosPointer->prop_pTX(quad->xyz[1],                                quad->xyz[0] + physical_length_quad[0],     forest->m_constZ);      //xmax,ymin
-                props_refine_check[2] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0],                               forest->m_constZ);      //xmin,ymax
-                props_refine_check[3] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0] + physical_length_quad[0],     forest->m_constZ);      //xmax,ymax
-                props_refine_check[4] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1]/2.0,  quad->xyz[0] + physical_length_quad[0]/2.0, forest->m_constZ);      //xc,yc
+                props_refine_check[0] = eosPointer->prop_pTX(quad->qData.leaf->coord.xyz[1],                                quad->qData.leaf->coord.xyz[0],                               forest->m_constZ);      //xmin,ymin
+                props_refine_check[1] = eosPointer->prop_pTX(quad->qData.leaf->coord.xyz[1],                                quad->qData.leaf->coord.xyz[0] + physical_length_quad[0],     forest->m_constZ);      //xmax,ymin
+                props_refine_check[2] = eosPointer->prop_pTX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],      quad->qData.leaf->coord.xyz[0],                               forest->m_constZ);      //xmin,ymax
+                props_refine_check[3] = eosPointer->prop_pTX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],      quad->qData.leaf->coord.xyz[0] + physical_length_quad[0],     forest->m_constZ);      //xmax,ymax
+                props_refine_check[4] = eosPointer->prop_pTX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1]/2.0,  quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]/2.0, forest->m_constZ);      //xc,yc
             }
             break;
         case LOOKUPTABLE_FOREST::CONST_TorH_VAR_XP:
             {
                 for (int iy = 0; iy < num_sample_y; iy++)
                 {
-                    y_physical_quad = quad->xyz[1] + dy_physical_quad*iy;
+                    y_physical_quad = quad->qData.leaf->coord.xyz[1] + dy_physical_quad*iy;
                     for (int ix = 0; ix < num_sample_x; ix++)
                     {
-                        x_physical_quad = quad->xyz[0] + dx_physical_quad*ix;
+                        x_physical_quad = quad->qData.leaf->coord.xyz[0] + dx_physical_quad*ix;
                         regionIndex[iy*num_sample_x + ix] = eosPointer->findPhaseRegion_pTX(y_physical_quad, forest->m_constZ, x_physical_quad);
                     }
                 }
-                data->phaseRegion_cell     = eosPointer->findPhaseRegion_pTX(quad->xyz[1] + physical_length_quad[1]/2.0, forest->m_constZ, quad->xyz[0] + physical_length_quad[0]/2.0); 
+                data->phaseRegion_cell     = eosPointer->findPhaseRegion_pTX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1]/2.0, forest->m_constZ, quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]/2.0); 
                 // ========================================================
                 // calculate properties: four vertices and one midpoint
-                props_refine_check[0] = eosPointer->prop_pTX(quad->xyz[1],                                forest->m_constZ,   quad->xyz[0]);                                  //xmin,ymin
-                props_refine_check[1] = eosPointer->prop_pTX(quad->xyz[1],                                forest->m_constZ,   quad->xyz[0] + physical_length_quad[0]);        //xmax,ymin
-                props_refine_check[2] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      forest->m_constZ,   quad->xyz[0]);                                  //xmin,ymax
-                props_refine_check[3] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      forest->m_constZ,   quad->xyz[0] + physical_length_quad[0]);        //xmax,ymax
-                props_refine_check[4] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1]/2.0,  forest->m_constZ,   quad->xyz[0] + physical_length_quad[0]/2.0);    //xc,yc
+                props_refine_check[0] = eosPointer->prop_pTX(quad->qData.leaf->coord.xyz[1],                                forest->m_constZ,   quad->qData.leaf->coord.xyz[0]);                                  //xmin,ymin
+                props_refine_check[1] = eosPointer->prop_pTX(quad->qData.leaf->coord.xyz[1],                                forest->m_constZ,   quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]);        //xmax,ymin
+                props_refine_check[2] = eosPointer->prop_pTX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],      forest->m_constZ,   quad->qData.leaf->coord.xyz[0]);                                  //xmin,ymax
+                props_refine_check[3] = eosPointer->prop_pTX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],      forest->m_constZ,   quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]);        //xmax,ymax
+                props_refine_check[4] = eosPointer->prop_pTX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1]/2.0,  forest->m_constZ,   quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]/2.0);    //xc,yc
                 
             }
             break;
@@ -99,21 +99,21 @@ namespace H2ONaCl
             {
                 for (int iy = 0; iy < num_sample_y; iy++)
                 {
-                    y_physical_quad = quad->xyz[1] + dy_physical_quad*iy;
+                    y_physical_quad = quad->qData.leaf->coord.xyz[1] + dy_physical_quad*iy;
                     for (int ix = 0; ix < num_sample_x; ix++)
                     {
-                        x_physical_quad = quad->xyz[0] + dx_physical_quad*ix;
+                        x_physical_quad = quad->qData.leaf->coord.xyz[0] + dx_physical_quad*ix;
                         regionIndex[iy*num_sample_x + ix] = eosPointer->findPhaseRegion_pTX(forest->m_constZ, y_physical_quad, x_physical_quad);
                     }
                 }
-                data->phaseRegion_cell     = eosPointer->findPhaseRegion_pTX(forest->m_constZ, quad->xyz[1] + physical_length_quad[1]/2.0,  quad->xyz[0] + physical_length_quad[0]/2.0); 
+                data->phaseRegion_cell     = eosPointer->findPhaseRegion_pTX(forest->m_constZ, quad->qData.leaf->coord.xyz[1] + physical_length_quad[1]/2.0,  quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]/2.0); 
                 // ========================================================
                 // calculate properties: four vertices and one midpoint
-                props_refine_check[0] = eosPointer->prop_pTX(forest->m_constZ, quad->xyz[1],                               quad->xyz[0]);                                  //xmin,ymin
-                props_refine_check[1] = eosPointer->prop_pTX(forest->m_constZ, quad->xyz[1],                               quad->xyz[0] + physical_length_quad[0]);        //xmax,ymin
-                props_refine_check[2] = eosPointer->prop_pTX(forest->m_constZ, quad->xyz[1] + physical_length_quad[1],     quad->xyz[0]);                                  //xmin,ymax
-                props_refine_check[3] = eosPointer->prop_pTX(forest->m_constZ, quad->xyz[1] + physical_length_quad[1],     quad->xyz[0] + physical_length_quad[0]);        //xmax,ymax
-                props_refine_check[4] = eosPointer->prop_pTX(forest->m_constZ, quad->xyz[1] + physical_length_quad[1]/2.0, quad->xyz[0] + physical_length_quad[0]/2.0);    //xc,yc
+                props_refine_check[0] = eosPointer->prop_pTX(forest->m_constZ, quad->qData.leaf->coord.xyz[1],                               quad->qData.leaf->coord.xyz[0]);                                  //xmin,ymin
+                props_refine_check[1] = eosPointer->prop_pTX(forest->m_constZ, quad->qData.leaf->coord.xyz[1],                               quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]);        //xmax,ymin
+                props_refine_check[2] = eosPointer->prop_pTX(forest->m_constZ, quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],     quad->qData.leaf->coord.xyz[0]);                                  //xmin,ymax
+                props_refine_check[3] = eosPointer->prop_pTX(forest->m_constZ, quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],     quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]);        //xmax,ymax
+                props_refine_check[4] = eosPointer->prop_pTX(forest->m_constZ, quad->qData.leaf->coord.xyz[1] + physical_length_quad[1]/2.0, quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]/2.0);    //xc,yc
                 
             }
             break;
@@ -123,29 +123,29 @@ namespace H2ONaCl
                 double z_physical_quad;
                 for (int iz = 0; iz < num_sample_z; iz++)
                 {
-                    z_physical_quad = quad->xyz[2] + dz_physical_quad*iz;
+                    z_physical_quad = quad->qData.leaf->coord.xyz[2] + dz_physical_quad*iz;
                     for (int iy = 0; iy < num_sample_y; iy++)
                     {
-                        y_physical_quad = quad->xyz[1] + dy_physical_quad*iy;
+                        y_physical_quad = quad->qData.leaf->coord.xyz[1] + dy_physical_quad*iy;
                         for (int ix = 0; ix < num_sample_x; ix++)
                         {
-                            x_physical_quad = quad->xyz[0] + dx_physical_quad*ix;
+                            x_physical_quad = quad->qData.leaf->coord.xyz[0] + dx_physical_quad*ix;
                             regionIndex[iz*num_sample_x*num_sample_y + iy*num_sample_x + ix] = eosPointer->findPhaseRegion_pTX(y_physical_quad, x_physical_quad, z_physical_quad);
                         }
                     }
                 }
-                data->phaseRegion_cell     = eosPointer->findPhaseRegion_pTX(quad->xyz[1] + physical_length_quad[1]/2.0, quad->xyz[0] + physical_length_quad[0]/2.0, quad->xyz[2] + physical_length_quad[2]/2.0); 
+                data->phaseRegion_cell     = eosPointer->findPhaseRegion_pTX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1]/2.0, quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]/2.0, quad->qData.leaf->coord.xyz[2] + physical_length_quad[2]/2.0); 
                 // ========================================================
                 // calculate properties: four vertices and one midpoint
-                props_refine_check[0] = eosPointer->prop_pTX(quad->xyz[1],                                quad->xyz[0],                               quad->xyz[2]);      //xmin,ymin
-                props_refine_check[1] = eosPointer->prop_pTX(quad->xyz[1],                                quad->xyz[0] + physical_length_quad[0],     quad->xyz[2]);      //xmax,ymin
-                props_refine_check[2] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0],                               quad->xyz[2]);      //xmin,ymax
-                props_refine_check[3] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0] + physical_length_quad[0],     quad->xyz[2]);      //xmax,ymax
-                props_refine_check[4] = eosPointer->prop_pTX(quad->xyz[1],                                quad->xyz[0],                               quad->xyz[2] + physical_length_quad[2]);      //xmin,ymin
-                props_refine_check[5] = eosPointer->prop_pTX(quad->xyz[1],                                quad->xyz[0] + physical_length_quad[0],     quad->xyz[2] + physical_length_quad[2]);      //xmax,ymin
-                props_refine_check[6] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0],                               quad->xyz[2] + physical_length_quad[2]);      //xmin,ymax
-                props_refine_check[7] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0] + physical_length_quad[0],     quad->xyz[2] + physical_length_quad[2]);      //xmax,ymax
-                props_refine_check[8] = eosPointer->prop_pTX(quad->xyz[1] + physical_length_quad[1]/2.0,  quad->xyz[0] + physical_length_quad[0]/2.0, quad->xyz[2]+ physical_length_quad[2]/2.0);      //xc,yc
+                props_refine_check[0] = eosPointer->prop_pTX(quad->qData.leaf->coord.xyz[1],                                quad->qData.leaf->coord.xyz[0],                               quad->qData.leaf->coord.xyz[2]);      //xmin,ymin
+                props_refine_check[1] = eosPointer->prop_pTX(quad->qData.leaf->coord.xyz[1],                                quad->qData.leaf->coord.xyz[0] + physical_length_quad[0],     quad->qData.leaf->coord.xyz[2]);      //xmax,ymin
+                props_refine_check[2] = eosPointer->prop_pTX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],      quad->qData.leaf->coord.xyz[0],                               quad->qData.leaf->coord.xyz[2]);      //xmin,ymax
+                props_refine_check[3] = eosPointer->prop_pTX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],      quad->qData.leaf->coord.xyz[0] + physical_length_quad[0],     quad->qData.leaf->coord.xyz[2]);      //xmax,ymax
+                props_refine_check[4] = eosPointer->prop_pTX(quad->qData.leaf->coord.xyz[1],                                quad->qData.leaf->coord.xyz[0],                               quad->qData.leaf->coord.xyz[2] + physical_length_quad[2]);      //xmin,ymin
+                props_refine_check[5] = eosPointer->prop_pTX(quad->qData.leaf->coord.xyz[1],                                quad->qData.leaf->coord.xyz[0] + physical_length_quad[0],     quad->qData.leaf->coord.xyz[2] + physical_length_quad[2]);      //xmax,ymin
+                props_refine_check[6] = eosPointer->prop_pTX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],      quad->qData.leaf->coord.xyz[0],                               quad->qData.leaf->coord.xyz[2] + physical_length_quad[2]);      //xmin,ymax
+                props_refine_check[7] = eosPointer->prop_pTX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],      quad->qData.leaf->coord.xyz[0] + physical_length_quad[0],     quad->qData.leaf->coord.xyz[2] + physical_length_quad[2]);      //xmax,ymax
+                props_refine_check[8] = eosPointer->prop_pTX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1]/2.0,  quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]/2.0, quad->qData.leaf->coord.xyz[2]+ physical_length_quad[2]/2.0);      //xc,yc
                 
             }
             break;
@@ -193,7 +193,7 @@ namespace H2ONaCl
         
         H2ONaCl::cH2ONaCl* eosPointer =(H2ONaCl::cH2ONaCl*)(forest->m_eosPointer); //read only! please DO NOT use this pointer to change any data in the EOS object!!! although it can change the member data. 
         // double xv, xl;
-        USER_DATA       *data = (USER_DATA *) quad->user_data;
+        USER_DATA       *data = (USER_DATA *) quad->qData.leaf->user_data;
         data->need_refine = LOOKUPTABLE_FOREST::NeedRefine_NoNeed; //initialize need_refine to be NoNeed
         // const double* physical_length_quad = forest->m_physical_length_quad[quad->level];
         double physical_length_quad[3];
@@ -215,25 +215,25 @@ namespace H2ONaCl
             {
                 for (int iy = 0; iy < num_sample_y; iy++)
                 {
-                    y_physical_quad = quad->xyz[1] + dy_physical_quad*iy;
+                    y_physical_quad = quad->qData.leaf->coord.xyz[1] + dy_physical_quad*iy;
                     for (int ix = 0; ix < num_sample_x; ix++)
                     {
-                        x_physical_quad = quad->xyz[0] + dx_physical_quad*ix;
+                        x_physical_quad = quad->qData.leaf->coord.xyz[0] + dx_physical_quad*ix;
                         tmp_prop = eosPointer->prop_pHX(y_physical_quad, x_physical_quad, forest->m_constZ);
                         regionIndex[iy*num_sample_x + ix] = tmp_prop.Region;
                     }
                 }
-                tmp_prop = eosPointer->prop_pHX(quad->xyz[1] + physical_length_quad[1]/2.0, quad->xyz[0] + physical_length_quad[0]/2.0, forest->m_constZ); 
+                tmp_prop = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1]/2.0, quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]/2.0, forest->m_constZ); 
                 data->phaseRegion_cell     = tmp_prop.Region;
                 // ========================================================
                 // calculate properties: four vertices and one midpoint
                 if(refine_prop)
                 {
-                    props_refine_check[0] = eosPointer->prop_pHX(quad->xyz[1],                                quad->xyz[0],                               forest->m_constZ);      //xmin,ymin
-                    props_refine_check[1] = eosPointer->prop_pHX(quad->xyz[1],                                quad->xyz[0] + physical_length_quad[0],     forest->m_constZ);      //xmax,ymin
-                    props_refine_check[2] = eosPointer->prop_pHX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0],                               forest->m_constZ);      //xmin,ymax
-                    props_refine_check[3] = eosPointer->prop_pHX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0] + physical_length_quad[0],     forest->m_constZ);      //xmax,ymax
-                    props_refine_check[4] = eosPointer->prop_pHX(quad->xyz[1] + physical_length_quad[1]/2.0,  quad->xyz[0] + physical_length_quad[0]/2.0, forest->m_constZ);      //xc,yc
+                    props_refine_check[0] = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1],                                quad->qData.leaf->coord.xyz[0],                               forest->m_constZ);      //xmin,ymin
+                    props_refine_check[1] = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1],                                quad->qData.leaf->coord.xyz[0] + physical_length_quad[0],     forest->m_constZ);      //xmax,ymin
+                    props_refine_check[2] = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],      quad->qData.leaf->coord.xyz[0],                               forest->m_constZ);      //xmin,ymax
+                    props_refine_check[3] = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],      quad->qData.leaf->coord.xyz[0] + physical_length_quad[0],     forest->m_constZ);      //xmax,ymax
+                    props_refine_check[4] = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1]/2.0,  quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]/2.0, forest->m_constZ);      //xc,yc
                 } 
             }
             break;
@@ -241,25 +241,25 @@ namespace H2ONaCl
             {
                 for (int iy = 0; iy < num_sample_y; iy++)
                 {
-                    y_physical_quad = quad->xyz[1] + dy_physical_quad*iy;
+                    y_physical_quad = quad->qData.leaf->coord.xyz[1] + dy_physical_quad*iy;
                     for (int ix = 0; ix < num_sample_x; ix++)
                     {
-                        x_physical_quad = quad->xyz[0] + dx_physical_quad*ix;
+                        x_physical_quad = quad->qData.leaf->coord.xyz[0] + dx_physical_quad*ix;
                         tmp_prop = eosPointer->prop_pHX(y_physical_quad, forest->m_constZ, x_physical_quad);
                         regionIndex[iy*num_sample_x + ix] = tmp_prop.Region;
                     }
                 }
-                tmp_prop = eosPointer->prop_pHX(quad->xyz[1] + physical_length_quad[1]/2.0, forest->m_constZ, quad->xyz[0] + physical_length_quad[0]/2.0); 
+                tmp_prop = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1]/2.0, forest->m_constZ, quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]/2.0); 
                 data->phaseRegion_cell     = tmp_prop.Region;
                 // ========================================================
                 // calculate properties: four vertices and one midpoint
                 if(refine_prop)
                 {
-                    props_refine_check[0] = eosPointer->prop_pHX(quad->xyz[1],                                forest->m_constZ,   quad->xyz[0]);                                  //xmin,ymin
-                    props_refine_check[1] = eosPointer->prop_pHX(quad->xyz[1],                                forest->m_constZ,   quad->xyz[0] + physical_length_quad[0]);        //xmax,ymin
-                    props_refine_check[2] = eosPointer->prop_pHX(quad->xyz[1] + physical_length_quad[1],      forest->m_constZ,   quad->xyz[0]);                                  //xmin,ymax
-                    props_refine_check[3] = eosPointer->prop_pHX(quad->xyz[1] + physical_length_quad[1],      forest->m_constZ,   quad->xyz[0] + physical_length_quad[0]);        //xmax,ymax
-                    props_refine_check[4] = eosPointer->prop_pHX(quad->xyz[1] + physical_length_quad[1]/2.0,  forest->m_constZ,   quad->xyz[0] + physical_length_quad[0]/2.0);    //xc,yc
+                    props_refine_check[0] = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1],                                forest->m_constZ,   quad->qData.leaf->coord.xyz[0]);                                  //xmin,ymin
+                    props_refine_check[1] = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1],                                forest->m_constZ,   quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]);        //xmax,ymin
+                    props_refine_check[2] = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],      forest->m_constZ,   quad->qData.leaf->coord.xyz[0]);                                  //xmin,ymax
+                    props_refine_check[3] = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],      forest->m_constZ,   quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]);        //xmax,ymax
+                    props_refine_check[4] = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1]/2.0,  forest->m_constZ,   quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]/2.0);    //xc,yc
                 }
             }
             break;
@@ -267,25 +267,25 @@ namespace H2ONaCl
             {
                 for (int iy = 0; iy < num_sample_y; iy++)
                 {
-                    y_physical_quad = quad->xyz[1] + dy_physical_quad*iy;
+                    y_physical_quad = quad->qData.leaf->coord.xyz[1] + dy_physical_quad*iy;
                     for (int ix = 0; ix < num_sample_x; ix++)
                     {
-                        x_physical_quad = quad->xyz[0] + dx_physical_quad*ix;
+                        x_physical_quad = quad->qData.leaf->coord.xyz[0] + dx_physical_quad*ix;
                         tmp_prop = eosPointer->prop_pHX(forest->m_constZ, y_physical_quad, x_physical_quad);
                         regionIndex[iy*num_sample_x + ix] = tmp_prop.Region;
                     }
                 }
-                tmp_prop = eosPointer->prop_pHX(forest->m_constZ, quad->xyz[1] + physical_length_quad[1]/2.0,  quad->xyz[0] + physical_length_quad[0]/2.0); 
+                tmp_prop = eosPointer->prop_pHX(forest->m_constZ, quad->qData.leaf->coord.xyz[1] + physical_length_quad[1]/2.0,  quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]/2.0); 
                 data->phaseRegion_cell     = tmp_prop.Region;
                 // ========================================================
                 // calculate properties: four vertices and one midpoint
                 if(refine_prop)
                 {
-                    props_refine_check[0] = eosPointer->prop_pHX(forest->m_constZ, quad->xyz[1],                               quad->xyz[0]);                                  //xmin,ymin
-                    props_refine_check[1] = eosPointer->prop_pHX(forest->m_constZ, quad->xyz[1],                               quad->xyz[0] + physical_length_quad[0]);        //xmax,ymin
-                    props_refine_check[2] = eosPointer->prop_pHX(forest->m_constZ, quad->xyz[1] + physical_length_quad[1],     quad->xyz[0]);                                  //xmin,ymax
-                    props_refine_check[3] = eosPointer->prop_pHX(forest->m_constZ, quad->xyz[1] + physical_length_quad[1],     quad->xyz[0] + physical_length_quad[0]);        //xmax,ymax
-                    props_refine_check[4] = eosPointer->prop_pHX(forest->m_constZ, quad->xyz[1] + physical_length_quad[1]/2.0, quad->xyz[0] + physical_length_quad[0]/2.0);    //xc,yc
+                    props_refine_check[0] = eosPointer->prop_pHX(forest->m_constZ, quad->qData.leaf->coord.xyz[1],                               quad->qData.leaf->coord.xyz[0]);                                  //xmin,ymin
+                    props_refine_check[1] = eosPointer->prop_pHX(forest->m_constZ, quad->qData.leaf->coord.xyz[1],                               quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]);        //xmax,ymin
+                    props_refine_check[2] = eosPointer->prop_pHX(forest->m_constZ, quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],     quad->qData.leaf->coord.xyz[0]);                                  //xmin,ymax
+                    props_refine_check[3] = eosPointer->prop_pHX(forest->m_constZ, quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],     quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]);        //xmax,ymax
+                    props_refine_check[4] = eosPointer->prop_pHX(forest->m_constZ, quad->qData.leaf->coord.xyz[1] + physical_length_quad[1]/2.0, quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]/2.0);    //xc,yc
                 }
             }
             break;
@@ -295,33 +295,33 @@ namespace H2ONaCl
                 double z_physical_quad;
                 for (int iz = 0; iz < num_sample_z; iz++)
                 {
-                    z_physical_quad = quad->xyz[2] + dz_physical_quad*iz;
+                    z_physical_quad = quad->qData.leaf->coord.xyz[2] + dz_physical_quad*iz;
                     for (int iy = 0; iy < num_sample_y; iy++)
                     {
-                        y_physical_quad = quad->xyz[1] + dy_physical_quad*iy;
+                        y_physical_quad = quad->qData.leaf->coord.xyz[1] + dy_physical_quad*iy;
                         for (int ix = 0; ix < num_sample_x; ix++)
                         {
-                            x_physical_quad = quad->xyz[0] + dx_physical_quad*ix;
+                            x_physical_quad = quad->qData.leaf->coord.xyz[0] + dx_physical_quad*ix;
                             tmp_prop = eosPointer->prop_pHX(y_physical_quad, x_physical_quad, z_physical_quad);
                             regionIndex[iz*num_sample_x*num_sample_y + iy*num_sample_x + ix] = tmp_prop.Region;
                         }
                     }
                 }
-                tmp_prop = eosPointer->prop_pHX(quad->xyz[1] + physical_length_quad[1]/2.0, quad->xyz[0] + physical_length_quad[0]/2.0, quad->xyz[2] + physical_length_quad[2]/2.0); 
+                tmp_prop = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1]/2.0, quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]/2.0, quad->qData.leaf->coord.xyz[2] + physical_length_quad[2]/2.0); 
                 data->phaseRegion_cell     = tmp_prop.Region;
                 // ========================================================
                 // calculate properties: four vertices and one midpoint
                 if(refine_prop)
                 {
-                    props_refine_check[0] = eosPointer->prop_pHX(quad->xyz[1],                                quad->xyz[0],                               quad->xyz[2]);      //xmin,ymin
-                    props_refine_check[1] = eosPointer->prop_pHX(quad->xyz[1],                                quad->xyz[0] + physical_length_quad[0],     quad->xyz[2]);      //xmax,ymin
-                    props_refine_check[2] = eosPointer->prop_pHX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0],                               quad->xyz[2]);      //xmin,ymax
-                    props_refine_check[3] = eosPointer->prop_pHX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0] + physical_length_quad[0],     quad->xyz[2]);      //xmax,ymax
-                    props_refine_check[4] = eosPointer->prop_pHX(quad->xyz[1],                                quad->xyz[0],                               quad->xyz[2] + physical_length_quad[2]);      //xmin,ymin
-                    props_refine_check[5] = eosPointer->prop_pHX(quad->xyz[1],                                quad->xyz[0] + physical_length_quad[0],     quad->xyz[2] + physical_length_quad[2]);      //xmax,ymin
-                    props_refine_check[6] = eosPointer->prop_pHX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0],                               quad->xyz[2] + physical_length_quad[2]);      //xmin,ymax
-                    props_refine_check[7] = eosPointer->prop_pHX(quad->xyz[1] + physical_length_quad[1],      quad->xyz[0] + physical_length_quad[0],     quad->xyz[2] + physical_length_quad[2]);      //xmax,ymax
-                    props_refine_check[8] = eosPointer->prop_pHX(quad->xyz[1] + physical_length_quad[1]/2.0,  quad->xyz[0] + physical_length_quad[0]/2.0, quad->xyz[2]+ physical_length_quad[2]/2.0);      //xc,yc
+                    props_refine_check[0] = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1],                                quad->qData.leaf->coord.xyz[0],                               quad->qData.leaf->coord.xyz[2]);      //xmin,ymin
+                    props_refine_check[1] = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1],                                quad->qData.leaf->coord.xyz[0] + physical_length_quad[0],     quad->qData.leaf->coord.xyz[2]);      //xmax,ymin
+                    props_refine_check[2] = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],      quad->qData.leaf->coord.xyz[0],                               quad->qData.leaf->coord.xyz[2]);      //xmin,ymax
+                    props_refine_check[3] = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],      quad->qData.leaf->coord.xyz[0] + physical_length_quad[0],     quad->qData.leaf->coord.xyz[2]);      //xmax,ymax
+                    props_refine_check[4] = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1],                                quad->qData.leaf->coord.xyz[0],                               quad->qData.leaf->coord.xyz[2] + physical_length_quad[2]);      //xmin,ymin
+                    props_refine_check[5] = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1],                                quad->qData.leaf->coord.xyz[0] + physical_length_quad[0],     quad->qData.leaf->coord.xyz[2] + physical_length_quad[2]);      //xmax,ymin
+                    props_refine_check[6] = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],      quad->qData.leaf->coord.xyz[0],                               quad->qData.leaf->coord.xyz[2] + physical_length_quad[2]);      //xmin,ymax
+                    props_refine_check[7] = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1],      quad->qData.leaf->coord.xyz[0] + physical_length_quad[0],     quad->qData.leaf->coord.xyz[2] + physical_length_quad[2]);      //xmax,ymax
+                    props_refine_check[8] = eosPointer->prop_pHX(quad->qData.leaf->coord.xyz[1] + physical_length_quad[1]/2.0,  quad->qData.leaf->coord.xyz[0] + physical_length_quad[0]/2.0, quad->qData.leaf->coord.xyz[2]+ physical_length_quad[2]/2.0);      //xc,yc
                 }
             }
             break;
