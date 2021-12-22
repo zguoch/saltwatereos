@@ -196,7 +196,7 @@ namespace LOOKUPTABLE_FOREST
     void LookUpTableForest<dim,USER_DATA>::write_forest(FILE* fpout, Quadrant<dim,USER_DATA>* quad, int order_child, bool isWriteData)
     {
         // fwrite(quad, sizeof(Quadrant<dim,USER_DATA>), 1, fpout); //write all quads
-        fwrite(&quad->level, sizeof(int), 1, fpout); //write level
+        fwrite(&quad->level, sizeof(unsigned char), 1, fpout); //write level
         fwrite(&quad->isHasChildren, sizeof(bool), 1, fpout); //write isHasChildren
         // cout<<"write, level: "<<quad->level<<", index: "<<quad->index<<endl;
         if(quad->isHasChildren)
@@ -368,7 +368,7 @@ namespace LOOKUPTABLE_FOREST
     void LookUpTableForest<dim,USER_DATA>::read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, int order_child)
     {
         // fread(quad, sizeof(Quadrant<dim,USER_DATA>), 1, fpin); //write all quads
-        fread(&quad->level, sizeof(int), 1, fpin); //write level
+        fread(&quad->level, sizeof(unsigned char), 1, fpin); //write level
         fread(&quad->isHasChildren, sizeof(bool), 1, fpin); //write isHasChildren
         // cout<<"read, level: "<<quad->level<<", has child: "<<quad->isHasChildren<<endl;
         
@@ -738,6 +738,7 @@ namespace LOOKUPTABLE_FOREST
 
         // 1. get all leaves
         vector<Quadrant<dim,USER_DATA>* > leaves;
+        m_num_quads = 0;
         getLeaves(leaves, m_num_quads, &m_root);
         m_num_leaves = leaves.size();
         

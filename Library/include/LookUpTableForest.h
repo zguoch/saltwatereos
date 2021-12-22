@@ -16,7 +16,7 @@ namespace LOOKUPTABLE_FOREST
 
     struct Quad_index
     {
-        int i, j, k;
+        int i = 0, j = 0, k = 0;
         bool operator< (const Quad_index &ijk) const
         {
             return i < ijk.i || (i==ijk.i && j<ijk.j) || (i==ijk.i && j==ijk.j && k<ijk.k);
@@ -34,10 +34,10 @@ namespace LOOKUPTABLE_FOREST
     template <int dim, typename USER_DATA>
     struct Quadrant
     {
-        int       level;
-        bool      isHasChildren;
+        unsigned char       level;
+        bool                isHasChildren;
         Quad_data<dim, USER_DATA> qData; //leaf quad and nonleaf quad use different type of data
-        int index;
+        // int index;
         // double              xyz[dim]; //real coordinate of the lower left corner of a quadrant
         // Quad_index          ijk; //index of the LowerLeft corner in the reference space [2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL]
         
