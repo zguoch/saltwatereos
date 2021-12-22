@@ -368,7 +368,7 @@ namespace LOOKUPTABLE_FOREST
     void LookUpTableForest<dim,USER_DATA>::read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, int order_child)
     {
         // fread(quad, sizeof(Quadrant<dim,USER_DATA>), 1, fpin); //write all quads
-        fread(&quad->level, sizeof(unsigned char), 1, fpin); //write level
+        fread(&quad->level, sizeof(quad->level), 1, fpin); //write level
         fread(&quad->isHasChildren, sizeof(bool), 1, fpin); //write isHasChildren
         // cout<<"read, level: "<<quad->level<<", has child: "<<quad->isHasChildren<<endl;
         
@@ -744,19 +744,23 @@ namespace LOOKUPTABLE_FOREST
         
         // 2. allocate memory of data at all nodes of leaves
         Quad_index *ijk_nodes_quad = new Quad_index[m_num_node_per_quad]; // \todo 如果使用二阶插值，则需要更多节点，需要通过cellType进行判断：比如二维情况九点quad，那么需要限制max_level必须小于MAX_FOREST_LEVEL-2，不过这个好办，在构造函数里面判断一下进行安全检查就行
-        for (size_t i = 0; i < leaves.size(); i++)
+        if(m_num_props>0)
         {
-            // get ijk of all nodes of a leaf quad
-            get_ijk_nodes_quadrant(leaves[i], m_num_node_per_quad, ijk_nodes_quad);
-            for (int i_node = 0; i_node < m_num_node_per_quad; i_node++)
+            for (size_t i = 0; i < leaves.size(); i++)
             {
-                if(m_map_ijk2data.count(ijk_nodes_quad[i_node]) == 0)
+                // get ijk of all nodes of a leaf quad
+                get_ijk_nodes_quadrant(leaves[i], m_num_node_per_quad, ijk_nodes_quad);
+                for (int i_node = 0; i_node < m_num_node_per_quad; i_node++)
                 {
-                    // cout<<ijk_nodes_quad[i_node].i<<" "<<ijk_nodes_quad[i_node].j<<" "<<ijk_nodes_quad[i_node].k<<endl;
-                    m_map_ijk2data[ijk_nodes_quad[i_node]] = new double[m_num_props];
+                    if(m_map_ijk2data.count(ijk_nodes_quad[i_node]) == 0)
+                    {
+                        // cout<<ijk_nodes_quad[i_node].i<<" "<<ijk_nodes_quad[i_node].j<<" "<<ijk_nodes_quad[i_node].k<<endl;
+                        m_map_ijk2data[ijk_nodes_quad[i_node]] = new double[m_num_props];
+                    }
                 }
             }
         }
+        
 
         // // check key counts
         cout<<"    leaves: "<<leaves.size()<<endl;
@@ -1044,7 +1048,10 @@ namespace LOOKUPTABLE_FOREST
         double x_ref = (x - m_xyz_min[0])/m_length_scale[0];
         double y_ref = (y - m_xyz_min[1])/m_length_scale[1];
         double z_ref = dim == 3 ? (z - m_xyz_min[2])/m_length_scale[2] : 0;
+        // WAIT("开始搜索");
         searchQuadrant(&m_root, targetLeaf, x_ref, y_ref, z_ref);
+        // cout<<targetLeaf->level<<endl;
+        // WAIT("搜索结束");
     }
 
     // template <int dim, typename USER_DATA>

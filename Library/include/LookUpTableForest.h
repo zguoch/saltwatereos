@@ -66,6 +66,7 @@ namespace LOOKUPTABLE_FOREST
         }coord;
         Quadrant<dim, USER_DATA>* parent =NULL;
         USER_DATA           *user_data = NULL;
+        // int index_node[1<<dim];
     };
     
     /**
