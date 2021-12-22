@@ -1015,7 +1015,7 @@ namespace LOOKUPTABLE_FOREST
     }
 
     template <int dim, typename USER_DATA>
-    void LookUpTableForest<dim,USER_DATA>::searchQuadrant(Quadrant<dim,USER_DATA> *quad_source, Quadrant<dim,USER_DATA> *&quad_target, double x_ref, double y_ref, double z_ref)
+    void LookUpTableForest<dim,USER_DATA>::searchQuadrant(Quadrant<dim,USER_DATA> *quad_source, Quadrant<dim,USER_DATA> *&quad_target, double* xyz_min_target, double x_ref, double y_ref, double z_ref)
     {
         // NOTE that do not use for loop in the recursion, it will slow down the calculation
         if(!quad_source->isHasChildren)
@@ -1033,7 +1033,10 @@ namespace LOOKUPTABLE_FOREST
             childID_y = childID_y >=2 ? 1 : childID_y;
             childID_z = childID_z >=2 ? 1 : childID_z;
             // cout<<"  childID_x: "<<childID_x<<", childID_y: "<<childID_y<<", level: "<<quad_source->level<<endl;
-            searchQuadrant(quad_source->qData.nonleaf->children[childID_z*4 + childID_y*2 + childID_x], quad_target,
+            if(childID_x==1)xyz_min_target[0] += length_child; //here only calculate the reference coordinate, multiply scale after searching
+            if(childID_y==1)xyz_min_target[1] += length_child;
+            if(dim==3)if(childID_z==1)xyz_min_target[2] += length_child;
+            searchQuadrant(quad_source->qData.nonleaf->children[childID_z*4 + childID_y*2 + childID_x], quad_target, xyz_min_target,
                 childID_x == 1 ? x_ref - length_child : x_ref, 
                 childID_y == 1 ? y_ref - length_child : y_ref, 
                 childID_z == 1 ? z_ref - length_child : z_ref
@@ -1042,14 +1045,22 @@ namespace LOOKUPTABLE_FOREST
     }
 
     template <int dim, typename USER_DATA>
-    void LookUpTableForest<dim,USER_DATA>::searchQuadrant(Quadrant<dim,USER_DATA> *&targetLeaf, double x, double y, double z)
+    void LookUpTableForest<dim,USER_DATA>::searchQuadrant(Quadrant<dim,USER_DATA> *&targetLeaf, double* xyz_min_target, double x, double y, double z)
     {
         // NOTE that do not use for loop in the recursion, it will slow down the calculation
         double x_ref = (x - m_xyz_min[0])/m_length_scale[0];
         double y_ref = (y - m_xyz_min[1])/m_length_scale[1];
         double z_ref = dim == 3 ? (z - m_xyz_min[2])/m_length_scale[2] : 0;
+        // initialized by reference coordinate and calculate reference xyz as well inside the searchQuadrant
+        xyz_min_target[0] = 0;
+        xyz_min_target[1] = 0;
+        if(dim==3)xyz_min_target[2] = 0;
         // WAIT("开始搜索");
-        searchQuadrant(&m_root, targetLeaf, x_ref, y_ref, z_ref);
+        searchQuadrant(&m_root, targetLeaf, xyz_min_target, x_ref, y_ref, z_ref);
+        // now calculate the physical xyz of the left corner of the target quad
+        xyz_min_target[0] = xyz_min_target[0]*m_length_scale[0] + m_xyz_min[0];
+        xyz_min_target[1] = xyz_min_target[1]*m_length_scale[1] + m_xyz_min[1];
+        if(dim==3)xyz_min_target[2] = xyz_min_target[2]*m_length_scale[2] + m_xyz_min[2];
         // cout<<targetLeaf->level<<endl;
         // WAIT("搜索结束");
     }

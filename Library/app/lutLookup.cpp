@@ -38,6 +38,7 @@ int main(int argc, char** argv)
             fp = fopen("lookup_result.csv", "w");
             if(!fp)ERROR("Open file failed: lookup_result.txt");
             double* props = new double[pLUT->m_map_props.size()];
+            double xyz_min_target[dim];
             fprintf(fp, "Phase region\tNeed_refine");
             for (auto &m : pLUT->m_map_props)
             {
@@ -47,7 +48,7 @@ int main(int argc, char** argv)
             
             for (size_t i = 0; i < x.size(); i++)
             {
-                targetLeaf = sw.lookup(props, x[i], y[i]);
+                targetLeaf = sw.lookup(props, xyz_min_target, x[i], y[i]);
                 fprintf(fp, "%d\t%d", targetLeaf->qData.leaf->user_data->phaseRegion_cell, targetLeaf->qData.leaf->user_data->need_refine);
                 for (size_t j = 0; j < pLUT->m_map_props.size(); j++)
                 {
@@ -69,6 +70,7 @@ int main(int argc, char** argv)
             fp = fopen("lookup_result.csv", "w");
             if(!fp)ERROR("Open file failed: lookup_result.txt");
             double* props = new double[pLUT->m_map_props.size()];
+            double xyz_min_target[dim];
             fprintf(fp, "Phase region\tNeed_refine");
             for (auto &m : pLUT->m_map_props)
             {
@@ -78,7 +80,7 @@ int main(int argc, char** argv)
 
             for (size_t i = 0; i < x.size(); i++)
             {
-                targetLeaf = sw.lookup(props, x[i], y[i], z[i]);
+                targetLeaf = sw.lookup(props, xyz_min_target, x[i], y[i], z[i]);
                 fprintf(fp, "%d\t%d", targetLeaf->qData.leaf->user_data->phaseRegion_cell, targetLeaf->qData.leaf->user_data->need_refine);
                 for (size_t j = 0; j < pLUT->m_map_props.size(); j++)
                 {

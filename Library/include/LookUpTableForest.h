@@ -135,7 +135,7 @@ namespace LOOKUPTABLE_FOREST
         void refine(Quadrant<dim,USER_DATA>* quad, bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level));
         void release_map2data();
         void write_vtk_cellData(ofstream* fout, string type, string name, string format);
-        void searchQuadrant(Quadrant<dim,USER_DATA>* quad_source, Quadrant<dim,USER_DATA> *&quad_target, double x_ref, double y_ref, double z_ref);
+        void searchQuadrant(Quadrant<dim,USER_DATA>* quad_source, Quadrant<dim,USER_DATA> *&quad_target, double* xyz_min_target, double x_ref, double y_ref, double z_ref);
         void init(double xyz_min[dim], double xyz_max[dim], int max_level, size_t data_size, void* eosPointer);
         void write_forest(FILE* fpout, Quadrant<dim,USER_DATA>* quad, int order_child, bool is_write_data);
         void read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, int order_child);
@@ -166,7 +166,7 @@ namespace LOOKUPTABLE_FOREST
         inline void set_min_level(int min_level){m_min_level = min_level;};
         Quadrant<dim,USER_DATA>* get_root(){return &m_root;};
         // int searchQuadrant(double x, double y, double z);
-        void searchQuadrant(Quadrant<dim,USER_DATA> *&targetLeaf, double x, double y, double z);
+        void searchQuadrant(Quadrant<dim,USER_DATA> *&targetLeaf, double* xyz_min_target, double x, double y, double z);
         void get_quadrant_physical_length(int level, double physical_length[dim]);
         void refine(bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level));
         void get_ijk_nodes_quadrant(Quadrant<dim,USER_DATA>* quad, int num_nodes_per_quad, Quad_index* ijk);

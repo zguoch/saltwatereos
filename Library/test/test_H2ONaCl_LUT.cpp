@@ -326,6 +326,7 @@ void load_binary_3d(string filename)
     start = clock();
     LOOKUPTABLE_FOREST::Quadrant<dim,H2ONaCl::FIELD_DATA<dim> > *targetLeaf = NULL;
     double* props = new double[pLUT->m_map_props.size()];
+    double xyz_min_target[dim];
     int ind_rho = 0;
     ofstream fpout_xx("XX.txt");
     ofstream fpout_yy("YY.txt");
@@ -357,7 +358,7 @@ void load_binary_3d(string filename)
                 fpout_zz<<prop_cal.Rho<<" ";
             }
             
-            targetLeaf = eos.lookup(props, TorH, constP, X);
+            targetLeaf = eos.lookup(props, xyz_min_target, TorH, constP, X);
             fpout_xx<<X<<" ";
             fpout_yy<<TorH<<" ";
             fpout_zz_lut<<props[index_rho]<<" ";
@@ -448,6 +449,7 @@ void load_binary_2d(string filename, bool isCal)
     LOOKUPTABLE_FOREST::Quadrant<dim,H2ONaCl::FIELD_DATA<dim> > *targetLeaf = NULL;
     int n_randSample = 1E3;
     double* props = new double[pLUT->m_map_props.size()];
+    double xyz_min_target[dim];
     int ind_rho = 0;
     int nx = 100, ny = 150;
     double dx = (Xmax - Xmin)/(nx - 1);
@@ -511,7 +513,7 @@ void load_binary_2d(string filename, bool isCal)
                 fpout_zz<<prop_cal.Rho<<" ";
             }
             
-            targetLeaf = eos.lookup(props, x, y, false);
+            targetLeaf = eos.lookup(props, xyz_min_target, x, y, false);
             fpout_xx<<x<<" ";
             fpout_yy<<y<<" ";
             fpout_zz_lut<<props[index_rho]<<" ";
