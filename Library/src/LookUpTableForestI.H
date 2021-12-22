@@ -210,7 +210,7 @@ namespace LOOKUPTABLE_FOREST
             // write xyz at the lower left corner
             if(order_child==0)
             {
-                fwrite(quad->qData.leaf->coord.xyz, sizeof(double), dim, fpout); //only write xyz of eldest brother
+                // fwrite(quad->qData.leaf->coord.xyz, sizeof(double), dim, fpout); //only write xyz of eldest brother
                 fwrite(&quad->qData.leaf->coord.ijk, sizeof(Quad_index), 1, fpout); //only write ijk of eldest brother
             }
             // write data
@@ -390,14 +390,14 @@ namespace LOOKUPTABLE_FOREST
         {
             if(order_child==0) //only read xyz of eldest brother
             {
-                fread(quad->qData.leaf->coord.xyz, sizeof(double), dim, fpin); 
+                // fread(quad->qData.leaf->coord.xyz, sizeof(double), dim, fpin); 
                 fread(&quad->qData.leaf->coord.ijk, sizeof(Quad_index), 1, fpin); //only read ijk of eldest brother
             }else
             {
                 // get left corner xyz, find it's elderest brother->first child->first child ...
                 // 找大哥要xyz，如果大哥有儿子那就找大哥大儿子要xyz；如果大哥的大儿子还有儿子那就找大哥的大孙子要xyz... 直到最后一代一定能找到左下角的xyz
                 // get_lowerleft_xyz第一个参数就是大哥的内存地址
-                cal_xyz_quad(get_lowerleft_xyz(quad->qData.leaf->parent->qData.nonleaf->children[0]), order_child, quad);
+                // cal_xyz_quad(get_lowerleft_xyz(quad->qData.leaf->parent->qData.nonleaf->children[0]), order_child, quad);
                 cal_ijk_quad(get_lowerleft_ijk(quad->qData.leaf->parent->qData.nonleaf->children[0]), order_child, quad);
             }
             // load data
@@ -530,29 +530,31 @@ namespace LOOKUPTABLE_FOREST
     }
 
     template <int dim, typename USER_DATA>
-    void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level))
+    void LookUpTableForest<dim,USER_DATA>::refine(Quadrant<dim,USER_DATA>* quad, double xmin_quad, double ymin_quad, double zmin_quad, bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, double xmin_quad, double ymin_quad, double zmin_quad, int max_level))
     {
         // WAIT("inside refine");
         // printf("refine on thread %d, min_level: %d, max_level: %d, level: %d\n", omp_get_thread_num(), m_min_level, m_max_level, quad->level);
         // 
         // NOTE that do not use for loop in the recursion, it will slow down the calculation
         // -------- ijk and xyz are union, ijk2xyz and make a backup for ijk -------
-        Quad_index ijk_backup;
-        if(!quad->isHasChildren)union_ijk2xyz(quad, ijk_backup);
+        // Quad_index ijk_backup;
+        // if(!quad->isHasChildren)union_ijk2xyz(quad, ijk_backup);
+        // double* xyz_min_quad = quad->qData.leaf->coord.xyz; //need to be replace by a function calculate it
         // WAIT("union_ijk2xyz");
+        // double xyz_min_quad[3] = {xmin_quad, ymin_quad, zmin_quad};
         // -------------------------------------------------------------------------
-        bool do_refine = is_refine(this, quad, m_max_level); //refine calculation function need xyz coordinate
+        bool do_refine = is_refine(this, quad, xmin_quad, ymin_quad, zmin_quad, m_max_level); //refine calculation function need xyz coordinate
         // after refine calculating, give ijk back to union
-        if(!quad->isHasChildren)quad->qData.leaf->coord.ijk = ijk_backup;
+        // if(!quad->isHasChildren)quad->qData.leaf->coord.ijk = ijk_backup;
         // -----------------------------------------
 
         if(do_refine)
         {
+            int length_child = 1<<(MAX_FOREST_LEVEL - quad->level -1); //Note that must -1, because this is the child length
             // if no children, create children
             if(!quad->isHasChildren)
             {
                 // make children and release user_data of parent, because the non-leaf quad doesn't need user data
-                int length_child = 1<<(MAX_FOREST_LEVEL - quad->level -1); //Note that must -1, because this is the child length
                 // z index = 0
 
                 // quad->qData.nonleaf->children = new Quadrant<dim,USER_DATA>*[1<<dim];
@@ -660,44 +662,45 @@ namespace LOOKUPTABLE_FOREST
             #if USE_OMP == 1
                 #pragma omp task shared(is_refine) //firstprivate(quad, m_max_level) //
             #endif
-                refine(quad->qData.nonleaf->children[0], is_refine);
+                refine(quad->qData.nonleaf->children[0], xmin_quad, ymin_quad, zmin_quad, is_refine);
 
             #if USE_OMP == 1
                 #pragma omp task shared(is_refine) //firstprivate(quad, m_max_level)
             #endif
-                refine(quad->qData.nonleaf->children[1], is_refine);
+                refine(quad->qData.nonleaf->children[1], xmin_quad + length_child*m_length_scale[0], ymin_quad, zmin_quad, is_refine);
 
             #if USE_OMP == 1
                 #pragma omp task shared(is_refine) //firstprivate(quad, m_max_level)
             #endif
-                refine(quad->qData.nonleaf->children[2], is_refine);
+                refine(quad->qData.nonleaf->children[2], xmin_quad, ymin_quad + length_child*m_length_scale[1], zmin_quad, is_refine);
 
             #if USE_OMP == 1
                 #pragma omp task shared(is_refine) //firstprivate(quad, m_max_level)
             #endif
-                refine(quad->qData.nonleaf->children[3], is_refine);
+                refine(quad->qData.nonleaf->children[3], xmin_quad + length_child*m_length_scale[0], ymin_quad + length_child*m_length_scale[1], zmin_quad, is_refine);
 
                 if(dim==3)
                 {
+                    zmin_quad += length_child*m_length_scale[2];
                 #if USE_OMP == 1
                     #pragma omp task shared(is_refine)
                 #endif
-                    refine(quad->qData.nonleaf->children[4], is_refine);
+                    refine(quad->qData.nonleaf->children[4], xmin_quad, ymin_quad, zmin_quad, is_refine);
 
                 #if USE_OMP == 1
                     #pragma omp task shared(is_refine)
                 #endif
-                    refine(quad->qData.nonleaf->children[5], is_refine);
+                    refine(quad->qData.nonleaf->children[5], xmin_quad + length_child*m_length_scale[0], ymin_quad, zmin_quad, is_refine);
 
                 #if USE_OMP == 1
                     #pragma omp task shared(is_refine)
                 #endif
-                    refine(quad->qData.nonleaf->children[6], is_refine);
+                    refine(quad->qData.nonleaf->children[6], xmin_quad, ymin_quad + length_child*m_length_scale[1], zmin_quad, is_refine);
 
                 #if USE_OMP == 1
                     #pragma omp task shared(is_refine)
                 #endif
-                    refine(quad->qData.nonleaf->children[7], is_refine);
+                    refine(quad->qData.nonleaf->children[7], xmin_quad + length_child*m_length_scale[0], ymin_quad + length_child*m_length_scale[1], zmin_quad, is_refine);
                 }
             #if USE_OMP == 1
                 #pragma omp taskwait
@@ -707,10 +710,10 @@ namespace LOOKUPTABLE_FOREST
     }
 
     template <int dim, typename USER_DATA>
-    void LookUpTableForest<dim,USER_DATA>::refine(bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level))
+    void LookUpTableForest<dim,USER_DATA>::refine(bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, double xmin_quad, double ymin_quad, double zmin_quad, int max_level))
     {
         // WAIT("Do refine");
-        refine(&m_root, is_refine);
+        refine(&m_root, m_xyz_min[0], m_xyz_min[1], dim==3 ? m_xyz_min[2] : 0, is_refine);
         // WAIT("Refine done");
     }
 

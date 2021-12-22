@@ -132,7 +132,7 @@ namespace LOOKUPTABLE_FOREST
         void release_quadrant_data(Quadrant<dim,USER_DATA>* quad);
         void release_leaves(Quadrant<dim,USER_DATA>* quad);
         void getLeaves(vector<Quadrant<dim,USER_DATA>* >& leaves, long int& quad_counts, Quadrant<dim,USER_DATA>* quad);
-        void refine(Quadrant<dim,USER_DATA>* quad, bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level));
+        void refine(Quadrant<dim,USER_DATA>* quad, double xmin_quad, double ymin_quad, double zmin_quad, bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, double xmin_quad, double ymin_quad, double zmin_quad, int max_level));
         void release_map2data();
         void write_vtk_cellData(ofstream* fout, string type, string name, string format);
         void searchQuadrant(Quadrant<dim,USER_DATA>* quad_source, Quadrant<dim,USER_DATA> *&quad_target, double* xyz_min_target, double x_ref, double y_ref, double z_ref);
@@ -168,7 +168,7 @@ namespace LOOKUPTABLE_FOREST
         // int searchQuadrant(double x, double y, double z);
         void searchQuadrant(Quadrant<dim,USER_DATA> *&targetLeaf, double* xyz_min_target, double x, double y, double z);
         void get_quadrant_physical_length(int level, double physical_length[dim]);
-        void refine(bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, int max_level));
+        void refine(bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, double xmin_quad, double ymin_quad, double zmin_quad, int max_level));
         void get_ijk_nodes_quadrant(Quadrant<dim,USER_DATA>* quad, int num_nodes_per_quad, Quad_index* ijk);
         void assemble_data(void (*cal_prop)(LookUpTableForest<dim,USER_DATA>* forest, std::map<Quad_index, double*>& map_ijk2data));
         void ijk2xyz(const Quad_index* ijk, double& x, double& y, double& z);
