@@ -46,11 +46,17 @@ namespace LOOKUPTABLE_FOREST
         }else
         {
             // read forest
-            read_forest_from_binary(filename_forest);
+            bool isHasPointIndexFile = false;
+            isHasPointIndexFile = read_forest_from_binary(filename_forest);
             // WAIT("after loading forest");
-            // construct ijk_map2data
-            // construct_map2dat();
-            construct_props_leaves(NULL);
+            if(isHasPointIndexFile) // if the point index exist, the point index will be filled in each leaf quad, then need to create properties dynamic array
+            {
+                m_props_unique_points_leaves.create();
+            }else    // if the point index file: *.pi doesn't exist, construct point index for properties at unique point of leaves
+            {
+                construct_props_leaves(NULL);
+            }
+            
             // WAIT("after constructing map2data");
             // read data from binary
             read_props_from_binary(filename_forest); 
@@ -194,30 +200,53 @@ namespace LOOKUPTABLE_FOREST
     }
 
     template <int dim, typename USER_DATA> 
-    void LookUpTableForest<dim,USER_DATA>::write_forest(FILE* fpout, Quadrant<dim,USER_DATA>* quad, int order_child, bool isWriteData)
+    void LookUpTableForest<dim,USER_DATA>::write_forest(FILE* fpout_forest, FILE* fpout_point_index, Quadrant<dim,USER_DATA>* quad, int order_child, bool isWriteData)
     {
-        // fwrite(quad, sizeof(Quadrant<dim,USER_DATA>), 1, fpout); //write all quads
-        fwrite(&quad->level, sizeof(unsigned char), 1, fpout); //write level
-        fwrite(&quad->isHasChildren, sizeof(bool), 1, fpout); //write isHasChildren
+        fwrite(&quad->level, sizeof(unsigned char), 1, fpout_forest); //write level
+        fwrite(&quad->isHasChildren, sizeof(bool), 1, fpout_forest); //write isHasChildren
         // cout<<"write, level: "<<quad->level<<", index: "<<quad->index<<endl;
         if(quad->isHasChildren)
         {
             for (int i = 0; i < m_num_children; i++)
             {
-                write_forest(fpout, quad->qData.nonleaf->children[i], i, isWriteData);
+                write_forest(fpout_forest, fpout_point_index, quad->qData.nonleaf->children[i], i, isWriteData);
             }
         }else
         {
-            // write xyz at the lower left corner
-            if(order_child==0)
-            {
-                // fwrite(quad->qData.leaf->coord.xyz, sizeof(double), dim, fpout); //only write xyz of eldest brother
-                // fwrite(&quad->qData.leaf->coord.ijk, sizeof(Quad_index), 1, fpout); //only write ijk of eldest brother
-            }
-            // write data
-            fwrite(quad->qData.leaf->user_data, sizeof(USER_DATA), 1, fpout);
-            // fwrite(quad->pointData, sizeof(double), m_num_children*m_props_unique_points_leaves.num_props, fpout);
+            // write cell data of leaf quad
+            fwrite(quad->qData.leaf->user_data, sizeof(USER_DATA), 1, fpout_forest);
+            fwrite(quad->qData.leaf->index_props, sizeof(int_pointIndex), m_num_children, fpout_point_index);
         }
+    }
+
+    template <int dim, typename USER_DATA> 
+    void LookUpTableForest<dim,USER_DATA>::write_point_index(FILE* fpout_point_index, Quadrant<dim,USER_DATA>* quad)
+    {
+        if(quad->isHasChildren)
+        {
+            for (int i = 0; i < m_num_children; i++)
+            {
+                write_point_index(fpout_point_index, quad->qData.nonleaf->children[i]);
+            }
+        }else
+        {
+            fwrite(quad->qData.leaf->index_props, sizeof(int_pointIndex), m_num_children, fpout_point_index);
+        }
+    }
+
+    template <int dim, typename USER_DATA> 
+    void LookUpTableForest<dim,USER_DATA>::write_point_index(string filename_forest)
+    {
+        STATUS("Writting point index ... ");
+        string filename_point_index = filename_forest + "." + ExtensionName_PointIndexFile;
+        FILE* fpout_point_index = NULL;
+        fpout_point_index = fopen(filename_point_index.c_str(), "wb");
+        if(fpout_point_index == NULL)ERROR("Open file failed: "+filename_point_index);
+
+        write_point_index(fpout_point_index, &m_root);
+
+        fclose(fpout_point_index);
+        STATUS("Write point index done: " + filename_forest + "."+ExtensionName_PointIndexFile);
     }
 
     template <int dim, typename USER_DATA> 
@@ -225,48 +254,47 @@ namespace LOOKUPTABLE_FOREST
     {
         STATUS("Write lookup table forest to binary file ...");
         int dim0 = dim;
-        FILE* fpout = NULL;
-        fpout = fopen(filename.c_str(), "wb");
-        if(fpout == NULL)ERROR("Open file failed: "+filename);
+        FILE* fpout_forest = NULL;
+        FILE* fpout_point_index = NULL;
+        fpout_forest = fopen(filename.c_str(), "wb");
+        if(fpout_forest == NULL)ERROR("Open file failed: "+filename);
+        string filename_point_index = filename + "." + ExtensionName_PointIndexFile;
+        fpout_point_index = fopen(filename_point_index.c_str(), "wb");
+        if(fpout_point_index == NULL)ERROR("Open file failed: "+filename_point_index);
         // write header
-        fwrite(&dim0,       sizeof(int),    1,      fpout);
-        fwrite(&m_TorH,     sizeof(EOS_ENERGY),    1,      fpout);
-        fwrite(&m_const_which_var, sizeof(CONST_WHICH_VAR),    1,      fpout);
-        fwrite(m_xyz_min,   sizeof(double), dim,    fpout);
-        fwrite(m_xyz_max,   sizeof(double), dim,    fpout);
-        fwrite(&m_constZ,    sizeof(double), dim,    fpout);
-        fwrite(m_length_scale,  sizeof(double), dim, fpout);
-        fwrite(&m_min_level,    sizeof(int), 1, fpout);
-        fwrite(&m_max_level,    sizeof(int), 1, fpout);
-        fwrite(&m_num_node_per_quad, sizeof(int), 1, fpout);
+        fwrite(&dim0,       sizeof(int),    1,      fpout_forest);
+        fwrite(&m_TorH,     sizeof(EOS_ENERGY),    1,      fpout_forest);
+        fwrite(&m_const_which_var, sizeof(CONST_WHICH_VAR),    1,      fpout_forest);
+        fwrite(m_xyz_min,   sizeof(double), dim,    fpout_forest);
+        fwrite(m_xyz_max,   sizeof(double), dim,    fpout_forest);
+        fwrite(&m_constZ,    sizeof(double), dim,    fpout_forest);
+        fwrite(m_length_scale,  sizeof(double), dim, fpout_forest);
+        fwrite(&m_min_level,    sizeof(int), 1, fpout_forest);
+        fwrite(&m_max_level,    sizeof(int), 1, fpout_forest);
+        fwrite(&m_num_node_per_quad, sizeof(int), 1, fpout_forest);
         // leaves and total quads info 
-        // vector<Quadrant<dim,USER_DATA>* > leaves;
-        // long int quad_counts = 0;
-        // getLeaves(leaves,quad_counts, &m_root);
-        // int num_leaves = leaves.size();
-        fwrite(&m_num_quads, sizeof(long int), 1, fpout);
-        fwrite(&m_num_leaves, sizeof(int), 1, fpout);
-        fwrite(&m_props_unique_points_leaves.num_points, sizeof(m_props_unique_points_leaves.num_points), 1, fpout);
+        fwrite(&m_num_quads, sizeof(long int), 1, fpout_forest);
+        fwrite(&m_num_leaves, sizeof(int), 1, fpout_forest);
+        fwrite(&m_props_unique_points_leaves.num_points, sizeof(m_props_unique_points_leaves.num_points), 1, fpout_forest);
         // write props info
         int num_props = m_map_props.size();
-        fwrite(&num_props, sizeof(int), 1, fpout);
+        fwrite(&num_props, sizeof(int), 1, fpout_forest);
         for(auto &m : m_map_props)
         {
-            fwrite(&m.first, sizeof(int), 1, fpout);
+            fwrite(&m.first, sizeof(int), 1, fpout_forest);
             // short name
-            fwrite(m.second.shortName, sizeof(char), STR_LENGTH_PROPINFO, fpout);
+            fwrite(m.second.shortName, sizeof(char), STR_LENGTH_PROPINFO, fpout_forest);
             // long name
-            fwrite(m.second.longName, sizeof(char), STR_LENGTH_PROPINFO, fpout);
+            fwrite(m.second.longName, sizeof(char), STR_LENGTH_PROPINFO, fpout_forest);
             // unit
-            fwrite(m.second.unit, sizeof(char), STR_LENGTH_PROPINFO, fpout);
-            // // const char* name = m.second.c_str();
-            // // cout<<"length of name: "<<m.second.length()<<" "<<m.second<<" "<<sizeof(m.second.c_str())<<endl;
+            fwrite(m.second.unit, sizeof(char), STR_LENGTH_PROPINFO, fpout_forest);
         }
-        fwrite(&m_RMSD_RefineCriterion, sizeof(RMSD_RefineCriterion), 1, fpout);
+        fwrite(&m_RMSD_RefineCriterion, sizeof(RMSD_RefineCriterion), 1, fpout_forest);
         // recursion write forest and data
-        write_forest(fpout, &m_root, 0, isWriteData);
+        write_forest(fpout_forest, fpout_point_index, &m_root, 0, isWriteData);
         // close file
-        fclose(fpout);
+        fclose(fpout_forest);
+        fclose(fpout_point_index);
         STATUS("Writting lookup table forest to binary file done.");
 
         // write properties to binary file
@@ -282,7 +310,6 @@ namespace LOOKUPTABLE_FOREST
             if(fpout_prop == NULL)ERROR("Open file failed: "+filename_prop);
             for(int_pointIndex i = 0; i<m_props_unique_points_leaves.num_points; i++)
             {
-                // fwrite(&map_ijk2data.second[ind_prop], sizeof(double), 1, fpout_prop);
                 fwrite(&m_props_unique_points_leaves.data[i][ind_prop], sizeof(double), 1, fpout_prop);
             }
             fclose(fpout_prop);
@@ -299,17 +326,14 @@ namespace LOOKUPTABLE_FOREST
     }
 
     template <int dim, typename USER_DATA> 
-    void LookUpTableForest<dim,USER_DATA>::read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, int order_child)
+    void LookUpTableForest<dim,USER_DATA>::read_forest(FILE* fpin_forest, FILE* fpin_point_index, Quadrant<dim,USER_DATA>* quad, int order_child)
     {
-        // fread(quad, sizeof(Quadrant<dim,USER_DATA>), 1, fpin); //write all quads
-        fread(&quad->level, sizeof(quad->level), 1, fpin); //write level
-        fread(&quad->isHasChildren, sizeof(bool), 1, fpin); //write isHasChildren
+        fread(&quad->level, sizeof(quad->level), 1, fpin_forest); //write level
+        fread(&quad->isHasChildren, sizeof(bool), 1, fpin_forest); //write isHasChildren
         // cout<<"read, level: "<<quad->level<<", has child: "<<quad->isHasChildren<<endl;
         
         if(quad->isHasChildren)
         {
-            // quad->qData.nonleaf->children = new Quadrant<dim,USER_DATA>*[1<dim];
-            // LeafQuad<dim,USER_DATA>* leaf_quad_backup = quad->qData.leaf;
             if(quad->qData.leaf->user_data)delete quad->qData.leaf->user_data;
             delete quad->qData.leaf;
             quad->qData.nonleaf = new NonLeafQuad<dim, USER_DATA>;
@@ -318,28 +342,14 @@ namespace LOOKUPTABLE_FOREST
                 quad->qData.nonleaf->children[i] = new Quadrant<dim,USER_DATA>;
                 quad->qData.nonleaf->children[i]->qData.leaf = new LeafQuad<dim,USER_DATA>;
                 quad->qData.nonleaf->children[i]->qData.leaf->parent = quad;
-                read_forest(fpin, quad->qData.nonleaf->children[i], i); 
+                read_forest(fpin_forest, fpin_point_index, quad->qData.nonleaf->children[i], i); 
             }
         }else
         {
-            if(order_child==0) //only read xyz of eldest brother
-            {
-                // fread(quad->qData.leaf->coord.xyz, sizeof(double), dim, fpin); 
-                // fread(&quad->qData.leaf->coord.ijk, sizeof(Quad_index), 1, fpin); //only read ijk of eldest brother
-            }else
-            {
-                // get left corner xyz, find it's elderest brother->first child->first child ...
-                // 找大哥要xyz，如果大哥有儿子那就找大哥大儿子要xyz；如果大哥的大儿子还有儿子那就找大哥的大孙子要xyz... 直到最后一代一定能找到左下角的xyz
-                // get_lowerleft_xyz第一个参数就是大哥的内存地址
-                // cal_xyz_quad(get_lowerleft_xyz(quad->qData.leaf->parent->qData.nonleaf->children[0]), order_child, quad);
-                // cal_ijk_quad(get_lowerleft_ijk(quad->qData.leaf->parent->qData.nonleaf->children[0]), order_child, quad);
-            }
             // load data
             quad->qData.leaf->user_data = new USER_DATA;
-            fread(quad->qData.leaf->user_data, sizeof(USER_DATA), 1, fpin);
-            // quad->pointData = new double[m_props_unique_points_leaves.num_props*m_num_node_per_quad];
-            // fread(quad->pointData, sizeof(double), m_props_unique_points_leaves.num_props*m_num_node_per_quad, fpin);
-            // return;
+            fread(quad->qData.leaf->user_data, sizeof(USER_DATA), 1, fpin_forest);
+            if(fpin_point_index)fread(quad->qData.leaf->index_props, sizeof(int_pointIndex), m_num_children, fpin_point_index);
         }
     }
 
@@ -369,12 +379,18 @@ namespace LOOKUPTABLE_FOREST
     }
 
     template <int dim, typename USER_DATA> 
-    void LookUpTableForest<dim,USER_DATA>::read_forest_from_binary(string filename_forest, bool read_only_header)
+    bool LookUpTableForest<dim,USER_DATA>::read_forest_from_binary(string filename_forest, bool read_only_header)
     {
         STATUS("Check lookup table forest header ...");
         FILE* fpin = NULL;
+        FILE* fpin_point_index = NULL;
         fpin = fopen(filename_forest.c_str(), "rb");
         if(!fpin)ERROR("Open file failed: "+filename_forest);
+        // open point index file if it exist
+        string filename_point_index = filename_forest + "." + ExtensionName_PointIndexFile;
+        fpin_point_index = fopen(filename_point_index.c_str(), "rb");
+        if(!fpin_point_index)WARNING("Open point index file failed, the point index will be reconstructed. "+filename_forest);
+
         int dim0;
         fread(&dim0, sizeof(dim0), 1, fpin);
         if(dim0 != dim)
@@ -424,10 +440,12 @@ namespace LOOKUPTABLE_FOREST
         STATUS("Read lookup table forest from binary file ...");
         fread(&m_RMSD_RefineCriterion, sizeof(RMSD_RefineCriterion), 1, fpin);
         // recursion read forest and data
-        if(!read_only_header)read_forest(fpin, &m_root, 0); //child order of the root it self is 0
+        if(!read_only_header)read_forest(fpin, fpin_point_index, &m_root, 0); //child order of the root it self is 0
         // close file
         fclose(fpin);
+        if(fpin_point_index)fclose(fpin_point_index);
         STATUS("Reading lookup table forest done");
+        return (bool)fpin_point_index;
     }
 
     template <int dim, typename USER_DATA>
@@ -740,18 +758,11 @@ namespace LOOKUPTABLE_FOREST
         m_num_leaves = 0; m_num_quads = 0;
         get_unique_points_leaves(map_unique_points, m_num_leaves, m_num_quads, &m_root, ijk_quad, 1<<(MAX_FOREST_LEVEL));
 
-        // 2. update map value: index of m_props_unique_points_leaves.data
+        // 2. create m_props_unique_points_leaves.data
         // WAIT("update map value");
         ASSERT(m_props_unique_points_leaves.data==NULL, "m_props_unique_points_leaves不为空，在new之前需要释放之前的内存");
         m_props_unique_points_leaves.num_points = map_unique_points.size();
-        m_props_unique_points_leaves.data = new double*[m_props_unique_points_leaves.num_points];
-        int_pointIndex ind = 0;
-        for(auto &m : map_unique_points)
-        {
-            m.second = ind;
-            m_props_unique_points_leaves.data[ind] = new double[m_props_unique_points_leaves.num_props];
-            ind++;
-        }
+        m_props_unique_points_leaves.create();
 
         // 3. pass index of property array pointer to each leaf quad
         // WAIT("pass index of property array pointer to each leaf quad");

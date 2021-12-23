@@ -13,7 +13,7 @@ using namespace std;
 namespace LOOKUPTABLE_FOREST
 {
     #define MAX_FOREST_LEVEL 29
-
+    #define ExtensionName_PointIndexFile "pi"
     struct Quad_index
     {
         int i = 0, j = 0, k = 0;
@@ -28,6 +28,17 @@ namespace LOOKUPTABLE_FOREST
         double** data = NULL;
         int_pointIndex num_points = 0;
         int num_props = 0;
+        void create()
+        {
+            if(num_props>0)
+            {
+                data = new double*[num_points];
+                for (int_pointIndex i = 0; i < num_points; i++)
+                {
+                    data[i] = new double[num_props];
+                }
+            }
+        }
         void clear()
         {
             if(data) //need to check where the data array is created or not, e.g., lutInfo, doesn't create data array.
@@ -142,13 +153,13 @@ namespace LOOKUPTABLE_FOREST
         void write_vtk_cellData(ofstream* fout, string type, string name, string format);
         void searchQuadrant(Quadrant<dim,USER_DATA>* quad_source, Quadrant<dim,USER_DATA> *&quad_target, double* xyz_min_target, double x_ref, double y_ref, double z_ref);
         void init(double xyz_min[dim], double xyz_max[dim], int max_level, size_t data_size, void* eosPointer);
-        void write_forest(FILE* fpout, Quadrant<dim,USER_DATA>* quad, int order_child, bool is_write_data);
-        void read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, int order_child);
+        void write_forest(FILE* fpout, FILE* fpout_point_index, Quadrant<dim,USER_DATA>* quad, int order_child, bool is_write_data);
+        void read_forest(FILE* fpin_forest, FILE* fpin_point_index, Quadrant<dim,USER_DATA>* quad, int order_child);
         void construct_map2dat();
         void get_unique_points_leaves(std::map<Quad_index, int_pointIndex>& map_unique_points, int& num_leaves, long int& num_quads, Quadrant<dim,USER_DATA>* quad, Quad_index ijk_quad, unsigned int length_quad);
         void pass_props_pointer_leaves(std::map<Quad_index, int_pointIndex>& map_unique_points, Quadrant<dim,USER_DATA>* quad, Quad_index ijk_quad, unsigned int length_quad);
         void read_props_from_binary(string filename_forest);
-        void read_forest_from_binary(string filename, bool read_only_header=false);
+        bool read_forest_from_binary(string filename, bool read_only_header=false);
         string byte2string(double bytes);
     public:
         void    *m_eosPointer;      //pass pointer of EOS object (e.g., the pointer of a object of cH2ONaCl class) to the forest through construct function, this will give access of EOS stuff in the refine call back function, e.g., calculate phase index and properties
@@ -178,6 +189,8 @@ namespace LOOKUPTABLE_FOREST
         void union_ijk2xyz(Quadrant<dim, USER_DATA>* quad, Quad_index& ijk_backup);
         void write_to_vtk(string filename, bool write_data=true, bool isNormalizeXYZ=true);
         void write_to_binary(string filename, bool is_write_data=true);
+        void write_point_index(string filename_forest);
+        void write_point_index(FILE* fpout_point_index, Quadrant<dim,USER_DATA>* quad);
         void print_summary();
         /**
          * @brief Construct a new Look Up Table Forest object. This is always used to create a 3D table

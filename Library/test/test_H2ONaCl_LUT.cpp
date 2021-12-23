@@ -644,10 +644,12 @@ int main(int argc, char** argv)
         }
         break;
     case 7:
-        cout<<"Test loading 2D LUT: "<<argv[2]<<endl;
+        if(argc!=4)help(argv);
+        cout<<"Test load and lookup 2D LUT: "<<argv[2]<<endl;
         load_binary_2d(argv[2],(bool)atoi(argv[3]));
         break;
     case 8:
+        if(argc!=4)help(argv);
         cout<<"Test loading 3D LUT: "<<argv[2]<<endl;
         load_binary_3d(argv[2],(bool)atoi(argv[3]));
         break;
