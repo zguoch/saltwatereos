@@ -276,6 +276,7 @@ namespace LOOKUPTABLE_FOREST
         fwrite(&m_num_quads, sizeof(long int), 1, fpout_forest);
         fwrite(&m_num_leaves, sizeof(int), 1, fpout_forest);
         fwrite(&m_props_unique_points_leaves.num_points, sizeof(m_props_unique_points_leaves.num_points), 1, fpout_forest);
+        fwrite(&m_num_need_refine, sizeof(m_num_need_refine), 1, fpout_forest);
         // write props info
         int num_props = m_map_props.size();
         fwrite(&num_props, sizeof(int), 1, fpout_forest);
@@ -413,6 +414,7 @@ namespace LOOKUPTABLE_FOREST
         fread(&m_num_quads, sizeof(long int), 1, fpin);
         fread(&m_num_leaves, sizeof(int), 1, fpin);
         fread(&m_props_unique_points_leaves.num_points, sizeof(m_props_unique_points_leaves.num_points), 1, fpin);
+        fread(&m_num_need_refine, sizeof(m_num_need_refine), 1, fpin);
         // read props info
         int tmp_num_props = 0;
         fread(&tmp_num_props, sizeof(int), 1, fpin);
@@ -640,7 +642,7 @@ namespace LOOKUPTABLE_FOREST
     }
 
     template <int dim, typename USER_DATA>
-    void LookUpTableForest<dim,USER_DATA>::get_unique_points_leaves(std::map<Quad_index, int_pointIndex>& map_unique_points, int& num_leaves, long int& num_quads, Quadrant<dim,USER_DATA>* quad, Quad_index ijk_quad, unsigned int length_quad)
+    void LookUpTableForest<dim,USER_DATA>::get_unique_points_leaves(std::map<Quad_index, int_pointIndex>& map_unique_points, int& num_leaves, long int& num_quads, int& num_need_refine, Quadrant<dim,USER_DATA>* quad, Quad_index ijk_quad, unsigned int length_quad)
     {
         num_quads++;
         if(quad->isHasChildren)
@@ -648,31 +650,31 @@ namespace LOOKUPTABLE_FOREST
             //update the length of children
             length_quad = length_quad>>1; //divided by 2 //1<<(MAX_FOREST_LEVEL - quad->level - 1);
 
-            get_unique_points_leaves(map_unique_points, num_leaves, num_quads, quad->qData.nonleaf->children[0], ijk_quad, length_quad);
+            get_unique_points_leaves(map_unique_points, num_leaves, num_quads, num_need_refine, quad->qData.nonleaf->children[0], ijk_quad, length_quad);
 
             ijk_quad.i += length_quad;
-            get_unique_points_leaves(map_unique_points, num_leaves, num_quads, quad->qData.nonleaf->children[1], ijk_quad, length_quad);
+            get_unique_points_leaves(map_unique_points, num_leaves, num_quads, num_need_refine, quad->qData.nonleaf->children[1], ijk_quad, length_quad);
 
             ijk_quad.i -= length_quad; ijk_quad.j += length_quad;
-            get_unique_points_leaves(map_unique_points, num_leaves, num_quads, quad->qData.nonleaf->children[2], ijk_quad, length_quad);
+            get_unique_points_leaves(map_unique_points, num_leaves, num_quads, num_need_refine, quad->qData.nonleaf->children[2], ijk_quad, length_quad);
 
             ijk_quad.i += length_quad;
-            get_unique_points_leaves(map_unique_points, num_leaves, num_quads, quad->qData.nonleaf->children[3], ijk_quad, length_quad);
+            get_unique_points_leaves(map_unique_points, num_leaves, num_quads, num_need_refine, quad->qData.nonleaf->children[3], ijk_quad, length_quad);
             if(dim==3)
             {
                 ijk_quad.k += length_quad;
 
                 ijk_quad.i -= length_quad; ijk_quad.j -= length_quad;
-                get_unique_points_leaves(map_unique_points, num_leaves, num_quads, quad->qData.nonleaf->children[4], ijk_quad, length_quad);
+                get_unique_points_leaves(map_unique_points, num_leaves, num_quads, num_need_refine, quad->qData.nonleaf->children[4], ijk_quad, length_quad);
 
                 ijk_quad.i += length_quad;
-                get_unique_points_leaves(map_unique_points, num_leaves, num_quads, quad->qData.nonleaf->children[5], ijk_quad, length_quad);
+                get_unique_points_leaves(map_unique_points, num_leaves, num_quads, num_need_refine, quad->qData.nonleaf->children[5], ijk_quad, length_quad);
 
                 ijk_quad.i -= length_quad; ijk_quad.j += length_quad;
-                get_unique_points_leaves(map_unique_points, num_leaves, num_quads, quad->qData.nonleaf->children[6], ijk_quad, length_quad);
+                get_unique_points_leaves(map_unique_points, num_leaves, num_quads, num_need_refine, quad->qData.nonleaf->children[6], ijk_quad, length_quad);
 
                 ijk_quad.i += length_quad;
-                get_unique_points_leaves(map_unique_points, num_leaves, num_quads, quad->qData.nonleaf->children[7], ijk_quad, length_quad);
+                get_unique_points_leaves(map_unique_points, num_leaves, num_quads, num_need_refine, quad->qData.nonleaf->children[7], ijk_quad, length_quad);
             }
         }else
         {
@@ -688,6 +690,8 @@ namespace LOOKUPTABLE_FOREST
                 }
             }
             delete[] ijk_nodes_quad;
+            // check need-refine quads
+            if(quad->qData.leaf->user_data->need_refine)num_need_refine++;
         }
     }
 
@@ -755,14 +759,21 @@ namespace LOOKUPTABLE_FOREST
         ijk_quad.i = 0;
         ijk_quad.j = 0;
         ijk_quad.k = 0;
-        m_num_leaves = 0; m_num_quads = 0;
-        get_unique_points_leaves(map_unique_points, m_num_leaves, m_num_quads, &m_root, ijk_quad, 1<<(MAX_FOREST_LEVEL));
+        m_num_leaves = 0; m_num_quads = 0; m_num_need_refine = 0;
+        get_unique_points_leaves(map_unique_points, m_num_leaves, m_num_quads, m_num_need_refine, &m_root, ijk_quad, 1<<(MAX_FOREST_LEVEL));
 
         // 2. create m_props_unique_points_leaves.data
         // WAIT("update map value");
         ASSERT(m_props_unique_points_leaves.data==NULL, "m_props_unique_points_leaves不为空，在new之前需要释放之前的内存");
         m_props_unique_points_leaves.num_points = map_unique_points.size();
-        m_props_unique_points_leaves.create();
+        m_props_unique_points_leaves.data = new double*[m_props_unique_points_leaves.num_points];
+        int_pointIndex ind = 0;
+        for(auto &m : map_unique_points)
+        {
+            m.second = ind;
+            m_props_unique_points_leaves.data[ind] = new double[m_props_unique_points_leaves.num_props];
+            ind++;
+        }
 
         // 3. pass index of property array pointer to each leaf quad
         // WAIT("pass index of property array pointer to each leaf quad");
@@ -779,6 +790,7 @@ namespace LOOKUPTABLE_FOREST
         // }
         // WAIT("Test output props value");
     }
+    
     template <int dim, typename USER_DATA>
     void LookUpTableForest<dim,USER_DATA>::getLeaves(vector<Quadrant<dim,USER_DATA>* >& leaves, long int& quad_counts, Quadrant<dim,USER_DATA>* quad)
     {
@@ -876,8 +888,8 @@ namespace LOOKUPTABLE_FOREST
         ijk_quad.i = 0;
         ijk_quad.j = 0;
         ijk_quad.k = 0;
-        m_num_leaves = 0; m_num_quads = 0;
-        get_unique_points_leaves(map_unique_points, m_num_leaves, m_num_quads, &m_root, ijk_quad, 1<<(MAX_FOREST_LEVEL));
+        m_num_leaves = 0; m_num_quads = 0; m_num_need_refine = 0;
+        get_unique_points_leaves(map_unique_points, m_num_leaves, m_num_quads, m_num_need_refine, &m_root, ijk_quad, 1<<(MAX_FOREST_LEVEL));
         for(auto &ijk2data : map_unique_points)
         {
             fout<<"         "<<ijk2data.first.i<<" "<<ijk2data.first.j<<" "<<ijk2data.first.k<<endl;
@@ -972,9 +984,10 @@ namespace LOOKUPTABLE_FOREST
             break;
         }
         cout<<"Min level: "<<m_min_level<<", max level: "<<m_max_level<<endl;
-        cout<<"All "<<m_num_leaves<<" leaves, "<<m_num_quads-m_num_leaves<<" non-leaf quads. "<<m_props_unique_points_leaves.num_points<<" unique points on leaves"
-        // <<"Estimate size "<<ceil(leaves.size()*(sizeof(FIELD_DATA<dim>) + sizeof(bool) + sizeof(double)*3 + sizeof(int))/1024.0/1024.0)<<" Mb"
-        <<endl;
+        cout<<"All "<<m_num_leaves<<" leaves, "<<m_num_quads-m_num_leaves<<" non-leaf quads. "<<m_props_unique_points_leaves.num_points<<" unique points on leaves."<<endl;
+        cout<<"All "<<m_num_need_refine<<" leaves need refine. "
+            <<"Next refinement will add "<<m_num_need_refine*(m_num_children - 1)<<" leaves."
+            <<endl;
         // props info
         cout<<"Include "<<m_props_unique_points_leaves.num_props<<" properties on each node."<<endl;
         int ind =0;

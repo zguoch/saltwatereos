@@ -142,6 +142,7 @@ namespace LOOKUPTABLE_FOREST
     private:
         long int m_num_quads;
         int m_num_leaves;
+        int m_num_need_refine;
         size_t  m_data_size;
         double m_length_scale[dim]; /**< The reference space is a square or a cube with length=2^{MAX_FOREST_LEVEL}, so the length scale in x,y,z axis is calculated as, e.g. length_scale[0] = (m_xyz_max[0] - m_xyz_min[0])/length, so the length of a quadrant is len_quad = 2^{MAX_FOREST_LEVEL - level}, so its real length in x-axis is len_quad*length_scale[0] */
         Quadrant<dim,USER_DATA> m_root;
@@ -156,7 +157,7 @@ namespace LOOKUPTABLE_FOREST
         void write_forest(FILE* fpout, FILE* fpout_point_index, Quadrant<dim,USER_DATA>* quad, int order_child, bool is_write_data);
         void read_forest(FILE* fpin_forest, FILE* fpin_point_index, Quadrant<dim,USER_DATA>* quad, int order_child);
         void construct_map2dat();
-        void get_unique_points_leaves(std::map<Quad_index, int_pointIndex>& map_unique_points, int& num_leaves, long int& num_quads, Quadrant<dim,USER_DATA>* quad, Quad_index ijk_quad, unsigned int length_quad);
+        void get_unique_points_leaves(std::map<Quad_index, int_pointIndex>& map_unique_points, int& num_leaves, long int& num_quads, int& num_need_refine, Quadrant<dim,USER_DATA>* quad, Quad_index ijk_quad, unsigned int length_quad);
         void pass_props_pointer_leaves(std::map<Quad_index, int_pointIndex>& map_unique_points, Quadrant<dim,USER_DATA>* quad, Quad_index ijk_quad, unsigned int length_quad);
         void read_props_from_binary(string filename_forest);
         bool read_forest_from_binary(string filename, bool read_only_header=false);
