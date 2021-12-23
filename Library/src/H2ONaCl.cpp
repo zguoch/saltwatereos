@@ -4606,8 +4606,8 @@ namespace H2ONaCl
         const int num_children = tmp_lut->m_num_children;
         double* values_at_vertices = new double[tmp_lut->m_num_node_per_quad];
         double** pNodeData = new double*[tmp_lut->m_num_node_per_quad];
-        LOOKUPTABLE_FOREST::Quad_index *ijk_nodes_quad = new LOOKUPTABLE_FOREST::Quad_index[tmp_lut->m_num_node_per_quad]; // \todo 如果使用二阶插值，则需要更多节点，需要通过cellType进行判断：比如二维情况九点quad，那么需要限制max_level必须小于MAX_FOREST_LEVEL-2，不过这个好办，在构造函数里面判断一下进行安全检查就行
-        tmp_lut->get_ijk_nodes_quadrant(targetLeaf, &targetLeaf->qData.leaf->coord.ijk, tmp_lut->m_num_node_per_quad, ijk_nodes_quad);
+        // LOOKUPTABLE_FOREST::Quad_index *ijk_nodes_quad = new LOOKUPTABLE_FOREST::Quad_index[tmp_lut->m_num_node_per_quad]; // \todo 如果使用二阶插值，则需要更多节点，需要通过cellType进行判断：比如二维情况九点quad，那么需要限制max_level必须小于MAX_FOREST_LEVEL-2，不过这个好办，在构造函数里面判断一下进行安全检查就行
+        // tmp_lut->get_ijk_nodes_quadrant(targetLeaf, &targetLeaf->qData.leaf->coord.ijk, tmp_lut->m_num_node_per_quad, ijk_nodes_quad);
 
         tmp_lut->get_quadrant_physical_length((int)targetLeaf->level, physical_length);
         get_coeff_bilinear<dim> (xyz_min_target, physical_length, xyz, coeff);
@@ -4632,7 +4632,6 @@ namespace H2ONaCl
             ind_prop++;
         }
         delete[] values_at_vertices;
-        delete[] ijk_nodes_quad;
         delete[] pNodeData;
     }
 

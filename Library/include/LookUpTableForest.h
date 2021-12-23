@@ -80,11 +80,6 @@ namespace LOOKUPTABLE_FOREST
     template <int dim, typename USER_DATA> 
     struct LeafQuad
     {
-        struct COORD
-        {
-            Quad_index          ijk; //index of the LowerLeft corner in the reference space [2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL]
-            double              xyz[dim]; //real coordinate of the lower left corner of a quadrant
-        }coord;
         Quadrant<dim, USER_DATA>* parent =NULL;
         USER_DATA           *user_data = NULL;
         unsigned int index_props[1<<dim]; //index of property on each node.
@@ -159,10 +154,6 @@ namespace LOOKUPTABLE_FOREST
         void init(double xyz_min[dim], double xyz_max[dim], int max_level, size_t data_size, void* eosPointer);
         void write_forest(FILE* fpout, Quadrant<dim,USER_DATA>* quad, int order_child, bool is_write_data);
         void read_forest(FILE* fpin, Quadrant<dim,USER_DATA>* quad, int order_child);
-        double* get_lowerleft_xyz(Quadrant<dim,USER_DATA>* quad);
-        Quad_index get_lowerleft_ijk(Quadrant<dim,USER_DATA>* quad);
-        void cal_xyz_quad(double* xyz_lower_left, int order_child, Quadrant<dim,USER_DATA>* quad);
-        void cal_ijk_quad(Quad_index ijk_lower_left, int order_child, Quadrant<dim,USER_DATA>* quad);
         void construct_map2dat();
         void get_unique_points_leaves(std::map<Quad_index, int_pointIndex>& map_unique_points, int& num_leaves, long int& num_quads, Quadrant<dim,USER_DATA>* quad, Quad_index ijk_quad, unsigned int length_quad);
         void pass_props_pointer_leaves(std::map<Quad_index, int_pointIndex>& map_unique_points, Quadrant<dim,USER_DATA>* quad, Quad_index ijk_quad, unsigned int length_quad);
