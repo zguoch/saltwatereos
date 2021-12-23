@@ -298,7 +298,7 @@ void createTable_HPX(int max_level)
     // STATUS_time("Searching done", clock() - start);
 
 }
-void load_binary_3d(string filename)
+void load_binary_3d(string filename, bool isCal)
 {
     int ind = 0;
     H2ONaCl::cH2ONaCl eos;
@@ -330,12 +330,13 @@ void load_binary_3d(string filename)
     int ind_rho = 0;
     ofstream fpout_xx("XX.txt");
     ofstream fpout_yy("YY.txt");
-    ofstream fpout_zz("ZZ.txt");
+    ofstream fpout_zz;
+    if(isCal)ofstream fpout_zz("ZZ.txt");
     ofstream fpout_zz_lut("ZZ_lut.txt");
     ofstream fpout_phase("phase.txt");
     ofstream fpout_needRefine("refine.txt");
     ofstream fpout_T_lut("T_lut.txt");
-    bool isCal = true;
+    // bool isCal = true;
     for (int i = 0; i < nTorH; i++)
     {
         TorH = TorHmin + i*dTorH;
@@ -368,7 +369,7 @@ void load_binary_3d(string filename)
         }
         fpout_xx<<endl;
         fpout_yy<<endl;
-        fpout_zz<<endl;
+        if(isCal)fpout_zz<<endl;
         fpout_zz_lut<<endl;
         fpout_needRefine<<endl;
         fpout_phase<<endl;
@@ -376,7 +377,7 @@ void load_binary_3d(string filename)
     }
     fpout_xx.close();
     fpout_yy.close();
-    fpout_zz.close();
+    if(isCal)fpout_zz.close();
     fpout_zz_lut.close();
     fpout_phase.close();
     fpout_needRefine.close();
@@ -583,8 +584,8 @@ void help(char** argv)
     cout<<argv[0]<<" 4 [max_level]: createTable_constT_XP"<<endl;
     cout<<argv[0]<<" 5 [max_level]: createTable_TPX"<<endl;
     cout<<argv[0]<<" 6 [max_level]: createTable_HPX"<<endl;
-    cout<<argv[0]<<" 7 [my.bin] [isFunCal]: load_binary_2d consX_TP"<<endl;
-    cout<<argv[0]<<" 8 [my.bin]: load_binary_3d"<<endl;
+    cout<<argv[0]<<" 7 [my.bin] [isFunCal]: load and lookup 2D LUT"<<endl;
+    cout<<argv[0]<<" 8 [my.bin] [isFunCal]: load and lookup 3D LUT"<<endl;
 
     exit(0);
 }
@@ -648,7 +649,7 @@ int main(int argc, char** argv)
         break;
     case 8:
         cout<<"Test loading 3D LUT: "<<argv[2]<<endl;
-        load_binary_3d(argv[2]);
+        load_binary_3d(argv[2],(bool)atoi(argv[3]));
         break;
     default:
         break;

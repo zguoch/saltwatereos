@@ -726,7 +726,7 @@ namespace LOOKUPTABLE_FOREST
     {
         if(m_props_unique_points_leaves.num_props==0)return; //if there is not any property included, skip it!
         
-        STATUS("Construct properties on unique points of leaves ...");
+        STATUS("Construct properties on unique points of leaves, it will take a while ...");
         // 0. clear old array of properties
         m_props_unique_points_leaves.clear();
 

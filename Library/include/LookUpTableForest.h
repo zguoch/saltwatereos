@@ -58,16 +58,6 @@ namespace LOOKUPTABLE_FOREST
         unsigned char       level;
         bool                isHasChildren;
         Quad_data<dim, USER_DATA> qData; //leaf quad and nonleaf quad use different type of data
-        // int index;
-        // double              xyz[dim]; //real coordinate of the lower left corner of a quadrant
-        // Quad_index          ijk; //index of the LowerLeft corner in the reference space [2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL, 2^MAX_FOREST_LEVEL]
-        
-        // Quadrant*           parent;
-        // Quadrant            *children[1<<dim];// = NULL; //[1<<dim]; //2^dim: use dynamic array to save memory. Use dynamic array will cause bugs in read_forest, fix it later.
-        // USER_DATA        *user_data = NULL;
-        // double              *pointData = NULL; //store all point data of a leaf quad, calculate it after refining process.
-        // DEBUG
-        // int index = -1;
     };
 
     // data for non-leaf quad
@@ -169,13 +159,8 @@ namespace LOOKUPTABLE_FOREST
         double m_xyz_max[dim];
         int     m_num_children;
         int     m_num_node_per_quad; //how many nodes will be stored in a quad: only for data storage
-        // int     m_num_props; //How many properties will be stored in the node
         std::map<int, propInfo> m_map_props;
-        // unsigned int m_num_unique_points_leaves; //number of unique points on leaf quads
-        // double** m_props_unique_points_leaves;
         PropsData m_props_unique_points_leaves;
-        // std::map<Quad_index, double*> m_map_ijk2data; //std::map<Quad_index, double> one pair of (i,j,k) to one array of data
-        // int     m_index_TorH, m_index_P, m_index_X; //specify the index of variable T/H, P, X in the xyz array.
         CONST_WHICH_VAR m_const_which_var; 
         EOS_ENERGY m_TorH; 
         // double  m_physical_length_quad[MAX_FOREST_LEVEL][dim]; //Optimization: store the length of quad in each dimension as a member data of the forest, therefore don't need to calculate length of quad, just access this 2D array according to the quad level. 
@@ -222,9 +207,6 @@ namespace LOOKUPTABLE_FOREST
         void destory();
         ~LookUpTableForest();
     };
-
-//    #include "LookUpTableForestI.h" //have to organize the template class header file and sourfile together
-    
 }
 
 
