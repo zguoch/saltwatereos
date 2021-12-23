@@ -66,7 +66,7 @@ namespace LOOKUPTABLE_FOREST
         }coord;
         Quadrant<dim, USER_DATA>* parent =NULL;
         USER_DATA           *user_data = NULL;
-        unsigned int index_props[dim]; //index of property on each node.
+        unsigned int index_props[1<<dim]; //index of property on each node.
     };
     
     /**

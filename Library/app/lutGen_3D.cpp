@@ -43,8 +43,8 @@ int main(int argc, char** argv)
     }
     if (TorH == "T")
     {
-        eos.createLUT_3D(xmin + 273.15, xmax + 273.15, ymin * 1E5, ymax * 1E5, xmin, xmax, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level, Update_prop_rho | Update_prop_h | Update_prop_T);
-        // eos.save_lut_to_vtk("lut_TPX_"+std::to_string(max_level)+".vtu");
+        eos.createLUT_3D(xmin + 273.15, xmax + 273.15, ymin * 1E5, ymax * 1E5, zmin, zmax, LOOKUPTABLE_FOREST::EOS_ENERGY_T, min_level, max_level, Update_prop_rho | Update_prop_h | Update_prop_T);
+        eos.save_lut_to_vtk("lut_TPX_"+std::to_string(max_level)+".vtu");
         eos.save_lut_to_binary("lut_TPX_"+std::to_string(max_level)+".bin");
     }else if (TorH == "H")
     {
