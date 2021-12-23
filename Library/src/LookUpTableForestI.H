@@ -101,8 +101,6 @@ namespace LOOKUPTABLE_FOREST
     template <int dim, typename USER_DATA> 
     void LookUpTableForest<dim,USER_DATA>::destory()
     {
-        // release data first
-        release_map2data();
         // cout<<"destroy forest"<<endl;
         release_quadrant_data(&m_root);
         while (m_root.isHasChildren)
@@ -282,7 +280,6 @@ namespace LOOKUPTABLE_FOREST
             FILE* fpout_prop = NULL;
             fpout_prop = fopen(filename_prop.c_str(), "wb");
             if(fpout_prop == NULL)ERROR("Open file failed: "+filename_prop);
-            // for(auto &map_ijk2data : m_map_ijk2data)
             for(int_pointIndex i = 0; i<m_props_unique_points_leaves.num_points; i++)
             {
                 // fwrite(&map_ijk2data.second[ind_prop], sizeof(double), 1, fpout_prop);
@@ -431,10 +428,6 @@ namespace LOOKUPTABLE_FOREST
             {
                 ERROR("Open file failed: "+filename_prop);
             }
-            // for(auto &map_ijk2data : m_map_ijk2data)
-            // {
-            //     fread(&map_ijk2data.second[ind_prop], sizeof(double), 1, fpin);
-            // }
             for(int_pointIndex i=0; i<m_props_unique_points_leaves.num_points; i++)
             {
                 fread(&m_props_unique_points_leaves.data[i][ind_prop], sizeof(double), 1, fpin);
@@ -729,20 +722,6 @@ namespace LOOKUPTABLE_FOREST
     }
 
     template <int dim, typename USER_DATA>
-    void LookUpTableForest<dim,USER_DATA>::release_map2data()
-    {
-        if(m_map_ijk2data.size()>0)
-        {
-            // release data and clear map
-            for(auto &ijk2data : m_map_ijk2data)
-            {
-                delete[] ijk2data.second;
-            }
-            m_map_ijk2data.clear();
-        }
-    }
-
-    template <int dim, typename USER_DATA>
     void LookUpTableForest<dim,USER_DATA>::get_unique_points_leaves(std::map<Quad_index, int_pointIndex>& map_unique_points, int& num_leaves, long int& num_quads, Quadrant<dim,USER_DATA>* quad, Quad_index ijk_quad, unsigned int length_quad)
     {
         num_quads++;
@@ -889,75 +868,6 @@ namespace LOOKUPTABLE_FOREST
         // }
         // WAIT("Test output props value");
     }
-
-    template <int dim, typename USER_DATA>
-    void LookUpTableForest<dim,USER_DATA>::construct_map2dat()
-    {
-        STATUS("Construct map to points ...");
-        clock_t start = clock();
-        // 0. safety check: if the m_map_ijk2data has been already created, release it to avoid repleated creation and memory leak
-        release_map2data();
-
-        // 1. get all leaves
-        vector<Quadrant<dim,USER_DATA>* > leaves;
-        m_num_quads = 0;
-        getLeaves(leaves, m_num_quads, &m_root);
-        m_num_leaves = leaves.size();
-        
-        // 2. allocate memory of data at all nodes of leaves
-        Quad_index *ijk_nodes_quad = new Quad_index[m_num_node_per_quad]; // \todo 如果使用二阶插值，则需要更多节点，需要通过cellType进行判断：比如二维情况九点quad，那么需要限制max_level必须小于MAX_FOREST_LEVEL-2，不过这个好办，在构造函数里面判断一下进行安全检查就行
-        if(m_props_unique_points_leaves.num_props>0)
-        {
-            for (size_t i = 0; i < leaves.size(); i++)
-            {
-                // get ijk of all nodes of a leaf quad
-                get_ijk_nodes_quadrant(leaves[i], &leaves[i]->qData.leaf->coord.ijk, m_num_node_per_quad, ijk_nodes_quad);
-                for (int i_node = 0; i_node < m_num_node_per_quad; i_node++)
-                {
-                    if(m_map_ijk2data.count(ijk_nodes_quad[i_node]) == 0)
-                    {
-                        // cout<<ijk_nodes_quad[i_node].i<<" "<<ijk_nodes_quad[i_node].j<<" "<<ijk_nodes_quad[i_node].k<<endl;
-                        m_map_ijk2data[ijk_nodes_quad[i_node]] = new double[m_props_unique_points_leaves.num_props];
-                    }
-                }
-            }
-        }
-        
-
-        // // check key counts
-        cout<<"    leaves: "<<leaves.size()<<endl;
-        cout<<"    unique nodes: "<<m_map_ijk2data.size()<<endl;
-
-        // release pointer
-        delete[] ijk_nodes_quad;
-
-        STATUS_time("Construct map to property data done.", clock()-start);
-    }
-
-    template <int dim, typename USER_DATA>
-    void LookUpTableForest<dim,USER_DATA>::assemble_data(void (*cal_prop)(LookUpTableForest<dim,USER_DATA>* forest, std::map<Quad_index, double*>& map_ijk2data))
-    {
-        // #if __cplusplus <= 199711L
-        // auto start = std::chrono::system_clock::now();
-        // #endif
-        // clock_t start = clock();
-    
-        construct_map2dat();
-        
-        STATUS("Assemble properties data to nodes of leaves ...");
-
-        //3. call property calculation function to fill data to array
-        cal_prop(this, m_map_ijk2data);
-
-        // #if __cplusplus <= 199711L
-        //     auto end = std::chrono::system_clock::now();
-        //     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-        //     STATUS_system_time("Assemble properties data done.", duration.count());
-        // #else
-            STATUS("Assemble properties data done.");
-        // #endif
-    }
-
     template <int dim, typename USER_DATA>
     void LookUpTableForest<dim,USER_DATA>::getLeaves(vector<Quadrant<dim,USER_DATA>* >& leaves, long int& quad_counts, Quadrant<dim,USER_DATA>* quad)
     {
@@ -998,13 +908,7 @@ namespace LOOKUPTABLE_FOREST
         int num_points_per_cell = 1<<dim;
         int num_cells = index_valid_leaves.size();
         int num_points = m_props_unique_points_leaves.num_points;
-        std::map<Quad_index, int> index_map_ijk2data;
         int ind =0;
-        for(auto & m : m_map_ijk2data)
-        {
-            index_map_ijk2data[m.first] = ind;
-            ind++;
-        }
         double length_cell[dim]; //physical length
         double length_ref_cell = 0;
         Quad_index *ijk_nodes_quad = new Quad_index[m_num_node_per_quad]; // \todo 如果使用二阶插值，则需要更多节点，需要通过cellType进行判断：比如二维情况九点quad，那么需要限制max_level必须小于MAX_FOREST_LEVEL-2，不过这个好办，在构造函数里面判断一下进行安全检查就行
@@ -1026,11 +930,6 @@ namespace LOOKUPTABLE_FOREST
         for(auto &m : m_map_props)
         {
             fout<<"        <DataArray type=\"Float32\" Name=\""<<m.second.longName<<"\" format=\"ascii\" RangeMin=\"0\" RangeMax=\"0\">\n        ";
-            // fout<<"        ";
-            // for(auto &map_ijk2data : m_map_ijk2data)
-            // {
-            //     fout<<" "<<map_ijk2data.second[ind];
-            // }
             for (unsigned int i = 0; i < m_props_unique_points_leaves.num_points; i++)
             {
                 fout<<" "<<m_props_unique_points_leaves.data[i][ind];
@@ -1061,10 +960,6 @@ namespace LOOKUPTABLE_FOREST
         double scale=0; //scale = 0.001, keep some space between each quadrant
         double physical_length[dim]; //={m_xyz_max[0] - m_xyz_min[0], m_xyz_max[1] - m_xyz_min[1], m_xyz_max[2] - m_xyz_min[2]};
         for (int i = 0; i < dim; i++){ physical_length[i] = m_xyz_max[i] - m_xyz_min[i];}
-        // for(auto &ijk2data : m_map_ijk2data)
-        // {
-        //     fout<<"         "<<ijk2data.first.i<<" "<<ijk2data.first.j<<" "<<ijk2data.first.k<<endl;
-        // }
         std::map<Quad_index, int_pointIndex> map_unique_points;
         Quad_index ijk_quad;
         ijk_quad.i = 0;
@@ -1083,19 +978,6 @@ namespace LOOKUPTABLE_FOREST
         cout<<"cells ";
         fout<<"      <Cells>"<<endl;
         fout<<"        <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\" RangeMin=\"0\" RangeMax=\""<<num_cells-1<<"\">"<<endl;
-        // fout<<"        ";
-        // int point_id_cell = 0;
-        // for (int i = 0; i < num_cells; i++)
-        // {
-        //     // get ijk of all nodes of a leaf quad
-        //     get_ijk_nodes_quadrant(leaves[index_valid_leaves[i]], &leaves[index_valid_leaves[i]]->qData.leaf->coord.ijk, m_num_node_per_quad, ijk_nodes_quad);
-        //     fout<<"         ";
-        //     for (int i_node = 0; i_node < m_num_node_per_quad; i_node++)
-        //     {
-        //         fout<<index_map_ijk2data[ijk_nodes_quad[i_node]]<<" "; 
-        //     }
-        //     fout<<endl;
-        // }
         for (int i = 0; i < num_cells; i++)
         {
             fout<<"         ";
@@ -1190,7 +1072,43 @@ namespace LOOKUPTABLE_FOREST
             cout<<"  "<<ind<<": "<<COLOR_GREEN<<m.second.longName<<COLOR_DEFAULT<<": "<<m.second.shortName<<m.second.unit<<endl;
             ind++;
         }
+        double byte_forest_leaves = sizeof(LeafQuad<dim, USER_DATA>) * m_num_leaves;
+        double byte_forest_nonleaves = sizeof(NonLeafQuad<dim, USER_DATA>) * (m_num_quads - m_num_leaves);
+        double byte_quads = sizeof(Quadrant<dim, USER_DATA>) * m_num_quads;
+        double byte_per_property = sizeof(double)*m_props_unique_points_leaves.num_points;
+        double byte_total = (byte_forest_leaves + byte_forest_nonleaves + byte_quads + byte_per_property*m_props_unique_points_leaves.num_props);
+        cout<<"Memory estimate. Total: "
+            <<byte2string(byte_total)<<"\n"
+            <<"  Leaves: "<<byte2string(byte_forest_leaves)<<"; Nonleaves: "
+            <<byte2string(byte_forest_nonleaves)<<"\n"
+            <<"  Quads: "<<byte2string(byte_quads)<<"; Properties: "
+            <<byte2string(byte_per_property)<<"/property."
+            <<endl;
         cout<<"================== Summary end ==================="<<endl;
+    }
+
+    template <int dim, typename USER_DATA>
+    string LookUpTableForest<dim,USER_DATA>::byte2string(double bytes)
+    {
+        std::stringstream ss;
+        if(bytes<1024)
+        {
+            ss<<std::setiosflags(std::ios::fixed)<<std::setprecision(1)<<bytes<<" bytes";
+            return ss.str();
+        }else if(bytes>=1024 && bytes<1024*1024)
+        {
+            ss<<std::setiosflags(std::ios::fixed)<<std::setprecision(1)<<bytes/1024<<" kb";
+            return ss.str();
+        }else if(bytes>=1024*1024 && bytes<1024*1024*1024)
+        {
+            ss<<std::setiosflags(std::ios::fixed)<<std::setprecision(1)<<bytes/1024/1024<<" Mb";
+            return ss.str();
+        }else if(bytes>=1024*1024*1024)
+        {
+            ss<<std::setiosflags(std::ios::fixed)<<std::setprecision(1)<<bytes/1024*1024*1024<<" Gb";
+            return ss.str();
+        }
+        return " ";
     }
 
     template <int dim, typename USER_DATA>

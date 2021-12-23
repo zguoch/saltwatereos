@@ -30,13 +30,16 @@ namespace LOOKUPTABLE_FOREST
         int num_props = 0;
         void clear()
         {
-            for (int_pointIndex i = 0; i < num_points; i++)
+            if(data) //need to check where the data array is created or not, e.g., lutInfo, doesn't create data array.
             {
-                delete[] data[i];
-                data[i] = NULL;
+                for (int_pointIndex i = 0; i < num_points; i++)
+                {
+                    delete[] data[i];
+                    data[i] = NULL;
+                }
+                delete[] data;
+                num_points = 0;
             }
-            delete[] data;
-            num_points = 0;
         }
     };
     
@@ -151,7 +154,6 @@ namespace LOOKUPTABLE_FOREST
         void release_leaves(Quadrant<dim,USER_DATA>* quad);
         void getLeaves(vector<Quadrant<dim,USER_DATA>* >& leaves, long int& quad_counts, Quadrant<dim,USER_DATA>* quad);
         void refine(Quadrant<dim,USER_DATA>* quad, double xmin_quad, double ymin_quad, double zmin_quad, bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, double xmin_quad, double ymin_quad, double zmin_quad, int max_level));
-        void release_map2data();
         void write_vtk_cellData(ofstream* fout, string type, string name, string format);
         void searchQuadrant(Quadrant<dim,USER_DATA>* quad_source, Quadrant<dim,USER_DATA> *&quad_target, double* xyz_min_target, double x_ref, double y_ref, double z_ref);
         void init(double xyz_min[dim], double xyz_max[dim], int max_level, size_t data_size, void* eosPointer);
@@ -166,6 +168,7 @@ namespace LOOKUPTABLE_FOREST
         void pass_props_pointer_leaves(std::map<Quad_index, int_pointIndex>& map_unique_points, Quadrant<dim,USER_DATA>* quad, Quad_index ijk_quad, unsigned int length_quad);
         void read_props_from_binary(string filename_forest);
         void read_forest_from_binary(string filename, bool read_only_header=false);
+        string byte2string(double bytes);
     public:
         void    *m_eosPointer;      //pass pointer of EOS object (e.g., the pointer of a object of cH2ONaCl class) to the forest through construct function, this will give access of EOS stuff in the refine call back function, e.g., calculate phase index and properties
         double  m_constZ;         // only valid when dim==2, i.e., 2D case, the constant value of third dimension, e.g. in T-P space with constant X.
@@ -180,7 +183,7 @@ namespace LOOKUPTABLE_FOREST
         // unsigned int m_num_unique_points_leaves; //number of unique points on leaf quads
         // double** m_props_unique_points_leaves;
         PropsData m_props_unique_points_leaves;
-        std::map<Quad_index, double*> m_map_ijk2data; //std::map<Quad_index, double> one pair of (i,j,k) to one array of data
+        // std::map<Quad_index, double*> m_map_ijk2data; //std::map<Quad_index, double> one pair of (i,j,k) to one array of data
         // int     m_index_TorH, m_index_P, m_index_X; //specify the index of variable T/H, P, X in the xyz array.
         CONST_WHICH_VAR m_const_which_var; 
         EOS_ENERGY m_TorH; 

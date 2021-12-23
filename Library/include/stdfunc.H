@@ -5,6 +5,7 @@
 #include<map>
 #include <sys/stat.h>
 #include <cstring>
+#include <sstream>
 // uncomment to disable assert()
 // #define NDEBUG
 #include <cassert>

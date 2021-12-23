@@ -4619,7 +4619,7 @@ namespace H2ONaCl
         // interpolate props
         int ind_prop =0;
         for (int i = 0; i < tmp_lut->m_num_node_per_quad; i++){
-            pNodeData[i] = tmp_lut->m_map_ijk2data[ijk_nodes_quad[i]]; //\todo need to be optimized, this map index takes more time
+            pNodeData[i] = tmp_lut->m_props_unique_points_leaves.data[targetLeaf->qData.leaf->index_props[i]];
         }
         for(auto &map_props : tmp_lut->m_map_props)
         {
