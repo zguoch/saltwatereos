@@ -35,7 +35,7 @@ namespace LOOKUPTABLE_FOREST
     {
         m_eosPointer = eosPointer;
         m_num_children = 1<<dim;
-        m_num_node_per_quad = m_num_children; //use 4 nodes for 2d and 8 nodes for 3D at this moment
+        m_num_node_per_quad = m_num_children; //use 4 nodes for 2d and 8 nodes for 3D at this moment, there is no necessary use more points!!! 
         m_data_size = sizeof(USER_DATA);
         init_Root(m_root);
         
