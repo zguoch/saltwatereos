@@ -36,7 +36,9 @@ namespace LOOKUPTABLE_FOREST
 
     template <int dim, typename USER_DATA> 
     LookUpTableForest<dim,USER_DATA>::LookUpTableForest(string filename_forest, void* eosPointer)
-    // :m_props_unique_points_leaves(NULL)
+    :
+    m_num_unique_points_leaves(0),
+    m_props_unique_points_leaves(NULL)
     {
         m_eosPointer = eosPointer;
         m_num_children = 1<<dim;
