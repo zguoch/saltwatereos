@@ -56,10 +56,11 @@ namespace LOOKUPTABLE_FOREST
             read_forest_from_binary(filename_forest);
             // WAIT("after loading forest");
             // construct ijk_map2data
-            construct_map2dat();
+            // construct_map2dat();
+            construct_props_leaves(NULL);
             // WAIT("after constructing map2data");
             // read data from binary
-            read_props_from_binary(filename_forest);
+            read_props_from_binary(filename_forest); 
             // WAIT("after loading property data");
         }
         // print info
@@ -299,9 +300,11 @@ namespace LOOKUPTABLE_FOREST
             FILE* fpout_prop = NULL;
             fpout_prop = fopen(filename_prop.c_str(), "wb");
             if(fpout_prop == NULL)ERROR("Open file failed: "+filename_prop);
-            for(auto &map_ijk2data : m_map_ijk2data)
+            // for(auto &map_ijk2data : m_map_ijk2data)
+            for(int_pointIndex i = 0; i<m_num_unique_points_leaves; i++)
             {
-                fwrite(&map_ijk2data.second[ind_prop], sizeof(double), 1, fpout_prop);
+                // fwrite(&map_ijk2data.second[ind_prop], sizeof(double), 1, fpout_prop);
+                fwrite(&m_props_unique_points_leaves[i][ind_prop], sizeof(double), 1, fpout_prop);
             }
             fclose(fpout_prop);
             ind_prop++;
@@ -446,9 +449,13 @@ namespace LOOKUPTABLE_FOREST
             {
                 ERROR("Open file failed: "+filename_prop);
             }
-            for(auto &map_ijk2data : m_map_ijk2data)
+            // for(auto &map_ijk2data : m_map_ijk2data)
+            // {
+            //     fread(&map_ijk2data.second[ind_prop], sizeof(double), 1, fpin);
+            // }
+            for(int_pointIndex i=0; i<m_num_unique_points_leaves; i++)
             {
-                fread(&map_ijk2data.second[ind_prop], sizeof(double), 1, fpin);
+                fread(&m_props_unique_points_leaves[i][ind_prop], sizeof(double), 1, fpin);
             }
             fclose(fpin);
             ind_prop++;
@@ -753,41 +760,43 @@ namespace LOOKUPTABLE_FOREST
     }
 
     template <int dim, typename USER_DATA>
-    void LookUpTableForest<dim,USER_DATA>::get_unique_points_leaves(std::map<Quad_index, int_pointIndex>& map_unique_points, Quadrant<dim,USER_DATA>* quad, Quad_index ijk_quad, unsigned int length_quad)
+    void LookUpTableForest<dim,USER_DATA>::get_unique_points_leaves(std::map<Quad_index, int_pointIndex>& map_unique_points, int& num_leaves, long int& num_quads, Quadrant<dim,USER_DATA>* quad, Quad_index ijk_quad, unsigned int length_quad)
     {
+        num_quads++;
         if(quad->isHasChildren)
         {
             //update the length of children
             length_quad = length_quad>>1; //divided by 2 //1<<(MAX_FOREST_LEVEL - quad->level - 1);
 
-            get_unique_points_leaves(map_unique_points, quad->qData.nonleaf->children[0], ijk_quad, length_quad);
+            get_unique_points_leaves(map_unique_points, num_leaves, num_quads, quad->qData.nonleaf->children[0], ijk_quad, length_quad);
 
             ijk_quad.i += length_quad;
-            get_unique_points_leaves(map_unique_points, quad->qData.nonleaf->children[1], ijk_quad, length_quad);
+            get_unique_points_leaves(map_unique_points, num_leaves, num_quads, quad->qData.nonleaf->children[1], ijk_quad, length_quad);
 
             ijk_quad.i -= length_quad; ijk_quad.j += length_quad;
-            get_unique_points_leaves(map_unique_points, quad->qData.nonleaf->children[2], ijk_quad, length_quad);
+            get_unique_points_leaves(map_unique_points, num_leaves, num_quads, quad->qData.nonleaf->children[2], ijk_quad, length_quad);
 
             ijk_quad.i += length_quad;
-            get_unique_points_leaves(map_unique_points, quad->qData.nonleaf->children[3], ijk_quad, length_quad);
+            get_unique_points_leaves(map_unique_points, num_leaves, num_quads, quad->qData.nonleaf->children[3], ijk_quad, length_quad);
             if(dim==3)
             {
                 ijk_quad.k += length_quad;
 
                 ijk_quad.i -= length_quad; ijk_quad.j -= length_quad;
-                get_unique_points_leaves(map_unique_points, quad->qData.nonleaf->children[4], ijk_quad, length_quad);
+                get_unique_points_leaves(map_unique_points, num_leaves, num_quads, quad->qData.nonleaf->children[4], ijk_quad, length_quad);
 
                 ijk_quad.i += length_quad;
-                get_unique_points_leaves(map_unique_points, quad->qData.nonleaf->children[5], ijk_quad, length_quad);
+                get_unique_points_leaves(map_unique_points, num_leaves, num_quads, quad->qData.nonleaf->children[5], ijk_quad, length_quad);
 
                 ijk_quad.i -= length_quad; ijk_quad.j += length_quad;
-                get_unique_points_leaves(map_unique_points, quad->qData.nonleaf->children[6], ijk_quad, length_quad);
+                get_unique_points_leaves(map_unique_points, num_leaves, num_quads, quad->qData.nonleaf->children[6], ijk_quad, length_quad);
 
                 ijk_quad.i += length_quad;
-                get_unique_points_leaves(map_unique_points, quad->qData.nonleaf->children[7], ijk_quad, length_quad);
+                get_unique_points_leaves(map_unique_points, num_leaves, num_quads, quad->qData.nonleaf->children[7], ijk_quad, length_quad);
             }
         }else
         {
+            num_leaves++;
             Quad_index *ijk_nodes_quad = new Quad_index[m_num_node_per_quad];
             get_ijk_nodes_quadrant(quad, &ijk_quad, m_num_node_per_quad, ijk_nodes_quad);
             for (int i_node = 0; i_node < m_num_node_per_quad; i_node++)
@@ -866,7 +875,8 @@ namespace LOOKUPTABLE_FOREST
         ijk_quad.i = 0;
         ijk_quad.j = 0;
         ijk_quad.k = 0;
-        get_unique_points_leaves(map_unique_points, &m_root, ijk_quad, 1<<(MAX_FOREST_LEVEL));
+        m_num_leaves = 0; m_num_quads = 0;
+        get_unique_points_leaves(map_unique_points, m_num_leaves, m_num_quads, &m_root, ijk_quad, 1<<(MAX_FOREST_LEVEL));
 
         // 2. update map value: index of m_props_unique_points_leaves
         // WAIT("update map value");
@@ -888,7 +898,8 @@ namespace LOOKUPTABLE_FOREST
 
         // 4. calculate properties and fill to the data array
         // WAIT("calculate properties and fill to the data array");
-        cal_prop(this, map_unique_points, m_props_unique_points_leaves);
+        // if cal_prop is NULL, the construct_props_leaves will be used to construct property data and index for binary file reading
+        if(cal_prop)cal_prop(this, map_unique_points, m_props_unique_points_leaves); 
         // for (int_pointIndex i = 0; i < m_num_unique_points_leaves; i++)
         // {
         //     cout<<m_props_unique_points_leaves[i][0]<<endl;
@@ -991,6 +1002,7 @@ namespace LOOKUPTABLE_FOREST
         vector<Quadrant<dim,USER_DATA>* > leaves;
         long int quad_counts = 0;
         getLeaves(leaves, quad_counts, &m_root);
+        // WAIT(to_string(leaves.size()));
         // get valid leaves, get rid of leaves with  H2ONaCl::UnknownPhaseRegion
         vector<size_t> index_valid_leaves;
         for (size_t i = 0; i < leaves.size(); i++)
@@ -1075,7 +1087,8 @@ namespace LOOKUPTABLE_FOREST
         ijk_quad.i = 0;
         ijk_quad.j = 0;
         ijk_quad.k = 0;
-        get_unique_points_leaves(map_unique_points, &m_root, ijk_quad, 1<<(MAX_FOREST_LEVEL));
+        m_num_leaves = 0; m_num_quads = 0;
+        get_unique_points_leaves(map_unique_points, m_num_leaves, m_num_quads, &m_root, ijk_quad, 1<<(MAX_FOREST_LEVEL));
         for(auto &ijk2data : map_unique_points)
         {
             fout<<"         "<<ijk2data.first.i<<" "<<ijk2data.first.j<<" "<<ijk2data.first.k<<endl;
