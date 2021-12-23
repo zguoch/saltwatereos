@@ -22,7 +22,7 @@ namespace LOOKUPTABLE_FOREST
             return i < ijk.i || (i==ijk.i && j<ijk.j) || (i==ijk.i && j==ijk.j && k<ijk.k);
         }
     };
-
+    typedef unsigned int int_pointIndex;
     // non complete declaration
     template <int dim, typename USER_DATA> struct NonLeafQuad;
     template <int dim, typename USER_DATA> struct LeafQuad;
@@ -66,7 +66,7 @@ namespace LOOKUPTABLE_FOREST
         }coord;
         Quadrant<dim, USER_DATA>* parent =NULL;
         USER_DATA           *user_data = NULL;
-        // int index_node[1<<dim];
+        unsigned int index_props[dim]; //index of property on each node.
     };
     
     /**
@@ -144,8 +144,11 @@ namespace LOOKUPTABLE_FOREST
         void cal_xyz_quad(double* xyz_lower_left, int order_child, Quadrant<dim,USER_DATA>* quad);
         void cal_ijk_quad(Quad_index ijk_lower_left, int order_child, Quadrant<dim,USER_DATA>* quad);
         void construct_map2dat();
+        void get_unique_points_leaves(std::map<Quad_index, int_pointIndex>& map_unique_points, Quadrant<dim,USER_DATA>* quad, Quad_index ijk_quad, unsigned int length_quad);
+        void pass_props_pointer_leaves(std::map<Quad_index, int_pointIndex>& map_unique_points, Quadrant<dim,USER_DATA>* quad, Quad_index ijk_quad, unsigned int length_quad);
         void read_props_from_binary(string filename_forest);
         void read_forest_from_binary(string filename, bool read_only_header=false);
+        void release_props_data();
     public:
         void    *m_eosPointer;      //pass pointer of EOS object (e.g., the pointer of a object of cH2ONaCl class) to the forest through construct function, this will give access of EOS stuff in the refine call back function, e.g., calculate phase index and properties
         double  m_constZ;         // only valid when dim==2, i.e., 2D case, the constant value of third dimension, e.g. in T-P space with constant X.
@@ -157,6 +160,8 @@ namespace LOOKUPTABLE_FOREST
         int     m_num_node_per_quad; //how many nodes will be stored in a quad: only for data storage
         int     m_num_props; //How many properties will be stored in the node
         std::map<int, propInfo> m_map_props;
+        unsigned int m_num_unique_points_leaves; //number of unique points on leaf quads
+        double** m_props_unique_points_leaves;
         std::map<Quad_index, double*> m_map_ijk2data; //std::map<Quad_index, double> one pair of (i,j,k) to one array of data
         // int     m_index_TorH, m_index_P, m_index_X; //specify the index of variable T/H, P, X in the xyz array.
         CONST_WHICH_VAR m_const_which_var; 
@@ -169,8 +174,9 @@ namespace LOOKUPTABLE_FOREST
         void searchQuadrant(Quadrant<dim,USER_DATA> *&targetLeaf, double* xyz_min_target, double x, double y, double z);
         void get_quadrant_physical_length(int level, double physical_length[dim]);
         void refine(bool (*is_refine)(LookUpTableForest<dim,USER_DATA>* forest, Quadrant<dim,USER_DATA>* quad, double xmin_quad, double ymin_quad, double zmin_quad, int max_level));
-        void get_ijk_nodes_quadrant(Quadrant<dim,USER_DATA>* quad, int num_nodes_per_quad, Quad_index* ijk);
+        void get_ijk_nodes_quadrant(Quadrant<dim,USER_DATA>* quad, const Quad_index* ijk_quad, int num_nodes_per_quad, Quad_index* ijk);
         void assemble_data(void (*cal_prop)(LookUpTableForest<dim,USER_DATA>* forest, std::map<Quad_index, double*>& map_ijk2data));
+        void construct_props_leaves(void (*cal_prop)(LookUpTableForest<dim,USER_DATA>* forest, std::map<Quad_index, unsigned int>& map_ijk2data, double** data));
         void ijk2xyz(const Quad_index* ijk, double& x, double& y, double& z);
         void union_ijk2xyz(Quadrant<dim, USER_DATA>* quad, Quad_index& ijk_backup);
         void write_to_vtk(string filename, bool write_data=true, bool isNormalizeXYZ=true);

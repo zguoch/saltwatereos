@@ -5,6 +5,9 @@
 #include<map>
 #include <sys/stat.h>
 #include <cstring>
+// uncomment to disable assert()
+// #define NDEBUG
+#include <cassert>
 
  #ifdef _WIN32
     // define color, this seems only work on MacOS and linux, doesn't work on windows
@@ -34,6 +37,6 @@
 #define STATUS_system_time(info, duration) std::cout<<"--  "<<COLOR_GREEN<<info<<", time: "<< double(duration) * std::chrono::microseconds::period::num / std::chrono::microseconds::period::den<<" s"<<COLOR_DEFAULT<<std::endl;
 #define ERROR(info) {std::cout<<"--  "<<COLOR_RED<<info<<COLOR_DEFAULT<<std::endl; exit(0);}
 #define WARNING(info) {std::cout<<"--  "<<COLOR_YELLOW<<info<<COLOR_DEFAULT<<std::endl;}
-#define ASSERT(expression, info) {std::cout<<"--  "<<COLOR_RED<<info<<COLOR_DEFAULT<<std::endl; assert(expression);}
+#define ASSERT(expression, info) {if(!(expression))std::cout<<"--  "<<COLOR_RED<<info<<COLOR_DEFAULT<<std::endl; assert(expression);}
 #define WAIT(where) {std::cout<<"Waiting "<<where<< ". Enter to continue..." << std::endl; std::string dummy; std::getline(std::cin, dummy);}
 #endif

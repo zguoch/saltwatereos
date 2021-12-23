@@ -4435,7 +4435,7 @@ namespace H2ONaCl
             }
             // update properties data on leaves
             STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
-            tmp_lut_2D->assemble_data(cal_prop_PTX);
+            tmp_lut_2D->construct_props_leaves(cal_prop_PTX);
         }else if(tmp_lut_2D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
         {
         #ifdef USE_OMP
@@ -4453,7 +4453,7 @@ namespace H2ONaCl
 
             // 
             STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
-            tmp_lut_2D->assemble_data(cal_prop_PHX);
+            tmp_lut_2D->construct_props_leaves(cal_prop_PHX);
         }else
         {
             ERROR("The EOS space only support TPX and HPX!");
@@ -4495,7 +4495,7 @@ namespace H2ONaCl
             }
             // 
             STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
-            tmp_lut_3D->assemble_data(cal_prop_PTX);
+            tmp_lut_3D->construct_props_leaves(cal_prop_PTX);
         }else if (tmp_lut_3D->m_TorH == LOOKUPTABLE_FOREST::EOS_ENERGY_H)
         {
         #ifdef USE_OMP
@@ -4512,7 +4512,7 @@ namespace H2ONaCl
             }
             // 
             STATUS_time("Lookup table refinement done", (clock() - start)/m_num_threads);
-            tmp_lut_3D->assemble_data(cal_prop_PHX);
+            tmp_lut_3D->construct_props_leaves(cal_prop_PHX);
         }else
         {
             ERROR("The EOS space only support TPX and HPX!");
@@ -4607,7 +4607,7 @@ namespace H2ONaCl
         double* values_at_vertices = new double[tmp_lut->m_num_node_per_quad];
         double** pNodeData = new double*[tmp_lut->m_num_node_per_quad];
         LOOKUPTABLE_FOREST::Quad_index *ijk_nodes_quad = new LOOKUPTABLE_FOREST::Quad_index[tmp_lut->m_num_node_per_quad]; // \todo 如果使用二阶插值，则需要更多节点，需要通过cellType进行判断：比如二维情况九点quad，那么需要限制max_level必须小于MAX_FOREST_LEVEL-2，不过这个好办，在构造函数里面判断一下进行安全检查就行
-        tmp_lut->get_ijk_nodes_quadrant(targetLeaf, tmp_lut->m_num_node_per_quad, ijk_nodes_quad);
+        tmp_lut->get_ijk_nodes_quadrant(targetLeaf, &targetLeaf->qData.leaf->coord.ijk, tmp_lut->m_num_node_per_quad, ijk_nodes_quad);
 
         tmp_lut->get_quadrant_physical_length((int)targetLeaf->level, physical_length);
         get_coeff_bilinear<dim> (xyz_min_target, physical_length, xyz, coeff);
