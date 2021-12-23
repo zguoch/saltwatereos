@@ -1005,7 +1005,7 @@ namespace LOOKUPTABLE_FOREST
             return ss.str();
         }else if(bytes>=1024*1024*1024)
         {
-            ss<<std::setiosflags(std::ios::fixed)<<std::setprecision(1)<<bytes/1024*1024*1024<<" Gb";
+            ss<<std::setiosflags(std::ios::fixed)<<std::setprecision(1)<<bytes/1024/1024/1024<<" Gb";
             return ss.str();
         }
         return " ";
