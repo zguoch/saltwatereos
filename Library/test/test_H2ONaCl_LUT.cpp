@@ -306,7 +306,7 @@ void load_binary_3d(string filename, bool isCal)
     clock_t start = clock();
     const int dim = 3;
     eos.loadLUT(filename);
-    cout<<"dim of the bin file: "<<eos.m_dim_lut<<endl;
+    // cout<<"dim of the bin file: "<<eos.m_dim_lut<<endl;
     // eos.save_lut_to_vtk("lut_TPX.vtu");
     H2ONaCl::LookUpTableForest_3D* pLUT = (H2ONaCl::LookUpTableForest_3D*)eos.m_pLUT;
 
