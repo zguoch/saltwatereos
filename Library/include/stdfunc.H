@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include <cstring>
 #include <sstream>
+#include <iomanip> //to use std::setprecision
 // uncomment to disable assert()
 // #define NDEBUG
 #include <cassert>
