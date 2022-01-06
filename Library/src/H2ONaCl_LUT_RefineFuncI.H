@@ -349,8 +349,8 @@ namespace H2ONaCl
             CHECK_REFINE_PROP_RMSD(Rho);
         }
         // // ========== 2. refinement check for H =====================
-        // if(data->need_refine == LOOKUPTABLE_FOREST::NeedRefine_NoNeed){
-        //     CHECK_REFINE_PROP_RMSD(Rho);
+        // if(refine_prop  && data->need_refine == LOOKUPTABLE_FOREST::NeedRefine_NoNeed){
+        //     CHECK_REFINE_PROP_RMSD(H);
         // }
 
 
