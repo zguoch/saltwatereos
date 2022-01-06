@@ -75,8 +75,8 @@ namespace LOOKUPTABLE_FOREST
         m_data_size = data_size;
         m_min_level = 0;
         m_max_level = max_level;
-        m_RMSD_RefineCriterion.Rho  = 5;
-        m_RMSD_RefineCriterion.H    = 1000;
+        m_RMSD_RefineCriterion.Rho  = 0.01; // 1%
+        m_RMSD_RefineCriterion.H    = 0.01; // 1%
 
         double length_forest = (1<<MAX_FOREST_LEVEL);
         for (size_t i = 0; i < dim; i++)

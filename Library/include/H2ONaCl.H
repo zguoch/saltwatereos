@@ -72,18 +72,18 @@ namespace H2ONaCl
     typedef LOOKUPTABLE_FOREST::LookUpTableForest<3, H2ONaCl::FIELD_DATA<3> > LookUpTableForest_3D;
 
     /**
-     * @brief Check the criterion of a property and determine if need to refine.
+     * @brief Check the criterion of a property and determine if need to refine. Should use relative error criterion, rather absolute error otherwise it is not fair for vapor region.
      * 
      */
     #define CHECK_REFINE_PROP_RMSD(PROP) \
     { \
-        double mean_Rho = props_refine_check[0].PROP; \
-        for(int i=0;i<forest->m_num_children;i++)mean_Rho += props_refine_check[i+1].PROP; \
-        mean_Rho = mean_Rho / (forest->m_num_children + 1);  \
-        double RMSD_Rho = pow(props_refine_check[0].PROP - mean_Rho, 2.0); \
-        for(int i=0;i<forest->m_num_children;i++)RMSD_Rho += pow(props_refine_check[i+1].PROP - mean_Rho, 2.0); \
-        RMSD_Rho = sqrt(RMSD_Rho/(forest->m_num_children + 1)); \
-        if(RMSD_Rho > forest->m_RMSD_RefineCriterion.PROP) \
+        double mean_Prop = props_refine_check[0].PROP; \
+        for(int i=0;i<forest->m_num_children;i++)mean_Prop += props_refine_check[i+1].PROP; \
+        mean_Prop = mean_Prop / (forest->m_num_children + 1);  \
+        double RMSD_Prop = pow((props_refine_check[0].PROP - mean_Prop)/mean_Prop, 2.0); \
+        for(int i=0;i<forest->m_num_children;i++)RMSD_Prop += pow((props_refine_check[i+1].PROP - mean_Prop)/mean_Prop, 2.0); \
+        RMSD_Prop = sqrt(RMSD_Prop/(forest->m_num_children + 1)); \
+        if(RMSD_Prop > forest->m_RMSD_RefineCriterion.PROP) \
         { \
             data->need_refine = LOOKUPTABLE_FOREST::NeedRefine_##PROP; \
         } \
