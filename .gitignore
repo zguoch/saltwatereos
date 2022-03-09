@@ -1,6 +1,7 @@
 build/*
 plot/*
 !plot/*.py
+!plot/*.ipynb
 lib
 build-*/
 .DS_Store
