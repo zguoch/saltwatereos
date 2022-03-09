@@ -1,5 +1,5 @@
 # 0. CMake Minimum version
-cmake_minimum_required(VERSION 3.3...3.12 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
 if (POLICY CMP0086)
   # cmake warns if loaded from a min-3.0-required parent dir, so silence the warning:
   cmake_policy(SET CMP0086 NEW)
@@ -93,9 +93,9 @@ aux_source_directory(. SRC_MAIN)
 include_directories(src include)
 # source
 add_subdirectory(src)
-# add_subdirectory(swig/H2O)
-# add_subdirectory(swig/NaCl)
-# add_subdirectory(swig/H2ONaCl) # split omp-related code to another file, and do not compile that file in swig
+add_subdirectory(swig/H2O)
+add_subdirectory(swig/NaCl)
+add_subdirectory(swig/H2ONaCl) # split omp-related code to another file, and do not compile that file in swig
 
 # install path 
 INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/include )

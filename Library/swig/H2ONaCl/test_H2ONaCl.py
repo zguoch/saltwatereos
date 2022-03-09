@@ -1,4 +1,6 @@
 import numpy as np 
+import os
+import matplotlib as mpl
 import random
 import time
 from pyswEOS import H2ONaCl
@@ -59,10 +61,38 @@ def test_LUT_load_lookup():
             if(np.abs(err)>0.5): print('Rho err: %f'%(err))
     stop = time.process_time()
     print("Search, elapsed time: %.2f, %d need refine" % (stop - start, ind))
-
+def test_XL_VL(mmc6='data/Driesner2007a/1-s2.0-S0016703707002943-mmc6.txt'):
+    xl = sw.X_VaporLiquidCoexistSurface_LiquidBranch(200, 100)
+    # plot Driesner's result
+    T_,P_,xv_,xl_ = [],[],[],[]
+    if(os.path.exists(mmc6)):
+        data=np.loadtxt(mmc6, skiprows=6)
+        T_,P_,xv_,xl_=data[:,0],data[:,1],data[:,2],data[:,3]
+        # triang = mpl.tri.Triangulation(xl_*100.0, T_)
+        # ax.plot_trisurf(triang, P_)
+        X_L=np.zeros_like(T_)
+        for i in range(0,len(T_)):
+            X_L[i] = sw.X_VaporLiquidCoexistSurface_LiquidBranch(T_[i], P_[i])
+        # write to file and compare the result with Driesner(2007a) mm6
+        fpout = open('mm6.txt','w')
+        for i in range(0,len(T_)):
+            fpout.write('%.6e\t%.6e\t%.6e\t%.6e\n'%(T_[i], P_[i], xl_[i], X_L[i]))
+        fpout.close()
+        diff_Xl = np.abs(X_L - xl_)
+        diff_Xl = diff_Xl[~np.isnan(diff_Xl)]
+        # read and calculate diff
+        data = np.loadtxt('mm6.txt')
+        fpout = open('mm6.txt','w')
+        for i in range(0,len(T_)):
+            fpout.write('%.6f\t%.6f\t%.6f\t%.6f\t%.6e\n'%(T_[i], P_[i], xl_[i], X_L[i], data[i, 2]-data[i,3]))
+        fpout.close()
+        print('XL_VL difference, max: %.3E, min: %.3E'%(diff_Xl.max(),diff_Xl.min()))
+    else:
+        print('mmc6 file of Driesner(2007a) doesn\'t exists: %s'%(mmc6))
 
 # run test
 # test_basic()
 # test_propCalculation()
 # test_LUT_generation()
-test_LUT_load()
+# test_LUT_load()
+test_XL_VL()
