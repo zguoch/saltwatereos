@@ -11,7 +11,10 @@ using namespace std;
 
 #include "H2ONaCl.H"
 #include "MultiProgressBar.h"
-#include "omp.h"
+#ifndef USE_OMP
+#else
+    #include "omp.h"
+#endif
 
 #define VERSION_MAJOR 1
 #define VERSION_MINOR 0

@@ -10,6 +10,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SWEOS_LIB_PATH "../Library/lib")
 set(SWEOS_LIB_NAME "eosH2ONaCl")
+# options
+option(USE_OMP "Enable OpenMP to parallel computing" OFF)
 
 set(SWEOS_MAJOR_VERSION 1)
 set(SWEOS_MINOR_VERSION 7)
@@ -58,42 +60,49 @@ if(NOT SWEOS_PACKAGER)
 endif()
 
 # Using OpenMP
-include_directories(/usr/local/Cellar/libomp/12.0.1/include /usr/local/Cellar/libomp/11.0.0/include /usr/local/Cellar/libomp/11.1.0/include)
-find_package(OpenMP REQUIRED)
-if(APPLE)
-    set(CMAKE_C_COMPILER clang)
-    set(CMAKE_CXX_COMPILER clang++)
+if(USE_OMP)
+  include_directories(/usr/local/include /opt/local/include)
+  find_package(OpenMP REQUIRED)
+  if(APPLE)
+      set(CMAKE_C_COMPILER clang)
+      set(CMAKE_CXX_COMPILER clang++)
 
-    if(CMAKE_C_COMPILER_ID MATCHES "Clang\$")
-        set(OpenMP_C_FLAGS "-Xpreprocessor -fopenmp")
-        set(OpenMP_C_LIB_NAMES "omp")
-        set(OpenMP_omp_LIBRARY omp)
-    endif()
+      if(CMAKE_C_COMPILER_ID MATCHES "Clang\$")
+          set(OpenMP_C_FLAGS "-Xpreprocessor -fopenmp")
+          set(OpenMP_C_LIB_NAMES "omp")
+          set(OpenMP_omp_LIBRARY omp)
+      endif()
 
-    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang\$")
-        set(OpenMP_CXX_FLAGS "-Xpreprocessor -fopenmp")
-        set(OpenMP_CXX_LIB_NAMES "omp")
-        set(OpenMP_omp_LIBRARY omp)
-    endif()
+      if(CMAKE_CXX_COMPILER_ID MATCHES "Clang\$")
+          set(OpenMP_CXX_FLAGS "-Xpreprocessor -fopenmp")
+          set(OpenMP_CXX_LIB_NAMES "omp")
+          set(OpenMP_omp_LIBRARY omp)
+      endif()
+  endif()
+  if(OPENMP_FOUND)
+      message("OPENMP FOUND")
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+  endif()
+  #windows vs2017 doesn't need opm library link 
+  set(LIBomp "")
+  if (APPLE)
+    set(LIBomp "omp")
+  endif()
+  # add MACRO definition
+  add_definitions("-DUSE_OMP=1")
+  link_directories("/usr/local/lib" "/opt/local/lib")
 endif()
-if(OPENMP_FOUND)
-    message("OPENMP FOUND")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-endif()
-#windows vs2017 doesn't need opm library link 
-set(LIBomp "")
-if (APPLE)
-  set(LIBomp "omp")
-endif()
+
+
 
 
 #2. Source code dir
 
 # add H2ONaCl source and library 
 include_directories(../Library/include)
-link_directories(${SWEOS_LIB_PATH} "../Library/lib" "/usr/local/lib")
+link_directories(${SWEOS_LIB_PATH} "../Library/lib")
 aux_source_directory(. SRC_MAIN)
 set( Srcs_bash ./SWEOSbash.cpp ./MultiProgressBar.cpp ./getopt.cpp)
 set( Hdrs_bash ./SWEOSbash.h ./MultiProgressBar.h ./getopt.h)

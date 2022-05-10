@@ -42,9 +42,14 @@ namespace SWEOSbash
   cSWEOSarg::cSWEOSarg(/* args */)
   :m_haveD(false), m_haveV(false), m_haveP(false)
   ,m_haveT(false), m_havet(false), m_haveX(false), m_haveH(false), m_haveR(false),m_haveO(false)
-  ,m_valueD(-1),m_threadNumOMP(omp_get_max_threads()), m_valueO(""),m_valueV("")
+  ,m_valueD(-1), m_valueO(""),m_valueV("")
   ,m_normalize_vtk(false)
   {
+    #ifndef USE_OMP
+      m_threadNumOMP = 1;
+    #else
+      m_threadNumOMP = omp_get_max_threads();
+    #endif
     for(int i=0;i<3;i++)
     for(int j=0;j<3;j++)m_valueR[i][j]=0;
   }
@@ -121,9 +126,12 @@ namespace SWEOSbash
       case 't':
         m_havet=true;
         if(!GetOptionValue(opt, optarg, doubleOptValue))return false;
-        m_threadNumOMP=(int)doubleOptValue;
-        if(m_threadNumOMP>omp_get_max_threads())m_threadNumOMP=omp_get_max_threads();
-        if(m_threadNumOMP<1)m_threadNumOMP=1;
+        #ifndef USE_OMP
+        #else
+          m_threadNumOMP=(int)doubleOptValue;
+          if(m_threadNumOMP>omp_get_max_threads())m_threadNumOMP=omp_get_max_threads();
+          if(m_threadNumOMP<1)m_threadNumOMP=1;
+        #endif
         break;
       case 'V':
         m_haveV=true;
@@ -310,7 +318,10 @@ namespace SWEOSbash
       props.resize(arrT.size()*arrP.size());
       
       MultiProgressBar multibar(arrP.size(),COLOR_BAR_BLUE);
-      omp_set_num_threads(m_threadNumOMP);
+      #ifndef USE_OMP
+      #else
+        omp_set_num_threads(m_threadNumOMP);
+      #endif
       cout<<"2D calculation using "<<m_threadNumOMP<<" threads, T in ["
           <<rangeT[0]<<", "<<rangeT[1]<<"] deg.C, P in ["
           <<rangeP[0]<<", "<<rangeP[1]<<"] bar, fixed salinity X="
@@ -355,7 +366,10 @@ namespace SWEOSbash
       vector<H2ONaCl::PROP_H2ONaCl> props;
       props.resize(arrP.size()*arrX.size());
       MultiProgressBar multibar(arrP.size(),COLOR_BAR_BLUE);
-      omp_set_num_threads(m_threadNumOMP);
+      #ifndef USE_OMP
+      #else
+        omp_set_num_threads(m_threadNumOMP);
+      #endif
       cout<<"2D calculation using "<<m_threadNumOMP<<" threads, X in ["
           <<rangeX[0]<<", "<<rangeX[1]<<"] , P in ["
           <<rangeP[0]<<", "<<rangeP[1]<<"] bar, fixed temperature T="
@@ -399,7 +413,10 @@ namespace SWEOSbash
       vector<H2ONaCl::PROP_H2ONaCl> props;
       props.resize(arrT.size()*arrX.size());
       MultiProgressBar multibar(arrX.size(),COLOR_BAR_BLUE);
-      omp_set_num_threads(m_threadNumOMP);
+      #ifndef USE_OMP
+      #else
+        omp_set_num_threads(m_threadNumOMP);
+      #endif
       cout<<"2D calculation using "<<m_threadNumOMP<<" threads, X in ["
           <<rangeX[0]<<", "<<rangeX[1]<<"] , T in ["
           <<rangeT[0]<<", "<<rangeT[1]<<"] deg.C, fixed pressure P="
@@ -444,7 +461,10 @@ namespace SWEOSbash
       props.resize(arrH.size()*arrP.size());
       
       MultiProgressBar multibar(arrP.size(),COLOR_BAR_BLUE);
-      omp_set_num_threads(m_threadNumOMP);
+      #ifndef USE_OMP
+      #else
+        omp_set_num_threads(m_threadNumOMP);
+      #endif
       cout<<"2D calculation using "<<m_threadNumOMP<<" threads, H in ["
           <<rangeH[0]<<", "<<rangeH[1]<<"] kJ/kg, P in ["
           <<rangeP[0]<<", "<<rangeP[1]<<"] bar, fixed salinity X="
@@ -489,7 +509,10 @@ namespace SWEOSbash
       props.resize(arrH.size()*arrX.size());
       
       MultiProgressBar multibar(arrX.size(),COLOR_BAR_BLUE);
-      omp_set_num_threads(m_threadNumOMP);
+      #ifndef USE_OMP
+      #else
+        omp_set_num_threads(m_threadNumOMP);
+      #endif
       cout<<"2D calculation using "<<m_threadNumOMP<<" threads, H in ["
           <<rangeH[0]<<", "<<rangeH[1]<<"] kJ/kg, X in ["
           <<rangeX[0]<<", "<<rangeX[1]<<"], fixed pressure P="
@@ -638,7 +661,10 @@ namespace SWEOSbash
       props.resize(arrT.size()*arrP.size()*arrX.size());
       //progressbar
       MultiProgressBar multiBar(arrP.size(),COLOR_BAR_BLUE);
-      omp_set_num_threads(m_threadNumOMP);
+      #ifndef USE_OMP
+      #else
+        omp_set_num_threads(m_threadNumOMP);
+      #endif
       cout<<"3D calculation using "<<m_threadNumOMP<<" threads, T in ["
           <<rangeT[0]<<", "<<rangeT[1]<<"] deg.C, P in ["
           <<rangeP[0]<<", "<<rangeP[1]<<"] bar, X in ["
@@ -697,7 +723,10 @@ namespace SWEOSbash
       props.resize(arrH.size()*arrP.size()*arrX.size());
       //progressbar
       MultiProgressBar multiBar(arrP.size(),COLOR_BAR_BLUE);
-      omp_set_num_threads(m_threadNumOMP);
+      #ifndef USE_OMP
+      #else
+        omp_set_num_threads(m_threadNumOMP);
+      #endif
       cout<<"3D calculation using "<<m_threadNumOMP<<" threads, H in ["
           <<rangeH[0]<<", "<<rangeH[1]<<"] kJ/kg, P in ["
           <<rangeP[0]<<", "<<rangeP[1]<<"] bar, X in ["
