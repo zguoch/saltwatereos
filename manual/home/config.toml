@@ -138,10 +138,16 @@ name = "Faq"
 url = "faq"
 weight = 5
 
+# imprint
+[[Languages.en.menu.main]]
+name = "imprint"
+url = "imprint"
+weight = 6
+
 [[Languages.en.menu.main]]
 name = "contact"
 url = "contact"
-weight = 6
+weight = 7
 
 # banner
 [Languages.en.params.banner]

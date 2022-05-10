@@ -117,6 +117,10 @@ html_theme_options = {
 html_context = {
     "menu_links": [
         (
+            '<i class="fa fa-stamp"></i> Imprint',
+            "https://www.sweos.info/imprint/",
+        ),
+        (
             '<i class="fa fa-home fa-fw"></i> Homepage',
             "https://hydrothermal-openfoam.gitlab.io/saltwatereos/",
         ),
